@@ -1,0 +1,14 @@
+.custompageDots {
+    :global(.flickity-page-dots) {
+        position: initial !important;
+        padding-block: 13px;
+
+        :global(.flickity-page-dot) {
+            background: rgba(255, 255, 255, 0.411);
+        }
+
+        :global(.flickity-page-dot.is-selected) {
+            background: rgb(255, 255, 255);
+        }
+    }
+}

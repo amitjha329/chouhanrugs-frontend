@@ -1,0 +1,14 @@
+#categories_card {
+
+    & .arrow {
+        @apply transition-transform duration-150;
+    }
+
+    &:hover .arrow {
+        @apply translate-x-4;
+    }
+
+    img {
+        @apply drop-shadow-md max-h-36 object-contain mt-2 md:mt-0;
+    }
+}

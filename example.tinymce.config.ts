@@ -1,0 +1,2 @@
+const TINY_MCE_KEY="eavwkotcp2tytvdeuw7wgo508s791069xjwh0pp4encqepup"
+export default TINY_MCE_KEY

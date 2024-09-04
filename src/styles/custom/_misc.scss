@@ -1,0 +1,100 @@
+@layer utilities {
+    .no-scrollbar {
+
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .radial-click {
+        transition: background-color;
+        background-color: #fff;
+
+        &:active {
+            transition: background-color;
+            background: transparent radial-gradient(#e0e0e0, #fafafa, #fff);
+        }
+    }
+
+    .move-arrow-right {
+
+        & .arrow {
+            @apply transition-transform duration-150;
+        }
+
+        &:hover .arrow {
+            @apply translate-x-4;
+        }
+    }
+
+    .move-arrow-left {
+
+        & .arrow {
+            @apply transition-transform duration-150;
+        }
+
+        &:hover .arrow {
+            @apply -translate-x-4;
+        }
+    }
+
+    ul.numbered-list {
+        counter-reset: li;
+        list-style-type: none;
+        font-size: 14px;
+        line-height: 18px;
+        padding-left: 10px;
+
+        li {
+            position: relative;
+            padding: 5px 0 5px 30px;
+            text-align: justify;
+
+            div.title {
+                @apply text-lg font-semibold mb-2;
+            }
+
+            &:before {
+                content: counter(li);
+                counter-increment: li;
+                height: 20px;
+                width: 20px;
+                background: #e37b3b;
+                border-radius: 50%;
+                color: white;
+                text-align: center;
+                position: absolute;
+                left: 0;
+                top: 10px;
+            }
+        }
+    }
+}
+
+@layer components {
+    .ellipsize {
+        display: -webkit-box !important;
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
+        white-space: unset;
+        overflow: hidden;
+
+        &.line-clamp-one {
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
+        }
+
+        &.line-clamp-two {
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+
+        &.line-clamp-three {
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+        }
+    }
+}

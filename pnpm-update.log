@@ -1,0 +1,67 @@
+ WARN  deprecated react-particles@2.12.2: @tsparticles/react is the new version, please use that
+ WARN  deprecated tsparticles-engine@2.12.0: starting from tsparticles v3 the packages are now moved to @tsparticles/package-name instead of tsparticles-package-name
+ WARN  deprecated tsparticles@2.12.0: tsParticles v3 is out, it contains breaking changes and it's recommended to migrate to that version with fixes and new features
+ WARN  deprecated tsparticles-slim@2.12.0: starting from tsparticles v3 the packages are now moved to @tsparticles/package-name instead of tsparticles-package-name
+ WARN  48 deprecated subdependencies found: are-we-there-yet@2.0.0, gauge@3.0.2, glob@7.1.7, glob@7.2.3, inflight@1.0.6, mkdirp@0.3.0, npmlog@5.0.1, rimraf@3.0.2, tsparticles-basic@2.12.0, tsparticles-interaction-external-attract@2.12.0, tsparticles-interaction-external-bounce@2.12.0, tsparticles-interaction-external-bubble@2.12.0, tsparticles-interaction-external-connect@2.12.0, tsparticles-interaction-external-grab@2.12.0, tsparticles-interaction-external-pause@2.12.0, tsparticles-interaction-external-push@2.12.0, tsparticles-interaction-external-remove@2.12.0, tsparticles-interaction-external-repulse@2.12.0, tsparticles-interaction-external-slow@2.12.0, tsparticles-interaction-external-trail@2.12.0, tsparticles-interaction-particles-attract@2.12.0, tsparticles-interaction-particles-collisions@2.12.0, tsparticles-interaction-particles-links@2.12.0, tsparticles-move-base@2.12.0, tsparticles-move-parallax@2.12.0, tsparticles-particles.js@2.12.0, tsparticles-plugin-absorbers@2.12.0, tsparticles-plugin-easing-quad@2.12.0, tsparticles-plugin-emitters@2.12.0, tsparticles-shape-circle@2.12.0, tsparticles-shape-image@2.12.0, tsparticles-shape-line@2.12.0, tsparticles-shape-polygon@2.12.0, tsparticles-shape-square@2.12.0, tsparticles-shape-star@2.12.0, tsparticles-shape-text@2.12.0, tsparticles-updater-color@2.12.0, tsparticles-updater-destroy@2.12.0, tsparticles-updater-life@2.12.0, tsparticles-updater-opacity@2.12.0, tsparticles-updater-out-modes@2.12.0, tsparticles-updater-roll@2.12.0, tsparticles-updater-rotate@2.12.0, tsparticles-updater-size@2.12.0, tsparticles-updater-stroke-color@2.12.0, tsparticles-updater-tilt@2.12.0, tsparticles-updater-twinkle@2.12.0, tsparticles-updater-wobble@2.12.0
+Packages: +816
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 824, reused 770, downloaded 46, added 366, done
+node_modules/.pnpm/bcrypt@5.1.1/node_modules/bcrypt: Running install script, done in 264ms
+node_modules/.pnpm/sharp@0.32.6/node_modules/sharp: Running install script, done in 523ms
+node_modules/.pnpm/react-particles@2.12.2_react@18.3.1/node_modules/react-particles: Running install script, done in 155ms
+
+dependencies:
++ @algolia/autocomplete-core 1.17.1
++ @algolia/autocomplete-js 1.17.1
++ @algolia/autocomplete-plugin-query-suggestions 1.17.1
++ @algolia/autocomplete-plugin-recent-searches 1.17.1
++ @algolia/autocomplete-shared 1.17.1
++ @algolia/autocomplete-theme-classic 1.17.1
++ @headlessui/react 1.7.19 (2.0.4 is available)
++ @next/third-parties 14.2.3
++ @paypal/react-paypal-js 7.8.3 (8.3.0 is available)
++ @stripe/react-stripe-js 2.7.1
++ @tinymce/tinymce-react 4.3.2 (5.0.1 is available)
++ algoliasearch 4.23.3
++ autoprefixer 10.4.19
++ axios 1.7.2
++ daisyui 4.11.1
++ eslint 8.57.0 (9.3.0 is available)
++ eslint-config-next 13.5.6 (14.2.3 is available)
++ mongodb 6.6.2
++ next 14.2.3
++ next-auth 4.24.7
++ node-fpe 2.0.3
++ nodemailer 6.9.13
++ nodemailer-express-handlebars 6.1.2
++ octokit 3.2.1 (4.0.2 is available)
++ openid-client 5.6.5
++ postcss 8.4.38
++ razorpay 2.9.4
++ react 18.3.1
++ react-aria-components 1.2.1
++ react-color 2.19.3
++ react-cookie 4.1.1 (7.1.4 is available)
++ react-data-table-component 7.6.2
++ react-datepicker 4.25.0 (6.9.0 is available)
++ react-dom 18.3.1
++ react-icons 4.12.0 (5.2.1 is available)
++ react-instantsearch 7.9.0
++ react-instantsearch-core 7.9.0
++ react-instantsearch-nextjs 0.1.14 (0.2.5 is available)
++ react-particles 2.12.2 deprecated
++ react-spinners 0.13.8
++ react-sticky-box 2.0.5
++ tailwindcss 3.4.3
++ typescript 5.4.5
+
+devDependencies:
++ @types/node 18.19.33 (20.12.12 is available)
++ @types/nodemailer 6.4.15
++ @types/react 18.3.3
++ @types/react-color 3.0.12
++ @types/react-datepicker 4.19.6 (6.2.0 is available)
++ @types/react-dom 18.3.0
++ sass 1.77.2
+
+Done in 34.7s

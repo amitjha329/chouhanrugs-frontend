@@ -1,0 +1,19 @@
+'use server'
+import clientPromise from "../mongodb/clientPromise";
+import BlogDataModel from "../types/BlogDataModel";
+import converter from "../utilities/mongoObjectConversionUtility";
+
+export default async function getBlogPostWithSlug(slug: string): Promise<BlogDataModel> {
+    const mongoClient = await clientPromise
+    const collectionPartnerIds = mongoClient.db(process.env.MONGODB_DB).collection("blogs")
+    try {
+        const partnerIdsData = await collectionPartnerIds.findOne({ slug })
+        if (partnerIdsData != null) {
+            return converter.fromWithNoFieldChange<BlogDataModel>(partnerIdsData)
+        } else {
+            throw new Error("Data not Found")
+        }
+    } catch (err: any) {
+        throw new Error(err)
+    }
+}

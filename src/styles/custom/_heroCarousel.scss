@@ -1,0 +1,5 @@
+#carousel-hero {
+  & > div {
+    @apply rounded-t-none;
+  }
+}

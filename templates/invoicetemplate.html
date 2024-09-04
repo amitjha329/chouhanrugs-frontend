@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Tax Invoice</title>
+    <link rel="shortcut icon" type="image/png" href="./favicon.png" />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .table-bordered td,
+        .table-bordered th {
+            border: 1px solid #ddd;
+            padding: 10px;
+            word-break: break-all;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 10px;
+        }
+
+        .h4-14 h4 {
+            font-size: 10px;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .img {
+            margin-left: "auto";
+            margin-top: "auto";
+            height: 30px;
+        }
+
+        pre,
+        p {
+            /* width: 99%; */
+            /* overflow: auto; */
+            /* bpicklist: 1px solid #aaa; */
+            padding: 0;
+            margin: 0;
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            width: 100%;
+            border-collapse: collapse;
+            padding: 1px;
+        }
+
+        .hm-p p {
+            text-align: left;
+            padding: 1px;
+            padding: 5px 4px;
+        }
+
+        td,
+        th {
+            text-align: left;
+            padding: 8px 6px;
+        }
+
+        .table-b td,
+        .table-b th {
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #ddd;
+        }
+
+        .hm-p td,
+        .hm-p th {
+            padding: 3px 0px;
+        }
+
+        .cropped {
+            float: right;
+            margin-bottom: 20px;
+            height: 100px;
+            /* height of container */
+            overflow: hidden;
+        }
+
+        .cropped img {
+            width: 400px;
+            margin: 8px 0px 0px 80px;
+        }
+
+        .table-bordered td,
+        .table-bordered th {
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <div style="display: table-header-group">
+            <h4 style="text-align: center; margin: 0">
+                <b>Tax Invoice</b>
+            </h4>
+
+            <table style="width: 100%; table-layout: fixed">
+                <tr>
+                    <td>
+                            %logo%
+                    </td>
+                    <td align="right" style="
+                text-align: right;
+                padding-left: 50px;
+                line-height: 1.5;
+                color: #323232;
+              ">
+                        <div>
+                            <h4 style="margin-top: 5px; margin-bottom: 5px">
+                                Bill to/ Ship to
+                            </h4>
+                            <!-- <p>NAME   :- {{ customer["name"]}}</p>
+                        <p>ADDRESS:- {{customer['address']}}</p>
+                        <p>MOBILE :- {{customer['mobile']}}</p>
+                        <p>OrderID   :- {{customer['order_id']}}</p>  -->
+                            <p style="font-size: 10px">
+                                <b>%company-to%</b>
+                                <br />
+                                %address-to%<br />
+                                %city-to%, %zip-to%,<br />
+                                %country-to%<br />
+                                <a href="tel:01241234568" style="color: #00bb07">%client-custom-1%</a>
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table class="table table-bordered h4-14" style="width: 100%; -fs-table-paginate: paginate; margin-top: 15px">
+            <thead style="display: table-header-group">
+                <tr style="
+              margin: 0;
+              background: #fcbd021f;
+              padding: 15px;
+              padding-left: 20px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            ">
+                    <td colspan="1" style="width: 200px">
+                        <h4 style="margin: 0">Sold By:</h4>
+                        <p>
+                            <b>%company-from%</b><br />
+                            %address-from%<br />
+                            %city-from% - %zip-from%<br />
+                            %country-from%<br />
+                            %sender-custom-1%<br />
+                            %sender-custom-2%<br />
+                            %sender-custom-3%
+                        </p>
+                    </td>
+                    <td colspan="2">
+                        <h3>
+                            <span style="
+                    font-weight: 300;
+                    font-size: 10px;
+                    margin-left: 5px;
+                  ">%number-title%:%number%</span>
+                        </h3>
+                    </td>
+                    <td colspan="1">
+                        <p style="margin: 5px 0">Invoice Generated: %date%</p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th style="width: 150px">
+                        <h4>%products-header-products%</h4>
+                    </th>
+                    <th style="width: 80px">
+                        <h4>%products-header-quantity%</h4>
+                    </th>
+                    <th style="width: 60px">
+                        <h4>%products-header-price%</h4>
+                    </th>
+                    <th style="width: 120px">
+                        <h4>%products-header-total%</h4>
+                    </th>
+                </tr>
+            </thead>
+            <products>
+                <tbody>
+                    <td>%description%</td>
+                    <td align="center">%quantity%</td>
+                    <td>%price%</td>
+                    <td>%row-total%</td>
+                </tbody>
+            </products>
+            <tfoot></tfoot>
+        </table>
+
+        <table class="hm-p table-bordered" style="width: 100%; margin-top: 30px">
+            <tr>
+                <th style="width: 400px">
+                    %subtotal-title%:
+                </th>
+                <td style="vertical-align: top; color: #000">
+                    <b>%subtotal%</b>
+                </td>
+            </tr>
+            <tax>
+                <tr>
+                    <th style="width: 400px">
+                        %tax-notation% %tax-rate%%:
+                    </th>
+                    <td style="vertical-align: top; color: #000">
+                        <b>%tax%</b>
+                    </td>
+                </tr>
+            </tax>
+            <!-- <tr>
+                <th style="vertical-align: top">Coupon Discount</th>
+                <td style="vertical-align: top; color: #000">
+                    <b> ₹{{total['coupon_amount']}}</b>
+                </td>
+            </tr> -->
+            <tr>
+                <th style="vertical-align: top">Delivery Charge</th>
+                <td style="vertical-align: top">
+                    <b>₹ 0</b>
+                </td>
+            </tr>
+
+            <!-- <tr>
+                <th style="vertical-align: top">Saving</th>
+                <td style="vertical-align: top; color: #000">
+                    <b>₹{{total['saving']}}</b>
+                </td>
+            </tr> -->
+        </table>
+
+        <table class="hm-p table-bordered" style="width: 100%; margin-top: 30px">
+            <tr>
+                <th style="width: 400px">
+                    <p>Payment Mode:</p>
+                </th>
+                <td style="width: 100px; border-right: none">
+                    <p>&nbsp;</p>
+                </td>
+                <td colspan="5" style="border-left: none"></td>
+            </tr>
+            <tr style="background: #fcbd02">
+                <th>%total-title%:</th>
+                <td style="width: 70px; text-align: right; border-right: none">
+                    <b>%total%</b>
+                </td>
+                <td colspan="5" style="border-left: none"></td>
+            </tr>
+        </table>
+
+        <table style="width: 100%" cellspacing="0" cellspadding="0" border="0">
+            <tr>
+                <td>
+                    <p>
+                        This is computer generated invoice and hence signature is not
+                        required
+                    </p>
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </section>
+</body>
+
+</html>

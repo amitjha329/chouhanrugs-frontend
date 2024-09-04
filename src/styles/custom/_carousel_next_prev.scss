@@ -1,0 +1,39 @@
+.flickity-button {
+    background: #fff;
+    opacity: 1;
+
+    &:hover {
+        background: #333;
+    }
+
+    &.flickity-prev-next-button {
+        width: 30px;
+        height: 60px;
+        border-radius: 5px;
+        box-shadow: 0 10px 8px rgb(0 0 0 / 0.04), 0 4px 3px rgb(0 0 0 / 0.1);
+
+        .flickity-button-icon {
+            fill: rgb(0, 0, 0);
+        }
+
+        &:hover .flickity-button-icon {
+            fill: #fff;
+        }
+
+        &.previous {
+            left: 0;
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+        }
+
+        &.next {
+            right: 0;
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+        }
+    }
+}
+
+.flickity-page-dot:not(.is-selected) {
+    background-color: rgba(114, 114, 114, 0.44) !important;
+}

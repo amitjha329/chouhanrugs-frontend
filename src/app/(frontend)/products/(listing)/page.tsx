@@ -1,0 +1,42 @@
+import getSiteData from '@/lib/actions/getSiteData'
+import ProductList from '@/ui/frontend/Sections/ProductsList'
+import { Metadata } from 'next'
+import React from 'react'
+
+export async function generateMetadata(): Promise<Metadata> {
+    const dataAdditional = await getSiteData()
+    const title = "Products | Chouhan Rugs"
+    const description = "Browse all the categories and products, find the product that you love."
+    const keywords = "jute rugs, jute hand bags, jute basket, cotton rugs, thrown blanket, wall hanging macrame"
+    return {
+        title,
+        description,
+        keywords,
+        openGraph: {
+            title,
+            description,
+            type: "website",
+            siteName: "Chouhan Rugs",
+            phoneNumbers: dataAdditional.contact_details.phone,
+            emails: dataAdditional.contact_details.email,
+            images: dataAdditional.logoSrc
+        },
+        twitter: {
+            title,
+            card: "summary",
+            description,
+            images: dataAdditional.logoSrc,
+        },
+        alternates: {
+            canonical: `${dataAdditional.url}products/`
+        }
+    }
+}
+
+const ProductsListPage = async ({ searchParams }: { searchParams: { [key: string]: string | undefined } }) => {
+    return (
+        <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} />
+    )
+}
+
+export default ProductsListPage

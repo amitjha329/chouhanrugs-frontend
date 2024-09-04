@@ -1,0 +1,23 @@
+.mega-menu {
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0%;
+        left:50%;
+        border-right: 10px solid transparent;
+        border-top: 10px solid hsl(var(--p));
+        border-left: 10px solid transparent;
+    }
+
+    .mega-sub-menu{
+        &::before {
+            top: 22px;
+            right: 100%;
+            bottom: auto;
+            left: auto;
+            border-top: 5px solid transparent;
+            border-right: 5px solid hsl(var(--p));
+            border-bottom: 5px solid transparent;
+        }
+    }
+}
