@@ -33,9 +33,6 @@ yarn-error.log*
 next-env.d.ts
 .next.zip
 dist.zip
-.env.production.local
-.env.development.local
 
 /public/uploads
 tinymce.config.ts
-tinymce.config.js

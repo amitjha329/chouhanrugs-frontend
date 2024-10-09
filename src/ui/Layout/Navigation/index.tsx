@@ -5,7 +5,7 @@ import Header from './Header'
 
 const Navigation = () => {
     return (
-        <header>
+        <header className='sticky top-0'>
             <PageLinks />
             <Header />
             <CategoryMenu />

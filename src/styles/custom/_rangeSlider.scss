@@ -1,5 +1,0 @@
-@layer components {
-    input[type="range"]::-webkit-slider-thumb {
-        @apply bg-blue-500 w-6 h-6 pointer-events-auto appearance-none rounded-[50%];
-    }
-}

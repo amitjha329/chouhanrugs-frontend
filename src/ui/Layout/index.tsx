@@ -6,7 +6,9 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     return (
         <>
             <Navigation />
-            {children}
+            <main className='container mx-auto px-20'>
+                {children}
+            </main>
             <Footer />
         </>
     )

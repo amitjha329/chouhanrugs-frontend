@@ -1,11 +1,6 @@
-import { withAuth } from "next-auth/middleware"
-
-export default withAuth({
-    callbacks: {
-        authorized: ({ token }) => {
-            return token != null;
-        }
-    }
+import { auth } from "@/auth"
+ 
+export default auth((req) => {
 })
 
 export const config = {
