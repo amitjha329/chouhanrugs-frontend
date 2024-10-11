@@ -1,7 +1,6 @@
 import { auth } from "@/auth"
- 
-export default auth((req) => {
-})
+
+export default auth()
 
 export const config = {
     matcher: [

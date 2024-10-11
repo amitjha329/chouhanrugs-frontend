@@ -16,6 +16,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         strategy: "jwt"
     },
     adapter: MongoDBAdapter(clientPromise),
+    jwt:{
+        maxAge: 60 * 60 * 24 * 30
+    },
     providers: [
         Email({
             generateVerificationToken: async () => {

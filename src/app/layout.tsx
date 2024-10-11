@@ -4,13 +4,17 @@ import MainLayout from '@/ui/Layout'
 import { Poppins } from 'next/font/google'
 import clsx from 'clsx'
 import NextTopLoader from 'nextjs-toploader'
-import BreadCrumbs from '@/ui/BreadCrumbs'
 import '@/styles/Nprogress.css'
+import { Viewport } from 'next'
 
 const poppins = Poppins({
     weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
     subsets: ["latin"]
 })
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1.0
+}
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
     return (
@@ -18,10 +22,10 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             <body className={clsx(poppins.className)}>
                 <NextTopLoader />
                 <MainLayout>
-                    <BreadCrumbs crumbs={[
+                    {/* <BreadCrumbs crumbs={[
                         { name: "Home", link: "/" },
                         { name: "Category", link: "/category" }
-                    ]} />
+                    ]} /> */}
                     {children}
                 </MainLayout>
             </body>

@@ -10,7 +10,7 @@ interface MenuItemProp {
 
 const CategoryMenu = () => {
     return (
-        <nav className='bg-secondary text-secondary-content font-[500] flex items-center justify-center gap-10 py-5' id='category_links'>
+        <nav className='bg-secondary text-secondary-content font-[500] flex items-center justify-center gap-10 py-5 sticky top-0 z-[99999]' id='category_links'>
             <CategoryMenuItem label='Cushion & Pillow' href='/category/cushion_pillow' submenu={[
                 { label: "Demo Category", href: "/" },
                 { label: "Demo Category", href: "/" },

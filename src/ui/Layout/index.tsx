@@ -1,12 +1,18 @@
 import React, { ReactNode } from 'react'
 import Footer from './Footer'
 import Navigation from './Navigation'
+import { headers } from 'next/headers'
+import getDevice from '@/utils/getDevice'
+import MobileNavigation from './MobileNavigation'
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
+    const header = headers()
     return (
         <>
-            <Navigation />
-            <main className='container mx-auto px-20'>
+            {
+                getDevice({ headers: header }) != "mobile" ? <Navigation /> : <MobileNavigation />
+            }
+            <main>
                 {children}
             </main>
             <Footer />
