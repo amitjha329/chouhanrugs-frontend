@@ -12,7 +12,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
             {
                 getDevice({ headers: header }) != "mobile" ? <Navigation /> : <MobileNavigation />
             }
-            <main>
+            <main className='bg-base-100'>
                 {children}
             </main>
             <Footer />

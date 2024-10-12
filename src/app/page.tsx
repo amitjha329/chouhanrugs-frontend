@@ -6,6 +6,8 @@ import ShopByRoom from '@/ui/HomePage/ShopByRoom'
 import ShopByColor from '@/ui/HomePage/ShopByColor'
 import TrendingProducts from '@/ui/HomePage/TrendingProducts'
 import OurPopularCategories from '@/ui/HomePage/OurPopularCategories'
+import ShopBySize from '@/ui/HomePage/ShopBySize'
+import Testimonials from '@/ui/HomePage/Testimonials'
 
 const HomePage = () => {
   return (
@@ -15,8 +17,10 @@ const HomePage = () => {
       <OrderProcessSection />
       <OurPopularCategories />
       <TrendingProducts />
+      <ShopBySize />
       <ShopByColor />
       <ShopByRoom />
+      <Testimonials />
     </>
   )
 }

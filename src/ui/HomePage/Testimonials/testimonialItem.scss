@@ -1,0 +1,8 @@
+.testimonial_content {
+    @apply bg-white drop-shadow-2xl relative;
+
+    &::after {
+        @apply border-[20px] border-t-white border-l-transparent border-r-transparent border-b-transparent absolute -bottom-10 left-7;
+        content: '',
+    }
+}

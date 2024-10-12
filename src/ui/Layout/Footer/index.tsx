@@ -4,7 +4,7 @@ import Subscribe from './Subscribe'
 import { FaCcAmex, FaCcMastercard, FaCcVisa, FaFacebook, FaGooglePay, FaInstagram, FaLinkedin, FaPaypal, FaPinterest, FaStripe, FaTwitter, FaX, FaXTwitter, FaYoutube } from 'react-icons/fa6'
 
 const Footer = () => {
-  return <footer className='text-primary-content'>
+  return <footer className='text-primary-content sticky bottom-0 -z-10'>
     <div className='bg-primary ~py-10/0'>
       <div className='mx-auto flex ~p-0/20 max-lg:flex-col'>
         <div className='lg:basis-1/3 space-y-10 ~px-5/10'>
