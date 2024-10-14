@@ -4,7 +4,7 @@ import Logo from '../Logo'
 
 const MobileNavigation = () => {
     return (
-        <header className='sticky top-0 z-[99999] bg-base-100'>
+        <header className='sticky top-0 z-50 bg-base-100'>
             <div className='flex pt-3 px-3 justify-between items-center'>
                 <Image src="/vector/menu.svg" alt="Search" width={25} height={25} />
                 <Logo logoClass='text-accent' taglineClass='text-[8px] text-center' />
