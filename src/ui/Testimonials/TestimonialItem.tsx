@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
-import client_sample from '../../../../static_assets/profile.webp';
-import verified from '../../../../static_assets/verified.svg';
+import client_sample from '../../../static_assets/profile.webp';
+import verified from '../../../static_assets/verified.svg';
 
 const TestimonialItem = (props: TestimonialDataModel) => {
     return (

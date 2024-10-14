@@ -7,7 +7,7 @@ import ShopByColor from '@/ui/HomePage/ShopByColor'
 import TrendingProducts from '@/ui/HomePage/TrendingProducts'
 import OurPopularCategories from '@/ui/HomePage/OurPopularCategories'
 import ShopBySize from '@/ui/HomePage/ShopBySize'
-import Testimonials from '@/ui/HomePage/Testimonials'
+import Testimonials from '@/ui/Testimonials'
 
 const HomePage = () => {
   return (

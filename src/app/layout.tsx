@@ -19,15 +19,9 @@ export const viewport: Viewport = {
 const RootLayout = ({ children }: { children: ReactNode }) => {
     return (
         <html>
-            <body className={clsx(poppins.className, 'custom_scrollbar')}>
+            <body className={clsx(poppins.className)}>
                 <NextTopLoader />
-                <MainLayout>
-                    {/* <BreadCrumbs crumbs={[
-                        { name: "Home", link: "/" },
-                        { name: "Category", link: "/category" }
-                    ]} /> */}
-                    {children}
-                </MainLayout>
+                {children}
             </body>
         </html>
     )

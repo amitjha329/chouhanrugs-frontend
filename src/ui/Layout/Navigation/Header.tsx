@@ -1,8 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
 import Logo from '../Logo'
+import { auth } from '@/auth'
 
-const Header = () => {
+const Header = async () => {
+    const session = await auth()
     return (
         <header className='flex items-center justify-between px-10 py-5 bg-base-100'>
             <div className='flex gap-10'>
@@ -13,7 +15,7 @@ const Header = () => {
             <Logo logoClass='text-accent' className='text-center' />
             <div className='flex gap-10'>
                 <HeaderItem icon='/vector/Heart.svg' text='Wishlist' />
-                <HeaderItem icon='/vector/UserIcon.svg' text='Sign In' />
+                <HeaderItem icon='/vector/UserIcon.svg' text={session?.user?.name?.split(' ')[0] ?? 'Login'} />
                 <HeaderItem icon='/vector/Cart.svg' text='Cart' />
             </div>
         </header>
