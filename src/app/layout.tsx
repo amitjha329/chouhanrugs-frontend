@@ -1,10 +1,8 @@
 import React, { ReactNode } from 'react'
 import '@/styles/globals.scss'
-import MainLayout from '@/ui/Layout'
 import { Poppins } from 'next/font/google'
 import clsx from 'clsx'
 import NextTopLoader from 'nextjs-toploader'
-import '@/styles/Nprogress.css'
 import { Viewport } from 'next'
 
 const poppins = Poppins({
@@ -20,7 +18,9 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
     return (
         <html>
             <body className={clsx(poppins.className)}>
-                <NextTopLoader />
+                <NextTopLoader
+                    color='#6c4624'
+                    zIndex={1600} />
                 {children}
             </body>
         </html>
