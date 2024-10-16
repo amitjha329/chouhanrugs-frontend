@@ -1,7 +1,7 @@
 'use client'
 import saveUserNewAddressForm from "@/backend/serverActions/saveUserNewAddressForm"
 import onPageNotifications from "@/utils/onPageNotifications"
-import { Combobox, ComboboxButton, ComboboxInput, Transition } from "@headlessui/react"
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Transition } from "@headlessui/react"
 import { useSession } from "next-auth/react"
 import { Fragment, useMemo, useState, FormEventHandler, Dispatch, SetStateAction } from "react"
 import { BsCaretDown } from "react-icons/bs"
@@ -111,7 +111,7 @@ const UserAddressForm = ({ addAddressHandler }: {
                                     <label htmlFor="email-address" className="block text-sm text-gray-600">
                                         Country
                                     </label>
-                                    <Combobox value={selectedCountry} onChange={setselectedCountry}>
+                                    <Combobox value={selectedCountry} onChange={v => setselectedCountry(v ? v : countries[0])}>
                                         <div className="relative mt-1">
                                             <div className="relative w-full overflow-hidden text-left input input-bordered p-0">
                                                 <ComboboxInput
@@ -133,14 +133,14 @@ const UserAddressForm = ({ addAddressHandler }: {
                                                 leaveTo="opacity-0"
                                                 afterLeave={() => setQuery('')}
                                             >
-                                                <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                                <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                                     {filteredCountries.length === 0 && query !== '' ? (
                                                         <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                                             Not a country.
                                                         </div>
                                                     ) : (
                                                         filteredCountries.map((country) => (
-                                                            <Combobox.Option
+                                                            <ComboboxOption
                                                                 key={country.value}
                                                                 className={({ active }) =>
                                                                     `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-teal-600 text-white' : 'text-gray-900'
@@ -166,10 +166,10 @@ const UserAddressForm = ({ addAddressHandler }: {
                                                                         ) : null}
                                                                     </>
                                                                 )}
-                                                            </Combobox.Option>
+                                                            </ComboboxOption>
                                                         ))
                                                     )}
-                                                </Combobox.Options>
+                                                </ComboboxOptions>
                                             </Transition>
                                         </div>
                                     </Combobox>

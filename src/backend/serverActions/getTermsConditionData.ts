@@ -1,6 +1,7 @@
 'use server'
 
-import clientPromise from "../mongodb/clientPromise"
+import clientPromise from "@/lib/clientPromise"
+import TermsAndPoliciesDataModel from "@/types/TermsAndPoliciesDataModel"
 
 export default async function getTermsConditionData(): Promise<TermsAndPoliciesDataModel> {
     try {
