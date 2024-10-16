@@ -8,6 +8,8 @@ import { headers } from 'next/headers'
 import getDevice from '@/utils/getDevice'
 import PriceAndVariation from '@/ui/Layout/ProductPage/PricingAndVariations'
 import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
+import getRelatedProducts from '@/backend/serverActions/getRelatedProduct'
+import InformationTabs from '@/ui/Layout/ProductPage/InformationTabs'
 
 export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
     const data = await getProductWithSlug(params.productId)
@@ -44,13 +46,15 @@ const ProductPage = async ({ params: { productId } }: { params: { productId: str
     if (data == undefined) return notFound();
     const header = headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
+    const relatedProdcust = await getRelatedProducts(data)
     return (
         <div className='fluid_container'>
-            <div className='flex max-md:flex-col'>
+            <div className='flex max-md:flex-col gap-10'>
                 <ImageSection imageArray={data.images} mobile={isMobile} className='md:basis-1/2 overflow-hidden' />
                 <PriceAndVariation product={data} />
             </div>
-            <ProductCarouselBasic products={[]} />
+            <InformationTabs product={data} />
+            <ProductCarouselBasic products={relatedProdcust} sectionHeading='Related Products' />
         </div>
     )
 }

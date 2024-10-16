@@ -8,8 +8,12 @@ import TrendingProducts from '@/ui/HomePage/TrendingProducts'
 import OurPopularCategories from '@/ui/HomePage/OurPopularCategories'
 import ShopBySize from '@/ui/HomePage/ShopBySize'
 import Testimonials from '@/ui/Testimonials'
+import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
+import { getNewProductsTopSelling } from '@/backend/serverActions/getNewProductsTopSelling'
 
-const HomePage = () => {
+const HomePage = async () => {
+  const products = await getNewProductsTopSelling({ limit: 10 });
+
   return (
     <>
       <HeroSection />
@@ -20,6 +24,7 @@ const HomePage = () => {
       <ShopBySize />
       <ShopByColor />
       <ShopByRoom />
+      <ProductCarouselBasic products={products} sectionHeading='Best Sellers' />
       <Testimonials />
     </>
   )

@@ -1,4 +1,4 @@
-function html(params: { OTP: string, SITE: string }) {
+export default function html(params: { OTP: string, SITE: string }) {
     const { OTP, SITE } = params
 
     return `

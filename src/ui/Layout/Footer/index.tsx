@@ -2,9 +2,10 @@ import React from 'react'
 import Logo from '../Logo'
 import Subscribe from './Subscribe'
 import { FaCcAmex, FaCcMastercard, FaCcVisa, FaFacebook, FaGooglePay, FaInstagram, FaLinkedin, FaPaypal, FaPinterest, FaStripe, FaTwitter, FaX, FaXTwitter, FaYoutube } from 'react-icons/fa6'
+import Link from 'next/link'
 
 const Footer = () => {
-  return <footer className='text-primary-content sticky bottom-0 -z-10'>
+  return <footer className='text-primary-content bottom-0'>
     <div className='bg-primary ~py-10/0'>
       <div className='mx-auto flex ~p-0/20 max-lg:flex-col'>
         <div className='lg:basis-1/3 space-y-10 ~px-5/10'>
@@ -48,19 +49,27 @@ const Footer = () => {
             <div>
               <ul id='categories' className='list-none space-y-2 h-fit'>
                 <li className=''>
-                  Cotton Rugs
+                  <Link href='/cotton-rugs'>
+                    Cotton Rugs
+                  </Link>
                 </li>
                 <li className=''>
                   <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                  Cushion & Pillow Covers
+                  <Link href='/pillow-and-cushion-covers'>
+                    Cushion & Pillow Covers
+                  </Link>
                 </li>
                 <li className=''>
                   <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                  Jute Hand Bags
+                  <Link href='/jute-hand-bags'>
+                    Jute Hand Bags
+                  </Link>
                 </li>
                 <li className=''>
                   <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                  Jute Rugs
+                  <Link href='/jute-rugs'>
+                    Jute Rugs
+                  </Link>
                 </li>
               </ul>
               <div className='flex w-full items-center gap-2 justify-end max-lg:grid max-lg:grid-cols-3 lg:hidden py-10'>

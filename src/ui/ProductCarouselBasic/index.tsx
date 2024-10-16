@@ -1,15 +1,19 @@
 import { ProductDataModel } from "@/types/ProductDataModel"
-import NewProductCard from "../Product/NewProductCard"
+import ProductCardItem from "../Product/ProductCardItem"
+import SectionTitle from "../SectionTitle"
 
-const ProductCarouselBasic = async ({ products }: { products: ProductDataModel[] }) => {
+const ProductCarouselBasic = async ({ products, sectionHeading }: { products: ProductDataModel[], sectionHeading: string }) => {
 
     return (
-        <div className="carousel carousel-center max-w-full space-x-4 p-4 z-30">
-            {
-                products.map(product => {
-                    return <NewProductCard key={product._id?.toString()} {...product} className="carousel-item" />
-                })
-            }
+        <div className="fluid_container mx-auto ~py-10/20">
+            <SectionTitle title={sectionHeading} className="text-center ~pb-10/16" />
+            <div className="carousel space-x-4">
+                {
+                    products.map(product => {
+                        return <ProductCardItem key={product._id?.toString()} {...product} className="carousel-item max-w-72" />
+                    })
+                }
+            </div>
         </div>
     )
 }

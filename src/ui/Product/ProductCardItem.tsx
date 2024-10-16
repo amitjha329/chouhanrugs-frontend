@@ -1,14 +1,19 @@
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
+import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const ProductCardItem = (props: ProductDataModelWithColorMap) => {
+interface CompoProps extends ProductDataModelWithColorMap {
+    className?: string
+}
+
+const ProductCardItem = (props: CompoProps) => {
     return (
-        <div className='bg-white rounded-xl overflow-hidden w-full text-center'>
+        <div className={clsx('bg-white rounded-xl overflow-hidden w-full text-center', props.className)}>
             <Link href={'/products/' + props.productURL} className="">
                 <div className="relative rounded-2xl overflow-hidden">
-                    <Image src={props.images[props.productPrimaryImageIndex]} alt={props.productName} className="!w-full !relative !~h-40/60 object-cover" fill />
+                    <Image src={props.images[props.productPrimaryImageIndex]} alt={props.productName} className="!w-full !relative !~h-40/60 object-cover" width={300} height={240} />
                     <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{props.productDiscountPercentage}</div>
                     <div className="absolute top-2 right-2">
 

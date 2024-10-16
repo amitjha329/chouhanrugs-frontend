@@ -1,7 +1,20 @@
 import { ProductDataModel } from '@/types/ProductDataModel'
 import React from 'react'
+import dhl from '../../../../../static_assets/dhl.svg'
+import free_delivery from '../../../../../static_assets/free_deliveries.svg'
+import hand_crafted from '../../../../../static_assets/hand_crafted.svg'
+import returns_replacements from '../../../../../static_assets/return_replacements.svg'
+import Image from 'next/image'
 
-const PriceAndVariation = ({ product }: { product: ProductDataModel }) => {
+
+
+const PriceAndVariation = ({ product,
+    // colorList, sizeList 
+}: {
+    product: ProductDataModel,
+    // colorList: ColorDataModel[],
+    // sizeList: SizeDataModel[]
+}) => {
     return (
         <div className='basis-1/2'>
             <div className="p-6 max-w-xl mx-auto">
@@ -29,6 +42,9 @@ const PriceAndVariation = ({ product }: { product: ProductDataModel }) => {
                     <span className="text-3xl font-bold text-brown-700">₹4488.86</span>
                     <span className="line-through ml-2 text-gray-500">₹4987</span>
                     <button className="bg-green-500 text-white px-3 py-1 rounded ml-4">Save 10%</button>
+                </div>
+                <div className="flex items-center mb-4 text-brown-700">
+                    {product.productDescriptionShort}
                 </div>
                 <div className="grid grid-cols-3 gap-4 mb-4">
                     <div>
@@ -65,26 +81,25 @@ const PriceAndVariation = ({ product }: { product: ProductDataModel }) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center mb-4">
-                    <button className="bg-brown-700 text-white px-4 py-2 rounded-full mr-2">Buy Now</button>
-                    <button className="bg-white text-black px-4 py-2 rounded-full border border-gray-400">Add to Cart</button>
-                    <button className="ml-2 text-white"><i className="far fa-heart"></i></button>
+                <div className="flex items-center gap-5 mb-4">
+                    <button className="btn btn-accent ~px-10/20">Buy Now</button>
+                    <button className="btn btn-outline btn-accent ~px-10/20">Add to Cart</button>
                 </div>
-                <div className="grid grid-cols-4 gap-4 text-center">
-                    <div>
-                        <img src="https://placehold.co/50x50" alt="DHL logo" className="mx-auto mb-2" />
+                <div className="grid grid-cols-2 gap-4 text-center">
+                    <div className='flex items-center justify-start gap-3'>
+                        <Image src={dhl} alt="DHL logo" />
                         <span>Delivery Partner</span>
                     </div>
-                    <div>
-                        <img src="https://placehold.co/50x50" alt="Returns & Replacements icon" className="mx-auto mb-2" />
+                    <div className='flex items-center justify-start gap-3'>
+                        <Image src={returns_replacements} alt="Returns & Replacements icon" />
                         <span>Returns & Replacements</span>
                     </div>
-                    <div>
-                        <img src="https://placehold.co/50x50" alt="Free Deliveries icon" className="mx-auto mb-2" />
+                    <div className='flex items-center justify-start gap-3'>
+                        <Image src={free_delivery} alt="Free Deliveries icon" />
                         <span>Free Deliveries</span>
                     </div>
-                    <div>
-                        <img src="https://placehold.co/50x50" alt="Hand Crafted icon" className="mx-auto mb-2" />
+                    <div className='flex items-center justify-start gap-3'>
+                        <Image src={hand_crafted} alt="Hand Crafted icon" />
                         <span>Hand Crafted</span>
                     </div>
                 </div>
