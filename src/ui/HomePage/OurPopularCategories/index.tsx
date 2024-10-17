@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { headers } from 'next/headers'
 import getDevice from '@/utils/getDevice'
 import SectionTitle from '@/ui/SectionTitle'
+import Link from 'next/link'
 
 const OurPopularCategories = () => {
     const header = headers()
@@ -71,9 +72,9 @@ const OurPopularCategories = () => {
                                 {(!isMobile || (isMobile && category.span === 4)) && <div className='text-xs z-20 max-w-xl'>
                                     {category.desc}
                                 </div>}
-                                <div className={`btn z-20 ${isMobile && "btn-sm"}`}>
+                                <Link href={`/products/categories/${category.link}`} className={`btn z-20 ${isMobile && "btn-sm"}`}>
                                     View All
-                                </div>
+                                </Link>
                             </div>
                         )
                     })

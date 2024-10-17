@@ -1,0 +1,13 @@
+.sizes {
+    label {
+        @apply rounded-full px-2;
+    }
+
+    input[type="checkbox"] {
+        @apply hidden;
+    }
+
+    input[type="checkbox"]:checked + label {
+        @apply bg-primary text-white;
+    }
+}
