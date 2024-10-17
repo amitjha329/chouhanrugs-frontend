@@ -10,6 +10,20 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.caredone.in' },
     ]
   },
+  webpack(
+    config,
+    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
+  ) {
+    config.externals.push({
+      canvas: 'commonjs canvas'
+    })
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      handlebars: 'handlebars/dist/handlebars.js'
+    }
+    // config.resolve.alias['express-handlebars'] = 'node_modules/handlebars/dist/handlebars.js'
+    return config
+  },
   async headers() {
     const ContentSecurityPolicy = `
   default-src 'self';
