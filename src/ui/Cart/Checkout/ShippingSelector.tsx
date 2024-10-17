@@ -1,8 +1,8 @@
 'use client'
+import UserAddressDataModel from '@/types/UserAddressDataModel'
 import { RadioGroup } from '@headlessui/react'
 import React from 'react'
 import { MdOutlineCheckCircleOutline } from 'react-icons/md'
-import UserAddressDataModel from '@/lib/types/UserAddressDataModel'
 
 
 const ShippingSelector = ({ selectedAddress, selectionHandler, addresses }: {
