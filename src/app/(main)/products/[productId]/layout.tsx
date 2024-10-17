@@ -1,4 +1,4 @@
-import { ProductDataContextProvider } from '@/app/prociders'
+import { ProductDataContextProvider } from '@/app/providers'
 import { getProductWithSlug } from '@/backend/serverActions/getProductWithSlug'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import generateProductBreadCrumbs from '@/utils/generateProductBreadCrumbs'

@@ -24,7 +24,7 @@ const Header = async () => {
             <div className='flex gap-10'>
                 <Link href="/user/wishlist"><HeaderItem icon='/vector/Heart.svg' text='Wishlist' /></Link>
                 {session == null ? <Link href="/signin"><HeaderItem icon='/vector/UserIcon.svg' text={'Login'} /></Link> : <UserMenu><HeaderItem icon='/vector/UserIcon.svg' text={session?.user?.name?.split(' ')[0] ?? ""} /></UserMenu>}
-                <HeaderItem icon='/vector/Cart.svg' text='Cart' />
+                <Link href="/cart"><HeaderItem icon='/vector/Cart.svg' text='Cart' /></Link>
             </div>
         </header>
     )
