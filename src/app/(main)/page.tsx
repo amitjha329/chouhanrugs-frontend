@@ -13,7 +13,6 @@ import { getNewProductsTopSelling } from '@/backend/serverActions/getNewProducts
 
 const HomePage = async () => {
   const products = await getNewProductsTopSelling({ limit: 10 });
-
   return (
     <>
       <HeroSection />

@@ -7,7 +7,7 @@ const ProductCarouselBasic = async ({ products, sectionHeading }: { products: Pr
     return (
         <div className="fluid_container mx-auto ~py-10/20">
             <SectionTitle title={sectionHeading} className="text-center ~pb-10/16" />
-            <div className="carousel space-x-4">
+            <div className="carousel space-x-4 max-w-full">
                 {
                     products.map(product => {
                         return <ProductCardItem key={product._id?.toString()} {...product} className="carousel-item max-w-72" />

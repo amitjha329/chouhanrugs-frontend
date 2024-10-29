@@ -12,7 +12,7 @@ const CategoriesInHero = async () => {
           return (
             <Link href={'/products/category/' + category.name} className='space-y-2 ~min-h-32/40' key={category._id}>
               <div className='~w-16/24 ~h-20/28 overflow-hidden rounded-xl border-white border-2 relative mx-auto'>
-                <Image src={category.imgSrc} alt={category.name} height={112} width={96} className='object-cover' priority />
+                <Image src={category.imgSrc} alt={category.name} height={112} width={96} priority />
               </div>
               <div className='text-xs max-w-24 text-center'>{category.name}</div>
             </Link>

@@ -14,7 +14,7 @@ const Logo = ({ className, logoClass, taglineClass }: { logoClass?: string, tagl
     return (
         <Link href={'/'} className={clsx(reem_kufi_ink.className, "uppercase", className)}>
             <p className={clsx('~text-lg/4xl tracking-widest', logoClass)}>Chouhan Rugs</p>
-            <p className={clsx(taglineClass)}>Home Decor | Handloom</p>
+            <p className={clsx(taglineClass,'align-middle')}>Home&nbsp;&nbsp;Decor&nbsp;&nbsp;&nbsp;&nbsp;&#124;&nbsp;&nbsp;&nbsp;&nbsp;Handloom</p>
         </Link>
     )
 }

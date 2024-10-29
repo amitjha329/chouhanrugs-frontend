@@ -72,7 +72,7 @@ const OurPopularCategories = () => {
                                 {(!isMobile || (isMobile && category.span === 4)) && <div className='text-xs z-20 max-w-xl'>
                                     {category.desc}
                                 </div>}
-                                <Link href={`/products/categories/${category.link}`} className={`btn z-20 ${isMobile && "btn-sm"}`}>
+                                <Link href={`/products/category/${category.link}`} className={`btn z-20 ${isMobile && "btn-sm"}`}>
                                     View All
                                 </Link>
                             </div>
