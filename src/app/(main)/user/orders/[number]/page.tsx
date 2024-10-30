@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import UserOrderView from './UserOrderView'
 
-const OrderViewPage = async ({ params }: { params: { number: string } }) => {
+const OrderViewPage = async (props: { params: Promise<{ number: string }> }) => {
+    const params = await props.params;
     const orderItem = await getUserOrderWithId(params.number)
     if (orderItem == undefined) return notFound()
     return (

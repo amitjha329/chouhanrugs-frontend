@@ -4,14 +4,14 @@ import Image from 'next/image'
 import bg_section from '../../../../static_assets/1370e2249338920089a9a7217d235002.webp'
 import clsx from 'clsx';
 import HeroSLider from './HeroSlider';
-import { headers } from 'next/headers';
+import { headers} from 'next/headers';
 import getDevice from '@/utils/getDevice';
 import CategoriesInHero from './CategoriesInHero';
 import SectionTitle from '@/ui/SectionTitle';
 
 
-const HeroSection = () => {
-    const header = headers()
+const HeroSection = async () => {
+    const header = await headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
     return (
         <div className={clsx('flex w-full overflow-hidden relative', { "flex-col": isMobile })}>

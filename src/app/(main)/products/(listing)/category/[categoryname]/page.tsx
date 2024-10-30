@@ -5,7 +5,8 @@ import ProductList from '../../ProductsList';
 import getCategoriesWithName from '@/backend/serverActions/getCategoriesWithName';
 
 
-export async function generateMetadata({ params }: { params: { categoryname: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ categoryname: string }> }): Promise<Metadata> {
+    const params = await props.params;
     const data = await getCategoriesWithName(decodeURIComponent(params.categoryname))
     const dataAdditional = await getSiteData()
     return {
@@ -33,7 +34,8 @@ export async function generateMetadata({ params }: { params: { categoryname: str
     }
 }
 
-const CategoryProcutListPage = async ({ params }: { params: { categoryname: string } }) => {
+const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: string }> }) => {
+    const params = await props.params;
 
     return (
         <ProductList categoryParam={params.categoryname} />

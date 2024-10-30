@@ -7,7 +7,8 @@ import Image from 'next/image'
 import { notFound, redirect } from 'next/navigation'
 import React from 'react'
 
-const OrderFinalPage = async ({ searchParams }: { searchParams: { [key: string]: string } }) => {
+const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: string }> }) => {
+    const searchParams = await props.searchParams;
     const orderData = await getUserOrderWithId(searchParams.order)
     if (orderData == undefined) return notFound()
     const shippingAddress = await getUserAddressWithId(orderData.shippingAddress)

@@ -6,7 +6,7 @@ import { TestimonialsList, TestimonialsListMobile } from './TestimonialsList';
 
 const Testimonials = async () => {
 
-    const header = headers()
+    const header = await headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
     return isMobile ? <TestimonialsListMobile /> : <TestimonialsList />
 }

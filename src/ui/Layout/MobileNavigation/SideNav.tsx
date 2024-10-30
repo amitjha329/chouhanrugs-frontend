@@ -18,14 +18,14 @@ const SideNav = () => {
                     </div>
                     <ul className="space-y-2 h-full overflow-y-scroll no-scrollbar">
                         <li className="border-b-[0.5px] border-gray-200">
-                            <a
+                            <Link
                                 href="/products/category"
                             >
                                 <div className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <BiCategoryAlt className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                                     <span className="ml-3">All Categories</span>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                         <li>
                             <Link

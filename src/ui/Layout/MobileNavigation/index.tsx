@@ -14,10 +14,10 @@ const MobileNavigation = () => {
                     <Image src="/vector/UserIcon.svg" alt="User Account" width={20} height={20} />
                     <Image src="/vector/Cart.svg" alt="Cart" width={20} height={20} />
                 </div>
-                <div className='join join-horizontal w-full pb-4 pt-5 px-3'>
-                    <input className='join-item input input-md input-bordered border-r-0 !rounded-l-full w-full placeholder:text-primary' placeholder='Search' />
-                    <button className='join-item btn btn-outline btn-md border-l-0 !rounded-r-full border-gray-300'><Image src="/vector/Search.svg" alt="Search" width={20} height={20} /></button>
-                </div>
+                <form className='join join-horizontal w-full pb-4 pt-5 px-3' action="/products">
+                    <input className='join-item input input-md input-bordered border-r-0 !rounded-l-full w-full placeholder:text-primary' placeholder='Search' name='search' type='text' id='search' />
+                    <button className='join-item btn btn-outline btn-md border-l-0 !rounded-r-full border-gray-300' type='submit'><Image src="/vector/Search.svg" alt="Search" width={20} height={20} /></button>
+                </form>
             </header>
         </>
     )

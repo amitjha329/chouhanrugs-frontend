@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 export default async function updateUserProfile(id: string, email: string, name: string, number: string, image?: string) {
     try {
         const insertResponse = await (await clientPromise).db(process.env.MONGODB_DB).collection("users").findOneAndUpdate({ _id: ObjectId.createFromHexString(id) }, {
-            $set: { name, email, ...(image) && { image }, number }
+            $set: { name, email, ...(image && { image }), number }
         })
         if (insertResponse) {
             return {

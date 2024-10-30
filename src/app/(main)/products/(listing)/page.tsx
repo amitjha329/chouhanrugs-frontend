@@ -33,7 +33,8 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 }
 
-const ProductsListPage = async ({ searchParams }: { searchParams: { [key: string]: string | undefined } }) => {
+const ProductsListPage = async (props: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
+    const searchParams = await props.searchParams;
     return (
         <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} />
     )

@@ -10,7 +10,7 @@ import handmade_bags from '../../../../static_assets/bags.webp'
 import Link from 'next/link'
 
 const NewProductsSection = async () => {
-  const header = headers()
+  const header = await headers()
   const isMobile = getDevice({ headers: header }) == "mobile"
 
   return (

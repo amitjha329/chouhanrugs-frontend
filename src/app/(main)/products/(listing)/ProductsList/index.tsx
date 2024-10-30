@@ -1,11 +1,15 @@
 'use client'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
+import Loader from '@/ui/Loader'
 import ProductCardItem from '@/ui/Product/ProductCardItem'
 import React, { useEffect } from 'react'
-import { Configure, Pagination, useHits, useSearchBox } from 'react-instantsearch'
+import { Configure, Pagination, useHits, useInstantSearch, useSearchBox } from 'react-instantsearch'
 
 const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery?: string, categoryParam?: string, searchParams?: { [key: string]: string | undefined } }) => {
-    const { hits } = useHits()
+    const { items: hits } = useHits({
+        
+    })
+    const { status } = useInstantSearch()
     const { refine } = useSearchBox()
 
     useEffect(() => {
@@ -13,9 +17,9 @@ const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery
     }, [searchQuery])
 
     return (
-        <div className="lg:basis-5/6 mx-auto">
+        (<div className="lg:basis-5/6 mx-auto">
             {
-                categoryParam && <Configure facetFilters={[['productCategory:' + decodeURIComponent(categoryParam ?? ""), ...(decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? ['productCategory:Hemp Rugs', 'productCategory:Wool Jute Kilim Rugs', 'productCategory:Braided Jute Rug'] : []]]} />
+                categoryParam && <Configure facetFilters={[['productCategory:' + decodeURIComponent(categoryParam ?? ""), ...((decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? ['productCategory:Hemp Rugs', 'productCategory:Wool Jute Kilim Rugs', 'productCategory:Braided Jute Rug'] : [])]]} />
             }
             {
                 searchParams?.color && <Configure facetFilters={[['variations.variationColor:' + decodeURIComponent(searchParams.color)]]} />
@@ -36,9 +40,12 @@ const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery
                 }
             </div>
             {
-                hits.length == 0 && <div className='w-full min-h-[700px]'>
+                hits.length == 0 && status != "stalled" && <div className='w-full min-h-[700px]'>
                     <span className='text-2xl sm:text-9xl font-extrabold opacity-50 absolute top-1/2 left-1/2 -translate-x-1/4'>OOPS! <br /> Nothing Found.</span>
                 </div>
+            }
+            {
+                status == "stalled" && <Loader />
             }
             <Pagination classNames={{
                 root: "flex",
@@ -47,8 +54,8 @@ const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery
                 selectedItem: "btn-disabled"
             }} padding={2} />
             {/* <div ref={ref} className='w-full flex items-center justify-center'>{onScreenIntersection && isLoading && <PuffLoader />}</div> */}
-        </div>
-    )
+        </div>)
+    );
 }
 
 export default ProductList

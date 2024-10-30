@@ -1,7 +1,6 @@
 import clientPromise from "@/lib/clientPromise"
 import NextAuth from "next-auth"
 import MongoDBAdapter from "./lib/authAdapter"
-// import jwtConfig from './utils/jwt.ts'
 import authConfig from "./auth.config"
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
@@ -17,8 +16,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     adapter: MongoDBAdapter(clientPromise),
     jwt: {
-        // decode: jwtConfig.decode,
-        // encode: jwtConfig.encode,
         maxAge: 60 * 60 * 24 * 30
     },
     ...authConfig,

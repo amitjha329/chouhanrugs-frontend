@@ -1,14 +1,14 @@
 import React from 'react'
 import Image from 'next/image'
 import { BsExclamation, BsTrash } from 'react-icons/bs'
-import { cookies } from 'next/headers'
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 import { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CartDataModel from '@/types/CartDataModel'
 import IncrementDecrement from './IncrementDecrement'
 import { DeleteFromCartLg, DeleteFromCartSm } from './DeleteFromCart'
 
 const CartItem = ({ item }: { item: CartDataModel, }) => {
-    const cookie = cookies()
+    const cookie = ((cookies() as unknown as UnsafeUnwrappedCookies) as unknown as UnsafeUnwrappedCookies)
     const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : null
 
     const calculateProductPrice = (): number => {

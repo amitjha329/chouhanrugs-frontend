@@ -7,11 +7,10 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 type Props = {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 };
-export async function generateMetadata(
-    { params }: Props
-): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+    const params = await props.params;
     const data = await getBlogPostWithSlug(params.slug)
     const dataAdditional = await getSiteData()
     if (data == undefined) return notFound()
@@ -44,7 +43,8 @@ export async function generateMetadata(
     }
 }
 
-const BlogPostPage = async ({ params }: { params: { slug: string } }) => {
+const BlogPostPage = async (props: { params: Promise<{ slug: string }> }) => {
+    const params = await props.params;
     const [blogData, siteData] = await Promise.all([getBlogPostWithSlug(params.slug), getSiteData()])
     if (blogData == undefined) return notFound()
     return (

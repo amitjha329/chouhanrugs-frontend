@@ -6,7 +6,19 @@ import generateProductJsonLd from '@/utils/generateProductJsonLd'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-const ProductLayout = async ({ params: { productId }, children }: { params: { productId: string }, children: React.ReactNode }) => {
+const ProductLayout = async (
+    props: { params: Promise<{ productId: string }>, children: React.ReactNode }
+) => {
+    const params = await props.params;
+
+    const {
+        productId
+    } = params;
+
+    const {
+        children
+    } = props;
+
     const [productObj, siteData] = await Promise.all([getProductWithSlug(productId), getSiteData()])
     if (productObj == undefined) notFound()
     return (

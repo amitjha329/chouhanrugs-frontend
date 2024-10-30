@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 
 const ProductListingLayout = async ({ children }: { children: React.ReactNode }) => {
-    const cookie = cookies()
+    const cookie = await cookies()
     const currencies = await getCurrencyList()
     const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : currencies[0]
     return (

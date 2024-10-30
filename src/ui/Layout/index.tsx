@@ -1,15 +1,15 @@
 import React, { ReactNode } from 'react'
 import Footer from './Footer'
 import Navigation from './Navigation'
-import { headers } from 'next/headers'
+import { headers } from 'next/headers';
 import getDevice from '@/utils/getDevice'
 import MobileNavigation from './MobileNavigation'
 import Script from 'next/script'
 import SideNav from './MobileNavigation/SideNav'
 import clsx from 'clsx'
 
-const MainLayout = ({ children }: { children: ReactNode }) => {
-    const header = headers()
+const MainLayout = async ({ children }: { children: ReactNode }) => {
+    const header = await headers()
     return (
         <main className='relative'>
             <div className={clsx('bg-base-100', { "absolute max-w-full transition-all": getDevice({ headers: header }) == "mobile" })} id='main_body_container'>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import getCategoriesList from '@/backend/serverActions/getCategoriesList'
 import CategoriesDataModel from '@/types/CategoriesDataModel'
 import clsx from 'clsx'
@@ -30,6 +31,16 @@ const CategoryMenu = async () => {
 
 const CategoryMenuItem = ({ label, submenu, href }: MenuItemProp) => {
     return (
+        (submenu?.length??0) > 0 ?<div className={clsx("text-sm", { "dropdown dropdown-hover": (submenu?.length ?? 0) > 0 })}>
+        <span className='flex items-center gap-2'>{label} {(submenu?.length ?? 0) > 0 && <FaChevronDown />}</span>
+        {
+            (submenu?.length ?? 0) > 0 && <div className='dropdown-content menu bg-base-100 rounded-box z-[60] w-52 p-2 shadow border border-primary'>
+                <ul>
+                    {submenu?.map(item => <li key={item._id}><Link href={'/products/category/' + item.name}>{item.name}</Link></li>)}
+                </ul>
+            </div>
+        }
+    </div>:
         <Link href={href ?? ""} className={clsx("text-sm", { "dropdown dropdown-hover": (submenu?.length ?? 0) > 0 })}>
             <span className='flex items-center gap-2'>{label} {(submenu?.length ?? 0) > 0 && <FaChevronDown />}</span>
             {

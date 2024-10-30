@@ -5,7 +5,7 @@ import React from 'react'
 import { ProductListHotTrending, ProductListHotTrendingMobile } from './ProductList'
 
 const TrendingProducts = async () => {
-    const header = headers()
+    const header = await headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
 
     return (

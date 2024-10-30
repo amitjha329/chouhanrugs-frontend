@@ -13,7 +13,8 @@ import InformationTabs from '@/ui/Layout/ProductPage/InformationTabs'
 import { getColorsList } from '@/backend/serverActions/getColorsList'
 import { getSizesList } from '@/backend/serverActions/getSizesList'
 
-export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ productId: string }> }): Promise<Metadata> {
+    const params = await props.params;
     const data = await getProductWithSlug(params.productId)
     if (data == undefined) return {}
     const dataAdditional = await getSiteData()
@@ -43,13 +44,19 @@ export async function generateMetadata({ params }: { params: { productId: string
     }
 }
 
-const ProductPage = async ({ params: { productId } }: { params: { productId: string } }) => {
+const ProductPage = async (props: { params: Promise<{ productId: string }> }) => {
+    const params = await props.params;
+
+    const {
+        productId
+    } = params;
+
     const dataPromise = getProductWithSlug(productId)
     const colorListPromise = getColorsList()
     const sizeListPromise = getSizesList()
     const [data, colorList, sizeList] = await Promise.all([dataPromise, colorListPromise, sizeListPromise])
     if (data == undefined) return notFound();
-    const header = headers()
+    const header = await headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
     const relatedProdcust = await getRelatedProducts(data)
     return (

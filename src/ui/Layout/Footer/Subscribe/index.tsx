@@ -1,10 +1,9 @@
 "use client"
-import React from 'react'
-import { useFormState } from 'react-dom'
+import React, { useActionState } from 'react'
 import SubscribeFields from './SubscribeFields'
 
 const Subscribe = () => {
-  const [state, action] = useFormState(() => {
+  const [state, action] = useActionState(() => {
     return { email: "" }
   }, {
     email: ""

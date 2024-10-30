@@ -46,24 +46,24 @@ const PriceAndVariation = ({ product,
                     <a href="#">Write A Review</a>
                 </div>
                 <PriceAndVariationClient product={product} />
-                <div className="flex items-center mb-4 text-brown-700">
+                <div className="flex items-center mb-4 text-brown-700 ~text-xs/base">
                     {product.productDescriptionShort}
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-center">
+                <div className="grid grid-cols-2 gap-4 text-center ~text-xs/base">
                     <div className='flex items-center justify-start gap-3'>
-                        <Image src={dhl} alt="DHL logo" />
+                        <Image src={dhl} alt="DHL logo" className='~w-7/10 ~h-7/10' />
                         <span>Delivery Partner</span>
                     </div>
                     <div className='flex items-center justify-start gap-3'>
-                        <Image src={returns_replacements} alt="Returns & Replacements icon" />
+                        <Image src={returns_replacements} alt="Returns & Replacements icon" className='~w-7/10 ~h-7/10' />
                         <span>Returns & Replacements</span>
                     </div>
                     <div className='flex items-center justify-start gap-3'>
-                        <Image src={free_delivery} alt="Free Deliveries icon" />
+                        <Image src={free_delivery} alt="Free Deliveries icon" className='~w-7/10 ~h-7/10' />
                         <span>Free Deliveries</span>
                     </div>
                     <div className='flex items-center justify-start gap-3'>
-                        <Image src={hand_crafted} alt="Hand Crafted icon" />
+                        <Image src={hand_crafted} alt="Hand Crafted icon" className='~w-7/10 ~h-7/10' />
                         <span>Hand Crafted</span>
                     </div>
                 </div>

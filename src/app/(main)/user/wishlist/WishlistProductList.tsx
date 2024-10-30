@@ -13,7 +13,7 @@ import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFrom
 const WishlistProductList = async ({ productList }: { productList: (ProductDataModel | null)[] }) => {
     // const { userCurrency } = useCurrencyContext()
     const session = await auth()
-    const cookie = cookies()
+    const cookie = await cookies()
     const userCurrency = JSON.parse(cookie.get("userCurrency")?.value ?? "{}") as Currency
     return (
         <>

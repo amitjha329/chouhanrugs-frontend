@@ -3,8 +3,8 @@ import React from 'react'
 import Logo from '../Logo'
 import { auth } from '@/auth'
 // import CurrencySelector from './CurrencySelector'
-import { cookies } from 'next/headers'
-import getCurrencyList from '@/backend/serverActions/getCurrencyList'
+// import { cookies } from 'next/headers'
+// import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 import Link from 'next/link'
 import UserMenu from './UserMenu'
 
@@ -17,7 +17,7 @@ const Header = async () => {
             <div className='flex gap-10'>
                 <Link href="/track-order"><HeaderItem icon='/vector/TrackOrder.svg' text='Track Order' /></Link>
                 {/* <CurrencySelector currency={currency}><HeaderItem icon='/vector/Currency.svg' text={JSON.parse(cookie.get('selectedCurrency')?.value ?? '{}').currency ?? 'INR'} /></CurrencySelector> */}
-                <HeaderItem icon='/vector/Search.svg' text='Search' />
+                <HeaderItem icon='/vector/Search.svg' text='Search' id='search_button'  />
             </div>
             <Logo logoClass='text-accent' taglineClass='~text-xs/sm' className='text-center' />
             <div className='flex gap-10'>
@@ -29,7 +29,7 @@ const Header = async () => {
     )
 }
 
-const HeaderItem = ({ icon, text }: { icon: string, text: string }) => <div className='gap-3 flex items-center'>
+const HeaderItem = ({ icon, text,id }: { icon: string, text: string, id?:string }) => <div className='gap-3 flex items-center cursor-pointer' id={id}>
     <Image src={icon} alt={text} height={25} width={25} />
     <span>{text}</span>
 </div>

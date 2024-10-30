@@ -7,7 +7,7 @@ import CartTotalSection from '@/ui/Cart/CartTotalSection'
 
 const CartPage = async () => {
     const session = await auth()
-    const cart = await getUserCartitems((session?.user as { id: string }).id)
+    const cart = await getUserCartitems((session?.user as { id: string })?.id)
     console.log(cart)
     return (
         <div className="container py-0 sm:py-10 mx-auto">
@@ -43,7 +43,7 @@ const CartPage = async () => {
                         </h3>
                     </div>
                     {
-                        cart && cart.length > 0 ? cart.map((item, index) => <CartItem item={item} key={item._id} />) : <div className="flex w-full h-20 justify-center items center text-2xl opacity-50">Cart is empty.</div>
+                        cart && cart.length > 0 ? cart.map((item, index) => <CartItem item={item} key={item?._id} />) : <div className="flex w-full h-20 justify-center items center text-2xl opacity-50">Cart is empty.</div>
                     }
                     <CartTotalSection cartItems={cart} />
                 </div>

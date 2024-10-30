@@ -12,9 +12,12 @@ import Script from 'next/script'
 import { cookies } from 'next/headers'
 import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 
-const CheckoutPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+const CheckoutPage = async (
+    props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+) => {
+    const searchParams = await props.searchParams;
     const [siteInfo, payOpts, stripeKey, session, shippingList, paypalData, currencyList] = await Promise.all([getSiteData(), getAvailablePaymentOptions(), getStripePublicKey(), auth(), getShippingList(), getPaymentGatewayData("PAYPAL"), getCurrencyList()])
-    const cookie = cookies()
+    const cookie = await cookies()
     const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : currencyList[0]
 
     return (

@@ -1,11 +1,11 @@
 import React from 'react'
-import { cookies } from 'next/headers'
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 import { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CartDataModel from '@/types/CartDataModel'
 import GoToCheckoutBtn from './GoToCheckoutBtn'
 
 const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
-    const cookie = cookies()
+    const cookie = ((cookies() as unknown as UnsafeUnwrappedCookies) as unknown as UnsafeUnwrappedCookies)
     const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : null
 
     const calculateProductPrice = (item: CartDataModel): number => {

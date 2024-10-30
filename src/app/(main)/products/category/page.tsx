@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const MobileCategoryListPage = async () => {
-    const showCategories = headers().get('user-agent')?.includes("Mobile")
+    const showCategories = (await headers()).get('user-agent')?.includes("Mobile")
     const categories = await getCategoriesList()
     return (
         <>
