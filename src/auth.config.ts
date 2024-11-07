@@ -6,7 +6,7 @@ import Credential from "next-auth/providers/credentials"
 // import { createHash } from "crypto"
 
 export default {
-    trustHost:true,
+    // trustHost:true,
     providers: [
         Credential({
             authorize: async (credentials) => {
@@ -127,10 +127,12 @@ export default {
             allowDangerousEmailAccountLinking: true,
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            authorization: "https://accounts.google.com/o/oauth2/v2/auth?" + new URLSearchParams({
-                prompt: "consent",
-                access_type: "offline",
-                response_type: "code",
-            })
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
+                }
+            }
         })]
 } satisfies NextAuthConfig
