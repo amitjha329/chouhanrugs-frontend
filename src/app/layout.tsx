@@ -22,7 +22,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
     return (
         <html>
             <head>
-                <meta name="robots" content="noindex,nofollow" />
+                {/* <meta name="robots" content="noindex,nofollow" /> */}
             </head>
             <body className={clsx(poppins.className)}>
                 <NextTopLoader
