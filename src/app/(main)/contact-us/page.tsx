@@ -2,6 +2,7 @@ import getSiteData from '@/backend/serverActions/getSiteData'
 import React from 'react'
 import { FaFacebook, FaInstagram, FaLinkedin, FaPinterest, FaTwitter, FaYoutube } from 'react-icons/fa'
 import ContactUsSideVector from './ContactUsSideVector'
+import Link from 'next/link'
 
 const ContactUsPage = async () => {
     const siteInfo = await getSiteData()
@@ -15,7 +16,7 @@ const ContactUsPage = async () => {
                 <div className="flex md:flex-col flex-row justify-center pl-3 md:pl-5 lg:pl-7 xl:pl-14 md:gap-y-5 gap-x-5 mt-8 md:mt-0">
                     {
                         siteInfo.profiles.map(profile => (
-                            <a
+                            <Link
                                 key={profile}
                                 href={profile}
                             >
@@ -55,7 +56,7 @@ const ContactUsPage = async () => {
                                         <span className="sr-only">Linkedin page</span>
                                     </>
                                 }
-                            </a>
+                            </Link>
                         ))
                     }
                 </div>

@@ -1,4 +1,5 @@
 "use client"
+import Link from 'next/link'
 import React from 'react'
 
 export default function Error({
@@ -19,12 +20,12 @@ export default function Error({
                     <p className="text-gray-txt mb-5">
                         The page you are looking for is facing some issues at the moment please try after some time.
                     </p>
-                    <a
+                    <Link
                         href="/"
                         className="bg-primary hover:bg-secondary text-white font-semibold px-4 py-2 rounded-full inline-block"
                     >
                         Home page
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

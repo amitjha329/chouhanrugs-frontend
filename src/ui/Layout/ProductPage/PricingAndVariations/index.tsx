@@ -19,9 +19,9 @@ const PriceAndVariation = ({ product,
     colorList: ColorDataModel[],
     sizeList: SizeDataModel[]
 }) => {
-    const showCalculatedPrice = useMemo(()=>{
-        
-    },[])
+    const showCalculatedPrice = useMemo(() => {
+
+    }, [])
     return (
         <div className='basis-1/2'>
             <div className="p-6 max-w-xl mx-auto">
@@ -45,7 +45,7 @@ const PriceAndVariation = ({ product,
                     <span className="mx-2">/</span>
                     <a href="#">Write A Review</a>
                 </div>
-                <PriceAndVariationClient product={product} />
+                <PriceAndVariationClient product={{ ...product, colorData: colorList, sizeData: sizeList }} />
                 <div className="flex items-center mb-4 text-brown-700 ~text-xs/base">
                     {product.productDescriptionShort}
                 </div>

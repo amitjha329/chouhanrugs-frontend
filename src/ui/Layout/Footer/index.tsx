@@ -1,7 +1,7 @@
 import React from 'react'
 import Logo from '../Logo'
 import Subscribe from './Subscribe'
-import { FaCcAmex, FaCcMastercard, FaCcVisa, FaFacebook, FaGooglePay, FaInstagram, FaLinkedin, FaPaypal, FaPinterest, FaStripe, FaTwitter, FaX, FaXTwitter, FaYoutube } from 'react-icons/fa6'
+import { FaCcAmex, FaCcMastercard, FaCcVisa, FaFacebook, FaGooglePay, FaInstagram, FaLinkedin, FaPaypal, FaPinterest, FaStripe, FaXTwitter, FaYoutube } from 'react-icons/fa6'
 import Link from 'next/link'
 
 const Footer = () => {
@@ -109,7 +109,7 @@ const Footer = () => {
       </div>
     </div>
     <div className='bg-base-200 flex items-center justify-center ~text-xs/sm py-1 text-primary'>
-      &copy;&nbsp;2024&nbsp;<a className='inline-block underline' href='/'>Chouhan Rugs</a>. All Rights Reserved
+      &copy;&nbsp;2024&nbsp;<Link className='inline-block underline' href='/'>Chouhan Rugs</Link>. All Rights Reserved
     </div>
   </footer>
 }

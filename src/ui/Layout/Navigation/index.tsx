@@ -11,7 +11,7 @@ const Navigation = () => {
             <PageLinks />
             <Header />
             <div className='w-full mx-auto h-0 transition-all join overflow-hidden' id='search_container'>
-                <form className="join w-full my-1 mx-auto fluid_container" action="/products">
+                <form className="join w-full pb-4 mx-auto fluid_container" action="/products">
                     <input className="input input-bordered join-item w-full" placeholder="Search" name='search' type='text' id='search' />
                     <button className="btn btn-outline btn-accent join-item" type='submit'><FaSearch /></button>
                 </form>

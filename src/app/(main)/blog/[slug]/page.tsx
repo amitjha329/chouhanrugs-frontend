@@ -74,13 +74,12 @@ const BlogPostPage = async (props: { params: Promise<{ slug: string }> }) => {
                                         width={64}
                                     />
                                     <div>
-                                        <a
-                                            href="#"
+                                        <span
                                             rel="author"
                                             className="text-xl font-bold text-gray-900 dark:text-white"
                                         >
                                             {blogData.author.name}
-                                        </a>
+                                        </span>
                                         <p className="text-base font-light text-gray-500 dark:text-gray-400">
                                             <time
                                                 dateTime="2022-02-08"

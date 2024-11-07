@@ -3,7 +3,7 @@
 import { ProductDataModelWithColorMap } from "@/types/ProductDataModel"
 import ProductContext from "@/utils/Contexts/ProductContext"
 import { PayPalScriptProvider } from "@paypal/react-paypal-js"
-import algoliasearch from "algoliasearch/lite";
+import {liteClient as algoliasearch} from "algoliasearch/lite";
 import { InstantSearch } from "react-instantsearch-core";
 
 

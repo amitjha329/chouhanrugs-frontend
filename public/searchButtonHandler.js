@@ -7,11 +7,11 @@ let openSearch = true
  */
 const handleSearchButtonClick = (e) => {
     console.log("search_button_clicked")
-        if (openSearch) {
-            searchContainer.style.height = "56px"
-        } else {
-            searchContainer.style.removeProperty("height")
-        }
-        openSearch = !openSearch
+    if (openSearch) {
+        searchContainer.style.height = "65px"
+    } else {
+        searchContainer.style.removeProperty("height")
     }
+    openSearch = !openSearch
+}
 searchButton.addEventListener("click", handleSearchButtonClick)
