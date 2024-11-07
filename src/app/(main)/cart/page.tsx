@@ -8,7 +8,6 @@ import CartTotalSection from '@/ui/Cart/CartTotalSection'
 const CartPage = async () => {
     const session = await auth()
     const cart = await getUserCartitems((session?.user as { id: string })?.id)
-    console.log(cart)
     return (
         <div className="container py-0 sm:py-10 mx-auto">
             <div className="flex shadow-none sm:shadow-lg rounded-none sm:rounded-md overflow-hidden flex-col">

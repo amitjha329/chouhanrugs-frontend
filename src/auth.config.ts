@@ -1,11 +1,12 @@
 import type { NextAuthConfig } from "next-auth"
 import Google from "next-auth/providers/google"
 import Credential from "next-auth/providers/credentials"
-import clientPromise from "./lib/clientPromise"
-import { ObjectId } from "mongodb"
-import { createHash } from "crypto"
+// import clientPromise from "./lib/clientPromise"
+// import { ObjectId } from "mongodb"
+// import { createHash } from "crypto"
 
 export default {
+    trustHost:true,
     providers: [
         Credential({
             authorize: async (credentials) => {

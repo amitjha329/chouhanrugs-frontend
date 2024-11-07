@@ -8,7 +8,7 @@ import { auth } from "@/auth";
 
 const SignIn = async () => {
     const session = await auth()
-    if (session != null) {
+    if (session?.user != null) {
         redirect('/')
     }
     const siteInfo = await getSiteData()

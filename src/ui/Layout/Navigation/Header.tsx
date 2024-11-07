@@ -22,7 +22,7 @@ const Header = async () => {
             <Logo logoClass='text-accent' taglineClass='~text-xs/sm' className='text-center' />
             <div className='flex gap-10'>
                 <Link href="/user/wishlist"><HeaderItem icon='/vector/Heart.svg' text='Wishlist' /></Link>
-                {session == null ? <Link href="/signin"><HeaderItem icon='/vector/UserIcon.svg' text={'Login'} /></Link> : <UserMenu><HeaderItem icon='/vector/UserIcon.svg' text={session?.user?.name?.split(' ')[0] ?? ""} /></UserMenu>}
+                {session?.user == null ? <Link href="/signin"><HeaderItem icon='/vector/UserIcon.svg' text={'Login'} /></Link> : <UserMenu><HeaderItem icon='/vector/UserIcon.svg' text={session?.user?.name?.split(' ')[0] ?? ""} /></UserMenu>}
                 <Link href="/cart"><HeaderItem icon='/vector/Cart.svg' text='Cart' /></Link>
             </div>
         </header>
