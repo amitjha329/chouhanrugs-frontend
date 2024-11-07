@@ -9,14 +9,7 @@ function generateSiteMap(posts: ProductDataModel[]) {
      ${posts.map(({ productURL, images, updatedOn }) => {
         return `
         <url>
-            <loc>${`https://chouhanrugs.com/products/${productURL}`}</loc>
-            ${
-                images.map(img=>`
-                <image:image>
-                <image:loc>${img}</image:loc>
-                </image:image>
-            `)
-            }
+            <loc>${`https://chouhanrugs.com/products/${encodeURIComponent(productURL)}`}</loc>
             <lastmod>${new Date(updatedOn).toISOString()}</lastmod>
         </url>
      `;
@@ -24,6 +17,15 @@ function generateSiteMap(posts: ProductDataModel[]) {
             .join('')}
    </urlset>
  `;
+
+    /**
+     * ${images.map(img => `
+                   <image:image>
+                   <image:loc>${encodeURI(img)}</image:loc>
+                   </image:image>
+               `).join('')
+               }
+     */
 }
 
 export async function GET(req: NextRequest) {
