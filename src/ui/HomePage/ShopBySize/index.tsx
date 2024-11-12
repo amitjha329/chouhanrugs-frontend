@@ -10,7 +10,7 @@ const ShopBySize = async () => {
             <SectionTitle title='Shop By Size' className='text-center py-5' />
             <div className='grid grid-cols-2 overflow-y-scroll max-h-[70vh] gap-5 p-10'>
                 {
-                    sizesList.map((size) => {
+                    sizesList.slice(0, 10).map((size) => {
                         return <SizeItems key={size._id} {...size} />
                     })
                 }

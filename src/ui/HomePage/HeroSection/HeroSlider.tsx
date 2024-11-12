@@ -5,8 +5,9 @@ import Carousel from 'react-multi-carousel'
 import "react-multi-carousel/lib/styles.css";
 import banner_1 from '../../../../static_assets/crbanner-01.webp'
 import banner_2 from '../../../../static_assets/crbanner-01-01.webp'
+import SliderDataModel from '@/types/SliderDataModel';
 
-const HeroSLider = ({ isMobile }: { isMobile: boolean }) => {
+const HeroSLider = ({ isMobile, slider }: { isMobile: boolean, slider: SliderDataModel }) => {
     return (
         <Carousel
             additionalTransfrom={0}
@@ -58,18 +59,22 @@ const HeroSLider = ({ isMobile }: { isMobile: boolean }) => {
             slidesToSlide={1}
             swipeable
             ssr>
-            <Image src={banner_1} alt='nbanner 1' style={{
+            {
+                slider.images.map((image, index) => {
+                    return <Image src={image.src.toString() ?? banner_2} key={image.src.toString()} alt='nbanner 1' style={{
+                        display: 'block',
+                        height: '100%',
+                        margin: 'auto',
+                        width: '100%'
+                    }} priority {...(image.src.toString() != null) && { fill: true }} />
+                })
+            }
+            {/* <Image src={banner_2} alt='nbanner 1' style={{
                 display: 'block',
                 height: '100%',
                 margin: 'auto',
                 width: '100%'
-            }} priority />
-            <Image src={banner_2} alt='nbanner 1' style={{
-                display: 'block',
-                height: '100%',
-                margin: 'auto',
-                width: '100%'
-            }} priority />
+            }} priority /> */}
         </Carousel>
     )
 }

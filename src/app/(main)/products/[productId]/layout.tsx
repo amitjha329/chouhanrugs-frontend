@@ -1,4 +1,5 @@
 import { ProductDataContextProvider } from '@/app/providers'
+import { auth } from '@/auth'
 import { getProductWithSlug } from '@/backend/serverActions/getProductWithSlug'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import generateProductBreadCrumbs from '@/utils/generateProductBreadCrumbs'
@@ -19,7 +20,7 @@ const ProductLayout = async (
         children
     } = props;
 
-    const [productObj, siteData] = await Promise.all([getProductWithSlug(productId), getSiteData()])
+    const [productObj, siteData, session] = await Promise.all([getProductWithSlug(productId), getSiteData(), auth()])
     if (productObj == undefined) notFound()
     return (
         <>
@@ -35,6 +36,7 @@ const ProductLayout = async (
                         key="product-breadcrumbs"></script>
                 </>
             }
+            <input value={session?.user?.id ?? ""} id='session_user' className='hidden' />
             <ProductDataContextProvider product={productObj}>
                 {
                     children

@@ -1,0 +1,134 @@
+.product_card {
+
+    &:hover .wish_button {
+        left: 0;
+    }
+
+    &:hover .rating {
+        right: 0;
+    }
+
+    .rating {
+        transition: all 150ms linear;
+        right: -100px;
+    }
+
+    .wish_button {
+        transition: all 150ms linear;
+        left: -100px;
+    }
+
+    .wish_button:not(.active):hover {
+        .heart_stroke {
+            animation: pulse 1s ease-out infinite;
+        }
+    }
+
+    .wish_button.animate {
+        .heart_full {
+            animation: heart 0.35s;
+        }
+
+        .heart_lines {
+            animation: lines 0.2s ease-out forwards;
+            display: block;
+        }
+    }
+
+    @media (hover: none) and ((pointer: coarse) or (pointer: fine)) {
+        .wish_button {
+            left: 0;
+        }
+
+        .rating {
+            right: 0;
+        }
+    }
+}
+
+.heart_ {
+    &stroke {
+        fill: none;
+        stroke: #e200008c;
+        stroke-width: 2px;
+        opacity: 1;
+        transform-origin: center center;
+
+        .wish_button.active & {
+            opacity: 0;
+        }
+    }
+
+    &full {
+        opacity: 0;
+        transform-origin: 50% 50%;
+
+        .wish_button.active & {
+            opacity: 1;
+        }
+    }
+
+    &lines {
+        stroke-width: 2px;
+        display: none;
+    }
+}
+
+
+@keyframes lines {
+    0% {
+        stroke-dasharray: 6;
+        stroke-dashoffset: 16;
+    }
+
+    100% {
+        stroke-dasharray: 13;
+        stroke-dashoffset: 18;
+    }
+}
+
+@keyframes heart {
+    0% {
+        transform: scale(1);
+        transform-origin: center center;
+        animation-timing-function: ease-out;
+    }
+
+    10% {
+        transform: scale(1.2);
+        animation-timing-function: ease-in;
+    }
+
+    35% {
+        transform: scale(1);
+        animation-timing-function: ease-out;
+    }
+
+    75% {
+        transform: scale(1.1);
+        animation-timing-function: ease-in;
+    }
+
+    100% {
+        transform: scale(1);
+        animation-timing-function: ease-out;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform-origin: center center;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.15);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

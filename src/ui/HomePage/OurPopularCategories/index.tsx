@@ -1,9 +1,9 @@
 import React from 'react'
 import cushion_pop from '../../../../static_assets/cushion_popular.webp'
-import rugs_pop from '../../../../static_assets/cushion_popular.webp'
+import rugs_pop from '../../../../static_assets/rugs_pop.webp'
 import macrame_pop from '../../../../static_assets/cushion_popular.webp'
-import blankets_pop from '../../../../static_assets/cushion_popular.webp'
-import bags_pop from '../../../../static_assets/cushion_popular.webp'
+import blankets_pop from '../../../../static_assets/throw_bl_pop.webp'
+import bags_pop from '../../../../static_assets/bags_pop.webp'
 import Image from 'next/image'
 import { headers } from 'next/headers';
 import getDevice from '@/utils/getDevice'
@@ -26,7 +26,7 @@ const OurPopularCategories = async () => {
             title: "Popular in Rugs & Runners",
             desc: "Lorem ipsum dolor sit amet consectetur. Massa eu sollicitudin ac arcu.",
             link: "Rugs%20&%20Runners",
-            image: cushion_pop,
+            image: rugs_pop,
             lgspan: 2,
             span: 2
         },
@@ -42,14 +42,14 @@ const OurPopularCategories = async () => {
             title: "Popular in Throw Blankets",
             desc: "Lorem ipsum dolor sit amet consectetur. Massa eu sollicitudin ac arcu.",
             link: "Throw%20Blankets",
-            image: cushion_pop,
+            image: blankets_pop,
             lgspan: 2,
             span: 2,
         }, {
             title: "Popular in Bags",
             desc: "Lorem ipsum dolor sit amet consectetur. Massa eu sollicitudin ac arcu.",
             link: "Bags",
-            image: cushion_pop,
+            image: bags_pop,
             lgspan: 2,
             span: 2,
         }
@@ -64,10 +64,10 @@ const OurPopularCategories = async () => {
                         (<div key={category.title + category.link} className={`col-span-${category.lgspan} min-h-60 ${(isMobile && category.span === 2) || (!isMobile && category.lgspan === 1) ? "bg-accent" : "bg-secondary/50"} card card-body relative overflow-hidden flex flex-col gap-5 items-start w-full ${isMobile && "p-5"}`} style={{
                             ...(isMobile && { gridColumn: `span ${category.span} / span ${category.span}` })
                         }}>
-                            <Image src={category.image} alt={category.title} height={400} width={400} className={`absolute z-10 ${!isMobile ? category.lgspan == 2 ? "-bottom-40 -right-40" : "-bottom-28 -right-28" : category.span == 2 ? "-bottom-16 -right-16" : "-bottom-28 -right-28"} opacity-70`} />
-                            <div className='~text-base/2xl font-semibold z-20'>
+                            <Image src={category.image} alt={category.title} height={400} width={400} className={`absolute z-10 ${!isMobile ? category.lgspan == 2 ? "-bottom-40 -right-40" : "-bottom-28 -right-28" : category.span == 2 ? "-bottom-16 -right-16" : "-bottom-28 -right-28"} opacity-50`} />
+                            <h2 className='~text-base/2xl font-semibold z-20'>
                                 {category.title}
-                            </div>
+                            </h2>
                             {(!isMobile || (isMobile && category.span === 4)) && <div className='text-xs z-20 max-w-xl'>
                                 {category.desc}
                             </div>}

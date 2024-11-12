@@ -7,7 +7,7 @@ import { Configure, Pagination, useHits, useInstantSearch, useSearchBox } from '
 
 const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery?: string, categoryParam?: string, searchParams?: { [key: string]: string | undefined } }) => {
     const { items: hits } = useHits({
-        
+
     })
     const { status } = useInstantSearch()
     const { refine } = useSearchBox()
@@ -41,18 +41,18 @@ const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery
             </div>
             {
                 hits.length == 0 && status != "stalled" && <div className='w-full min-h-[700px]'>
-                    <span className='text-2xl sm:text-9xl font-extrabold opacity-50 absolute top-1/2 left-1/2 -translate-x-1/4'>OOPS! <br /> Nothing Found.</span>
+                    <span className='text-2xl sm:text-9xl font-extrabold opacity-50'>OOPS! <br /> Nothing Found.</span>
                 </div>
             }
             {
                 status == "stalled" && <Loader />
             }
-            <Pagination classNames={{
+            {hits.length > 0 && <Pagination classNames={{
                 root: "flex",
                 list: "flex flex-row join ml-auto",
                 link: "btn max-sm:btn-sm btn-outline btn-primary join-item",
                 selectedItem: "btn-disabled"
-            }} padding={2} />
+            }} padding={2} />}
             {/* <div ref={ref} className='w-full flex items-center justify-center'>{onScreenIntersection && isLoading && <PuffLoader />}</div> */}
         </div>)
     );

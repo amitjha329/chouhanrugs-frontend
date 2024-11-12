@@ -63,7 +63,7 @@ const ProductPage = async (props: { params: Promise<{ productId: string }> }) =>
         <div className='fluid_container'>
             <div className='flex max-md:flex-col gap-10'>
                 <ImageSection imageArray={data.images} mobile={isMobile} className='md:basis-1/2 overflow-hidden' />
-                <PriceAndVariation product={data} colorList={colorList} sizeList={sizeList} />
+                <PriceAndVariation product={data} />
             </div>
             <InformationTabs product={data} />
             <ProductCarouselBasic products={relatedProdcust} sectionHeading='Related Products' />

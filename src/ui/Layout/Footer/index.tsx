@@ -49,27 +49,35 @@ const Footer = () => {
             <div>
               <ul id='categories' className='list-none space-y-2 h-fit'>
                 <li className=''>
-                  <Link href='/cotton-rugs'>
-                    Cotton Rugs
-                  </Link>
+                  <h3>
+                    <Link href='/cotton-rugs'>
+                      Cotton Rugs
+                    </Link>
+                  </h3>
                 </li>
                 <li className=''>
                   <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                  <Link href='/pillow-and-cushion-covers'>
-                    Cushion & Pillow Covers
-                  </Link>
+                  <h3>
+                    <Link href='/pillow-and-cushion-covers'>
+                      Cushion & Pillow Covers
+                    </Link>
+                  </h3>
                 </li>
                 <li className=''>
                   <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                  <Link href='/jute-hand-bags'>
-                    Jute Hand Bags
-                  </Link>
+                  <h3>
+                    <Link href='/jute-hand-bags'>
+                      Jute Hand Bags
+                    </Link>
+                  </h3>
                 </li>
                 <li className=''>
                   <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                  <Link href='/jute-rugs'>
-                    Jute Rugs
-                  </Link>
+                  <h3>
+                    <Link href='/jute-rugs'>
+                      Jute Rugs
+                    </Link>
+                  </h3>
                 </li>
               </ul>
               <div className='flex w-full items-center gap-2 justify-end max-lg:grid max-lg:grid-cols-3 lg:hidden py-10'>

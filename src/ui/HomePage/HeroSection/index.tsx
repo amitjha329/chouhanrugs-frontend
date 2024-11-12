@@ -4,13 +4,14 @@ import Image from 'next/image'
 import bg_section from '../../../../static_assets/1370e2249338920089a9a7217d235002.webp'
 import clsx from 'clsx';
 import HeroSLider from './HeroSlider';
-import { headers} from 'next/headers';
+import { headers } from 'next/headers';
 import getDevice from '@/utils/getDevice';
 import CategoriesInHero from './CategoriesInHero';
 import SectionTitle from '@/ui/SectionTitle';
+import SliderDataModel from '@/types/SliderDataModel';
 
 
-const HeroSection = async () => {
+const HeroSection = async ({ slider }: { slider: SliderDataModel }) => {
     const header = await headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
     return (
@@ -22,7 +23,7 @@ const HeroSection = async () => {
                 </>
             }
             <div className={clsx({ "~lg/2xl:~w-[40rem]/[60rem]": !isMobile }, { "w-full": isMobile }, "z-30")}>
-                <HeroSLider isMobile={isMobile} />
+                <HeroSLider isMobile={isMobile} slider={slider} />
             </div>
             <SectionTitle title='Shop With Categories' className='lg:hidden pt-3' />
             <div className='flex-grow w-full z-30 grid grid-cols-4 justify-center ~gap-1/3 items-center ~px-2/10 py-5'>

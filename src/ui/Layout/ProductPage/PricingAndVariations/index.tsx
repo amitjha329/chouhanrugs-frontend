@@ -1,6 +1,6 @@
-"use client"
+// "use client"
 import { ProductDataModel } from '@/types/ProductDataModel'
-import React, { useMemo } from 'react'
+import React from 'react'
 import dhl from '../../../../../static_assets/dhl.svg'
 import free_delivery from '../../../../../static_assets/free_deliveries.svg'
 import hand_crafted from '../../../../../static_assets/hand_crafted.svg'
@@ -10,18 +10,14 @@ import ColorDataModel from '@/types/ColorDataModel'
 import SizeDataModel from '@/types/SizeDataModel'
 import PriceAndVariationClient from './PriceAndVariationClient'
 
+interface returnProps extends ProductDataModel {
+    colorData: ColorDataModel[],
+    sizeData: SizeDataModel[]
+}
 
-
-const PriceAndVariation = ({ product,
-    colorList, sizeList
-}: {
-    product: ProductDataModel,
-    colorList: ColorDataModel[],
-    sizeList: SizeDataModel[]
-}) => {
-    const showCalculatedPrice = useMemo(() => {
-
-    }, [])
+const PriceAndVariation = async ({ product }: { product: returnProps }) => {
+    // const showCalculatedPrice = useMemo(() => {
+    // }, [])
     return (
         <div className='basis-1/2'>
             <div className="p-6 max-w-xl mx-auto">
@@ -45,7 +41,7 @@ const PriceAndVariation = ({ product,
                     <span className="mx-2">/</span>
                     <a href="#">Write A Review</a>
                 </div>
-                <PriceAndVariationClient product={{ ...product, colorData: colorList, sizeData: sizeList }} />
+                <PriceAndVariationClient product={product} />
                 <div className="flex items-center mb-4 text-brown-700 ~text-xs/base">
                     {product.productDescriptionShort}
                 </div>
@@ -55,7 +51,7 @@ const PriceAndVariation = ({ product,
                         <span>Delivery Partner</span>
                     </div>
                     <div className='flex items-center justify-start gap-3'>
-                        <Image src={returns_replacements} alt="Returns & Replacements icon" className='~w-7/10 ~h-7/10' />
+                        <Image src={returns_replacements} alt="Returns & Replacements icon" className='w-7 h-7' />
                         <span>Returns & Replacements</span>
                     </div>
                     <div className='flex items-center justify-start gap-3'>
@@ -63,7 +59,7 @@ const PriceAndVariation = ({ product,
                         <span>Free Deliveries</span>
                     </div>
                     <div className='flex items-center justify-start gap-3'>
-                        <Image src={hand_crafted} alt="Hand Crafted icon" className='~w-7/10 ~h-7/10' />
+                        <Image src={hand_crafted} alt="Hand Crafted icon" className='w-7 h-7' />
                         <span>Hand Crafted</span>
                     </div>
                 </div>

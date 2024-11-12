@@ -15,6 +15,9 @@ import { Metadata } from 'next'
 import getPageData from '@/backend/serverActions/getPageData'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
+import AboveFooterSEOContet from '@/ui/HomePage/AboveFooterSEOContet'
+import { getPageFooterContent } from '@/backend/serverActions/getFooterContent'
+import getSlider from '@/backend/serverActions/getSlider'
 
 export async function generateMetadata(): Promise<Metadata> {
   const [data, dataAdditional, bingVerification, googleVerification] = await Promise.all([getPageData("home"), getSiteData(), getAnalyticsData("BING"), getAnalyticsData("GOOGLE_VER")])
@@ -50,10 +53,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const HomePage = async () => {
-  const products = await getNewProductsTopSelling({ limit: 10 });
+  const footerContentPromise = getPageFooterContent("home")
+  const homePageDataPromise = getPageData("home")
+  const productsPromise = getNewProductsTopSelling({ limit: 10 });
+  const [footerContent, homePageData, products] = await Promise.all([footerContentPromise, homePageDataPromise, productsPromise])
+  const sliderData = await getSlider(homePageData.sliderId ?? 1)
   return (
     <>
-      <HeroSection />
+      <HeroSection slider={sliderData} />
       <NewProductsSection />
       <OrderProcessSection />
       <OurPopularCategories />
@@ -63,6 +70,9 @@ const HomePage = async () => {
       <ShopByRoom />
       <ProductCarouselBasic products={products} sectionHeading='Best Sellers' />
       <Testimonials />
+      <div className="container mx-auto pb-5 text-xs">
+        <AboveFooterSEOContet data={footerContent} />
+      </div>
     </>
   )
 }

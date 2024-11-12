@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import Image from 'next/image'
 import order_Process_side from '../../../../static_assets/order-process.webp'
 import SectionTitle from '@/ui/SectionTitle'
+import Link from 'next/link'
 
 const OrderProcessSection = () => {
     const orderrocess = [
@@ -30,7 +31,7 @@ const OrderProcessSection = () => {
     ]
     return (
         <div className='fluid_container relative ~py-5/14 ~px-5/0'>
-            <SectionTitle title='Ordering Process for Jute and Kilim Rugs, Cushions' className='md:text-center ~py-5/10' />
+            <div className='~text-lg/3xl max-w-xl mx-auto font-semibold md:text-center ~py-5/10'>Ordering Process for <h2 className='inline'><Link href='/'>Jute Rugs</Link></h2> <h2 className='inline'><Link href='/'>Kilim Rugs</Link></h2> and <h2 className='inline'><Link href="/" >Cushions Covers</Link></h2></div>
             <div className='flex flex-col gap-5 md:~max-w-xl/3xl'>
                 {
                     orderrocess.map((order, index) => (
