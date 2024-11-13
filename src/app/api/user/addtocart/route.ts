@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
             }
         }, { upsert: true })
         if (cartAdditionAck.acknowledged) {
-            await collectionUserProfile.findOneAndUpdate({ _id: new ObjectId(userId) }, { $inc: { cartCount: 1 } })
+            await collectionUserProfile.findOneAndUpdate({ _id: ObjectId.createFromHexString(userId) }, { $inc: { cartCount: 1 } })
             return NextResponse.json({
                 ack: true,
                 result: {

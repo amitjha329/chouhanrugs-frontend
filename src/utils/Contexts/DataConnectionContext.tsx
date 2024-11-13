@@ -1,9 +1,10 @@
 'use client'
 import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useSession } from 'next-auth/react'
 import getUserAllWishlist from '@/backend/serverActions/getUserAllWishlist'
 import getUserCartItemCount from '@/backend/serverActions/getUserCartItemCount'
 import DataContextDataModel from '@/types/DataContextDataModel'
+import { Session } from 'next-auth'
+import { useSession } from 'next-auth/react'
 
 /**
  * This Method Initializes the Socket Connection to the Server and accepts domain name for websocket connection.
@@ -26,8 +27,8 @@ const DataConnectionContext = createContext<DataContextDataModel>({
 const DataConnectionContextProvider = ({ children }: { children: ReactNode }) => {
     const [cartCount, setCartCount] = useState<number>()
     const [mainSocket, setMainSocket] = useState<WebSocket>()
-    const { data: session } = useSession()
     const [wishlistItems, setWishlistitems] = useState<string[]>([])
+    const { data: session } = useSession()
 
     const refreshWishList = () => {
         getUserAllWishlist((session?.user as { id: string }).id, false).then(result => {

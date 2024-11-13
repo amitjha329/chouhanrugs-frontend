@@ -1,11 +1,17 @@
 import MainLayout from '@/ui/Layout'
 import React from 'react'
+import { DataContextProvider } from '../providers'
+import { SessionProvider } from 'next-auth/react'
 
-const MainInnerContainerLayout = ({ children }: { children: React.ReactNode }) => {
+const MainInnerContainerLayout = async ({ children }: { children: React.ReactNode }) => {
     return (
-        <MainLayout>
-            {children}
-        </MainLayout>
+        <SessionProvider>
+            <DataContextProvider>
+                <MainLayout>
+                    {children}
+                </MainLayout>
+            </DataContextProvider>
+        </SessionProvider>
     )
 }
 

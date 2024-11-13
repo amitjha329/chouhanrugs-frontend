@@ -1,16 +1,20 @@
 'use server'
 
+import { auth } from "@/auth";
 import clientPromise from "@/lib/clientPromise";
 import { ObjectId } from "mongodb";
 
 export default async function deleteProductFromCart(id: string) {
     const client = await clientPromise
+    const db = client.db(process.env.MONGODB_DB)
+    const collectionUserProfile = db.collection("users")
+    const session = await auth()
     try {
-        const cartAdditionAck = await client.db(process.env.MONGODB_DB).collection("carts").findOneAndDelete({
-            _id: new ObjectId(id)
+        const cartAdditionAck = await db.collection("carts").findOneAndDelete({
+            _id: ObjectId.createFromHexString(id)
         })
         if (cartAdditionAck) {
-            await client.db(process.env.MONGODB_DB).collection("users").updateOne({ _id: cartAdditionAck?.value?.userId }, { $inc: { cartCount: -1 } })
+            await collectionUserProfile.findOneAndUpdate({ _id: ObjectId.createFromHexString(session?.user?.id ?? "") }, { $inc: { cartCount: -1 } })
             return {
                 ack: true,
                 result: {
