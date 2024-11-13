@@ -17,7 +17,6 @@ export function DataContextProvider({ children }: Readonly<{ children: React.Rea
     return <DataConnectionContextProvider>{children}</DataConnectionContextProvider>
 }
 
-
 export function PaypalContextProvider({ children, key_id, client_token }: Readonly<{ children: React.ReactNode, key_id: string, client_token: string }>) {
     return <PayPalScriptProvider options={{
         clientId: key_id,
