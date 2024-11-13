@@ -1,11 +1,11 @@
 .product_card {
 
     &:hover .wish_button {
-        left: 0;
+        left: 0.5rem;
     }
 
     &:hover .rating {
-        right: 0;
+        right: 0.5rem;
     }
 
     .rating {

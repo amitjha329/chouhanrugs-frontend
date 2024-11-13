@@ -9,6 +9,7 @@ import { ProductDataModel } from '@/types/ProductDataModel'
 import { cookies } from 'next/headers'
 import Currency from '@/types/Currency'
 import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFromWishlist'
+import WishlistProductDeleteButton from './WishlistProductDeleteButton'
 
 const WishlistProductList = async ({ productList }: { productList: (ProductDataModel | null)[] }) => {
     // const { userCurrency } = useCurrencyContext()
@@ -27,15 +28,7 @@ const WishlistProductList = async ({ productList }: { productList: (ProductDataM
                                 <span>{userCurrency?.currencySymbol}{(product.productSellingPrice * (userCurrency?.exchangeRates ?? 1)).toFixed(2)}</span> <span className="text-red-300 line-through"> {userCurrency?.currencySymbol}{(product.productMSRP * (userCurrency?.exchangeRates ?? 1)).toFixed(2)}</span>
                             </div>
                         </div>
-                        <div className='btn btn-sm rounded-none max-sm:w-full sm:h-20 btn-error btn-outline' onClick={e => {
-                            e.preventDefault()
-                            deleteProductFromWishlist(product._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {
-                                window.location.reload()
-                            }).catch(e => {
-                                console.log(e)
-                                onPageNotifications("error", "Failed Removing From Wishlist").catch(e => console.log(e))
-                            })
-                        }}><ImBin className='w-4 h-4' /></div>
+                        <WishlistProductDeleteButton productId={product._id?.toString() ?? ""} userId={session?.user?.id ?? ""} />
                     </Link> : <div key={product ?? "" + randomInt(999).toString()} className='card bordered card-body card-title p-14'>Product Not Available</div>
                 }) : <div className='w-full flex items-center justify-center max-sm:text-6xl text-9xl opacity-30 h-96'>No Items In Wishlist</div>
             }
