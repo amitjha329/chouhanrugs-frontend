@@ -17,7 +17,7 @@ const WishlistProductList = async ({ productList }: { productList: (ProductDataM
         <>
             {
                 productList.length > 0 ? productList.map(product => {
-                    return product ? <Link key={product._id?.toString()} href={`/products/${product._id}`} className="border-b mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start w-full">
+                    return product ? <Link key={product._id?.toString()} href={`/products/${product._id}`} className="border-b mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start w-full" prefetch={false}>
                         <div className="pb-4 md:pb-8 w-full relative flex flex-row items-center">
                             <Image src={product.images[product.productPrimaryImageIndex]} alt="dress" height={100} width={100} />
                             <div className="w-full ml-3 ">

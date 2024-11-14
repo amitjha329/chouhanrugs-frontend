@@ -13,7 +13,7 @@ interface CompoProps extends ProductDataModelWithColorMap {
 const ProductCardItem = (props: CompoProps) => {
     return (
         <div className={clsx('bg-white rounded-xl overflow-hidden w-full text-center', props.className, ProductsCardStyle.product_card)}>
-            <Link href={'/products/' + props.productURL} className="">
+            <Link href={'/products/' + props.productURL} className="" prefetch={false}>
                 <div className="relative rounded-2xl overflow-hidden">
                     <Image src={props.images[props.productPrimaryImageIndex]} alt={props.productName} className="!w-full !relative !~h-40/60 object-cover" width={300} height={240} />
                     <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{props.productDiscountPercentage}</div>
