@@ -21,7 +21,7 @@ const CheckoutPage = async (
 
     return (
         <>
-            <script src="https://checkout.razorpay.com/v1/checkout.js" />
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" />
             {
                 paypalData.activation && !searchParams?.redirect_status ? <PaypalContextProvider client_token={await generateClientToken()} key_id={paypalData.key_id}>
                     <MainSection siteInfo={siteInfo} payOpts={payOpts} queryParams={searchParams} stripeKey={stripeKey} session={session} shippingList={shippingList} userCurrency={{
