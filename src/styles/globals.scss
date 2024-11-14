@@ -26,6 +26,10 @@
     @apply ~sm/2xl:~max-w-[40rem]/[80rem] mx-auto;
 }
 
+.aa-Panel {
+    z-index: 9999;
+}
+
 // @import '../../node_modules/flickity/css/flickity.css';
 
 // @import './custom/misc';

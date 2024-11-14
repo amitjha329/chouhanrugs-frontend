@@ -1,14 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { ImBin } from 'react-icons/im'
 import { randomInt } from 'crypto'
-import onPageNotifications from '@/utils/onPageNotifications'
 import { auth } from '@/auth'
 import { ProductDataModel } from '@/types/ProductDataModel'
 import { cookies } from 'next/headers'
 import Currency from '@/types/Currency'
-import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFromWishlist'
 import WishlistProductDeleteButton from './WishlistProductDeleteButton'
 
 const WishlistProductList = async ({ productList }: { productList: (ProductDataModel | null)[] }) => {

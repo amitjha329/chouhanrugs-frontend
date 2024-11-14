@@ -30,5 +30,5 @@ export function PaypalContextProvider({ children, key_id, client_token }: Readon
 
 export function AlgoliaSearchProvider({ APPID, KEY, INDEX, children }: Readonly<{ children: React.ReactNode, APPID: string, KEY: string, INDEX: string }>) {
     const searchClient = algoliasearch(APPID, KEY)
-    return <InstantSearch searchClient={searchClient} indexName={INDEX} future={{ preserveSharedStateOnUnmount: true }} >{children}</InstantSearch>
+    return <InstantSearch searchClient={searchClient} indexName={INDEX} future={{ preserveSharedStateOnUnmount: true }}  >{children}</InstantSearch>
 }

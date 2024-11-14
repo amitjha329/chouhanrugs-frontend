@@ -4,10 +4,11 @@ import { CiBoxes } from 'react-icons/ci'
 import { FiX, FiUser, FiShoppingBag, FiInfo, FiHelpCircle } from 'react-icons/fi'
 import Logo from '../Logo'
 import Link from 'next/link'
+import SignoutButton from './SignoutButton'
 
 const SideNav = () => {
     return (
-        <div className='-z-10 fixed left-0 top-0 bg-secondary w-screen h-screen overflow-hidden'>
+        <div className='z-10 fixed left-0 top-0 bg-secondary w-screen h-screen overflow-hidden'>
             <div className='w-3/4 mr-auto'>
                 <div className="flex flex-col justify-between h-full w-full sm:w-80 rounded">
                     <div className="flex justify-between items-center w-full mb-5 py-4 px-3">
@@ -57,6 +58,9 @@ const SideNav = () => {
                                 </div>
                             </Link>
                         </li>
+                        <li>
+                            <SignoutButton />
+                        </li>
                         {/* <li className="border-t-[0.5px] border-gray-200">
                                 <Link
                                     href="#"
@@ -67,7 +71,7 @@ const SideNav = () => {
                                     </div>
                                 </Link>
                             </li> */}
-                        <li>
+                        <li className="border-t-[0.5px] border-gray-200">
                             <Link
                                 href="/about"
                             >
@@ -77,7 +81,7 @@ const SideNav = () => {
                                 </div>
                             </Link>
                         </li>
-                        <li className="border-t-[0.5px] border-gray-200">
+                        <li>
                             <Link
                                 href="/contact-us"
                             >

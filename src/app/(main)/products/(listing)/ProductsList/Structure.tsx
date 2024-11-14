@@ -35,7 +35,7 @@ const StructureListing = ({ children, userCurrency }: {
             </div>
             <div className="container flex flex-row mx-auto py-10 px-10 sm:px-0 gap-x-4 no-scrollbar items-start">
                 <div className="basis-1/6 hidden lg:block flex-grow-0 sticky bottom-0">
-                    <div className="flex bg-gray-100 p-5 mb-5 items-center justify-between">
+                    <div className="flex bg-secondary p-5 mb-5 items-center justify-between">
                         <div>Reset Filter</div>
                         <ClearRefinements aria-label='Clear' classNames={{
                             button: "btn",
@@ -51,7 +51,7 @@ const StructureListing = ({ children, userCurrency }: {
                         checkbox: "toggle",
                         label: "w-full label",
                         labelText: "label-text",
-                        root: "bg-gray-100 p-5 mb-5 flex items-center justify-between"
+                        root: "bg-secondary p-5 mb-5 flex items-center justify-between"
                     }} />
                     <SideBarSectionLayout title="Categories">
                         {/* <CheckBoxSelector dataArray={categories} checkHandler={handleCatCheck} selectedItem={selectedCats} /> */}
@@ -59,7 +59,7 @@ const StructureListing = ({ children, userCurrency }: {
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
                             count: "color-[grey]"
                         }} />
                     </SideBarSectionLayout>
@@ -73,7 +73,7 @@ const StructureListing = ({ children, userCurrency }: {
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
                             count: "color-[grey]"
                         }} />
                     </SideBarSectionLayout>
@@ -82,7 +82,7 @@ const StructureListing = ({ children, userCurrency }: {
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
                             count: "color-[grey]"
                         }} /> */}
                         {/* <CheckBoxSelector dataArray={allColors} selectedItem={selectedColors} checkHandler={handleColorCheck} showAsAccordion={true} showMinFive={true} /> */}
@@ -90,7 +90,7 @@ const StructureListing = ({ children, userCurrency }: {
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
                             count: "color-[grey]"
                         }} />
                         <></>
@@ -101,7 +101,7 @@ const StructureListing = ({ children, userCurrency }: {
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
                             count: "color-[grey]"
                         }} />
                     </SideBarSectionLayout>
@@ -111,7 +111,7 @@ const StructureListing = ({ children, userCurrency }: {
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
                             count: "color-[grey]"
                         }} />
                     </SideBarSectionLayout>
@@ -121,7 +121,7 @@ const StructureListing = ({ children, userCurrency }: {
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
                             count: "color-[grey]"
                         }} />
                     </SideBarSectionLayout>

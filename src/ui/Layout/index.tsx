@@ -11,8 +11,8 @@ import clsx from 'clsx'
 const MainLayout = async ({ children }: { children: ReactNode }) => {
     const header = await headers()
     return (
-        <main className='relative'>
-            <div className={clsx('bg-base-100', { "absolute max-w-full transition-all": getDevice({ headers: header }) == "mobile" })} id='main_body_container'>
+        <main className='relative h-screen w-screen overflow-y-scroll overflow-x-clip' id='main-container'>
+            <div className={clsx('bg-base-100', { "absolute max-w-full transition-all z-20": getDevice({ headers: header }) == "mobile" })} id='main_body_container'>
                 {
                     getDevice({ headers: header }) != "mobile" ? <Navigation /> : <MobileNavigation />
                 }
