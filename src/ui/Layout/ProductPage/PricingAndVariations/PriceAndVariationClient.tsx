@@ -93,7 +93,7 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                 <div className="btn btn-outline btn-accent ~px-10/20" id='add_to_cart_btn'>Add to Cart</div>
             </div>
             <input className='hidden' type='hidden' value={JSON.stringify(product)} id='prod_data' />
-            <script id='color_Selector_logic' src='/variationHandler.js' />
+            <Script id='color_Selector_logic' src='/variationHandler.js' strategy='beforeInteractive' />
         </>
     )
 }

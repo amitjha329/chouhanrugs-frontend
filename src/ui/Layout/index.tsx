@@ -20,7 +20,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
                 <Footer />
             </div>
             {getDevice({ headers: header }) == "mobile" && <SideNav />}
-            <script id='mobile_menu_handler' src='/mobile_menu_handler.js' />
+            <Script id='mobile_menu_handler' src='/mobile_menu_handler.js' strategy='beforeInteractive'></Script>
         </main>
     )
 }

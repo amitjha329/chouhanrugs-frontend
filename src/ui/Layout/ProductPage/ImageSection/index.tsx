@@ -36,7 +36,7 @@ const ImageSection = ({ className, imageArray, mobile = false }: { mobile: boole
                     }
                 </div>
             </section>
-            <script id='image-selection-handler' src="/imageHoveZoomHandler.js" />
+            <Script id='image-selection-handler' src="/imageHoveZoomHandler.js"  strategy='beforeInteractive' />
         </>
     )
 }
