@@ -22,7 +22,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
                     </div>
                 </div>
             </div>
-            <Script id='tab_controller' src='/tabhandler.js' />
+            <script id='tab_controller' src='/tabhandler.js' />
         </>
     )
 }

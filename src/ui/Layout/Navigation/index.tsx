@@ -20,7 +20,7 @@ const Navigation = () => {
                 {/* <SearchComp appId={process.env.ALGOLIA_APPID ?? ""} algKey={process.env.ALGOLIA_KEY_CLIENT ?? ""} index={process.env.ALGOLIA_INDEX ?? ""} /> */}
             </div>
             <CategoryMenu />
-            <Script id='searchButtonHandler' src='/searchButtonHandler.js'></Script>
+            <script id='searchButtonHandler' src='/searchButtonHandler.js' />
         </>
     )
 }
