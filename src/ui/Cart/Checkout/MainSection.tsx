@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import React, { useState, useMemo, useEffect, Fragment } from 'react'
+import React, { useState, useMemo, useEffect, Fragment, useCallback } from 'react'
 import { BsPlus } from 'react-icons/bs'
 import clsx from 'clsx'
 import { Orders } from 'razorpay/dist/types/orders'
@@ -12,7 +12,7 @@ import CheckoutForm from './Stripe/CheckoutForm'
 import { Session } from 'next-auth'
 import CardForm from './PayPal/CardForm'
 import UserAddressForm from '@/app/(main)/user/address/UserAddressForm'
-import { capturePayment } from '@/backend/serverActions/paypal'
+import { capturePayment, createOrder } from '@/backend/serverActions/paypal'
 import stringEmptyOrNull, { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CouponDataModel from '@/types/CouponDataModel'
 import OrderDataModel from '@/types/OrderDataModel'
@@ -35,7 +35,7 @@ import generateRazorPayOrder from '@/backend/serverActions/generateRazorPayOrder
 import validateCoupon from '@/backend/serverActions/validateCoupon'
 import generateStripePaymentIntent from '@/backend/serverActions/generateStripePaymentIntent'
 import CartItemClient from '../CartItemClient'
-import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies'
+import { PayPalButtons } from '@paypal/react-paypal-js'
 
 var calledStripeFinal = 0
 const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shippingList, userCurrency }: {
@@ -164,7 +164,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             case "PAYPAL":
                 console.log(userCurrency)
                 if (userCurrency?.currency == "USD") {
-                    setShowPayPal(true)
+                    // setShowPayPal(true)
+                    (document.getElementById("paypalModal") as HTMLDialogElement)?.showModal();
                     return
                 }
                 onPageNotifications("error", `PayPal Does Not Support ${userCurrency?.currency}`)
@@ -332,6 +333,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     useEffect(() => {
         stripePromise && orderTotal && orderTotal > 0 && generateStripePaymentIntent(orderTotal, userCurrency?.currency ?? "").then(result => { setStripeClientSecret(result) }).catch(e => console.log(e))
     }, [stripePromise, orderTotal, userCurrency])
+
     return (
         !Array.isArray(queryParams?.redirect_status) && stringEmptyOrNull(queryParams?.redirect_status) ? <>
             <div className="container py-0 sm:py-10 mx-auto">
@@ -560,7 +562,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     </div>
                 </Dialog>
             </Transition>
-            <Transition appear show={showPayPal} as={Fragment}>
+            {/* <Transition appear show={showPayPal} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={(e: any) => setShowPayPal(false)}>
                     <TransitionChild
                         as={Fragment}
@@ -588,64 +590,72 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                 <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-10 text-left align-middle shadow-xl transition-all">
                                     <GrFormClose className="absolute top-3 right-3 h-7 w-7 text-gray-500 cursor-pointer" onClick={_ => { setShowPayPal(false) }} />
                                     {
-                                        <CardForm
-                                            amount={orderTotal.toString()}
-                                            userCurrency={userCurrency}
-                                            onApprove={async (data, actions) => {
-                                                capturePayment(data.orderID).then(value => {
-                                                    if (value.status == "COMPLETED") {
-                                                        const orderData: OrderDataModel = {
-                                                            products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
-                                                                return {
-                                                                    productId: cartProduct[0]._id?.toString() ?? "",
-                                                                    productPrice: cartProduct[0].productSellingPrice,
-                                                                    productMSRP: cartProduct[0].productMSRP,
-                                                                    quantity: quantity,
-                                                                    variation: variationCode ?? "",
-                                                                    customSize
-                                                                }
-                                                            }),
-                                                            shippingType: "Standard",
-                                                            shippingAddress: selectedAddress?._id ?? "",
-                                                            paymentStatus: "success",
-                                                            paymentMode: "PayPal",
-                                                            couponApplied: couponData?.couponApplicable ? couponData?.couponData : null,
-                                                            paymentCode: value.purchase_units[0].payments.captures[0].id,
-                                                            subtotal: Number(cartTotal),
-                                                            taxation: Number(cartTotal * (currentTax.taxRate / 100)),
-                                                            // taxation: 0,
-                                                            orderValue: orderTotal,
-                                                            userCurrency: { ...userCurrency },
-                                                            userId: (session?.user as { id: string }).id,
-                                                            _id: "",
-                                                            orderPlacedOn: 0,
-                                                            orderStatus: "placed",
-                                                            tracking: {
-                                                                trackingNum: "",
-                                                                type: ""
-                                                            }
-                                                        }
-                                                        saveOrderAfterPay(orderData).then(res => {
-                                                            if (res.ack) {
-                                                                onPageNotifications("success", "Order Placed").catch(err => {
-                                                                    console.log(err)
-                                                                })
-                                                                router.push(`/order/final?order=${res.result.data}`)
-                                                            }
-                                                        }).catch(err => {
-                                                            console.log(err)
-                                                        })
-                                                    }
-                                                })
-                                            }}
-                                        />
+
                                     }
                                 </DialogPanel>
                             </TransitionChild>
                         </div>
                     </div>
                 </Dialog>
-            </Transition>
+            </Transition> */}
+            <dialog id="paypalModal" className="modal">
+                <div className="modal-box">
+                    {orderTotal > 0 &&
+                        <PayPalButtons
+                            style={{
+                                color: "blue"
+                            }}
+                            createOrder={() => createOrder(`${orderTotal}`, userCurrency?.currency ?? "USD")}
+                            onApprove={async (data: any, actions: any) => {
+                                capturePayment(data.orderID).then(value => {
+                                    if (value.status == "COMPLETED") {
+                                        const orderData: OrderDataModel = {
+                                            products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
+                                                return {
+                                                    productId: cartProduct[0]._id?.toString() ?? "",
+                                                    productPrice: cartProduct[0].productSellingPrice,
+                                                    productMSRP: cartProduct[0].productMSRP,
+                                                    quantity: quantity,
+                                                    variation: variationCode ?? "",
+                                                    customSize
+                                                }
+                                            }),
+                                            shippingType: "Standard",
+                                            shippingAddress: selectedAddress?._id ?? "",
+                                            paymentStatus: "success",
+                                            paymentMode: "PayPal",
+                                            couponApplied: couponData?.couponApplicable ? couponData?.couponData : null,
+                                            paymentCode: value.purchase_units[0].payments.captures[0].id,
+                                            subtotal: Number(cartTotal),
+                                            taxation: Number(cartTotal * (currentTax.taxRate / 100)),
+                                            orderValue: orderTotal,
+                                            userCurrency: { ...userCurrency },
+                                            userId: (session?.user as { id: string }).id,
+                                            _id: "",
+                                            orderPlacedOn: 0,
+                                            orderStatus: "placed",
+                                            tracking: {
+                                                trackingNum: "",
+                                                type: ""
+                                            }
+                                        }
+                                        saveOrderAfterPay(orderData).then(res => {
+                                            if (res.ack) {
+                                                onPageNotifications("success", "Order Placed").catch(err => {
+                                                    console.log(err)
+                                                })
+                                                router.push(`/order/final?order=${res.result.data}`)
+                                            }
+                                        }).catch(err => {
+                                            console.log(err)
+                                        })
+                                    }
+                                })
+                            }}
+                        />
+                    }
+                </div>
+            </dialog>
         </> : <Loader />
     )
 }
