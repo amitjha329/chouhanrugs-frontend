@@ -42,7 +42,7 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
         <div className="flex flex-col border-t pt-8 items-end w-full">
             <div className="flex flex-row ml-auto items-center justify-between w-full sm:w-1/2 lg:w-1/4 border-b pb-8">
                 <span className="text-xl font-thin">Subtotal:</span>
-                <span className="text-xl font-semibold">{(userCurrency as unknown as { currencySymbol: string }).currencySymbol ?? '$'} {(cartTotal * ((userCurrency as unknown as { exchangeRates: number }).exchangeRates ?? 1)).toFixed(2)}</span>
+                <span className="text-xl font-semibold">$ {(cartTotal * 1).toFixed(2)}</span>
             </div>
             <GoToCheckoutBtn isDisabled={cartItems && cartItems.length == 0} />
         </div>
