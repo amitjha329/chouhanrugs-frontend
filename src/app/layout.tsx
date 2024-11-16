@@ -25,6 +25,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
     return (
         <html>
             <body className={clsx(poppins.className)}>
+                <div className='btn-disabled'></div>
                 <NextTopLoader
                     color='#6c4624'
                     zIndex={1600} />

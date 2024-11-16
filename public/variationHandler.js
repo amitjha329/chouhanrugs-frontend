@@ -66,7 +66,10 @@ const productQuantity = document.getElementById("product_quantity")
 
 if (addToCartButton) {
     addToCartButton.onmousedown = e => {
-        console.log(product, session.value)
+        addToCartButton.disabled = true
+        buyNowBtn.disabled = true
+        addToCartButton.classList.add('btn-disabled')
+        buyNowBtn.classList.add('btn-disabled')
         fetch('/api/user/addtocart', {
             method: "POST", body: JSON.stringify({
                 productId: product._id,
@@ -74,12 +77,27 @@ if (addToCartButton) {
                 quantity: Number(productQuantity.value),
                 variationCode: selectedVaration
             })
-        })
+        }).then(res => {
+            window.location.reload()
+        }).catch(err => console.log(err));
     }
 }
 
 if (buyNowBtn) {
     buyNowBtn.onmousedown = e => {
-        console.log(product, session.value)
+        addToCartButton.disabled = true
+        buyNowBtn.disabled = true
+        buyNowBtn.classList.add('btn-disabled')
+        addToCartButton.classList.add('btn-disabled')
+        fetch('/api/user/addtocart', {
+            method: "POST", body: JSON.stringify({
+                productId: product._id,
+                userId: session.value,
+                quantity: Number(productQuantity.value),
+                variationCode: selectedVaration
+            })
+        }).then(res => {
+            window.location.href = "/cart/checkout"
+        }).catch(err => console.log(err));
     }
 }
