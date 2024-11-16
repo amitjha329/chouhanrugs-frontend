@@ -7,7 +7,6 @@ const PageLinks = () => {
             <Link href={'/'} >Home</Link>
             <Link href={'/about-us'} >About Us</Link>
             <Link href={'/contact-us'} >Contact Us</Link>
-            <Link href={'/'} >FAQ</Link>
             <Link href={'/blog'} >Blogs</Link>
             <Link href={'/policies'} >Policies</Link>
             <Link href={'/terms'} >T&C</Link>
