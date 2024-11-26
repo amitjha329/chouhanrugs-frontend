@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
 import Logo from '../Logo'
-import { } from 'react-icons/fa'
 import Link from 'next/link'
 
 
@@ -12,7 +11,7 @@ const MobileNavigation = () => {
                 <div className='flex pt-3 px-3 justify-between items-center'>
                     <Image src="/vector/menu.svg" alt="Search" width={25} height={25} id='mobile_menu_button' />
                     <Logo logoClass='text-accent' taglineClass='text-[8px] text-center' />
-                    <Link href="/user/profile"><Image src="/vector/UserIcon.svg" alt="User Account" width={20} height={20} /></Link>
+                    <Link href="/user/wishlist"><Image src="/vector/Heart.svg" alt="My WIshlist" width={20} height={20} /></Link>
                     <Link href="/cart"><Image src="/vector/Cart.svg" alt="Cart" width={20} height={20} /></Link>
                 </div>
                 <form className='join join-horizontal w-full pb-4 pt-5 px-3' action="/products">
