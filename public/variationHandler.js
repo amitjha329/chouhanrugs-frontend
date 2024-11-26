@@ -6,19 +6,25 @@ const colorDisplayer = document.getElementById("display-color")
 const sizeSelector = document.getElementById("size-select")
 const msrp = document.getElementById("msrp")
 const sellPrice = document.getElementById("selling_price")
+const imageProductCarousel = document.getElementById("thumbnail-carousel")
 
 const session = document.getElementById('session_user')
-
 
 function calculateDiscountedAmount(discountPercentage, originalAmount) {
     const discountRate = discountPercentage / 100;
     const discountedAmount = originalAmount - (originalAmount * discountRate);
-
     return discountedAmount;
 }
 
-let selectedVaration = null
+function deleteChild() {
+    let child = imageProductCarousel.lastElementChild;
+    while (child) {
+        imageProductCarousel.removeChild(child);
+        child = imageProductCarousel.lastElementChild;
+    }
+}
 
+let selectedVaration = null
 
 if (colorSelector) {
     colorSelector.onchange = e => {
@@ -30,11 +36,36 @@ if (colorSelector) {
             } else {
                 variation = product.variations.find(it => it.variationColor == e.target.value)
             }
-            console.log(variation)
             if (variation) {
                 selectedVaration = variation.variationCode
                 sellPrice.innerText = `$ ${calculateDiscountedAmount(variation.variationDiscount, variation.variationPrice).toFixed(1)}`
                 msrp.innerText = `$ ${variation.variationPrice}`
+                if (imageProductCarousel) {
+                    console.log(variation)
+                    deleteChild()
+                    const imageElements = []
+                    variation.variationImages.forEach((element, index) => {
+                        const tempEl = document.createElement("div")
+                        const imageEl = document.createElement("img")
+                        imageEl.setAttribute("src", element)
+                        imageEl.setAttribute("alt", `${element}-${index}`)
+                        imageEl.setAttribute("height", "100")
+                        imageEl.setAttribute("width", "100")
+                        imageEl.setAttribute("class", "!relative object-cover")
+                        imageEl.setAttribute("quality", "5")
+                        tempEl.classList.add("cursor-pointer", "carousel-item", "overflow-hidden", "rounded-lg", "w-20", "h-20", "border-primary", "border")
+                        tempEl.setAttribute("data-carousel-item", "true")
+                        tempEl.onclick = (ev) => {
+                            
+                        }
+                        tempEl.append(imageEl)
+                        imageElements.push(tempEl)
+                    });
+                    // imageProductCarousel.innerHTML = variation.variationImages.map((image, index) => `<div data-carousel-item="true" class="cursor-pointer carousel-item overflow-hidden rounded-lg w-20 h-20 border-primary border">
+                    //     <img src='${image}' alt='${image}-${index}' height="100" width="100" class="!relative object-cover" quality="5" />
+                    // </div>`)
+                    imageProductCarousel.replaceChildren(...imageElements)
+                }
             }
         }
     }
@@ -49,7 +80,6 @@ if (sizeSelector) {
             } else {
                 variation = product.variations.find(it => it.variationSize == e.target.value)
             }
-            console.log(variation)
             if (variation) {
                 selectedVaration = variation.variationCode
                 sellPrice.innerText = `$ ${calculateDiscountedAmount(variation.variationDiscount, variation.variationPrice).toFixed(1)}`
@@ -58,7 +88,6 @@ if (sizeSelector) {
         }
     }
 }
-
 
 const buyNowBtn = document.getElementById("buy_now_btn")
 const addToCartButton = document.getElementById("add_to_cart_btn")

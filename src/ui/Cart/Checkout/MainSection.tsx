@@ -60,9 +60,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     const [couponCode, setCouponCode] = useState("")
     const [deductable, setDeductable] = useState(0)
     const [showStripe, setShowStripe] = useState(false)
-    const [showPayPal, setShowPayPal] = useState(false)
     const [addAddress, setAddAddress] = useState(false)
-    const [selectedAddress, setSelected] = useState<UserAddressDataModel | null>(null)
+    const [selectedAddress, setSelectedAddress] = useState<UserAddressDataModel | null>(null)
     // const [taxation, setTaxation] = useState<TaxationDataModel[]>([])
     const [taxation, setTaxation] = useState<[]>([])
     const [pg] = useState<PaymentGatewayDataModel[]>(payOpts)
@@ -121,7 +120,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         }).catch(e => console.log(e))
         getUserAddressList((session?.user as { id: string }).id).then(res => {
             setaddress(res)
-            setSelected(res[0])
             setAddrLoading(false)
         }).catch(e => console.log(e))
         // getShipping().then(res => SetShippingList(res))
@@ -309,7 +307,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 }
             }
             saveOrderAfterPay(orderData).then(res => {
-                console.log(res)
                 if (res.ack) {
                     onPageNotifications("success", "Order Placed").catch(err => {
                         console.log(res)
@@ -334,6 +331,12 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         stripePromise && orderTotal && orderTotal > 0 && generateStripePaymentIntent(orderTotal, userCurrency?.currency ?? "").then(result => { setStripeClientSecret(result) }).catch(e => console.log(e))
     }, [stripePromise, orderTotal, userCurrency])
 
+    useEffect(() => {
+        if (addresses.length > 0) {
+            setSelectedAddress(addresses[0])
+        }
+    }, [addresses])
+
     return (
         !Array.isArray(queryParams?.redirect_status) && stringEmptyOrNull(queryParams?.redirect_status) ? <>
             <div className="container py-0 sm:py-10 mx-auto">
@@ -345,7 +348,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         }
                         {
                             addresses.length > 0 && !addAddress && <>
-                                <ShippingSelector addresses={addresses} selectedAddress={selectedAddress} selectionHandler={setSelected} />
+                                <ShippingSelector addresses={addresses} selectedAddress={selectedAddress} selectionHandler={setSelectedAddress} />
                                 <div className="relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none justify-between bg-white mt-2" onClick={_ => setAddAddress(true)}>
                                     <span>New Address</span> <BsPlus className="w-7 h-7" />
                                 </div>
@@ -600,12 +603,14 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             </Transition> */}
             <dialog id="paypalModal" className="modal">
                 <div className="modal-box">
-                    {orderTotal > 0 &&
+                    {orderTotal > 0 && selectedAddress?._id &&
                         <PayPalButtons
                             style={{
                                 color: "blue"
                             }}
-                            createOrder={() => createOrder(`${orderTotal}`, userCurrency?.currency ?? "USD")}
+                            createOrder={() => {
+                                return createOrder(`${orderTotal}`, userCurrency?.currency ?? "USD")
+                            }}
                             onApprove={async (data: any, actions: any) => {
                                 capturePayment(data.orderID).then(value => {
                                     if (value.status == "COMPLETED") {

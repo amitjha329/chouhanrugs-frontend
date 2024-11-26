@@ -112,7 +112,7 @@ export default async function saveOrderAfterPay(orderDataParam: OrderDataModel) 
         })
         mailer.sendMail({
             ...mailOptions,
-            to: "info@chouhanrugs.com",
+            to: "chouhanrugsjpr@gmail.com",
             subject: "New Order On Site"
         }, (error, info) => {
             if (error) {

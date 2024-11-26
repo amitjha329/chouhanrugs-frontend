@@ -16,8 +16,6 @@ interface returnProps extends ProductDataModel {
 }
 
 const PriceAndVariation = async ({ product }: { product: returnProps }) => {
-    // const showCalculatedPrice = useMemo(() => {
-    // }, [])
     return (
         <div className='basis-1/2'>
             <div className="p-6 max-w-xl mx-auto">

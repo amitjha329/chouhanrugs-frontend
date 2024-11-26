@@ -11,12 +11,12 @@ const ImageSection = ({ className, imageArray, mobile = false }: { mobile: boole
         <>
             <section className={className}>
 
-                <div className={clsx("sm:overflow-visible items-center justify-center flex")}>
+                <div className={clsx("sm:overflow-visible items-center justify-center flex")} id="image-carousel-container">
                     {
                         Array.isArray(imageArray) && imageArray.map((image, index) => (
                             <div key={image} data-image-container className={clsx(`image-${index}`, "rounded-3xl mb-4 relative img-zoom-container !h-[500px] overflow-hidden ", { "hidden": index > 0 })}
                             >
-                                <Image src={image} alt={`image-${index}`} data-main-image id={`${generatedId}-mainImage-${index}`} className="!relative mx-auto object-cover" fill quality={50} fetchPriority="high" priority />
+                                <Image src={image} alt={`image-${index}`} id={`image-${index}`} data-main-image className="!relative mx-auto object-cover" fill quality={50} fetchPriority="high" priority />
                                 <div className="img-zoomed z-10" style={{
                                     backgroundImage: `url("/_next/image?url=${encodeURIComponent(image)}&w=1920&q=75")`,
                                     backgroundRepeat: "no-repeat",
@@ -26,7 +26,7 @@ const ImageSection = ({ className, imageArray, mobile = false }: { mobile: boole
                         ))
                     }
                 </div>
-                <div className="carousel w-full gap-3 py-3">
+                <div className="carousel w-full gap-3 py-3" id="thumbnail-carousel">
                     {
                         imageArray?.map((image, index) => (
                             <div key={image} data-carousel-item className={clsx("cursor-pointer carousel-item overflow-hidden rounded-lg w-20 h-20 border-primary border", { 'ring-2 ring-primary shadow ring-offset-1': index == 0 })}>

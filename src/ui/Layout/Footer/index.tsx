@@ -3,8 +3,10 @@ import Logo from '../Logo'
 import Subscribe from './Subscribe'
 import { FaCcAmex, FaCcMastercard, FaCcVisa, FaFacebook, FaGooglePay, FaInstagram, FaLinkedin, FaPaypal, FaPinterest, FaStripe, FaXTwitter, FaYoutube } from 'react-icons/fa6'
 import Link from 'next/link'
+import getSiteData from '@/backend/serverActions/getSiteData'
 
-const Footer = () => {
+const Footer = async () => {
+  const siteData = await getSiteData()
   return <footer className='text-primary-content bottom-0'>
     <div className='bg-primary ~py-10/0'>
       <div className='mx-auto flex ~p-0/20 max-lg:flex-col'>
@@ -19,31 +21,43 @@ const Footer = () => {
           <div className='grid grid-cols-2 ~text-xs/base'>
             <ul id='pages' className='list-none space-y-2'>
               <li className=''>
-                <span>Home</span>
+                <Link href='/'>
+                  <span>Home</span>
+                </Link>
               </li>
               <li className=''>
-                <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                About Us
+                <Link href='/about-us'>
+                  <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
+                  About Us
+                </Link>
               </li>
               <li className=''>
-                <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                Contact Us
+                <Link href='/contact-us'>
+                  <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
+                  Contact Us
+                </Link>
               </li>
-              <li className=''>
+              {/* <li className=''>
                 <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
                 FAQ
+              </li> */}
+              <li className=''>
+                <Link href='/blogs'>
+                  <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
+                  Blogs
+                </Link>
               </li>
               <li className=''>
-                <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                Blogs
+                <Link href='/policies'>
+                  <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
+                  Policies
+                </Link>
               </li>
               <li className=''>
-                <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                Policies
-              </li>
-              <li className=''>
-                <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
-                T&C
+                <Link href='/terms'>
+                  <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
+                  T&C
+                </Link>
               </li>
             </ul>
             <div>
@@ -106,12 +120,49 @@ const Footer = () => {
 
           <div className='flex items-center max-lg:justify-center justify-end gap-5 ~pt-7/0'>
             <span className='~text-xs/base'>Follow Us</span>
-            <FaFacebook className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
-            <FaInstagram className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
-            <FaLinkedin className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
-            <FaPinterest className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
-            <FaXTwitter className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
-            <FaYoutube className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
+            {
+              siteData.profiles.map((profile) => <Link
+                key={profile}
+                href={profile}
+              >
+                {
+                  ["facebook.com", "www.facebook.com", "fb.me"].includes((new URL(profile)).hostname) && <>
+                    <FaFacebook className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
+                    <span className="sr-only">Facebook page</span>
+                  </>
+                }
+                {
+                  ["instagram.com", "www.instagram.com"].includes((new URL(profile)).hostname) && <>
+                    <FaInstagram className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
+                    <span className="sr-only">Instagram page</span>
+                  </>
+                }
+                {
+                  ["twitter.com", "www.twitter.com",].includes((new URL(profile)).hostname) && <>
+                    <FaXTwitter className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
+                    <span className="sr-only">Twitter page</span>
+                  </>
+                }
+                {
+                  ["pinterest.com", "www.pinterest.com", "in.pinterest.com"].includes((new URL(profile)).hostname) && <>
+                    <FaPinterest className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
+                    <span className="sr-only">Pinterest page</span>
+                  </>
+                }
+                {
+                  ["youtube.com", "www.youtube.com"].includes((new URL(profile)).hostname) && <>
+                    <FaYoutube className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
+                    <span className="sr-only">Youtube page</span>
+                  </>
+                }
+                {
+                  ["www.linkedin.com", "linkedin.com"].includes((new URL(profile)).hostname) && <>
+                    <FaLinkedin className='~sm/md:~w-7/10 ~sm/md:~h-7/10' />
+                    <span className="sr-only">Linkedin page</span>
+                  </>
+                }
+              </Link>)
+            }
           </div>
         </div>
       </div>

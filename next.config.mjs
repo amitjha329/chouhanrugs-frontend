@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental:{
-    after:true
+    after:true,
+    webpackMemoryOptimizations:true
   },
   images: {
     remotePatterns: [

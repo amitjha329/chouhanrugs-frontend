@@ -12,10 +12,10 @@ const reem_kufi_ink = Reem_Kufi_Ink({
 
 const Logo = ({ className, logoClass, taglineClass }: { logoClass?: string, taglineClass?: string, className?: string }) => {
     return (
-        <Link href={'/'} className={clsx(reem_kufi_ink.className, "uppercase", className)}>
+        <a href={'/'} className={clsx(reem_kufi_ink.className, "uppercase", className)}>
             <p className={clsx('~text-lg/4xl tracking-widest', logoClass)}>Chouhan Rugs</p>
             <p className={clsx(taglineClass,'align-middle')}>Home&nbsp;&nbsp;Decor&nbsp;&nbsp;&nbsp;&nbsp;&#124;&nbsp;&nbsp;&nbsp;&nbsp;Handloom</p>
-        </Link>
+        </a>
     )
 }
 

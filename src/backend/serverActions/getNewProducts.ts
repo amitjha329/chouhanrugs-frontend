@@ -6,8 +6,8 @@ export async function getNewProducts({ limit }: { limit: number }): Promise<Prod
     try {
         const client = await clientPromise;
         const db = client.db();
-        const products = await db.collection("products").find({ tags: { $in: ["New Arrivals"] } }, { limit, sort: [["_id", -1]] }).toArray();
-        return products.map(p=>converter.fromWithNoFieldChange<ProductDataModel>(p));
+        const products = await db.collection("products").find({ tags: { $in: ["New Arrivals"] }, productActive: true }, { limit, sort: [["_id", -1]] }).toArray();
+        return products.map(p => converter.fromWithNoFieldChange<ProductDataModel>(p));
     } catch (error) {
         console.error("Error fetching categories:", error);
         return [];
