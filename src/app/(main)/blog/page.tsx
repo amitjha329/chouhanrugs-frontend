@@ -35,20 +35,20 @@ export async function generateMetadata(): Promise<Metadata> {
 const BlogListPage = async () => {
     const blogList = await getBlogPostsList()
     return (
-        <section className="bg-white dark:bg-gray-900">
+        <section className="bg-white">
             <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
                 <div className="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
                     <h2 className="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Latest Blogs</h2>
                     <p className="font-light text-gray-500 sm:text-xl dark:text-gray-400">Read some of the latest news realted to textile industry and Important News related to Chouhan Rugs.</p>
                 </div>
-                <div className="columns-2 md:columns-3 space-y-2">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2">
                     {
                         Array.isArray(blogList) && blogList.length > 0 && blogList.map(blogItem => {
                             return (
                                 <Link href={`/blog/${blogItem.slug}`} key={blogItem._id} >
                                     <div className="bg-white rounded-lg border border-gray-200 shadow-md card card-body">
-                                        <figure className="px-3 pt-3">
-                                            <Image src={blogItem.featuredImage} alt={blogItem.title} className="rounded-xl" height={350} width={350} />
+                                        <figure className="px-3 pt-3 overflow-hidden aspect-square relative rounded-xl">
+                                            <Image src={blogItem.featuredImage} alt={blogItem.title} fill />
                                         </figure>
                                         <div className='card-body'>
                                             <div className="flex justify-between items-center mb-5 text-gray-500">
@@ -58,8 +58,8 @@ const BlogListPage = async () => {
                                                 </span>
                                                 <span className="text-sm">{new Date(blogItem.updated).toDateString()}</span>
                                             </div>
-                                            <h2 className="card-title cursor-pointer"><Link href={`/blog/${blogItem.slug}`}>{blogItem.title}</Link></h2>
-                                            <p className="mb-5 font-light text-current text-clip line-clamp-5">{blogItem.description}</p>
+                                            <h2 className="card-title cursor-pointer line-clamp-2"><Link href={`/blog/${blogItem.slug}`}>{blogItem.title}</Link></h2>
+                                            <p className="mb-5 font-light text-current text-clip line-clamp-4">{blogItem.description}</p>
                                             <div className="flex justify-between items-center">
                                                 <div className="flex items-center space-x-4">
                                                     {/* <img className="w-7 h-7 rounded-full" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png" alt="Jese Leos avatar" />
