@@ -13,13 +13,15 @@ const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery
     const { refine } = useSearchBox()
 
     useEffect(() => {
-        searchQuery && refine(searchQuery ?? "")
+        refine(searchQuery ?? "")
     }, [searchQuery])
 
     return (
         (<div className="lg:basis-5/6 mx-auto">
             {
-                categoryParam && <Configure facetFilters={[['productCategory:' + decodeURIComponent(categoryParam ?? ""), ...((decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? ['productCategory:Hemp Rugs', 'productCategory:Wool Jute Kilim Rugs', 'productCategory:Braided Jute Rug'] : [])]]} />
+                categoryParam && <Configure
+                    // facetFilters={[['productCategory:' + decodeURIComponent(categoryParam ?? ""), ...((decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? ['productCategory:Hemp Rugs', 'productCategory:Wool Jute Kilim Rugs', 'productCategory:Braided Jute Rug'] : [])]]} 
+                    filters={(decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? '(productCategory:"Hemp Rugs" OR productCategory:"Wool Jute Kilim Rugs" OR productCategory:"Braided Jute Rug")' : `productCategory:"${(decodeURIComponent(categoryParam ?? ""))}"`} />
             }
             {
                 searchParams?.color && <Configure facetFilters={[['variations.variationColor:' + decodeURIComponent(searchParams.color)]]} />

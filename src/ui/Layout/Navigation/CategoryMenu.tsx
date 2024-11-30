@@ -31,7 +31,7 @@ const CategoryMenu = async () => {
 
 const CategoryMenuItem = ({ label, submenu, href }: MenuItemProp) => {
     return (
-        (submenu?.length??0) > 0 ?<div className={clsx("text-sm", { "dropdown dropdown-hover": (submenu?.length ?? 0) > 0 })}>
+        (submenu?.length??0) > 0 ?<Link href={href ?? ""} className={clsx("text-sm", { "dropdown dropdown-hover": (submenu?.length ?? 0) > 0 })}>
         <span className='flex items-center gap-2'>{label} {(submenu?.length ?? 0) > 0 && <FaChevronDown />}</span>
         {
             (submenu?.length ?? 0) > 0 && <div className='dropdown-content menu bg-base-100 rounded-box z-[60] w-52 p-2 shadow border border-primary'>
@@ -40,7 +40,7 @@ const CategoryMenuItem = ({ label, submenu, href }: MenuItemProp) => {
                 </ul>
             </div>
         }
-    </div>:
+    </Link>:
         <Link href={href ?? ""} className={clsx("text-sm", { "dropdown dropdown-hover": (submenu?.length ?? 0) > 0 })}>
             <span className='flex items-center gap-2'>{label} {(submenu?.length ?? 0) > 0 && <FaChevronDown />}</span>
             {
