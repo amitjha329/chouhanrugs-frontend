@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client"
 import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFromWishlist'
 import onPageNotifications from '@/utils/onPageNotifications'

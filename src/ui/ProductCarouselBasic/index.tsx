@@ -1,8 +1,8 @@
-import { ProductDataModel } from "@/types/ProductDataModel"
+import { ProductDataModelWithColorMap } from "@/types/ProductDataModel"
 import ProductCardItem from "../Product/ProductCardItem"
 import SectionTitle from "../SectionTitle"
 
-const ProductCarouselBasic = async ({ products, sectionHeading }: { products: ProductDataModel[], sectionHeading: string }) => {
+const ProductCarouselBasic = async ({ products, sectionHeading }: { products: ProductDataModelWithColorMap[], sectionHeading: string }) => {
 
     return (
         <div className="fluid_container mx-auto ~py-10/20">

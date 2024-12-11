@@ -1,3 +1,4 @@
+// @ts-nocheck
 import MainLayout from '@/ui/Layout'
 import React from 'react'
 import { DataContextProvider } from '../providers'

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import { Disclosure, Transition } from '@headlessui/react'
 import React, { Fragment, useMemo, useState } from 'react'

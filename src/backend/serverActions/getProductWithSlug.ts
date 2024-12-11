@@ -5,12 +5,12 @@ import { extractColorsAndSizes } from "./extractColorsSizesFromVariation";
 import ColorDataModel from "@/types/ColorDataModel";
 import SizeDataModel from "@/types/SizeDataModel";
 
-interface returnProps extends ProductDataModel{
+interface ProductWithSizeandColorData extends ProductDataModel{
     colorData:ColorDataModel[],
     sizeData:SizeDataModel[]
 }
 
-export async function getProductWithSlug(slug: string): Promise< returnProps| undefined> {
+export async function getProductWithSlug(slug: string): Promise< ProductWithSizeandColorData| undefined> {
     try {
         const client = await clientPromise;
         const db = client.db();

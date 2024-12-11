@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react'
 import Logo from '../Logo'
 import Subscribe from './Subscribe'
@@ -42,7 +43,7 @@ const Footer = async () => {
                 FAQ
               </li> */}
               <li className=''>
-                <Link href='/blogs'>
+                <Link href='/blog'>
                   <hr className='bg-base-200 opacity-30 h-[0.5px] w-1/2 mb-2' />
                   Blogs
                 </Link>

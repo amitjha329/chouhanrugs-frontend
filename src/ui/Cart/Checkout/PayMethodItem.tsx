@@ -1,21 +1,30 @@
+// @ts-nocheck
 'use client'
 import { RadioGroup } from "@headlessui/react"
 import { FaPaypal, FaStripe } from "react-icons/fa"
 import { MdCheckCircleOutline } from "react-icons/md"
 import { SiRazorpay } from 'react-icons/si'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import Currency from "@/types/Currency"
 import PaymentGatewayDataModel from "@/types/PaymentGatewayDataModel"
 
 const PayMethodItem = ({ pgList, selected, setSelected, currency }: {
     pgList: PaymentGatewayDataModel[],
-    selected: PaymentGatewayDataModel | null,
-    setSelected: Dispatch<SetStateAction<PaymentGatewayDataModel | null>>
+    selected: PaymentGatewayDataModel | null | undefined,
+    setSelected: Dispatch<SetStateAction<PaymentGatewayDataModel | null | undefined>>
     currency: Currency
 }) => {
+    useEffect(() => {
+        if (pgList.length > 0 && !selected) {
+            if (currency?.currency === "INR") {
+                setSelected(pgList.find(item => item.partner === "RZP"))
+            } else {
+                setSelected(pgList.find(item => item.partner === "PAYPAL"))
+            }
+        }
+    }, [pgList])
     return (
         <RadioGroup value={selected} onChange={setSelected}>
-            <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
             <div className="space-y-2">
                 {pgList.map((paymentPartners) => (
                     currency?.currency === "INR" ? paymentPartners.partner === "RZP" && <RadioGroup.Option

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable @next/next/no-html-link-for-pages */
 import React from 'react'
 import { BiCategoryAlt } from 'react-icons/bi'

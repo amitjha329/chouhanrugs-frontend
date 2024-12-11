@@ -32,6 +32,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             if (trigger === "update") {
                 session.name && ((token.user as { name: string }).name = session.name)
                 session.image && ((token.user as { image: string }).image = session.image)
+                session.number && ((token.user as { number: string }).number = session.number)
+                session.email && ((token.user as { email: string }).email = session.email)
             }
             return token
         },

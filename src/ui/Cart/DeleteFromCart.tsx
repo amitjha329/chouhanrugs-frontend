@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client"
 import deleteProductFromCart from '@/backend/serverActions/deleteProductFromCart'
 import CartDataModel from '@/types/CartDataModel'

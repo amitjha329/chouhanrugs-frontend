@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental:{
-    after:true,
-    webpackMemoryOptimizations:true
+  experimental: {
+    after: true,
+    webpackMemoryOptimizations: true
   },
   images: {
     remotePatterns: [
@@ -14,6 +14,7 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.caredone.in' },
     ]
   },
+
   webpack(
     config,
     { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
@@ -72,6 +73,9 @@ const nextConfig = {
         ],
       },
     ]
+  },
+  sassOptions: {
+    silenceDeprecations: ['legacy-js-api'],
   }
 }
 

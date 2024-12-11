@@ -2,6 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 import Logo from '../Logo'
 import Link from 'next/link'
+import HeaderCartItemMobile from './HeaderCartItemMobile'
 
 
 const MobileNavigation = () => {
@@ -12,7 +13,7 @@ const MobileNavigation = () => {
                     <Image src="/vector/menu.svg" alt="Search" width={25} height={25} id='mobile_menu_button' />
                     <Logo logoClass='text-accent' taglineClass='text-[8px] text-center' />
                     <Link href="/user/wishlist"><Image src="/vector/Heart.svg" alt="My WIshlist" width={20} height={20} /></Link>
-                    <Link href="/cart"><Image src="/vector/Cart.svg" alt="Cart" width={20} height={20} /></Link>
+                    <Link href="/cart"><HeaderCartItemMobile /></Link>
                 </div>
                 <form className='join join-horizontal w-full pb-4 pt-5 px-3' action="/products">
                     <input className='join-item input input-md input-bordered border-r-0 !rounded-l-full w-full placeholder:text-primary' placeholder='Search' name='search' type='text' id='search' />

@@ -31,7 +31,7 @@ const WishListButton = ({ productDetails }: { productDetails: ProductDataModel }
         setWishAnimate(!wishAnimate)
     }
     return (
-        <div className={clsx("flex text-xs items-center bg-white rounded-badge p-0 text-black top-2 absolute",
+        <div className={clsx("flex text-xs items-center bg-white rounded-badge p-0 text-black top-2 absolute z-50 cursor-pointer",
             wishAnimate ? ` ${ProductsCardStyle.active} ${ProductsCardStyle.animate}` : "", ProductsCardStyle.wish_button
         )}
             onClick={addToWishlist}

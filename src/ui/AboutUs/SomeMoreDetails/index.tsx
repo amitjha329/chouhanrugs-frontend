@@ -17,7 +17,7 @@ const SomeMoreDetails = () => {
             </div>
             <div className='flex items-center gap-10'>
                 <div className='flex flex-col items-center justify-center gap-5' >
-                    <div className='flex items-center justify-center border-[14px] border-secondary text-transparent rounded-full p-7 aspect-square font-extrabold text-xl' style={{
+                    <div className='flex items-center justify-center border-[14px] border-secondary text-transparent rounded-full ~p-3/7 aspect-square font-extrabold text-xl' style={{
                         WebkitTextStroke: "1px grey",
                     }}>
                         100%
@@ -27,7 +27,7 @@ const SomeMoreDetails = () => {
                     </div>
                 </div>
                 <div className='flex flex-col items-center justify-center gap-4' >
-                    <div className='flex items-center justify-center border-[14px] border-secondary text-transparent rounded-full p-7 aspect-square font-extrabold text-xl' style={{
+                    <div className='flex items-center justify-center border-[14px] border-secondary text-transparent rounded-full ~p-3/7 aspect-square font-extrabold text-xl' style={{
                         WebkitTextStroke: "1px grey",
                     }}>
                         100%
@@ -37,7 +37,7 @@ const SomeMoreDetails = () => {
                     </div>
                 </div>
                 <div className='flex flex-col items-center justify-center gap-5' >
-                    <div className='flex items-center justify-center border-[14px] border-secondary text-transparent rounded-full p-7 aspect-square font-extrabold text-xl' style={{
+                    <div className='flex items-center justify-center border-[14px] border-secondary text-transparent rounded-full ~p-3/7 aspect-square font-extrabold text-xl' style={{
                         WebkitTextStroke: "1px grey",
                     }}>
                         100%

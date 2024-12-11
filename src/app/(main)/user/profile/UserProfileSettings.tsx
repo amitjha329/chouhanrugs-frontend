@@ -24,7 +24,7 @@ const UserProfileSettings = ({ className, userData }: { className: string, userD
             formData.append("image", userImageFile as Blob)
             uploadImages(formData).then((response) => {
                 updateDetails(response[0].url)
-            }).catch((e:any) => console.log(e))
+            }).catch((e: any) => console.log(e))
         } else {
             updateDetails()
         }
@@ -33,7 +33,7 @@ const UserProfileSettings = ({ className, userData }: { className: string, userD
     const updateDetails = (image?: string) => {
         updateUserProfile(userData?.id ?? "", email, name, number, image).then(res => {
             if (res.ack) {
-                onPageNotifications("success", "Profile Updated").catch(e => console.log(e)).finally(() => { sessionUpdate({ name }).catch(e => console.log(e)) })
+                onPageNotifications("success", "Profile Updated").catch(e => console.log(e)).finally(() => { sessionUpdate({ name, number, email, image }).catch(e => console.log(e)) })
             } else {
                 onPageNotifications("success", "Error In Updating Profile").catch(e => console.log(e))
             }

@@ -18,6 +18,7 @@ import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
 import AboveFooterSEOContet from '@/ui/HomePage/AboveFooterSEOContet'
 import { getPageFooterContent } from '@/backend/serverActions/getFooterContent'
 import getSlider from '@/backend/serverActions/getSlider'
+import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
 
 export async function generateMetadata(): Promise<Metadata> {
   const [data, dataAdditional, bingVerification, googleVerification] = await Promise.all([getPageData("home"), getSiteData(), getAnalyticsData("BING"), getAnalyticsData("GOOGLE_VER")])
@@ -62,6 +63,7 @@ const HomePage = async () => {
     <>
       <HeroSection slider={sliderData} />
       <NewProductsSection />
+      <FeaturedProducts />
       <OrderProcessSection />
       <OurPopularCategories />
       <TrendingProducts />

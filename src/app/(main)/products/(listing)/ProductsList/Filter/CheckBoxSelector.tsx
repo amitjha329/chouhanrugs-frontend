@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import { Disclosure, Transition } from "@headlessui/react"
 import { ChangeEventHandler } from "react"

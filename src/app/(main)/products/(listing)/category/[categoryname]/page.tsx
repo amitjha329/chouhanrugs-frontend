@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import getSiteData from '@/backend/serverActions/getSiteData';
 import ProductList from '../../ProductsList';
 import getCategoriesWithName from '@/backend/serverActions/getCategoriesWithName';
+import getProductPromoted from '@/backend/serverActions/getProductPromoted';
 
 
 export async function generateMetadata(props: { params: Promise<{ categoryname: string }> }): Promise<Metadata> {
@@ -36,9 +37,10 @@ export async function generateMetadata(props: { params: Promise<{ categoryname: 
 
 const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: string }> }) => {
     const params = await props.params;
-
+    const promotedProducts = await getProductPromoted(decodeURIComponent(params.categoryname))
+    console.log(promotedProducts)
     return (
-        <ProductList categoryParam={params.categoryname} />
+        <ProductList categoryParam={params.categoryname} predefinedProducts={promotedProducts} />
     )
 }
 

@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import WishListButton from './WishListButton'
 
 interface itemProps extends ProductDataModel {
   className?: string
@@ -10,9 +11,10 @@ interface itemProps extends ProductDataModel {
 
 const NewProductCard = (product: itemProps) => {
   return (
-    <div className={clsx('card items-center justify-around z-30 bg-base-100 card-body p-4', product.className)}>
+    <div className={clsx('card items-center justify-around z-30 bg-base-100 card-body p-4 relative', product.className)}>
+      {/* <WishListButton productDetails={product} /> */}
       <Link href={'/products/' + product.productURL} className="" prefetch={false}>
-        <Image src={product.images[product.productPrimaryImageIndex]} alt={product.productName} width={200} height={135} />
+        <Image src={product.images[product.productPrimaryImageIndex]} alt={product.productName} width={200} height={135} className='!w-[200px] !h-[135px]' />
         <div className='text-clip line-clamp-2 text-xs max-w-40 text-center'>
           {product.productName}
         </div>

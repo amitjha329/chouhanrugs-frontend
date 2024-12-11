@@ -10,8 +10,6 @@ import PriceAndVariation from '@/ui/Layout/ProductPage/PricingAndVariations'
 import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
 import getRelatedProducts from '@/backend/serverActions/getRelatedProduct'
 import InformationTabs from '@/ui/Layout/ProductPage/InformationTabs'
-import { getColorsList } from '@/backend/serverActions/getColorsList'
-import { getSizesList } from '@/backend/serverActions/getSizesList'
 
 export async function generateMetadata(props: { params: Promise<{ productId: string }> }): Promise<Metadata> {
     const params = await props.params;
@@ -52,16 +50,16 @@ const ProductPage = async (props: { params: Promise<{ productId: string }> }) =>
     } = params;
 
     const dataPromise = getProductWithSlug(productId)
-    const colorListPromise = getColorsList()
-    const sizeListPromise = getSizesList()
-    const [data, colorList, sizeList] = await Promise.all([dataPromise, colorListPromise, sizeListPromise])
+    const [data] = await Promise.all([
+        dataPromise,
+    ])
     if (data == undefined) return notFound();
     const header = await headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
     const relatedProdcust = await getRelatedProducts(data)
     return (
         <div className='fluid_container'>
-            <div className='flex max-md:flex-col gap-10'>
+            <div className='flex max-md:flex-col gap-10 ~px-5/0'>
                 <ImageSection imageArray={data.images} mobile={isMobile} className='md:basis-1/2 overflow-hidden' />
                 <PriceAndVariation product={data} />
             </div>

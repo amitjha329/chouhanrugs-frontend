@@ -5,10 +5,10 @@ import { NextResponse } from "next/server"
 const { auth } = NextAuth(authConfig)
 export default auth((req) => {
     const token = req.auth
-    console.log("==================================>FROM MIDDLEWARE",token)
     if (token) {
         return NextResponse.next()
     }
+    console.log(JSON.stringify(req))
     return NextResponse.redirect(new URL('/signin', req.url))
 })
 

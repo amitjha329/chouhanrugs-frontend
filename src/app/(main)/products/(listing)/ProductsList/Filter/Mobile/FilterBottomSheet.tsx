@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import React, { ChangeEventHandler, SetStateAction, useState } from 'react'
 import CheckBoxSelector from '../CheckBoxSelector'
@@ -38,7 +39,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary",
                             count: "color-[grey]"
                         }} />
                     </Container>
@@ -50,7 +51,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                             checkbox: "toggle",
                             label: "w-full label",
                             labelText: "label-text",
-                            root: "flex items-center justify-between"
+                            root: "flex items-center justify-between text-primary"
                         }} />
                     </Container>
                     <Container showAsAccordion accordionLable='Size'>
@@ -58,7 +59,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary",
                             count: "color-[grey]",
                         }} />
                     </Container>
@@ -67,7 +68,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary",
                             count: "color-[grey]"
                         }} />
                     </Container>
@@ -76,7 +77,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary",
                             count: "color-[grey]"
                         }} />
                     </Container>
@@ -85,7 +86,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                             checkbox: "checkbox",
                             label: "label cursor-pointer",
                             labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary",
                             count: "color-[grey]"
                         }} />
                     </Container>

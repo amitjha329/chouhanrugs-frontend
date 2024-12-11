@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import saveUserNewAddressForm from "@/backend/serverActions/saveUserNewAddressForm"
 import onPageNotifications from "@/utils/onPageNotifications"

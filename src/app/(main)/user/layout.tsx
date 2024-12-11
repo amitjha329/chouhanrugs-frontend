@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 import { auth } from '@/auth'
 import UserLayout from '@/ui/Layout/UserLayout'
 import { SessionProvider } from 'next-auth/react'

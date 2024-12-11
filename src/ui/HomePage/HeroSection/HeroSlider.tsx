@@ -3,7 +3,6 @@ import Image from 'next/image'
 import React from 'react'
 import Carousel from 'react-multi-carousel'
 import "react-multi-carousel/lib/styles.css";
-import banner_1 from '../../../../static_assets/crbanner-01.webp'
 import banner_2 from '../../../../static_assets/crbanner-01-01.webp'
 import SliderDataModel from '@/types/SliderDataModel';
 
@@ -24,9 +23,6 @@ const HeroSLider = ({ isMobile, slider }: { isMobile: boolean, slider: SliderDat
             minimumTouchDrag={80}
             pauseOnHover
             arrows={false}
-            // renderArrowsWhenDisabled={false}
-            // renderButtonGroupOutside={false}
-            // renderDotsOutside
             responsive={{
                 desktop: {
                     breakpoint: {
@@ -69,12 +65,6 @@ const HeroSLider = ({ isMobile, slider }: { isMobile: boolean, slider: SliderDat
                     }} priority {...(image.src.toString() != null) && { fill: true }} />
                 })
             }
-            {/* <Image src={banner_2} alt='nbanner 1' style={{
-                display: 'block',
-                height: '100%',
-                margin: 'auto',
-                width: '100%'
-            }} priority /> */}
         </Carousel>
     )
 }

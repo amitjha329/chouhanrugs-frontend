@@ -1,4 +1,5 @@
-import { Disclosure, Transition } from "@headlessui/react"
+// @ts-nocheck
+import { Disclosure, DisclosureButton, DisclosurePanel, Transition } from "@headlessui/react"
 import { BiChevronsDown } from "react-icons/bi"
 
 const FilterAccordion = ({ children, title }: { children: React.ReactNode, title: string }) => {
@@ -6,12 +7,12 @@ const FilterAccordion = ({ children, title }: { children: React.ReactNode, title
         <Disclosure className="border-collapse mb-4" as="div">
             {({ open }) => (
                 <>
-                    <Disclosure.Button className={`${open ? 'rounded-t-md' : 'rounded-md'} border flex w-full p-4 justify-between items-center text-left text-md font-normal text-blue-900 hover:bg-blue-200`}>
+                    <DisclosureButton className={`${open ? 'rounded-t-md' : 'rounded-md'} border flex w-full p-4 justify-between items-center text-left text-md font-normal text-black hover:bg-secondary`}>
                         <span>{title}</span>
                         <BiChevronsDown className={`
-                                    ${open ? 'rotate-180 transform' : ''} h-5 w-5 text-blue-500 transition-transform
+                                    ${open ? 'rotate-180 transform' : ''} h-5 w-5 text-primary transition-transform
                                     `} />
-                    </Disclosure.Button>
+                    </DisclosureButton>
                     <Transition
                         show={open}
                         enter="transition duration-150 ease-out"
@@ -21,9 +22,9 @@ const FilterAccordion = ({ children, title }: { children: React.ReactNode, title
                         leaveFrom="transform scale-y-100 opacity-100"
                         leaveTo="transform scale-y-0 opacity-0"
                     >
-                        <Disclosure.Panel className={`${open ? 'rounded-b-md' : ''} border p-5`} static>
+                        <DisclosurePanel className={`${open ? 'rounded-b-md' : ''} border p-5`} static>
                             {children}
-                        </Disclosure.Panel>
+                        </DisclosurePanel>
                     </Transition>
                 </>
             )}

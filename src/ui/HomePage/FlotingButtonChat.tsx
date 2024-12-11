@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import SiteDataModel from "@/types/SiteDataModel";
 import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";

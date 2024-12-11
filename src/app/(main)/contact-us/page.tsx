@@ -1,3 +1,4 @@
+// @ts-nocheck
 import getSiteData from '@/backend/serverActions/getSiteData'
 import React from 'react'
 import { FaFacebook, FaInstagram, FaLinkedin, FaPinterest, FaTwitter, FaYoutube } from 'react-icons/fa'

@@ -1,18 +1,18 @@
 let picSelected = 0;
 
-const imageContainers = document.querySelectorAll('[data-image-container]');
-const carouselItems = document.querySelectorAll('[data-carousel-item]');
-const zoomedImageList = document.querySelectorAll('[data-zoomed-image]');
-const mainImageList = document.querySelectorAll('[data-main-image]');
+let imageContainers = document.querySelectorAll('[data-image-container]');
+let carouselItems = document.querySelectorAll('[data-carousel-item]');
+let zoomedImageList = document.querySelectorAll('[data-zoomed-image]');
+let mainImageList = document.querySelectorAll('[data-main-image]');
+let imagesInputHidden = document.getElementById('imagesProducts');
 
 function updateImageSelection() {
-    imageContainers.forEach((container, index) => {
-        if (index === picSelected) {
-            container.classList.remove('hidden');
-        } else {
-            container.classList.add('hidden');
-        }
-    });
+
+    const img = carouselItems[picSelected].getAttribute('data-item-url')
+
+    mainImageList[0].setAttribute('src', `/_next/image?url=${encodeURIComponent(img)}&w=1920&q=100`)
+    zoomedImageList[0].style.backgroundImage = `url("/_next/image?url=${encodeURIComponent(img)}&w=1920&q=100")`
+
 
     carouselItems.forEach((item, index) => {
         if (index === picSelected) {
@@ -65,3 +65,24 @@ imageContainers.forEach((container, index) => {
         }
     });
 });
+
+
+
+// main.js
+
+const worker = new Worker('/imageCacheWorker.js');
+
+const imagesToCache = JSON.parse(imagesInputHidden.value);
+
+worker.postMessage({ images: imagesToCache });
+
+worker.addEventListener('message', (event) => {
+    const { status, imageUrl, error } = event.data;
+    if (status === 'success') {
+        console.log(`Successfully cached: ${imageUrl}`);
+    } else if (status === 'error') {
+        console.error(`Error caching ${imageUrl}: ${error}`);
+    }
+});
+
+

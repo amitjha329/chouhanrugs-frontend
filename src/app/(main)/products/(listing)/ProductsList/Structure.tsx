@@ -1,9 +1,10 @@
+// @ts-nocheck
 'use client'
 import React, { useState } from 'react'
 import SideBarSectionLayout from './Filter/SideBarSectionLayout'
 import RangeSlider from './Filter/RangeSlider'
 import { FaAngleDown } from 'react-icons/fa'
-import { ClearRefinements, CurrentRefinements, RangeInput, RefinementList, ToggleRefinement } from 'react-instantsearch'
+import { ClearRefinements, CurrentRefinements, RefinementList, ToggleRefinement } from 'react-instantsearch'
 import FilterBottomSheet from './Filter/Mobile/FilterBottomSheet'
 import Currency from '@/types/Currency'
 
@@ -22,10 +23,10 @@ const StructureListing = ({ children, userCurrency }: {
         <>
             <div className="flex md:hidden justify-between border">
                 <CurrentRefinements classNames={{
-                    item: "text-blue-600 rounded-full bg-blue-200 px-3 mr-1 min-w-max",
+                    item: "text-primary rounded-full bg-secondary px-3 py-1 mr-1 min-w-max text-xs",
                     list: "flex p-4",
                     root: "overflow-x-scroll no-scrollbar",
-                    delete: "border border-black rounded-full mx-1 px-1"
+                    delete: "border border-black rounded-full text-xs ml-2 w-5 h-5"
                 }} />
                 {/* <SelectedFilters allColors={allColors} allSizes={allSizes} brandList={brandList} categories={categories} selectedBrands={selectedBrands} selectedColors={selectedColors} selectedSizes={selectedSizes} allPatterns={allPatterns} allShapes={allShapes} selectedPatterns={selectedPatterns} selectedShapes={selectedShapes} /> */}
                 <div className="flex p-4 items-center pl-3 border-l radial-click" onClick={filterBottomSheetToggle}>

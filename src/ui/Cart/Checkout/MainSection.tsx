@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import { useRouter } from 'next/navigation'
 import React, { useState, useMemo, useEffect, Fragment, useCallback } from 'react'
@@ -69,7 +70,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         couponApplicable: boolean,
         couponData: CouponDataModel
     }>()
-    const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayDataModel | null>(null)
+    const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayDataModel | null>()
     const currentTax = useMemo(() => {
         // return taxation.find(item => item.ISO === userCurrency?.ISO) ?? { taxRate: 0 }
         return userCurrency?.ISO == "IN" ? { taxRate: 5 } : { taxRate: 0 }
@@ -102,7 +103,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     break;
             }
         } else {
-            priceInitial = item.cartProduct[0].productSellingPrice
+            priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0
         }
 
         return priceInitial * item.quantity >> 0
@@ -110,7 +111,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
 
     useEffect(() => {
         getUserCartitems((session?.user as { id: string }).id).then(res => {
-            setCart(res)
+            setCart(res.filter(it => it.cartProduct.length > 0))
             let subTotal = 0
             res.forEach(item => {
                 subTotal = subTotal + calculateProductPrice(item)

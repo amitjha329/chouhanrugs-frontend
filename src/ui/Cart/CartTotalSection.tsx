@@ -26,7 +26,7 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
                     break;
             }
         } else {
-            priceInitial = item.cartProduct[0].productSellingPrice
+            priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0
         }
 
         return priceInitial * item.quantity

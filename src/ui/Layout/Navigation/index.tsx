@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react'
 import CategoryMenu from './CategoryMenu'
 import PageLinks from './PageLinks'

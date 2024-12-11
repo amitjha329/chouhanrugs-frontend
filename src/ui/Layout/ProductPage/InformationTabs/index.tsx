@@ -1,4 +1,5 @@
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
+import clsx from 'clsx'
 import Script from 'next/script'
 import React from 'react'
 

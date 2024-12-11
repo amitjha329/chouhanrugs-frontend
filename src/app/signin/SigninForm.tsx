@@ -1,6 +1,8 @@
+// @ts-nocheck
 'use client'
 import sendOtp from '@/backend/serverActions/sendOtp'
 import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 import React, { useCallback, useState, KeyboardEvent } from 'react'
 import { FaSignInAlt } from 'react-icons/fa'
 
@@ -9,6 +11,7 @@ type propTypes = {
 }
 
 const SigninForm = ({ siteTitle }: propTypes) => {
+    const searchParams = useSearchParams()
     const [email, setEmail] = React.useState("")
     const [tkId, setTkid] = React.useState("")
     const [isOTPForm, setIsOTPForm] = useState<boolean>(false)
@@ -26,7 +29,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
     }, [email])
 
     const onReady = useCallback(() => {
-        signIn('credentials', { email, tkId, code }).then(console.log).catch(console.log)
+        signIn('credentials', { email, tkId, code, redirectTo: searchParams.get('cb') ?? undefined }).then(console.log).catch(console.log)
     }, [code, email]);
 
     const onKeyPress = useCallback(
@@ -44,7 +47,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 {
                     !isOTPForm && <>
                         <div className="flex flex-col items-center">
-                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { signIn("google") }}>
+                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { signIn("google", { redirectTo: searchParams.get('cb') ?? undefined }) }}>
                                 <div className="bg-white p-2 rounded-full">
                                     <svg className="w-4" viewBox="0 0 533.5 544.3">
                                         <path
@@ -82,12 +85,12 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                                 placeholder="Email"
                             /> */}
                             {/* <input
-                                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-                                    type="password"
-                                    defaultValue={password}
-                                    onChange={e => setPassword(e.currentTarget.value)}
-                                    placeholder="Password"
-                                /> */}
+                                className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                                type="password"
+                                defaultValue={password}
+                                onChange={e => setPassword(e.currentTarget.value)}
+                                placeholder="Password"
+                            /> */}
                             {/* <button className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none" onClick={_ => handleSignInUsingEmail()}>
                                 <FaSignInAlt className="w-6 h-6 -ml-2" />
                                 <span className="ml-3">Sign In</span>

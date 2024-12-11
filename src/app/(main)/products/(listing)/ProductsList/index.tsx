@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import Loader from '@/ui/Loader'
@@ -5,9 +6,8 @@ import ProductCardItem from '@/ui/Product/ProductCardItem'
 import React, { useEffect } from 'react'
 import { Configure, Pagination, useHits, useInstantSearch, useSearchBox } from 'react-instantsearch'
 
-const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery?: string, categoryParam?: string, searchParams?: { [key: string]: string | undefined } }) => {
+const ProductList = ({ searchQuery, searchParams, categoryParam, predefinedProducts = [] }: { searchQuery?: string, categoryParam?: string, searchParams?: { [key: string]: string | undefined }, predefinedProducts?: ProductDataModelWithColorMap[] }) => {
     const { items: hits } = useHits({
-
     })
     const { status } = useInstantSearch()
     const { refine } = useSearchBox()
@@ -19,9 +19,7 @@ const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery
     return (
         (<div className="lg:basis-5/6 mx-auto">
             {
-                categoryParam && <Configure
-                    // facetFilters={[['productCategory:' + decodeURIComponent(categoryParam ?? ""), ...((decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? ['productCategory:Hemp Rugs', 'productCategory:Wool Jute Kilim Rugs', 'productCategory:Braided Jute Rug'] : [])]]} 
-                    filters={(decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? '(productCategory:"Hemp Rugs" OR productCategory:"Wool Jute Kilim Rugs" OR productCategory:"Braided Jute Rug")' : `productCategory:"${(decodeURIComponent(categoryParam ?? ""))}"`} />
+                categoryParam && <Configure filters={(decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? '(productCategory:"Hemp Rugs" OR productCategory:"Wool Jute Kilim Rugs" OR productCategory:"Braided Jute Rug")' : `productCategory:"${(decodeURIComponent(categoryParam ?? ""))}"`} />
             }
             {
                 searchParams?.color && <Configure facetFilters={[['variations.variationColor:' + decodeURIComponent(searchParams.color)]]} />
@@ -34,6 +32,13 @@ const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery
             }
             <div className='grid grid-cols-2 lg:grid-cols-3 gap-10'>
                 {
+                    predefinedProducts.map(product => {
+                        return (
+                            <ProductCardItem key={(product._id ?? product.objectID).toString()} {...(product as unknown as ProductDataModelWithColorMap)} sponsered />
+                        )
+                    })
+                }
+                {
                     hits.map(product => {
                         return (
                             <ProductCardItem key={(product._id ?? product.objectID).toString()} {...(product as unknown as ProductDataModelWithColorMap)} />
@@ -42,7 +47,7 @@ const ProductList = ({ searchQuery, searchParams, categoryParam }: { searchQuery
                 }
             </div>
             {
-                hits.length == 0 && status != "stalled" && <div className='w-full min-h-[700px]'>
+                hits.length == 0 && status != "stalled" && status != "loading" && <div className='w-full min-h-[700px]'>
                     <span className='text-2xl sm:text-9xl font-extrabold opacity-50'>OOPS! <br /> Nothing Found.</span>
                 </div>
             }

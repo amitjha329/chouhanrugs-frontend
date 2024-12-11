@@ -2,17 +2,12 @@ import Image from 'next/image'
 import React from 'react'
 import Logo from '../Logo'
 import { auth } from '@/auth'
-// import CurrencySelector from './CurrencySelector'
-// import { cookies } from 'next/headers'
-// import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 import Link from 'next/link'
 import UserMenu from './UserMenu'
 import HeaderCartItem from './HeaderCartItem'
 
 const Header = async () => {
     const session = await auth()
-    // const cookie = cookies()
-    // const currency = await getCurrencyList()
     return (
         <header className='flex items-center justify-between px-10 py-5 bg-base-100'>
             <div className='flex gap-10'>
