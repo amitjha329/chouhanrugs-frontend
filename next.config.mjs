@@ -14,7 +14,16 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.caredone.in' },
     ]
   },
-
+  redirects: async () => {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.chouhanrugs.com" }],
+        destination: "https://chouhanrugs.com/:path*",
+        permanent: true,
+      }
+    ]
+  },
   webpack(
     config,
     { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
