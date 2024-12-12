@@ -20,7 +20,7 @@ const ProductCardItem = (props: CompoProps) => {
                 <div className="relative rounded-2xl overflow-hidden">
                     <Image src={props.images[props.productPrimaryImageIndex]} alt={props.productName} className="!w-full !relative !~h-40/60 object-cover" width={300} height={240} />
                     <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{props.productDiscountPercentage}</div>
-                    {props.sponsered && <div className='rounded-full text-primary py-1 px-2 text-xs bg-white absolute top-2 left-1/2 -translate-x-1/2'>Sponsored</div>}
+                    {props.sponsered && <div className='rounded-full text-primary py-1 px-2 text-xs bg-white absolute max-md:bottom-2 md:top-2 left-1/2 -translate-x-1/2'>Sponsored</div>}
                     {props.colorMap && <div className='absolute bottom-2 left-2'>
                         <div className="avatar-group -space-x-3 rtl:space-x-reverse">
                             {
