@@ -5,6 +5,7 @@ import banner_mobile from "./banner-mobile.jpg"
 import getSiteData from "@/backend/serverActions/getSiteData";
 import SigninForm from "./SigninForm";
 import { auth } from "@/auth";
+import Link from "next/link";
 
 const SignIn = async () => {
     const session = await auth()
@@ -20,12 +21,14 @@ const SignIn = async () => {
                 <div className="sm:basis-2/3 h-screen max-sm:hidden"></div>
                 <div className="sm:basis-1/3 sm:h-screen max-sm:w-screen flex flex-col items-center justify-center">
                     <div className='flex flex-col items-center justify-center'>
-                        <Image
-                            src={siteInfo.logoSrc}
-                            alt={siteInfo.title}
-                            className="!relative max-sm:!h-20 !w-auto mt-5"
-                            fill
-                        />
+                        <Link href="/">
+                            <Image
+                                src={siteInfo.logoSrc}
+                                alt={siteInfo.title}
+                                className="!relative max-sm:!h-20 !h-20 !w-auto mt-5"
+                                fill
+                            />
+                        </Link>
                         {
                             siteInfo.isTitle && <h1 className="text-lg text-center sm:text-left font-extrabold">
                                 {siteInfo.title}
