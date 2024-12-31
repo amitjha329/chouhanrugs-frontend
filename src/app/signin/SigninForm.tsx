@@ -84,6 +84,9 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                                 onChange={e => setEmail(e.currentTarget.value)}
                                 placeholder="Email"
                             />
+                            {
+                                searchParams.get('error') && <p className='mb-6 text-red-600 text-opacity-70 font-semibold'>Wrong OTP Was Provided, Please Retry Sign In.</p>
+                            }
                             {/* <input
                                 className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                                 type="password"

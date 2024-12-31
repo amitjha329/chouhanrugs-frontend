@@ -6,7 +6,7 @@ import authConfig from "./auth.config"
 export const { auth, handlers, signIn, signOut } = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
-        signIn: "/login"
+        signIn: "/signin"
     },
     session: {
         strategy: "jwt"
