@@ -1,61 +1,61 @@
 import type { NextAuthConfig } from "next-auth"
 import Google from "next-auth/providers/google"
-// import Credential from "next-auth/providers/credentials"
-// import { getTokenDB, getUserMiddleWare } from "./backend/serverActions/middleWareHandlers"
+import Credential from "next-auth/providers/credentials"
 
 export default {
     // trustHost:true,
     providers: [
-        // Credential({
-        //     authorize: async (credentials) => {
-        //         try {
-        //             if (!credentials.email || !credentials.tkId || !credentials.code) {
-        //                 console.log("error in check is data is present")
-        //                 return null
-        //             } else {
-        //                 const tokenDbREs = await fetch(process.env.AUTH_URL + '/api/mwHandler', {
-        //                     method: "POST",
-        //                     body: JSON.stringify({
-        //                         action: "getTokenDB",
-        //                         credentials
-        //                     })
-        //                 })
-        //                 const tokenDb = await tokenDbREs.json()
-        //                 if (!tokenDb) {
-        //                     console.log("error in check db token is present")
-        //                     return null
-        //                 }
-        //                 const crypto = await require('crypto');
-        //                 const hashedCode = crypto.createHash('md5').update(`${credentials.code}`).digest('hex');
-        //                 if (hashedCode !== tokenDb.token) {
-        //                     console.log("error in check if token matches")
-        //                     return null
-        //                 }
-        //                 const userres = await fetch(process.env.AUTH_URL + '/api/mwHandler', {
-        //                     method: "POST",
-        //                     body: JSON.stringify({
-        //                         action: "getUserMiddleWare",
-        //                         credentials
-        //                     })
-        //                 })
-        //                 const user = await userres.json()
-        //                 return {
-        //                     email: user.email,
-        //                     id: user._id.toHexString(),
-        //                     name: user.name,
-        //                     image: user.image,
-        //                     roles: user.roles,
-        //                     cartCount: user.cartCount,
-        //                     number: user.number
-        //                 }
-        //             }
-        //         } catch (error) {
-        //             console.log(error)
-        //             return null
-        //         }
-        //     },
-        //     type: "credentials"
-        // }),
+        Credential({
+            authorize: async (credentials) => {
+                try {
+                    if (!credentials.email || !credentials.tkId || !credentials.code) {
+                        console.log("error in check is data is present")
+                        return null
+                    } else {
+                        const tokenDbREs = await fetch(process.env.AUTH_URL + '/api/mwHandler', {
+                            method: "POST",
+                            body: JSON.stringify({
+                                action: "getTokenDB",
+                                credentials
+                            })
+                        })
+                        const tokenDb = await tokenDbREs.json()
+                        if (!tokenDb) {
+                            console.log("error in check db token is present")
+                            return null
+                        }
+                        const crypto = await require('crypto');
+                        const hashedCode = crypto.createHash('md5').update(`${credentials.code}`).digest('hex');
+                        if (hashedCode !== tokenDb.token) {
+                            console.log("error in check if token matches")
+                            return null
+                        }
+                        const userres = await fetch(process.env.AUTH_URL + '/api/mwHandler', {
+                            method: "POST",
+                            body: JSON.stringify({
+                                action: "getUserMiddleWare",
+                                credentials
+                            })
+                        })
+                        const user = await userres.json()
+                        console.log(user,"===============================")
+                        return {
+                            email: user.email,
+                            id: user._id,
+                            name: user.name,
+                            image: user.image,
+                            roles: user.roles,
+                            cartCount: user.cartCount,
+                            number: user.number
+                        }
+                    }
+                } catch (error) {
+                    console.log(error)
+                    return null
+                }
+            },
+            type: "credentials"
+        }),
         // Nodemailer({
         //     server: {
         //         host: process.env.EMAIL_SERVER_HOST,

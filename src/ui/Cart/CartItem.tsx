@@ -9,8 +9,9 @@ import IncrementDecrement from './IncrementDecrement'
 import { DeleteFromCartLg, DeleteFromCartSm } from './DeleteFromCart'
 
 const CartItem = ({ item }: { item: CartDataModel, }) => {
-    const cookie = ((cookies() as unknown as UnsafeUnwrappedCookies) as unknown as UnsafeUnwrappedCookies)
-    const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : null
+    // const cookie = cookies()
+    // const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : null
+    const userCurrency = null
 
     const calculateProductPrice = (): number => {
         var priceInitial = 0
