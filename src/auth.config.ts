@@ -12,12 +12,13 @@ export default {
                         console.log("error in check is data is present")
                         return null
                     } else {
-                        const tokenDbREs = await fetch(process.env.AUTH_URL + '/api/mwHandler', {
+                        const tokenDbREs = await fetch('http://localhost:3000/api/mwHandler', {
                             method: "POST",
                             body: JSON.stringify({
                                 action: "getTokenDB",
                                 credentials
-                            })
+                            }),
+                            
                         })
                         const tokenDb = await tokenDbREs.json()
                         if (!tokenDb) {
@@ -31,7 +32,7 @@ export default {
                             console.log("error in check if token matches")
                             return null
                         }
-                        const userres = await fetch(process.env.AUTH_URL + '/api/mwHandler', {
+                        const userres = await fetch('http://localhost:3000/api/mwHandler', {
                             method: "POST",
                             body: JSON.stringify({
                                 action: "getUserMiddleWare",
