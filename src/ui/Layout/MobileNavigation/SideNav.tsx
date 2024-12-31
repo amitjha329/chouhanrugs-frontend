@@ -6,8 +6,9 @@ import { CiBoxes } from 'react-icons/ci'
 import { FiX, FiShoppingBag, FiInfo, FiHelpCircle, FiHeart } from 'react-icons/fi'
 import Logo from '../Logo'
 import SignoutButton from './SignoutButton'
-import { FaRegUserCircle } from 'react-icons/fa'
+import { FaRegUserCircle, FaSignInAlt } from 'react-icons/fa'
 import { auth } from '@/auth'
+import Link from 'next/link'
 
 const SideNav = async () => {
     const session = await auth()
@@ -91,7 +92,12 @@ const SideNav = async () => {
                             </a>
                         </li>
                         <li className="border-t-[0.5px] border-gray-200">
-                            <SignoutButton />
+                            {
+                                session?.user ? <SignoutButton /> : <Link href="/signin" className='flex items-center p-2 text-base font-bold text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:bg-gray-700'>
+                                    <FaSignInAlt className="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-900 dark:text-white" />
+                                    <span className="flex-1 ml-3 whitespace-nowrap">Log In</span>
+                                </Link>
+                            }
                         </li>
                     </ul>
                 </div>

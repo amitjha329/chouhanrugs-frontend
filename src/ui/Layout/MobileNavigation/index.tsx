@@ -12,8 +12,10 @@ const MobileNavigation = () => {
                 <div className='flex pt-3 px-3 justify-between items-center'>
                     <Image src="/vector/menu.svg" alt="Search" width={25} height={25} id='mobile_menu_button' />
                     <Logo logoClass='text-accent' taglineClass='text-[8px] text-center' />
-                    <Link href="/user/wishlist"><Image src="/vector/Heart.svg" alt="My WIshlist" width={20} height={20} /></Link>
-                    <Link href="/cart"><HeaderCartItemMobile /></Link>
+                    <div className='flex items-center gap-5'>
+                        <Link href="/user/wishlist"><Image src="/vector/Heart.svg" alt="My WIshlist" width={20} height={20} /></Link>
+                        <Link href="/cart"><HeaderCartItemMobile /></Link>
+                    </div>
                 </div>
                 <form className='join join-horizontal w-full pb-4 pt-5 px-3' action="/products">
                     <input className='join-item input input-md input-bordered border-r-0 !rounded-l-full w-full placeholder:text-primary' placeholder='Search' name='search' type='text' id='search' />

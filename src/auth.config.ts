@@ -26,6 +26,7 @@ export default {
                         }
                         const crypto = await require('crypto');
                         const hashedCode = crypto.createHash('md5').update(`${credentials.code}`).digest('hex');
+                        console.log(hashedCode, tokenDb)
                         if (hashedCode !== tokenDb.token) {
                             console.log("error in check if token matches")
                             return null
