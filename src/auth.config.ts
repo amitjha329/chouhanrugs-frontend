@@ -1,81 +1,61 @@
 import type { NextAuthConfig } from "next-auth"
 import Google from "next-auth/providers/google"
-import Credential from "next-auth/providers/credentials"
-import clientPromise from "./lib/clientPromise"
-import { ObjectId } from "mongodb"
-// import { createHash } from "crypto"
-// import clientPromise from "./lib/clientPromise"
-// import { ObjectId } from "mongodb"
-// import { createHash } from "crypto"
+// import Credential from "next-auth/providers/credentials"
+// import { getTokenDB, getUserMiddleWare } from "./backend/serverActions/middleWareHandlers"
 
 export default {
     // trustHost:true,
     providers: [
-        Credential({
-            authorize: async (credentials) => {
-                try {
-                    if (!credentials.email || !credentials.tkId || !credentials.code) {
-                        console.log("error in check is data is present")
-                        return null
-                    } else {
-                        const clientMongo = await clientPromise
-                        const db = clientMongo.db(process.env.MONGODB_DB)
-                        const collection = db.collection("verification_tokens")
-                        const collectionUsers = db.collection("users")
-                        const tokenDb = await collection.findOne({ _id: ObjectId.createFromHexString(credentials.tkId.toString()) })
-                        if (!tokenDb) {
-                            console.log("error in check db token is present")
-                            return null
-                        }
-                        const crypto = await require('crypto');
-                        const hashedCode = crypto.createHash('md5').update(`${credentials.code}`).digest('hex');
-                        if (hashedCode !== tokenDb.token) {
-                            console.log("error in check if token matches")
-                            return null
-                        }
-                        const user = await collectionUsers.findOne({ email: credentials.email })
-                        if (!user) {
-                            const userNew = await collectionUsers.insertOne({
-                                email: credentials.email,
-                                emailVerified: new Date(),
-                                roles: [
-                                    "user"
-                                ],
-                                cartCount: 0,
-                                image: "",
-                                name: "",
-                                number: ""
-                            })
-                            return {
-                                email: credentials.email,
-                                id: userNew.insertedId.toHexString(),
-                                name: "",
-                                image: "",
-                                roles: [
-                                    "user"
-                                ],
-                                cartCount: 0,
-                                number: ""
-                            }
-                        }
-                        return {
-                            email: user.email,
-                            id: user._id.toHexString(),
-                            name: user.name,
-                            image: user.image,
-                            roles: user.roles,
-                            cartCount: user.cartCount,
-                            number: user.number
-                        }
-                        return null
-                    }
-                } catch (error) {
-                    console.log(error)
-                    return null
-                }
-            },
-            type: "credentials"
-        })
+        // Credential({
+        //     authorize: async (credentials) => {
+        //         try {
+        //             if (!credentials.email || !credentials.tkId || !credentials.code) {
+        //                 console.log("error in check is data is present")
+        //                 return null
+        //             } else {
+        //                 const tokenDbREs = await fetch(process.env.AUTH_URL + '/api/mwHandler', {
+        //                     method: "POST",
+        //                     body: JSON.stringify({
+        //                         action: "getTokenDB",
+        //                         credentials
+        //                     })
+        //                 })
+        //                 const tokenDb = await tokenDbREs.json()
+        //                 if (!tokenDb) {
+        //                     console.log("error in check db token is present")
+        //                     return null
+        //                 }
+        //                 const crypto = await require('crypto');
+        //                 const hashedCode = crypto.createHash('md5').update(`${credentials.code}`).digest('hex');
+        //                 if (hashedCode !== tokenDb.token) {
+        //                     console.log("error in check if token matches")
+        //                     return null
+        //                 }
+        //                 const userres = await fetch(process.env.AUTH_URL + '/api/mwHandler', {
+        //                     method: "POST",
+        //                     body: JSON.stringify({
+        //                         action: "getUserMiddleWare",
+        //                         credentials
+        //                     })
+        //                 })
+        //                 const user = await userres.json()
+        //                 return {
+        //                     email: user.email,
+        //                     id: user._id.toHexString(),
+        //                     name: user.name,
+        //                     image: user.image,
+        //                     roles: user.roles,
+        //                     cartCount: user.cartCount,
+        //                     number: user.number
+        //                 }
+        //             }
+        //         } catch (error) {
+        //             console.log(error)
+        //             return null
+        //         }
+        //     },
+        //     type: "credentials"
+        // }),
         // Nodemailer({
         //     server: {
         //         host: process.env.EMAIL_SERVER_HOST,
@@ -125,8 +105,7 @@ export default {
         //             throw new Error("SMTP Not Configured.")
         //         }
         //     }
-        // })
-        ,
+        // }),
         Google({
             allowDangerousEmailAccountLinking: true,
             clientId: process.env.GOOGLE_CLIENT_ID as string,

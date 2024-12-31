@@ -71,19 +71,19 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                                 <span className="ml-4">Sign In with Google</span>
                             </button>
                         </div>
-                        <div className="sm:my-12 my-7 border-b text-center">
+                        {/* <div className="sm:my-12 my-7 border-b text-center">
                             <div className="leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2">
                                 Or sign in with e-mail
                             </div>
-                        </div>
+                        </div> */}
                         <div className="mx-auto max-w-xs sm:max-w-sm ">
-                            <input
+                            {/* <input
                                 className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                                 type="email"
                                 defaultValue={email}
                                 onChange={e => setEmail(e.currentTarget.value)}
                                 placeholder="Email"
-                            />
+                            /> */}
                             {/* <input
                                 className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                                 type="password"
@@ -91,10 +91,10 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                                 onChange={e => setPassword(e.currentTarget.value)}
                                 placeholder="Password"
                             /> */}
-                            <button className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none" onClick={_ => handleSignInUsingEmail()}>
+                            {/* <button className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none" onClick={_ => handleSignInUsingEmail()}>
                                 <FaSignInAlt className="w-6 h-6 -ml-2" />
                                 <span className="ml-3">Sign In</span>
-                            </button>
+                            </button> */}
                             <p className="mt-6 max-sm:mb-6 text-xs text-gray-600 text-center">
                                 I agree to abide by {siteTitle}&nbsp;
                                 <a href="#" className="border-b border-gray-500 border-dotted">
