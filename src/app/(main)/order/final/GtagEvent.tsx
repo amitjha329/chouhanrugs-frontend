@@ -1,17 +1,16 @@
-'use client'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 const GtagEvent = () => {
-    useEffect(() => {
-        window.onload = ((e) => {
-            //@ts-ignore
+    return <script>
+        {
+            `
             gtag('event', 'conversion', {
                 'send_to': 'AW-16522702647/dNepCKjohv8ZELfe0cY9',
                 'transaction_id': ''
             });
-        })
-    }, [])
-    return <></>
+            `
+        }
+    </script>
 }
 
 export default GtagEvent
