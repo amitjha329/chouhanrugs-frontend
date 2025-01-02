@@ -21,7 +21,6 @@ const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: st
     const orderedProducts = await Promise.all(orderPorductsPromise)
     return (
         <>
-            <GtagEvent />
             <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
                 {
                     orderData && orderData != null ? (
@@ -147,6 +146,7 @@ const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: st
                     ) : <div className="w-full md:min-h-[400px] text-5xl flex justify-center items-center opacity-75">Order not Found</div>
                 }
             </div>
+            <GtagEvent />
         </>
     )
 }
