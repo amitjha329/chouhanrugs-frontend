@@ -10,7 +10,7 @@ const ImageSection = ({ className, imageArray }: { mobile: boolean, className?: 
             <section className={className}>
                 <div className={clsx("sm:overflow-visible items-center justify-center flex")} id="image-carousel-container">
                     <input type="hidden" value={JSON.stringify(imageArray.map(it => `/_next/image?url=${encodeURIComponent(it)}&w=1920&q=100`))} id="imagesProducts" />
-                    <div data-image-container className={clsx("rounded-3xl mb-4 relative img-zoom-container !h-[500px] overflow-hidden ")}
+                    <div data-image-container className={clsx("rounded-3xl mb-4 relative img-zoom-container md:!h-[500px] max-md:aspect-square max-md:w-full max-md:h-auto overflow-hidden ")}
                     >
                         <img src={imageArray[0] ?? ""} alt='image-viewing' data-main-image className="!relative object-cover h-full w-full" fetchPriority="high" />
                         <div className="img-zoomed z-10" style={{
