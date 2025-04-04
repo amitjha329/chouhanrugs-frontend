@@ -28,6 +28,39 @@ function deleteChild(element) {
 
 let selectedVaration = null
 
+// Initialize default selectedVariation
+if (Array.isArray(product.variations)) {
+    if (colorSelector && sizeSelector) {
+        const variation = product.variations.find(
+            it => it.variationColor === colorSelector.value && 
+                 it.variationSize === sizeSelector.value
+        );
+        if (variation) {
+            selectedVaration = variation.variationCode;
+            sellPrice.innerText = `$ ${calculateDiscountedAmount(variation.variationDiscount, variation.variationPrice).toFixed(1)}`;
+            msrp.innerText = `$ ${variation.variationPrice}`;
+        }
+    } else if (colorSelector) {
+        const variation = product.variations.find(
+            it => it.variationColor === colorSelector.value
+        );
+        if (variation) {
+            selectedVaration = variation.variationCode;
+            sellPrice.innerText = `$ ${calculateDiscountedAmount(variation.variationDiscount, variation.variationPrice).toFixed(1)}`;
+            msrp.innerText = `$ ${variation.variationPrice}`;
+        }
+    } else if (sizeSelector) {
+        const variation = product.variations.find(
+            it => it.variationSize === sizeSelector.value
+        );
+        if (variation) {
+            selectedVaration = variation.variationCode;
+            sellPrice.innerText = `$ ${calculateDiscountedAmount(variation.variationDiscount, variation.variationPrice).toFixed(1)}`;
+            msrp.innerText = `$ ${variation.variationPrice}`;
+        }
+    }
+}
+
 if (colorSelector) {
     colorSelector.onchange = e => {
         colorDisplayer.style.backgroundColor = product.colorData.find(c => c.name == e.target.value).colorCode.hex

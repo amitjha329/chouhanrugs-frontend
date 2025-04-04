@@ -10,11 +10,35 @@ interface VariationExtraDataModel extends ProductDataModel {
 }
 
 const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel }) => {
+    function getMsrp() {
+        if (product.sizeData.length > 0 && product.colorData.length > 0) {
+            return Number(product.variations.find((variation) => variation.variationSize === product.sizeData[0].sizeCode && variation.variationColor === product.colorData[0].name)?.variationPrice ?? 0)
+        } else if (product.sizeData.length > 0) {
+            return Number(product.variations.find((variation) => variation.variationSize === product.sizeData[0].sizeCode)?.variationPrice ?? 0)
+        } else if (product.colorData.length > 0) {
+            return Number(product.variations.find((variation) => variation.variationColor === product.colorData[0].name)?.variationPrice ?? 0)
+        } else {
+            return product.productMSRP
+        }
+    }
+
+    function getSellingPrice() {
+        if (product.sizeData.length > 0 && product.colorData.length > 0) {
+            return Number(product.variations.find((variation) => variation.variationSize === product.sizeData[0].sizeCode && variation.variationColor === product.colorData[0].name)?.variationPrice ?? '0') - Number(product.variations.find((variation) => variation.variationSize === product.sizeData[0].sizeCode && variation.variationColor === product.colorData[0].name)?.variationDiscount ?? 0) / 100 * Number(product.variations.find((variation) => variation.variationSize === product.sizeData[0].sizeCode && variation.variationColor === product.colorData[0].name)?.variationPrice ?? '0')
+        } else if (product.sizeData.length > 0) {
+            return Number(product.variations.find((variation) => variation.variationSize === product.sizeData[0].sizeCode)?.variationPrice ?? '0') - Number(product.variations.find((variation) => variation.variationSize === product.sizeData[0].sizeCode)?.variationDiscount ?? 0) / 100 * Number(product.variations.find((variation) => variation.variationSize === product.sizeData[0].sizeCode)?.variationPrice ?? '0')
+        } else if (product.colorData.length > 0) {
+            return Number(product.variations.find((variation) => variation.variationColor === product.colorData[0].name)?.variationPrice ?? '0') - Number(product.variations.find((variation) => variation.variationColor === product.colorData[0].name)?.variationDiscount ?? 0) / 100 * Number(product.variations.find((variation) => variation.variationColor === product.colorData[0].name)?.variationPrice ?? '0')
+        }
+        else {
+            return product.productSellingPrice
+        }
+    }
     return (
         <>
             <div className="flex items-center mb-4">
-                <span className="~text-xl/3xl font-bold text-brown-700" id='selling_price'>${product.productSellingPrice}</span>
-                <span className="line-through ml-2 text-gray-500" id='msrp'>${product.productMSRP}</span>
+                <span className="~text-xl/3xl font-bold text-brown-700" id='selling_price'>${getSellingPrice().toFixed(1)}</span>
+                <span className="line-through ml-2 text-gray-500" id='msrp'>${getMsrp().toFixed(1)}</span>
                 <button className="bg-green-500 text-white ~px-1/3 py-1 rounded ml-4 ~text-sm/base">Save {product.productDiscountPercentage}
                 </button>
             </div>
@@ -29,8 +53,8 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                                 name="color"
                                 defaultValue={product.colorData[0].name}
                             >
-                                {product.colorData.map((color) => (
-                                    <option key={color.colorCode.hex} value={color.name}>
+                                {product.colorData.map((color, index) => (
+                                    <option key={color.colorCode.hex} value={color.name} selected={index === 0}>
                                         {color.name}
                                     </option>
                                 ))}
@@ -55,8 +79,8 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                             id="size-select"
                             className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 ~px-3/4 ~py-1/2 ~pr-6/8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" defaultValue={product.sizeData[0].sizeCode}>
                             {
-                                product.sizeData.map((size) => (
-                                    <option key={size.sizeCode} value={size.sizeCode}>
+                                product.sizeData.map((size, index) => (
+                                    <option key={size.sizeCode} value={size.sizeCode} selected={index === 0}>
                                         {size.sizeCode}
                                     </option>
                                 ))
@@ -93,7 +117,7 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                 <div className="btn btn-outline btn-accent ~px-10/20" id='add_to_cart_btn'>Add to Cart</div>
             </div>
             <input className='hidden' type='hidden' value={JSON.stringify(product)} id='prod_data' />
-            <Script id='color_Selector_logic' src='/variationHandler.js'  />
+            <Script id='color_Selector_logic' src='/variationHandler.js' />
         </>
     )
 }
