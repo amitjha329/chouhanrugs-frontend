@@ -12,21 +12,23 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
     const calculateProductPrice = (item: CartDataModel): number => {
         var priceInitial = 0
         if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
-            const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!)
-            priceInitial = (Number(item.cartProduct[0].variations[variationindex].variationPrice) - Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationPrice) * (Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationDiscount ?? 0) / 100)) >> 0
+            const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!);
+            const variationPrice = Number(item.cartProduct[0].variations[variationindex].variationPrice);
+            const variationDiscount = Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationDiscount ?? 0);
+            priceInitial = variationPrice - (variationPrice * (variationDiscount / 100));
         } else if (item.variationCode == "customSize") {
             switch (item.customSize?.shape) {
                 case "Rectangle":
                 case "Runner":
                 case "Square":
-                    priceInitial = item.cartProduct[0].productPriceSqFt * (item.customSize?.dimensions.length ?? 1) * (item.customSize?.dimensions.width ?? 1)
+                    priceInitial = item.cartProduct[0].productPriceSqFt * (item.customSize?.dimensions.length ?? 1) * (item.customSize?.dimensions.width ?? 1);
                     break;
                 case "Round":
-                    priceInitial = item.cartProduct[0].productPriceSqFt * (Math.pow((item.customSize?.dimensions.diameter ?? 1) / 2, 2) * Math.PI)
+                    priceInitial = item.cartProduct[0].productPriceSqFt * (Math.pow((item.customSize?.dimensions.diameter ?? 1) / 2, 2) * Math.PI);
                     break;
             }
         } else {
-            priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0
+            priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0;
         }
 
         return priceInitial * item.quantity
