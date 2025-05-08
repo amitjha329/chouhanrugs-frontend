@@ -5,7 +5,7 @@ import React, { useEffect } from 'react'
 
 const HeaderCartItem = ({ icon, text, id }: { icon: string, text: string, id?: string }) => {
     const { cartCount } = useDataConnectionContext()
-    return <div className='gap-3 flex items-center cursor-pointer indicator' id={id}>
+    return <div className='gap-3 flex items-center cursor-pointer indicator z-50 relative' id={id}>
         {
             (cartCount ?? 0) > 0 && <span className="indicator-item badge badge-secondary">
                 {(cartCount ?? 0) < 11 ? cartCount : '10+'}

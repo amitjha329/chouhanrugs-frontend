@@ -25,7 +25,7 @@ const Header = async () => {
     )
 }
 
-const HeaderItem = ({ icon, text, id }: { icon: string, text: string, id?: string }) => <div className='gap-3 flex items-center cursor-pointer' id={id}>
+const HeaderItem = ({ icon, text, id }: { icon: string, text: string, id?: string }) => <div className='gap-3 flex items-center cursor-pointer z-50 relative' id={id}>
     <Image src={icon} alt={text} height={25} width={25} />
     <span>{text}</span>
 </div>

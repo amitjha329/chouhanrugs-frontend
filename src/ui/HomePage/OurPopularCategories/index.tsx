@@ -16,7 +16,7 @@ const OurPopularCategories = async () => {
     const popularCategories = [
         {
             title: "Popular in Cushion & Pillow",
-            desc: "Lorem ipsum dolor sit amet consectetur. Massa eu sollicitudin ac arcu.",
+            desc: "Explore our wide range of comfortable and stylish cushions and pillows.",
             link: "Cushion%20&%20Pillow",
             image: cushion_pop,
             lgspan: 1,
@@ -24,7 +24,7 @@ const OurPopularCategories = async () => {
         },
         {
             title: "Popular in Rugs & Runners",
-            desc: "Lorem ipsum dolor sit amet consectetur. Massa eu sollicitudin ac arcu.",
+            desc: "Discover premium quality rugs and runners to enhance your home decor. Our collection features a variety of styles, colors, and textures to suit every taste and space, ensuring a perfect blend of comfort and elegance.",
             link: "Rugs%20&%20Runners",
             image: rugs_pop,
             lgspan: 2,
@@ -32,22 +32,22 @@ const OurPopularCategories = async () => {
         },
         {
             title: "Popular in Wall Hanging Macrame",
-            desc: "Lorem ipsum dolor sit amet consectetur. Massa eu sollicitudin ac arcu.",
+            desc: "Add a touch of elegance with our handcrafted wall hanging macrame designs.",
             link: "Wall%20Hanging%20Macrame",
-            image: cushion_pop,
+            image: macrame_pop,
             lgspan: 1,
             span: 4
         },
         {
             title: "Popular in Throw Blankets",
-            desc: "Lorem ipsum dolor sit amet consectetur. Massa eu sollicitudin ac arcu.",
+            desc: "Cozy up with our soft and warm throw blankets, perfect for any season. Choose from a variety of designs, colors, and materials to complement your living space and keep you comfortable year-round.",
             link: "Throw%20Blankets",
             image: blankets_pop,
             lgspan: 2,
             span: 2,
         }, {
             title: "Popular in Bags",
-            desc: "Lorem ipsum dolor sit amet consectetur. Massa eu sollicitudin ac arcu.",
+            desc: "Browse our collection of versatile and trendy bags for every occasion. From casual totes to elegant handbags, find the perfect accessory to match your style and needs.",
             link: "Bags",
             image: bags_pop,
             lgspan: 2,

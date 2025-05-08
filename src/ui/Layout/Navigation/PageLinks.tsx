@@ -3,7 +3,7 @@ import React from 'react'
 
 const PageLinks = () => {
     return (
-        <nav className='bg-secondary text-secondary-content font-[500] flex items-center justify-center gap-5 py-2 text-xs' id='page_links'>
+        <nav className='bg-secondary text-secondary-content font-[500] flex items-center justify-center gap-5 py-2 text-xs z-50 relative' id='page_links'>
             <Link href={'/'} >Home</Link>
             <Link href={'/about-us'} >About Us</Link>
             <Link href={'/contact-us'} >Contact Us</Link>
