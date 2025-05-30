@@ -42,9 +42,22 @@ const CartPage = async () => {
                         </h3>
                     </div>
                     {
-                        cart && cart.length > 0 ? cart.map((item, index) => <CartItem item={item} key={item?._id} />) : <div className="flex w-full h-20 justify-center items center text-2xl opacity-50">Cart is empty.</div>
+                        cart && cart.length > 0 ? (
+                            cart.map((item, index) => <CartItem item={item} key={item?._id} />)
+                        ) : (
+                            <div className="flex flex-col items-center justify-center w-full h-64 sm:h-80 bg-base-100 rounded-lg shadow-inner my-8 px-4 sm:px-0">
+                                <svg className="w-12 h-12 sm:w-16 sm:h-16 text-primary mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m5-9v9m4-9v9m4-9l2 9" />
+                                </svg>
+                                <h2 className="font-bold text-lg sm:text-2xl text-gray-700 mb-2 text-center">Your cart is empty</h2>
+                                <p className="text-gray-500 mb-4 text-center text-sm sm:text-base">Looks like you haven&apos;t added anything yet.</p>
+                                <Link href="/">
+                                    <button className="btn btn-primary w-full sm:w-auto">Continue Shopping</button>
+                                </Link>
+                            </div>
+                        )
                     }
-                    <CartTotalSection cartItems={cart} />
+                    {cart && cart.length > 0 && <CartTotalSection cartItems={cart} />}
                 </div>
             </div>
         </div>

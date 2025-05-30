@@ -30,27 +30,28 @@ const CategoryMenu = async () => {
 }
 
 const CategoryMenuItem = ({ label, submenu, href }: MenuItemProp) => {
+    const hasSubmenu = (submenu?.length ?? 0) > 0;
     return (
-        (submenu?.length??0) > 0 ?<Link href={href ?? ""} className={clsx("text-sm", { "dropdown dropdown-hover": (submenu?.length ?? 0) > 0 })}>
-        <span className='flex items-center gap-2'>{label} {(submenu?.length ?? 0) > 0 && <FaChevronDown />}</span>
-        {
-            (submenu?.length ?? 0) > 0 && <div className='dropdown-content menu bg-base-100 rounded-box z-[60] w-52 p-2 shadow border border-primary'>
-                <ul>
-                    {submenu?.map(item => <li key={item._id}><Link href={'/products/category/' + item.name}>{item.name}</Link></li>)}
-                </ul>
-            </div>
-        }
-    </Link>:
-        <Link href={href ?? ""} className={clsx("text-sm", { "dropdown dropdown-hover": (submenu?.length ?? 0) > 0 })}>
-            <span className='flex items-center gap-2'>{label} {(submenu?.length ?? 0) > 0 && <FaChevronDown />}</span>
-            {
-                (submenu?.length ?? 0) > 0 && <div className='dropdown-content menu bg-base-100 rounded-box z-[60] w-52 p-2 shadow border border-primary'>
+        hasSubmenu ? (
+            <div className="dropdown dropdown-hover">
+                <div className="text-sm flex items-center gap-2 cursor-pointer select-none" tabIndex={-1}>
+                    {label} <FaChevronDown />
+                </div>
+                <div className="dropdown-content menu bg-base-100 rounded-box z-[60] w-52 p-2 shadow border border-primary" tabIndex={0}>
                     <ul>
-                        {submenu?.map(item => <li key={item._id}><Link href={'/products/category/' + item.name}>{item.name}</Link></li>)}
+                        {submenu?.map(item => (
+                            <li key={item._id}>
+                                <Link href={'/products/category/' + item.name}>{item.name}</Link>
+                            </li>
+                        ))}
                     </ul>
                 </div>
-            }
-        </Link>
+            </div>
+        ) : (
+            <Link href={href ?? ""} className="text-sm flex items-center gap-2">
+                {label}
+            </Link>
+        )
     );
 }
 

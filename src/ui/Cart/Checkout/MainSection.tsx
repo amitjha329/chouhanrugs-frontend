@@ -512,7 +512,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     <span>Total cost</span>
                                     <span>{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
                                 </div>
-                                <button onClick={() => { processPayment() }} className={clsx("btn btn-primary w-full", { "sm:btn-disabled": payEnabled })} >
+                                <button onClick={() => { processPayment() }} className={clsx("btn btn-primary w-full", { "btn-disabled": payEnabled })} >
                                     Pay
                                 </button>
                             </div>

@@ -10,6 +10,8 @@ import { generateClientToken } from '@/backend/serverActions/paypal'
 import MainSection from '@/ui/Cart/Checkout/MainSection'
 import Script from 'next/script'
 import getCurrencyList from '@/backend/serverActions/getCurrencyList'
+import getUserCartitems from '@/backend/serverActions/getUserCartitems'
+import { redirect } from 'next/navigation'
 
 const CheckoutPage = async (
     props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
@@ -18,6 +20,11 @@ const CheckoutPage = async (
     const [siteInfo, payOpts, stripeKey, session, shippingList, paypalData, currencyList] = await Promise.all([getSiteData(), getAvailablePaymentOptions(), getStripePublicKey(), auth(), getShippingList(), getPaymentGatewayData("PAYPAL"), getCurrencyList()])
     // const cookie = await cookies()
     // const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : currencyList[0]
+    const cart = await getUserCartitems((session?.user as { id: string })?.id)
+
+    if(cart.length === 0) {
+        redirect('/cart')
+    }
 
     return (
         <>
