@@ -19,6 +19,8 @@ import AboveFooterSEOContet from '@/ui/HomePage/AboveFooterSEOContet'
 import { getPageFooterContent } from '@/backend/serverActions/getFooterContent'
 import getSlider from '@/backend/serverActions/getSlider'
 import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
+import { headers } from 'next/headers'
+import getDevice from '@/utils/getDevice'
 
 export async function generateMetadata(): Promise<Metadata> {
   const [data, dataAdditional, bingVerification, googleVerification] = await Promise.all([getPageData("home"), getSiteData(), getAnalyticsData("BING"), getAnalyticsData("GOOGLE_VER")])
@@ -57,6 +59,8 @@ const HomePage = async () => {
   const footerContentPromise = getPageFooterContent("home")
   const homePageDataPromise = getPageData("home")
   const productsPromise = getNewProductsTopSelling({ limit: 10 });
+  const header = await headers()
+  const isMobile = getDevice({ headers: header }) == "mobile"
   const [footerContent, homePageData, products] = await Promise.all([footerContentPromise, homePageDataPromise, productsPromise])
   const sliderData = await getSlider(homePageData.sliderId ?? 1)
   return (
@@ -70,7 +74,7 @@ const HomePage = async () => {
       <ShopBySize />
       <ShopByColor />
       <ShopByRoom />
-      <ProductCarouselBasic products={products} sectionHeading='Best Sellers' />
+      <ProductCarouselBasic products={products} sectionHeading='Best Sellers' isMobile={isMobile} />
       <Testimonials />
       <div className="container mx-auto pb-5 text-xs">
         <AboveFooterSEOContet data={footerContent} />

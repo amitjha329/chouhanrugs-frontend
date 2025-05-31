@@ -64,7 +64,7 @@ const ProductPage = async (props: { params: Promise<{ productId: string }> }) =>
                 <PriceAndVariation product={data} />
             </div>
             <InformationTabs product={data} />
-            <ProductCarouselBasic products={relatedProdcust} sectionHeading='Related Products' />
+            <ProductCarouselBasic products={relatedProdcust} sectionHeading='Related Products' isMobile={isMobile} />
         </div>
     )
 }

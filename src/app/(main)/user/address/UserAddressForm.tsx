@@ -50,21 +50,21 @@ const UserAddressForm = ({ addAddressHandler }: {
 
     return (
         <div className="mt-10 sm:mt-0">
-            <div className="md:grid md:grid-cols-3 rounded-lg overflow-hidden">
-                <div className="hidden md:block md:col-span-1 bg-gray-200">
-                    <div className="px-4 sm:p-8">
-                        <h3 className="text-lg font-medium leading-6 text-gray-700">Address Information</h3>
-                        <p className="mt-1 text-sm text-gray-500">Use a permanent address where you can receive mail.</p>
+            <div className="md:grid md:grid-cols-3 rounded-2xl overflow-hidden shadow-xl bg-base-100 border">
+                <div className="hidden md:block md:col-span-1 bg-base-200">
+                    <div className="px-6 py-10">
+                        <h3 className="text-2xl font-bold text-base-content">Address Information</h3>
+                        <p className="mt-2 text-base text-base-content/70">Use a permanent address where you can receive mail.</p>
                     </div>
                 </div>
                 <div className="md:col-span-2 md:mt-0">
-                    <form onSubmit={handleAddressAddForm}>
-                        <div className="bg-white px-4 py-5 sm:p-6">
-                            <h2 className='block md:hidden text-center font-medium mb-6 text-xl w-full'>Profile Info</h2>
-                            <hr className="border-gray-200 block md:hidden" />
-                            <div className="grid grid-cols-6 gap-6 mt-8">
+                    <form onSubmit={handleAddressAddForm} className="w-full">
+                        <div className="bg-base-100 px-6 py-8 rounded-b-2xl md:rounded-none">
+                            <h2 className="block md:hidden text-center font-semibold mb-6 text-2xl w-full text-base-content">Profile Info</h2>
+                            <hr className="border-base-200 block md:hidden mb-6" />
+                            <div className="grid grid-cols-6 gap-6">
                                 <div className="col-span-6 sm:col-span-3">
-                                    <label htmlFor="first-name" className="block text-sm text-gray-600">
+                                    <label htmlFor="first-name" className="block text-base font-medium text-base-content mb-1">
                                         First name
                                     </label>
                                     <input
@@ -74,12 +74,11 @@ const UserAddressForm = ({ addAddressHandler }: {
                                         autoComplete="given-name"
                                         defaultValue={firstName}
                                         onChange={e => setFName(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm input"
+                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
                                     />
                                 </div>
-
                                 <div className="col-span-6 sm:col-span-3">
-                                    <label htmlFor="last-name" className="block text-sm text-gray-600">
+                                    <label htmlFor="last-name" className="block text-base font-medium text-base-content mb-1">
                                         Last name
                                     </label>
                                     <input
@@ -89,12 +88,11 @@ const UserAddressForm = ({ addAddressHandler }: {
                                         autoComplete="family-name"
                                         defaultValue={lastName}
                                         onChange={e => setLName(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm input"
+                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
                                     />
                                 </div>
-
                                 <div className="col-span-6 sm:col-span-4">
-                                    <label htmlFor="email-address" className="block text-sm text-gray-600">
+                                    <label htmlFor="email-address" className="block text-base font-medium text-base-content mb-1">
                                         Email address
                                     </label>
                                     <input
@@ -104,27 +102,23 @@ const UserAddressForm = ({ addAddressHandler }: {
                                         autoComplete="email"
                                         defaultValue={email}
                                         onChange={e => setemail(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm input"
+                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
                                     />
                                 </div>
-
                                 <div className="col-span-6">
-                                    <label htmlFor="email-address" className="block text-sm text-gray-600">
+                                    <label htmlFor="country" className="block text-base font-medium text-base-content mb-1">
                                         Country
                                     </label>
                                     <Combobox value={selectedCountry} onChange={v => setselectedCountry(v ? v : countries[0])}>
                                         <div className="relative mt-1">
-                                            <div className="relative w-full overflow-hidden text-left input input-bordered p-0">
+                                            <div className="relative w-full">
                                                 <ComboboxInput
-                                                    className="w-full input input-ghost"
+                                                    className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100 pr-10"
                                                     displayValue={(country: any) => country.label}
                                                     onChange={(event) => setQuery(event.target.value)}
                                                 />
-                                                <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                                                    <BsCaretDown
-                                                        className="h-5 w-5 text-gray-400"
-                                                        aria-hidden="true"
-                                                    />
+                                                <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                    <BsCaretDown className="h-5 w-5 text-base-content/60" aria-hidden="true" />
                                                 </ComboboxButton>
                                             </div>
                                             <Transition
@@ -134,9 +128,9 @@ const UserAddressForm = ({ addAddressHandler }: {
                                                 leaveTo="opacity-0"
                                                 afterLeave={() => setQuery('')}
                                             >
-                                                <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                                <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-xl bg-base-100 py-1 text-base shadow-lg ring-1 ring-base-300 ring-opacity-5 focus:outline-none">
                                                     {filteredCountries.length === 0 && query !== '' ? (
-                                                        <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                                                        <div className="relative cursor-default select-none py-2 px-4 text-base-content/70">
                                                             Not a country.
                                                         </div>
                                                     ) : (
@@ -144,24 +138,16 @@ const UserAddressForm = ({ addAddressHandler }: {
                                                             <ComboboxOption
                                                                 key={country.value}
                                                                 className={({ active }) =>
-                                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                                                                    `relative cursor-pointer select-none py-2 pl-10 pr-4 rounded-lg ${active ? 'bg-primary text-primary-content' : 'text-base-content'
                                                                     }`
                                                                 }
                                                                 value={country}
                                                             >
                                                                 {({ selected, active }) => (
                                                                     <>
-                                                                        <span
-                                                                            className={`block truncate ${selected ? 'font-medium' : 'font-normal'
-                                                                                }`}
-                                                                        >
-                                                                            {country.label}
-                                                                        </span>
+                                                                        <span className={`block truncate ${selected ? 'font-semibold' : 'font-normal'}`}>{country.label}</span>
                                                                         {selected ? (
-                                                                            <span
-                                                                                className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-teal-600'
-                                                                                    }`}
-                                                                            >
+                                                                            <span className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-primary-content' : 'text-primary'}`}>
                                                                                 <MdCheckCircleOutline className="h-5 w-5" aria-hidden="true" />
                                                                             </span>
                                                                         ) : null}
@@ -175,9 +161,8 @@ const UserAddressForm = ({ addAddressHandler }: {
                                         </div>
                                     </Combobox>
                                 </div>
-
                                 <div className="col-span-6">
-                                    <label htmlFor="street-address" className="block text-sm text-gray-600">
+                                    <label htmlFor="street-address" className="block text-base font-medium text-base-content mb-1">
                                         Street address
                                     </label>
                                     <input
@@ -187,12 +172,11 @@ const UserAddressForm = ({ addAddressHandler }: {
                                         autoComplete="street-address"
                                         defaultValue={streetAddress}
                                         onChange={e => setstreetAddress(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm input"
+                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
                                     />
                                 </div>
-
                                 <div className="col-span-6 sm:col-span-6 lg:col-span-2">
-                                    <label htmlFor="city" className="block text-sm text-gray-600">
+                                    <label htmlFor="city" className="block text-base font-medium text-base-content mb-1">
                                         City
                                     </label>
                                     <input
@@ -202,12 +186,11 @@ const UserAddressForm = ({ addAddressHandler }: {
                                         autoComplete="address-level2"
                                         defaultValue={city}
                                         onChange={e => setcity(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm input"
+                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
                                     />
                                 </div>
-
                                 <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                                    <label htmlFor="region" className="block text-sm text-gray-600">
+                                    <label htmlFor="region" className="block text-base font-medium text-base-content mb-1">
                                         State / Province
                                     </label>
                                     <input
@@ -217,12 +200,11 @@ const UserAddressForm = ({ addAddressHandler }: {
                                         autoComplete="address-level1"
                                         defaultValue={state}
                                         onChange={e => setstate(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm input"
+                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
                                     />
                                 </div>
-
                                 <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                                    <label htmlFor="postal-code" className="block text-sm text-gray-600">
+                                    <label htmlFor="postal-code" className="block text-base font-medium text-base-content mb-1">
                                         ZIP / Postal code
                                     </label>
                                     <input
@@ -232,22 +214,22 @@ const UserAddressForm = ({ addAddressHandler }: {
                                         autoComplete="postal-code"
                                         defaultValue={zip}
                                         onChange={e => setzip(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm input"
+                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
                                     />
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-gray-300 px-4 py-3 text-right sm:px-6">
+                        <div className="bg-base-200 px-6 py-4 flex flex-col sm:flex-row justify-end gap-3 rounded-b-2xl md:rounded-none">
                             <button
                                 type="button"
                                 onClick={_ => addAddressHandler(false)}
-                                className="btn btn-outline mr-5"
+                                className="btn btn-outline btn-neutral"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                className="btn btn-primary text-white"
+                                className="btn btn-primary text-primary-content"
                             >
                                 Save Address
                             </button>

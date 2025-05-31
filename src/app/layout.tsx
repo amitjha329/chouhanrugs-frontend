@@ -38,6 +38,13 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
                 </script>
             </head>
             <body className={clsx(poppins.className)}>
+                <div className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none">
+                    <div className="bg-red-500 hidden" />
+                    <div className="bg-yellow-500 hidden" />
+                    <div className="bg-blue-500 hidden" />
+                    <div className="bg-green-500 hidden" />
+                    {/* Notification container */}
+                </div>
                 <div className='btn-disabled'></div>
                 <NextTopLoader
                     color='#6c4624'

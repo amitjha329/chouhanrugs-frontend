@@ -10,7 +10,7 @@ export default async function generateStripePaymentIntent(orderAmount: number, c
         partner: "STRIPE"
     })
     const stripe = new Stripe(paymentGeteway?.key_secret, {
-        apiVersion: "2024-11-20.acacia"
+        apiVersion: "2025-05-28.basil"
     })
 
     // Create a PaymentIntent with the order amount and currency

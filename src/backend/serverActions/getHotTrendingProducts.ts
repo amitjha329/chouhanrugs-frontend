@@ -43,8 +43,11 @@ export async function getHotTrendingProducts({ limit }: { limit: number }): Prom
             {
                 $lookup: {
                     from: "colors",
-                    localField: "allColors",
-                    foreignField: "name",
+                    let: { colorNames: "$allColors" },
+                    pipeline: [
+                        { $match: { $expr: { $in: ["$name", "$$colorNames"] } } },
+                        { $addFields: { _id: { $toString: "$_id" } } }
+                    ],
                     as: "colorMap"
                 }
             },

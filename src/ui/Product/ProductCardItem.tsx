@@ -12,9 +12,34 @@ interface CompoProps extends ProductDataModelWithColorMap {
 }
 
 const ProductCardItem = (props: CompoProps) => {
+    const productVariations = props.variations ?? []
+
+    // Calculate least selling price (after discount) among all variations and the main product
+    const leastSellingPrice = Number(
+        productVariations.reduce((min, variation) => {
+            const price = Number(variation.variationPrice ?? '0');
+            const discount = Number(variation.variationDiscount ?? '0');
+            const sellingPrice = price - (discount / 100) * price;
+            if (isNaN(sellingPrice) || sellingPrice < 0) {
+                return min;
+            }
+            return Math.min(min, sellingPrice);
+        }, props.productSellingPrice)
+    ).toFixed(2);
+
+    // Calculate least MSRP among all variations and the main product
+    const leastMSRP = Number(
+        productVariations.reduce((min, variation) => {
+            const msrp = Number(variation.variationPrice ?? '0');
+            if (isNaN(msrp) || msrp < 0) {
+                return min;
+            }
+            return Math.min(min, msrp);
+        }, props.productMSRP)
+    ).toFixed(2);
 
     return (
-        <div className={clsx('bg-white rounded-xl overflow-hidden w-full text-center relative', props.className, ProductsCardStyle.product_card)}>
+        <div className={clsx('bg-white rounded-xl overflow-hidden w-full text-center relative mr-3', props.className, ProductsCardStyle.product_card)}>
             <WishListButton productDetails={props} />
             <Link href={'/products/' + props.productURL} className="" prefetch={false}>
                 <div className="relative rounded-2xl overflow-hidden">
@@ -43,8 +68,8 @@ const ProductCardItem = (props: CompoProps) => {
                     <div className="font-light text-gray-500 text-center">{props.productCategory}</div>
                     <div className="text-sm font-medium text-gray-800 mt-1 line-clamp-2">{props.productName}</div>
                     <div className="flex items-center mt-2 justify-center">
-                        <div className="text-primary">$ {props.productSellingPrice}</div>
-                        <div className="text-gray-500 line-through ml-2">$ {props.productMSRP}</div>
+                        <div className="text-primary">$ {leastSellingPrice}</div>
+                        <div className="text-gray-500 line-through ml-2">$ {leastMSRP}</div>
                     </div>
                 </div>
             </Link>

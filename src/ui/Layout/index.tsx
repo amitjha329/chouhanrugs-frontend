@@ -4,7 +4,6 @@ import Navigation from './Navigation'
 import { headers } from 'next/headers';
 import getDevice from '@/utils/getDevice'
 import MobileNavigation from './MobileNavigation'
-import Script from 'next/script'
 import SideNav from './MobileNavigation/SideNav'
 import clsx from 'clsx'
 
@@ -20,7 +19,8 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
                 <Footer />
             </div>
             {getDevice({ headers: header }) == "mobile" && <SideNav />}
-            <Script id='mobile_menu_handler' src='/mobile_menu_handler.js'></Script>
+            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+            <script id='mobile_menu_handler' src='/mobile_menu_handler.js'></script>
         </main>
     )
 }

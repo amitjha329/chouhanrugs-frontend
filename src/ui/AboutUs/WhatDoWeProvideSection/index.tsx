@@ -26,14 +26,14 @@ const WhatDoWeProvideSection = () => {
     return (
         <div className='fluid_container relative ~py-5/14 ~px-5/0'>
             <SectionTitle title='What do we Provide?' className='md:text-center ~py-5/10' />
-            <div className='flex flex-col gap-5 md:~max-w-xl/3xl'>
+            <div className='flex flex-col gap-5 md:~max-w-xl/3xl z-20 relative'>
                 {
                     orderrocess.map((order, index) => (
                         <OrderProcessItem key={order.title} className={clsx({ 'self-end max-md:flex-row-reverse': index % 2 == 1 })} {...order} />
                     ))
                 }
             </div>
-            <Image src={order_Process_side} alt='Order Process Site' className='absolute bottom-0 right-0 w-1/2 max-md:hidden' />
+            <Image src={order_Process_side} alt='Order Process Site' className='absolute bottom-0 right-0 w-2/5 max-md:hidden z-10' />
         </div>
     )
 }

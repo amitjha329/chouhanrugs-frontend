@@ -15,7 +15,7 @@ const SomeMoreDetails = () => {
                 <Image src={about_1} alt='some more 1' className='w-full h-52 object-cover rounded-2xl join-item' />
                 <Image src={about_2} alt='some more 2' className='w-full h-52 object-cover rounded-2xl join-item' />
             </div>
-            <div className='flex items-center gap-10'>
+            <div className='flex items-center max-md:items-start gap-10'>
                 <div className='flex flex-col items-center justify-center gap-5' >
                     <div className='flex items-center justify-center border-[14px] border-secondary text-transparent rounded-full ~p-3/7 aspect-square font-extrabold text-xl' style={{
                         WebkitTextStroke: "1px grey",

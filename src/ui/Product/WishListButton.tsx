@@ -8,15 +8,21 @@ import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFrom
 import { useDataConnectionContext } from '@/utils/Contexts/DataConnectionContext'
 import addProductToWishlist from '@/backend/serverActions/addProductToWishlist'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 
 const WishListButton = ({ productDetails }: { productDetails: ProductDataModel }) => {
     const [wishAnimate, setWishAnimate] = useState(false)
     const { wishlistItems, refreshWishList } = useDataConnectionContext()
     const { data: session } = useSession()
+    const router = useRouter()
 
     const addToWishlist: MouseEventHandler<HTMLDivElement> = (e) => {
         e.preventDefault()
+        if (session?.user === undefined) {
+            router.push("/signin")
+            return
+        }
         !wishlistItems.includes((productDetails._id ?? productDetails.objectID).toString() ?? "") ? addProductToWishlist(productDetails._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {
             res.ack ? onPageNotifications("success", "Added To Wishlist").catch(e => console.log(e)) : res.ack && onPageNotifications("error", "Failed Adding To Wishlist").catch(e => console.log(e))
         }).catch(err => {
@@ -31,7 +37,7 @@ const WishListButton = ({ productDetails }: { productDetails: ProductDataModel }
         setWishAnimate(!wishAnimate)
     }
     return (
-        <div className={clsx("flex text-xs items-center bg-white rounded-badge p-0 text-black top-2 absolute z-50 cursor-pointer",
+        <div className={clsx("flex text-xs items-center bg-white rounded-badge p-0 text-black top-2 absolute z-20 cursor-pointer",
             wishAnimate ? ` ${ProductsCardStyle.active} ${ProductsCardStyle.animate}` : "", ProductsCardStyle.wish_button
         )}
             onClick={addToWishlist}

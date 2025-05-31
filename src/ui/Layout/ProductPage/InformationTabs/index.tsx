@@ -1,6 +1,4 @@
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
-import clsx from 'clsx'
-import Script from 'next/script'
 import React from 'react'
 
 const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap }) => {
@@ -23,7 +21,8 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
                     </div>
                 </div>
             </div>
-            <Script id='tab_controller' src='/tabhandler.js' />
+            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+            <script id='tab_controller' src='/tabhandler.js' />
         </>
     )
 }

@@ -2,7 +2,6 @@ import Image from "next/image"
 import React, { useId } from "react"
 import clsx from "clsx"
 import './ProductImageGallery.scss'
-import Script from 'next/script'
 
 const ImageSection = ({ className, imageArray }: { mobile: boolean, className?: string, imageArray: string[] }) => {
     return (
@@ -30,7 +29,8 @@ const ImageSection = ({ className, imageArray }: { mobile: boolean, className?: 
                     }
                 </div>
             </section>
-            <Script id='image-selection-handler' src="/imageHoveZoomHandler.js" />
+            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+            <script id='image-selection-handler' src="/imageHoveZoomHandler.js" />
         </>
     )
 }

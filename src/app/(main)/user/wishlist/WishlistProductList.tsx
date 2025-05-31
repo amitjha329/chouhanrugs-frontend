@@ -8,7 +8,7 @@ import { cookies } from 'next/headers'
 import Currency from '@/types/Currency'
 import WishlistProductDeleteButton from './WishlistProductDeleteButton'
 
-const WishlistProductList = async ({ productList }: { productList: (ProductDataModel | null)[] }) => {
+const WishlistProductList = async ({ productList, itemIds }: { productList: (ProductDataModel | null)[], itemIds: string[] }) => {
     // const { userCurrency } = useCurrencyContext()
     const session = await auth()
     const cookie = await cookies()
@@ -16,18 +16,51 @@ const WishlistProductList = async ({ productList }: { productList: (ProductDataM
     return (
         <>
             {
-                productList.length > 0 ? productList.map(product => {
-                    return product ? <Link key={product._id?.toString()} href={`/products/${product._id}`} className="border-b mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start w-full" prefetch={false}>
-                        <div className="pb-4 md:pb-8 w-full relative flex flex-row items-center">
-                            <Image src={product.images[product.productPrimaryImageIndex]} alt="dress" height={100} width={100} />
-                            <div className="w-full ml-3 ">
-                                <h3 className="text-base leading-6 text-gray-800 mb-3">{product.productName}</h3>
-                                <span>{userCurrency?.currencySymbol}{(product.productSellingPrice * (userCurrency?.exchangeRates ?? 1)).toFixed(2)}</span> <span className="text-red-300 line-through"> {userCurrency?.currencySymbol}{(product.productMSRP * (userCurrency?.exchangeRates ?? 1)).toFixed(2)}</span>
+                productList.length > 0 ? productList.map((product, index) => {
+                    return product ? <Link key={product._id?.toString()} href={`/products/${product.productURL}`} className="group border-b mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start w-full bg-white hover:bg-indigo-50 transition-colors rounded-xl shadow-sm hover:shadow-lg overflow-hidden border" prefetch={false}>
+                        <div className="w-full relative flex flex-row items-center gap-4">
+                            <div className="relative h-24 w-24 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                                <Image
+                                    src={product.images[product.productPrimaryImageIndex]}
+                                    alt={product.productName}
+                                    height={100}
+                                    width={100}
+                                    className="object-cover w-full h-full group-hover:scale-105 transition-transform"
+                                />
+                            </div>
+                            <div className="w-full ml-3 flex flex-col gap-2">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-1 line-clamp-2">{product.productName}</h3>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-base font-bold text-primary">{userCurrency?.currencySymbol}{(product.productSellingPrice * (userCurrency?.exchangeRates ?? 1)).toFixed(2)}</span>
+                                    <span className="text-sm text-secondary line-through">{userCurrency?.currencySymbol}{(product.productMSRP * (userCurrency?.exchangeRates ?? 1)).toFixed(2)}</span>
+                                </div>
                             </div>
                         </div>
-                        <WishlistProductDeleteButton productId={product._id?.toString() ?? ""} userId={session?.user?.id ?? ""} />
-                    </Link> : <div key={product ?? "" + randomInt(999).toString()} className='card bordered card-body card-title p-14'>Product Not Available</div>
-                }) : <div className='w-full flex items-center justify-center max-sm:text-6xl text-9xl opacity-30 h-96'>No Items In Wishlist</div>
+                        <div className="flex items-center ml-4">
+                            <WishlistProductDeleteButton productId={product._id?.toString() ?? ""} userId={session?.user?.id ?? ""} />
+                        </div>
+                    </Link> : (
+                        <div
+                            key={product ?? "" + randomInt(999).toString()}
+                            className="group border-b mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start w-full bg-white rounded-xl shadow-sm border border-dashed border-red-200 overflow-hidden"
+                        >
+                            <div className="w-full relative flex flex-row items-center gap-4">
+                                <div className="relative h-24 w-24 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center">
+                                    <span className="text-4xl text-red-300 font-bold">!</span>
+                                </div>
+                                <div className="w-full ml-3 flex flex-col gap-2">
+                                    <h3 className="text-lg font-semibold text-red-400 mb-1">The product is no longer available</h3>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm text-gray-400">This item has been removed from our catalog or is out of stock.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex items-center ml-4">
+                                <WishlistProductDeleteButton productId={itemIds[index]} userId={session?.user?.id ?? ""} />
+                            </div>
+                        </div>
+                    )
+                }) : <div className="w-full flex items-center justify-center text-5xl sm:text-7xl opacity-30 h-96 font-extrabold select-none">No Items In Wishlist</div>
             }
         </>
     )

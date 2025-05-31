@@ -3,7 +3,6 @@ import React from 'react'
 import CategoryMenu from './CategoryMenu'
 import PageLinks from './PageLinks'
 import Header from './Header'
-import Script from 'next/script'
 // import SearchComp from './SearchComp'
 import { FaSearch } from 'react-icons/fa'
 
@@ -20,7 +19,8 @@ const Navigation = () => {
                 {/* <SearchComp appId={process.env.ALGOLIA_APPID ?? ""} algKey={process.env.ALGOLIA_KEY_CLIENT ?? ""} index={process.env.ALGOLIA_INDEX ?? ""} /> */}
             </div>
             <CategoryMenu />
-            <Script id='searchButtonHandler' src='/searchButtonHandler.js'></Script>
+            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+            <script id='searchButtonHandler' src='/searchButtonHandler.js'></script>
         </>
     )
 }

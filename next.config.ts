@@ -2,8 +2,13 @@ import { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   experimental: {
-    after: true,
     webpackMemoryOptimizations: true
+  },
+  turbopack: {
+    // Example: Add aliases and externals for Turbopack (experimental, API may change)
+    resolveAlias: {
+      handlebars: 'handlebars/dist/handlebars.js',
+    },
   },
   images: {
     remotePatterns: [
