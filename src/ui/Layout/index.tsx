@@ -20,7 +20,7 @@ const MainLayout = async ({ children }: { children: ReactNode }) => {
             </div>
             {getDevice({ headers: header }) == "mobile" && <SideNav />}
             {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-            <script id='mobile_menu_handler' src='/mobile_menu_handler.js'></script>
+            <script id='mobile_menu_handler' src='/mobile_menu_handler.js' defer></script>
         </main>
     )
 }

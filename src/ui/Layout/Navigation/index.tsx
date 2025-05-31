@@ -20,7 +20,7 @@ const Navigation = () => {
             </div>
             <CategoryMenu />
             {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-            <script id='searchButtonHandler' src='/searchButtonHandler.js'></script>
+            <script id='searchButtonHandler' src='/searchButtonHandler.js' defer></script>
         </>
     )
 }

@@ -22,7 +22,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
                 </div>
             </div>
             {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-            <script id='tab_controller' src='/tabhandler.js' />
+            <script id="tab_controller" src="/tabhandler.js" defer />
         </>
     )
 }

@@ -60,7 +60,7 @@ const ProductPage = async (props: { params: Promise<{ productId: string }> }) =>
     return (
         <div className='fluid_container'>
             <div className='flex max-md:flex-col gap-10 ~px-5/0'>
-                <ImageSection imageArray={data.images} mobile={isMobile} className='md:basis-1/2 overflow-hidden' />
+                <ImageSection mobile={isMobile} className='md:basis-1/2 overflow-hidden' />
                 <PriceAndVariation product={data} />
             </div>
             <InformationTabs product={data} />
