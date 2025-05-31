@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 import { useRouter } from 'next/navigation'
-import React, { useState, useMemo, useEffect, Fragment, useCallback } from 'react'
+import React, { useState, useMemo, useEffect, Fragment, useCallback, lazy, Suspense } from 'react'
 import { BsPlus } from 'react-icons/bs'
 import clsx from 'clsx'
 import { Orders } from 'razorpay/dist/types/orders'
@@ -9,9 +9,7 @@ import { loadStripe, Stripe } from '@stripe/stripe-js'
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
 import { GrFormClose } from 'react-icons/gr'
 import { Elements } from '@stripe/react-stripe-js'
-import CheckoutForm from './Stripe/CheckoutForm'
 import { Session } from 'next-auth'
-import CardForm from './PayPal/CardForm'
 import UserAddressForm from '@/app/(main)/user/address/UserAddressForm'
 import { capturePayment, createOrder } from '@/backend/serverActions/paypal'
 import stringEmptyOrNull, { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
@@ -36,7 +34,10 @@ import generateRazorPayOrder from '@/backend/serverActions/generateRazorPayOrder
 import validateCoupon from '@/backend/serverActions/validateCoupon'
 import generateStripePaymentIntent from '@/backend/serverActions/generateStripePaymentIntent'
 import CartItemClient from '../CartItemClient'
-import { PayPalButtons } from '@paypal/react-paypal-js'
+
+// Lazy load heavy payment components
+const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
+const LazyPayPalButtons = lazy(() => import('@paypal/react-paypal-js').then(mod => ({ default: mod.PayPalButtons })))
 
 var calledStripeFinal = 0
 const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shippingList, userCurrency }: {
@@ -53,7 +54,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     const router = useRouter()
     const { cartCount } = useDataConnectionContext()
     const [cart, setCart] = useState<CartDataModel[]>([])
-    const [cartTotal, setCartTotal] = useState(0)
     const [addresses, setaddress] = useState<UserAddressDataModel[]>([])
     const [cartLoading, setcartLoading] = useState(true)
     const [addressLoading, setAddrLoading] = useState(true)
@@ -79,9 +79,40 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     // const orderTotal = useMemo(() => {
     //     return Number(cartTotal + (currentShipping ? parseFloat(currentShipping.shippingCharges.split(' ')[1]) : 0)) - deductable
     // }, [currentTax, currentShipping, cartTotal, deductable])
+    
+    // Memoize calculateProductPrice to avoid recalculating for same item
+    const calculateProductPrice = useCallback((item: CartDataModel): number => {
+        var priceInitial = 0
+        if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
+            const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!);
+            const variationPrice = Number(item.cartProduct[0].variations[variationindex].variationPrice);
+            const variationDiscount = Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationDiscount ?? 0);
+            priceInitial = variationPrice - (variationPrice * (variationDiscount / 100));
+        } else if (item.variationCode == "customSize") {
+            switch (item.customSize?.shape) {
+                case "Rectangle":
+                case "Runner":
+                case "Square":
+                    priceInitial = item.cartProduct[0].productPriceSqFt * (item.customSize?.dimensions.length ?? 1) * (item.customSize?.dimensions.width ?? 1);
+                    break;
+                case "Round":
+                    priceInitial = item.cartProduct[0].productPriceSqFt * (Math.pow((item.customSize?.dimensions.diameter ?? 1) / 2, 2) * Math.PI);
+                    break;
+            }
+        } else {
+            priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0;
+        }
+        return priceInitial * item.quantity
+    }, [])
     const orderTotal = useMemo(() => {
-        return Number(cartTotal + (currentShipping ? parseFloat(currentShipping.shippingCharges.split(' ')[1]) : 0)) + Number((cartTotal * currentTax.taxRate / 100).toFixed(2)) - deductable
-    }, [currentTax, currentShipping, cartTotal, deductable])
+        return Number(cart.reduce((total, item) => {
+            const itemPrice = calculateProductPrice(item)
+            return total + itemPrice
+        }, 0) + (currentShipping ? parseFloat(currentShipping.shippingCharges.split(' ')[1]) : 0)) + Number((cart.reduce((total, item) => {
+            const itemPrice = calculateProductPrice(item)
+            return total + itemPrice
+        }, 0) * currentTax.taxRate / 100).toFixed(2)) - deductable
+    }, [currentTax, currentShipping, cart, deductable])
     const payEnabled = useMemo(() => {
         return cartCount != 0 && paymentMethod && paymentMethod.partner != undefined && currentShipping != undefined
     }, [cartCount, paymentMethod, currentShipping])
@@ -106,67 +137,88 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         return "";
     };
 
-    const calculateProductPrice = (item: CartDataModel): number => {
-        var priceInitial = 0
-        if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
-            const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!);
-            const variationPrice = Number(item.cartProduct[0].variations[variationindex].variationPrice);
-            const variationDiscount = Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationDiscount ?? 0);
-            priceInitial = variationPrice - (variationPrice * (variationDiscount / 100));
-        } else if (item.variationCode == "customSize") {
-            switch (item.customSize?.shape) {
-                case "Rectangle":
-                case "Runner":
-                case "Square":
-                    priceInitial = item.cartProduct[0].productPriceSqFt * (item.customSize?.dimensions.length ?? 1) * (item.customSize?.dimensions.width ?? 1);
-                    break;
-                case "Round":
-                    priceInitial = item.cartProduct[0].productPriceSqFt * (Math.pow((item.customSize?.dimensions.diameter ?? 1) / 2, 2) * Math.PI);
-                    break;
-            }
-        } else {
-            priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0;
-        }
+    // Memoize cart total calculation
+    const cartTotal = useMemo(() => {
+        let subTotal = 0
+        cart.forEach(item => {
+            subTotal += calculateProductPrice(item)
+        })
+        return Number((subTotal * (userCurrency?.exchangeRates ?? 1)).toFixed(2))
+    }, [cart, userCurrency, calculateProductPrice])
 
-        return priceInitial * item.quantity
-    }
-
+    // Batch state updates for cart and address
     useEffect(() => {
-        getUserCartitems((session?.user as { id: string }).id).then(res => {
-            setCart(res.filter(it => it.cartProduct.length > 0))
-            let subTotal = 0
-            res.forEach(item => {
-                subTotal = subTotal + calculateProductPrice(item)
-            })
-            setCartTotal(Number((subTotal * (userCurrency?.exchangeRates ?? 1)).toFixed(2)))
+        let isMounted = true
+        Promise.all([
+            getUserCartitems((session?.user as { id: string }).id),
+            getUserAddressList((session?.user as { id: string }).id)
+        ]).then(([cartRes, addrRes]) => {
+            if (!isMounted) return
+            setCart(cartRes.filter(it => it.cartProduct.length > 0))
+            setaddress(addrRes)
             setcartLoading(false)
-        }).catch(e => console.log(e))
-        getUserAddressList((session?.user as { id: string }).id).then(res => {
-            setaddress(res)
             setAddrLoading(false)
         }).catch(e => console.log(e))
-        // getShipping().then(res => SetShippingList(res))
+        return () => { isMounted = false }
     }, [userCurrency, currentTax])
 
-    // const refreshCartItems = () => {
-    //     setcartLoading(true)
-    //     getUserCartitems((session?.user as { id: string }).id).then(res => {
-    //         setCart(res)
-    //         let subTotal = 0
-    //         res.map((item, index) => {
-    //             subTotal = subTotal + (item.cartProduct[0]?.productSellingPrice * item.quantity)
-    //         })
-    //         setCartTotal(subTotal)
-    //         setcartLoading(false)
-    //     }).catch(e => console.log(e))
-    // }
+    // Debounce coupon input
+    const [debouncedCoupon, setDebouncedCoupon] = useState("")
+    useEffect(() => {
+        const handler = setTimeout(() => setDebouncedCoupon(couponCode), 400)
+        return () => clearTimeout(handler)
+    }, [couponCode])
+    // Only validate coupon when debouncedCoupon changes
+    useEffect(() => {
+        if (!debouncedCoupon) return
+        validateCoupon(debouncedCoupon, cartTotal).then(result => {
+            setCouponData(result)
+            if (result?.couponApplicable) {
+                onPageNotifications("success", "Coupon Applied")
+                switch (result.couponData.type) {
+                    case 2:
+                        setDeductable(result.couponData.value * (userCurrency?.exchangeRates ?? 1))
+                        break;
+                    case 1:
+                        const tempDeductable = (cartTotal * (Number(result.couponData.value) / 100)) * (userCurrency?.exchangeRates ?? 1)
+                        setDeductable(tempDeductable > Number(result.couponData.maxValue) * (userCurrency?.exchangeRates ?? 1) ? Number(result.couponData.maxValue) : tempDeductable)
+                        break;
+                }
+            } else {
+                onPageNotifications("error", "Copon Not Apllicable")
+            }
+        }).catch(err => onPageNotifications("error", "Something Went Wrong"))
+    }, [debouncedCoupon, cartTotal, userCurrency])
 
-    const processPayment = async () => {
+    // Move launchRazorPayFlow above processPayment to avoid TDZ error
+    const launchRazorPayFlow = (result: Orders.RazorpayOrder | undefined) => {
+        const options = {
+            key: paymentMethod?.key_id, // Enter the Key ID generated from the Dashboard
+            amount: orderTotal, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            currency: userCurrency?.currency,
+            name: siteInfo.title,
+            description: "New Order",
+            image: siteInfo.logoSrc,
+            order_id: result?.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            handler: paymentSuccessHandler,
+            prefill: {
+                name: session?.user?.name,
+                email: session?.user?.email
+            },
+            theme: {
+                color: "#954a2b"
+            }
+        }
+        //@ts-ignore
+        result && new Razorpay(options).open()
+    }
+
+    // Memoize processPayment handler
+    const processPayment = useCallback(async () => {
         if (currentShipping == undefined) {
             onPageNotifications("info", "Select Shipping Address First.").catch(e => console.log(e))
             return
         }
-        console.log(paymentMethod)
         switch (paymentMethod?.partner) {
             case "RZP":
                 !razorPayOrder ? await generateRazorPayOrder(Math.round(orderTotal) * 100, "INR").then(response => {
@@ -183,9 +235,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 setShowStripe(true)
                 break;
             case "PAYPAL":
-                console.log(userCurrency)
                 if (userCurrency?.currency == "USD") {
-                    // setShowPayPal(true)
                     (document.getElementById("paypalModal") as HTMLDialogElement)?.showModal();
                     return
                 }
@@ -195,7 +245,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 onPageNotifications("info", "Select Payment Gateway First.").catch(e => console.log(e))
                 return
         }
-    }
+    }, [currentShipping, paymentMethod, razorPayOrder, orderTotal, userCurrency, launchRazorPayFlow])
 
     const handleCouponApply = () => {
         validateCoupon(couponCode, cartTotal).then(result => {
@@ -266,28 +316,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 console.log(err)
             })
         }
-    }
-
-    const launchRazorPayFlow = (result: Orders.RazorpayOrder | undefined) => {
-        const options = {
-            key: paymentMethod?.key_id, // Enter the Key ID generated from the Dashboard
-            amount: orderTotal, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-            currency: userCurrency?.currency,
-            name: siteInfo.title,
-            description: "New Order",
-            image: siteInfo.logoSrc,
-            order_id: result?.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-            handler: paymentSuccessHandler,
-            prefill: {
-                name: session?.user?.name,
-                email: session?.user?.email
-            },
-            theme: {
-                color: "#954a2b"
-            }
-        }
-        //@ts-ignore
-        result && new Razorpay(options).open()
     }
 
     useEffect(() => {
@@ -461,7 +489,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     <span>Total cost</span>
                                     <span>{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
                                 </div>
-                                <button onClick={() => { processPayment() }} className={clsx("btn btn-primary w-full", isPayDisabled && 'btn-disabled')} disabled={isPayDisabled}>
+                                <button onClick={processPayment} className={clsx("btn btn-primary w-full", isPayDisabled && 'btn-disabled')} disabled={isPayDisabled}>
                                     Pay
                                 </button>
                                 {isPayDisabled && (
@@ -537,7 +565,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     <span>Total cost</span>
                                     <span>{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
                                 </div>
-                                <button onClick={() => { processPayment() }} className={clsx("btn btn-primary w-full", isPayDisabled && 'btn-disabled')} disabled={isPayDisabled}>
+                                <button onClick={processPayment} className={clsx("btn btn-primary w-full", isPayDisabled && 'btn-disabled')} disabled={isPayDisabled}>
                                     Pay
                                 </button>
                                 {isPayDisabled && (
@@ -550,6 +578,64 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     </div>
                 </div>
             </div>
+            <dialog id="paypalModal" className="modal">
+                <div className="modal-box">
+                    {orderTotal > 0 && selectedAddress?._id &&
+                        <Suspense fallback={<div>Loading PayPal...</div>}>
+                            <LazyPayPalButtons
+                                style={{ color: "blue" }}
+                                createOrder={() => createOrder(`${orderTotal}`, userCurrency?.currency ?? "USD")}
+                                onApprove={async (data: any, actions: any) => {
+                                    capturePayment(data.orderID).then(value => {
+                                        if (value.status == "COMPLETED") {
+                                            const orderData: OrderDataModel = {
+                                                products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
+                                                    return {
+                                                        productId: cartProduct[0]._id?.toString() ?? "",
+                                                        productPrice: cartProduct[0].productSellingPrice,
+                                                        productMSRP: cartProduct[0].productMSRP,
+                                                        quantity: quantity,
+                                                        variation: variationCode ?? "",
+                                                        customSize
+                                                    }
+                                                }),
+                                                shippingType: "Standard",
+                                                shippingAddress: selectedAddress?._id ?? "",
+                                                paymentStatus: "success",
+                                                paymentMode: "PayPal",
+                                                couponApplied: couponData?.couponApplicable ? couponData?.couponData : null,
+                                                paymentCode: value.purchase_units[0].payments.captures[0].id,
+                                                subtotal: Number(cartTotal),
+                                                taxation: Number(cartTotal * (currentTax.taxRate / 100)),
+                                                orderValue: orderTotal,
+                                                userCurrency: { ...userCurrency },
+                                                userId: (session?.user as { id: string }).id,
+                                                _id: "",
+                                                orderPlacedOn: 0,
+                                                orderStatus: "placed",
+                                                tracking: {
+                                                    trackingNum: "",
+                                                    type: ""
+                                                }
+                                            }
+                                            saveOrderAfterPay(orderData).then(res => {
+                                                if (res.ack) {
+                                                    onPageNotifications("success", "Order Placed").catch(err => {
+                                                        console.log(err)
+                                                    })
+                                                    router.push(`/order/final?order=${res.result.data}`)
+                                                }
+                                            }).catch(err => {
+                                                console.log(err)
+                                            })
+                                        }
+                                    })
+                                }}
+                            />
+                        </Suspense>
+                    }
+                </div>
+            </dialog>
             <Transition appear show={showStripe} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={(e: any) => setShowStripe(false)}>
                     <TransitionChild
@@ -563,7 +649,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     >
                         <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur" />
                     </TransitionChild>
-
                     <div className="fixed inset-0 overflow-y-auto">
                         <div className="flex min-h-full items-center justify-center p-4 text-center">
                             <TransitionChild
@@ -577,123 +662,28 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                             >
                                 <DialogPanel className="w-full max-w-5xl transform overflow-hidden rounded-2xl bg-white p-7 text-left align-middle shadow-xl transition-all">
                                     <GrFormClose className="absolute top-3 right-3 h-7 w-7 text-gray-500" onClick={_ => { setShowStripe(false) }} />
-                                    {
-                                        stripeClientSecret && paymentMethod?.partner == "STRIPE" && stripePromise != null && <Elements options={{
-                                            clientSecret: stripeClientSecret ?? "",
-                                            appearance: {
-                                                theme: 'stripe',
-                                                variables: {
-                                                    colorPrimary: '#773b22',
-                                                    colorText: '#000000',
-                                                }
-                                            },
-                                        }} stripe={stripePromise}>
-                                            <CheckoutForm clientSecret={stripeClientSecret} shippingId={selectedAddress?._id ?? ""} />
-                                        </Elements>
+                                    {stripeClientSecret && paymentMethod?.partner == "STRIPE" && stripePromise != null &&
+                                        <Suspense fallback={<div>Loading Stripe...</div>}>
+                                            <Elements options={{
+                                                clientSecret: stripeClientSecret ?? "",
+                                                appearance: {
+                                                    theme: 'stripe',
+                                                    variables: {
+                                                        colorPrimary: '#773b22',
+                                                        colorText: '#000000',
+                                                    }
+                                                },
+                                            }} stripe={stripePromise}>
+                                                <LazyCheckoutForm clientSecret={stripeClientSecret} shippingId={selectedAddress?._id ?? ""} />
+                                            </Elements>
+                                        </Suspense>
                                     }
-
                                 </DialogPanel>
                             </TransitionChild>
                         </div>
                     </div>
                 </Dialog>
             </Transition>
-            {/* <Transition appear show={showPayPal} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={(e: any) => setShowPayPal(false)}>
-                    <TransitionChild
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur" />
-                    </TransitionChild>
-
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
-                            <TransitionChild
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0 scale-95"
-                                enterTo="opacity-100 scale-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100 scale-100"
-                                leaveTo="opacity-0 scale-95"
-                            >
-                                <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-10 text-left align-middle shadow-xl transition-all">
-                                    <GrFormClose className="absolute top-3 right-3 h-7 w-7 text-gray-500 cursor-pointer" onClick={_ => { setShowPayPal(false) }} />
-                                    {
-
-                                    }
-                                </DialogPanel>
-                            </TransitionChild>
-                        </div>
-                    </div>
-                </Dialog>
-            </Transition> */}
-            <dialog id="paypalModal" className="modal">
-                <div className="modal-box">
-                    {orderTotal > 0 && selectedAddress?._id &&
-                        <PayPalButtons
-                            style={{
-                                color: "blue"
-                            }}
-                            createOrder={() => {
-                                return createOrder(`${orderTotal}`, userCurrency?.currency ?? "USD")
-                            }}
-                            onApprove={async (data: any, actions: any) => {
-                                capturePayment(data.orderID).then(value => {
-                                    if (value.status == "COMPLETED") {
-                                        const orderData: OrderDataModel = {
-                                            products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
-                                                return {
-                                                    productId: cartProduct[0]._id?.toString() ?? "",
-                                                    productPrice: cartProduct[0].productSellingPrice,
-                                                    productMSRP: cartProduct[0].productMSRP,
-                                                    quantity: quantity,
-                                                    variation: variationCode ?? "",
-                                                    customSize
-                                                }
-                                            }),
-                                            shippingType: "Standard",
-                                            shippingAddress: selectedAddress?._id ?? "",
-                                            paymentStatus: "success",
-                                            paymentMode: "PayPal",
-                                            couponApplied: couponData?.couponApplicable ? couponData?.couponData : null,
-                                            paymentCode: value.purchase_units[0].payments.captures[0].id,
-                                            subtotal: Number(cartTotal),
-                                            taxation: Number(cartTotal * (currentTax.taxRate / 100)),
-                                            orderValue: orderTotal,
-                                            userCurrency: { ...userCurrency },
-                                            userId: (session?.user as { id: string }).id,
-                                            _id: "",
-                                            orderPlacedOn: 0,
-                                            orderStatus: "placed",
-                                            tracking: {
-                                                trackingNum: "",
-                                                type: ""
-                                            }
-                                        }
-                                        saveOrderAfterPay(orderData).then(res => {
-                                            if (res.ack) {
-                                                onPageNotifications("success", "Order Placed").catch(err => {
-                                                    console.log(err)
-                                                })
-                                                router.push(`/order/final?order=${res.result.data}`)
-                                            }
-                                        }).catch(err => {
-                                            console.log(err)
-                                        })
-                                    }
-                                })
-                            }}
-                        />
-                    }
-                </div>
-            </dialog>
         </> : <Loader />
     )
 }
