@@ -91,75 +91,107 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                     </>
                 )}
             </div>
-            <div className="grid grid-cols-3 gap-4 mb-4">
-                {colorData.length > 0 && <div>
-                    <label className="block mb-1" htmlFor="color-select">Color</label>
-                    <div className="relative">
-                        {priceLoading ? (
-                            <div className="skeleton h-10 w-full rounded" aria-busy="true" />
-                        ) : (
-                            <select
-                                id="color-select"
-                                className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 ~py-1/2 ~px-6/8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                                name="color"
-                                value={selectedColor}
-                                onChange={e => setSelectedColor && setSelectedColor(e.target.value)}
-                                aria-label="Select color"
-                                disabled={actionLoading}
-                            >
-                                {colorData.map((color) => (
-                                    <option key={color.colorCode.hex} value={color.name}>
-                                        {color.name}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <span
-                                className="inline-block w-4 h-4 rounded-sm"
-                                id='display-color'
-                                style={{ backgroundColor: "transparent" }}
-                            ></span>
+            <div className="flex flex-col sm:flex-row gap-3 mb-6 w-full">
+                <div className="flex flex-row gap-3 mb-3 w-full">
+                    {colorData.length > 0 && <div className="basis-1/2 md:basis-1/3 flex-1">
+                        <label className="block mb-1 font-semibold text-gray-700" htmlFor="color-select">Color</label>
+                        <div className="relative">
+                            {priceLoading ? (
+                                <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                            ) : (
+                                <select
+                                    id="color-select"
+                                    className="block w-full rounded-xl border-2 border-gray-200 bg-white py-3 px-10 pr-10 text-base font-medium text-gray-700 shadow-sm focus:border-accent focus:ring-2 focus:ring-accent transition-all duration-150 ease-in-out appearance-none"
+                                    name="color"
+                                    value={selectedColor}
+                                    onChange={e => setSelectedColor && setSelectedColor(e.target.value)}
+                                    aria-label="Select color"
+                                    disabled={actionLoading}
+                                >
+                                    {colorData.map((color) => (
+                                        <option key={color.colorCode.hex} value={color.name}>
+                                            {color.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <span
+                                    className="inline-block w-5 h-5 rounded border border-gray-300"
+                                    id='display-color'
+                                    style={{ backgroundColor: selectedColor ? colorData.find(c => c.name === selectedColor)?.colorCode.hex : "#fff" }}
+                                ></span>
+                            </div>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                            </div>
                         </div>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                    </div>}
+                    {sortedSizeData.length > 0 && <div className="basis-1/2 md:basis-1/3 flex-1">
+                        <label className="block mb-1 font-semibold text-gray-700" htmlFor="size-select">Size</label>
+                        <div className="relative">
+                            {priceLoading ? (
+                                <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                            ) : (
+                                <select
+                                    id="size-select"
+                                    className="block w-full rounded-xl border-2 border-gray-200 bg-white py-3 px-4 pr-10 text-base font-medium text-gray-700 shadow-sm focus:border-accent focus:ring-2 focus:ring-accent transition-all duration-150 ease-in-out appearance-none"
+                                    value={selectedSize}
+                                    onChange={e => setSelectedSize && setSelectedSize(e.target.value)}
+                                    aria-label="Select size"
+                                    disabled={actionLoading}
+                                >
+                                    {sortedSizeData.map((size) => (
+                                        <option key={size.sizeCode} value={size.sizeCode}>
+                                            {size.sizeCode}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                            </div>
+                        </div>
+                    </div>}
+                </div>
+                {/* On desktop, show quantity in the same row, else in next row */}
+                <div className="hidden md:block basis-1/3 flex-1">
+                    <div className="w-full">
+                        <label className="block mb-1 font-semibold text-gray-700" htmlFor="product_quantity">Quantity</label>
+                        <div className="relative">
+                            {priceLoading ? (
+                                <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                            ) : (
+                                <select
+                                    className="block w-full rounded-xl border-2 border-gray-200 bg-white py-3 px-4 pr-10 text-base font-medium text-gray-700 shadow-sm focus:border-accent focus:ring-2 focus:ring-accent transition-all duration-150 ease-in-out appearance-none"
+                                    id='product_quantity'
+                                    aria-label="Select quantity"
+                                    value={quantity}
+                                    onChange={e => setQuantity(Number(e.target.value))}
+                                    disabled={priceLoading || actionLoading}
+                                >
+                                    {[...Array(10)].map((_, i) => (
+                                        <option key={i + 1} value={i + 1}>{i + 1}</option>
+                                    ))}
+                                </select>
+                            )}
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                            </div>
                         </div>
                     </div>
-                </div>}
-                {sortedSizeData.length > 0 && <div>
-                    <label className="block mb-1" htmlFor="size-select">Size</label>
+                </div>
+            </div>
+            {/* On mobile, show quantity in its own row */}
+            <div className="flex flex-row gap-3 mb-6 w-full md:hidden">
+                <div className="w-full">
+                    <label className="block mb-1 font-semibold text-gray-700" htmlFor="product_quantity">Quantity</label>
                     <div className="relative">
                         {priceLoading ? (
-                            <div className="skeleton h-10 w-full rounded" aria-busy="true" />
+                            <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
                         ) : (
                             <select
-                                id="size-select"
-                                className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 ~px-3/4 ~py-1/2 ~pr-6/8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-                                value={selectedSize}
-                                onChange={e => setSelectedSize && setSelectedSize(e.target.value)}
-                                aria-label="Select size"
-                                disabled={actionLoading}
-                            >
-                                {sortedSizeData.map((size) => (
-                                    <option key={size.sizeCode} value={size.sizeCode}>
-                                        {size.sizeCode}
-                                    </option>
-                                ))}
-                            </select>
-                        )}
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
-                        </div>
-                    </div>
-                </div>}
-                <div>
-                    <label className="block mb-1" htmlFor="product_quantity">Quantity</label>
-                    <div className="relative">
-                        {priceLoading ? (
-                            <div className="skeleton h-10 w-full rounded" aria-busy="true" />
-                        ) : (
-                            <select
-                                className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 ~px-3/4 ~py-1/2 ~pr-6/8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                                className="block w-full rounded-xl border-2 border-gray-200 bg-white py-3 px-4 pr-10 text-base font-medium text-gray-700 shadow-sm focus:border-accent focus:ring-2 focus:ring-accent transition-all duration-150 ease-in-out appearance-none"
                                 id='product_quantity'
                                 aria-label="Select quantity"
                                 value={quantity}
@@ -171,22 +203,22 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                                 ))}
                             </select>
                         )}
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                            <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="flex items-center gap-5 mb-4">
+            <div className="flex flex-col sm:flex-row items-center gap-3 mb-4 w-full">
                 {priceLoading ? (
                     <>
-                        <div className="skeleton h-10 w-32 rounded" aria-busy="true" />
-                        <div className="skeleton h-10 w-32 rounded" aria-busy="true" />
+                        <div className="skeleton h-12 w-full sm:w-40 rounded-xl" aria-busy="true" />
+                        <div className="skeleton h-12 w-full sm:w-40 rounded-xl" aria-busy="true" />
                     </>
                 ) : (
                     <>
                         <button
-                            className={`btn btn-accent ~px-10/20${actionLoading ? ' btn-disabled' : ''}`}
+                            className={`w-full sm:w-auto rounded-full bg-accent text-white font-bold py-3 px-8 shadow-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-base tracking-wide ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                             id='buy_now_btn'
                             tabIndex={0}
                             aria-label="Buy Now"
@@ -212,7 +244,7 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                             }}
                         >Buy Now</button>
                         <button
-                            className={`btn btn-outline btn-accent ~px-10/20${actionLoading ? ' btn-disabled' : ''}`}
+                            className={`w-full sm:w-auto rounded-full border-2 border-accent text-accent font-bold py-3 px-8 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-base tracking-wide ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                             id='add_to_cart_btn'
                             tabIndex={0}
                             aria-label="Add to Cart"
