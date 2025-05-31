@@ -86,6 +86,26 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         return cartCount != 0 && paymentMethod && paymentMethod.partner != undefined && currentShipping != undefined
     }, [cartCount, paymentMethod, currentShipping])
 
+    const isPayDisabled = useMemo(() => {
+        // Disable if cart is empty, payment method not selected, or shipping not selected/available
+        return (
+            cartCount === 0 ||
+            !paymentMethod ||
+            !paymentMethod.partner ||
+            !currentShipping ||
+            !selectedAddress
+        );
+    }, [cartCount, paymentMethod, currentShipping, selectedAddress]);
+
+    // Add a function to get the pay button disabled reason
+    const getPayDisabledReason = () => {
+        if (cartCount === 0) return "Your cart is empty.";
+        if (!selectedAddress) return "Please select a delivery address.";
+        if (!currentShipping) return "Delivery is not available for the selected address.";
+        if (!paymentMethod || !paymentMethod.partner) return "Please select a payment method.";
+        return "";
+    };
+
     const calculateProductPrice = (item: CartDataModel): number => {
         var priceInitial = 0
         if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
@@ -441,9 +461,14 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     <span>Total cost</span>
                                     <span>{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
                                 </div>
-                                <button onClick={() => { processPayment() }} className={clsx("btn btn-primary w-full", (currentShipping) ? '' : 'btn-disabled')}>
+                                <button onClick={() => { processPayment() }} className={clsx("btn btn-primary w-full", isPayDisabled && 'btn-disabled')} disabled={isPayDisabled}>
                                     Pay
                                 </button>
+                                {isPayDisabled && (
+                                    <div className="text-xs text-red-500 mt-2 text-center">
+                                        {getPayDisabledReason()}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -512,9 +537,14 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     <span>Total cost</span>
                                     <span>{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
                                 </div>
-                                <button onClick={() => { processPayment() }} className={clsx("btn btn-primary w-full", { "btn-disabled": payEnabled })} >
+                                <button onClick={() => { processPayment() }} className={clsx("btn btn-primary w-full", isPayDisabled && 'btn-disabled')} disabled={isPayDisabled}>
                                     Pay
                                 </button>
+                                {isPayDisabled && (
+                                    <div className="text-xs text-red-500 mt-2 text-center">
+                                        {getPayDisabledReason()}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
