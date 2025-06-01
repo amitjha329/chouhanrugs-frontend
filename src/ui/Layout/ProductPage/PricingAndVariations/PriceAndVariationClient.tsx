@@ -3,6 +3,7 @@ import ColorDataModel from '@/types/ColorDataModel'
 import { ProductDataModel } from '@/types/ProductDataModel'
 import SizeDataModel from '@/types/SizeDataModel'
 import { useProductContext } from '@/utils/Contexts/ProductContext'
+import clsx from 'clsx'
 import React from 'react'
 
 interface VariationExtraDataModel extends ProductDataModel {
@@ -92,7 +93,7 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                 )}
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mb-6 w-full">
-                <div className="flex flex-row gap-3 mb-3 w-full">
+                <div className={clsx("flex flex-row gap-3 mb-3 w-full", { "hidden": (colorData.length == 0 && sortedSizeData.length == 0) })}>
                     {colorData.length > 0 && <div className="basis-1/2 md:basis-1/3 flex-1">
                         <label className="block mb-1 font-semibold text-gray-700" htmlFor="color-select">Color</label>
                         <div className="relative">
@@ -156,7 +157,7 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                 </div>
                 {/* On desktop, show quantity in the same row, else in next row */}
                 <div className="hidden md:block basis-1/3 flex-1">
-                    <div className="w-full">
+                    <div className="w-full max-w-40">
                         <label className="block mb-1 font-semibold text-gray-700" htmlFor="product_quantity">Quantity</label>
                         <div className="relative">
                             {priceLoading ? (

@@ -201,13 +201,18 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
     // Universal loading state for price/variation
     const [priceLoading, setPriceLoading] = useState(true);
     useEffect(() => {
-        // Set loading to false when selectedSize and selectedColor are set (variation is ready)
-        if (selectedSize && (selectedColor !== undefined)) {
+        // If product has no variations, or both colorData and sizeData are empty, loading should be false
+        if (
+            (!product.variations || product.variations.length === 0) ||
+            ((Array.isArray(product.colorData) && product.colorData.length === 0) && (Array.isArray(product.sizeData) && product.sizeData.length === 0))
+        ) {
+            setPriceLoading(false);
+        } else if (selectedSize && (selectedColor !== undefined)) {
             setPriceLoading(false);
         } else {
             setPriceLoading(true);
         }
-    }, [selectedSize, selectedColor]);
+    }, [selectedSize, selectedColor, product.variations, product.colorData, product.sizeData]);
 
     const value = useMemo(() => ({
         product,
