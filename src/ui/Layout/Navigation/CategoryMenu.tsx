@@ -33,22 +33,24 @@ const CategoryMenuItem = ({ label, submenu, href }: MenuItemProp) => {
     const hasSubmenu = (submenu?.length ?? 0) > 0;
     return (
         hasSubmenu ? (
-            <div className="dropdown dropdown-hover">
-                <div className="text-sm flex items-center gap-2 cursor-pointer select-none" tabIndex={-1}>
+            <div className="relative group inline-block font-semibold">
+                <div className="text-sm flex items-center gap-2 cursor-pointer select-none px-4 py-1 rounded-md transition-colors duration-200 group-hover:bg-primary/10">
                     {label} <FaChevronDown />
                 </div>
-                <div className="dropdown-content menu bg-base-100 rounded-box z-[60] w-52 p-2 shadow border border-primary" tabIndex={0}>
-                    <ul>
+                <div className="absolute left-0 top-full min-w-[180px] bg-white rounded-lg shadow-lg z-50 py-1 border border-primary opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200">
+                    <ul className="list-none m-0 p-0 font-light">
                         {submenu?.map(item => (
                             <li key={item._id}>
-                                <Link href={'/products/category/' + item.name}>{item.name}</Link>
+                                <Link href={'/products/category/' + item.name} className="block px-4 py-2 text-gray-900 rounded-md hover:bg-primary/10 hover:text-primary transition-colors duration-200">
+                                    {item.name}
+                                </Link>
                             </li>
                         ))}
                     </ul>
                 </div>
             </div>
         ) : (
-            <Link href={href ?? ""} className="text-sm flex items-center gap-2">
+            <Link href={href ?? ""} className="text-sm flex items-center gap-2 px-4 py-1 rounded-md transition-colors duration-200 hover:bg-primary/10 font-semibold">
                 {label}
             </Link>
         )
