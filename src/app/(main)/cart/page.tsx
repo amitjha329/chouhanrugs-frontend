@@ -5,6 +5,7 @@ import getUserCartitems from '@/backend/serverActions/getUserCartitems'
 import CartItem from '@/ui/Cart/CartItem'
 import CartTotalSection from '@/ui/Cart/CartTotalSection'
 import dynamic from 'next/dynamic'
+import CartItemClient from '@/ui/Cart/CartItemClient'
 
 const CartLocalStorage = dynamic(() => import('@/ui/Cart/CartLocalStorage'))
 
@@ -47,7 +48,16 @@ const CartPage = async () => {
                     </div>
                     {
                         cart && cart.length > 0 ? (
-                            cart.map((item, index) => <CartItem item={item} key={item?._id} />)
+                            cart.map((item, index) => <CartItemClient item={item} key={item?._id} userCurrency={{
+                                _id: "",
+                                active: true,
+                                currency: "USD",
+                                exchangeRates: 1,
+                                ISO: "US",
+                                country: "US",
+                                currencySymbol: "$",
+                                default: true
+                            }} />)
                         ) : (
                             <div className="flex flex-col items-center justify-center w-full h-64 sm:h-80 bg-base-100 rounded-lg shadow-inner my-8 px-4 sm:px-0">
                                 <svg className="w-12 h-12 sm:w-16 sm:h-16 text-primary mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

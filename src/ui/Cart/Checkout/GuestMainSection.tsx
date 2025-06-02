@@ -157,8 +157,9 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
 
     return (
         <div className="container py-0 sm:py-10 mx-auto">
-            <div className="flex flex-col md:flex-row items-start">
-                <div className='flex flex-col lg:basis-2/3 w-full px-8 md:px-0 md:pl-5'>
+            <div className="flex flex-col md:flex-row items-start gap-8">
+                {/* Cart Items Section */}
+                <div className="flex flex-col w-full md:w-2/3 px-4 sm:px-8 md:px-0 md:pl-5">
                     <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-8 sm:mt-0">Your Cart</div>
                     {cartWithPrices && cartWithPrices.length > 0 ? (
                         cartWithPrices.map((item, idx) => (
@@ -180,8 +181,9 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
                         </div>
                     )}
                 </div>
-                <div className="px-10 py-10 lg:basis-1/3 hidden md:block sticky bottom-0 top-[170px]">
-                    <div id="summary" className=" flex flex-col justify-between bg-gray-200 px-8 pt-10 pb-16 sm:pb-10">
+                {/* Order Summary Section - Desktop */}
+                <div className="hidden md:block w-full md:w-1/3 px-0 md:px-10 py-10 sticky bottom-0 top-[170px]">
+                    <div id="summary" className="flex flex-col justify-between bg-gray-200 px-8 pt-10 pb-16 sm:pb-10 rounded-xl">
                         <h1 className="font-semibold text-2xl border-b border-black pb-8">Order Summary</h1>
                         <div className="flex justify-between mt-10 mb-5">
                             <span className="font-semibold text-sm uppercase">Items {cart.length}</span>
@@ -211,7 +213,6 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
                                         className={clsx("input input-bordered w-full join-item", { "border-success": couponApplied }, { "border-error": couponError })}
                                         value={couponCode}
                                         onChange={e => setCouponCode(e.target.value)}
-                                        // No disabled={couponApplied} so user can change code
                                     />
                                     <button className="btn btn-active join-item" onClick={() => setCouponCode(couponCode)}>
                                         Apply
@@ -241,23 +242,24 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
                         </div>
                     </div>
                 </div>
-                <div className='sm:px-10 py-10 md:hidden w-full'>
-                    <div id="summary" className=" flex flex-col justify-between bg-gray-200 px-8 pt-10 pb-16 sm:pb-10">
+                {/* Order Summary Section - Mobile */}
+                <div className="block md:hidden w-full px-0 sm:px-10 py-10">
+                    <div id="summary" className="flex flex-col justify-between bg-gray-200 px-4 sm:px-8 pt-10 pb-16 sm:pb-10 rounded-xl">
                         <h1 className="font-semibold text-2xl border-b border-black pb-8">Order Summary</h1>
                         <div className="flex justify-between mt-10 mb-5">
                             <span className="font-semibold text-sm uppercase">Items {cart.length}</span>
                             <span className="font-semibold text-sm">{userCurrency?.currencySymbol} {cartTotal}</span>
                         </div>
                         <div className="border-t border-black mt-8">
-                            <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
                                 <span>Sub Total</span>
                                 <span>{userCurrency?.currencySymbol} {cartTotal}</span>
                             </div>
-                            <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
                                 <span>Delivery</span>
                                 <span>{delivery}</span>
                             </div>
-                            <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
                                 <span>Taxation</span>
                                 <span>{userCurrency?.currencySymbol} {taxation}</span>
                             </div>
@@ -272,7 +274,6 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
                                         className={clsx("input input-bordered w-full join-item", { "border-success": couponApplied }, { "border-error": couponError })}
                                         value={couponCode}
                                         onChange={e => setCouponCode(e.target.value)}
-                                        // No disabled={couponApplied} so user can change code
                                     />
                                     <button className="btn btn-active join-item" onClick={() => setCouponCode(couponCode)}>
                                         Apply
@@ -286,12 +287,12 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
                                 )}
                             </div>
                             {couponApplied && (
-                                <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+                                <div className="flex font-semibold justify-between py-3 text-sm uppercase">
                                     <span>Coupon Applied</span>
                                     <span>-{userCurrency?.currencySymbol}{deductable.toFixed(2)}</span>
                                 </div>
                             )}
-                            <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
                                 <span>Total cost</span>
                                 <span>{userCurrency?.currencySymbol} {totalCost}</span>
                             </div>
