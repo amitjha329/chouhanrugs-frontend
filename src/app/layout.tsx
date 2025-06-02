@@ -36,6 +36,25 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
   gtag('config', '${googleTagData.code}');`
                 }}>
                 </script>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@type': 'Organization',
+                            name: 'Chouhan Rugs',
+                            url: siteData?.url,
+                            logo: siteData?.logoSrc,
+                            contactPoint: [{
+                                '@type': 'ContactPoint',
+                                telephone: siteData?.contact_details?.phone,
+                                contactType: 'customer service',
+                                email: siteData?.contact_details?.email
+                            }]
+                        })
+                    }}
+                    key="org-jsonld"
+                />
             </head>
             <body className={clsx(poppins.className)}>
                 <div className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none">

@@ -1,4 +1,5 @@
 import React from 'react'
+import dynamic from 'next/dynamic'
 import HeroSection from '@/ui/HomePage/HeroSection'
 import NewProductsSection from '@/ui/HomePage/NewProductsSection'
 import OrderProcessSection from '@/ui/HomePage/OrderProcessSection'
@@ -7,7 +8,6 @@ import ShopByColor from '@/ui/HomePage/ShopByColor'
 import TrendingProducts from '@/ui/HomePage/TrendingProducts'
 import OurPopularCategories from '@/ui/HomePage/OurPopularCategories'
 import ShopBySize from '@/ui/HomePage/ShopBySize'
-import Testimonials from '@/ui/Testimonials'
 import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
 import { getNewProductsTopSelling } from '@/backend/serverActions/getNewProductsTopSelling'
 import stringEmptyOrNull from '@/lib/stringEmptyOrNull'
@@ -15,12 +15,14 @@ import { Metadata } from 'next'
 import getPageData from '@/backend/serverActions/getPageData'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
-import AboveFooterSEOContet from '@/ui/HomePage/AboveFooterSEOContet'
 import { getPageFooterContent } from '@/backend/serverActions/getFooterContent'
 import getSlider from '@/backend/serverActions/getSlider'
-import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
 import { headers } from 'next/headers'
 import getDevice from '@/utils/getDevice'
+import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
+
+const DynamicTestimonials = dynamic(() => import('@/ui/Testimonials'), { loading: () => <div className="min-h-[200px] flex items-center justify-center">Loading testimonials...</div> })
+const DynamicAboveFooterSEOContet = dynamic(() => import('@/ui/HomePage/AboveFooterSEOContet'))
 
 export async function generateMetadata(): Promise<Metadata> {
   const [data, dataAdditional, bingVerification, googleVerification] = await Promise.all([getPageData("home"), getSiteData(), getAnalyticsData("BING"), getAnalyticsData("GOOGLE_VER")])
@@ -59,9 +61,15 @@ const HomePage = async () => {
   const footerContentPromise = getPageFooterContent("home")
   const homePageDataPromise = getPageData("home")
   const productsPromise = getNewProductsTopSelling({ limit: 10 });
+  const siteDataPromise = getSiteData();
   const header = await headers()
   const isMobile = getDevice({ headers: header }) == "mobile"
-  const [footerContent, homePageData, products] = await Promise.all([footerContentPromise, homePageDataPromise, productsPromise])
+  const [footerContent, homePageData, products, siteData] = await Promise.all([
+    footerContentPromise,
+    homePageDataPromise,
+    productsPromise,
+    siteDataPromise
+  ])
   const sliderData = await getSlider(homePageData.sliderId ?? 1)
   return (
     <>
@@ -75,9 +83,9 @@ const HomePage = async () => {
       <ShopByColor />
       <ShopByRoom />
       <ProductCarouselBasic products={products} sectionHeading='Best Sellers' isMobile={isMobile} />
-      <Testimonials />
+      <DynamicTestimonials />
       <div className="container mx-auto pb-5 text-xs">
-        <AboveFooterSEOContet data={footerContent} />
+        <DynamicAboveFooterSEOContet data={footerContent} />
       </div>
     </>
   )
