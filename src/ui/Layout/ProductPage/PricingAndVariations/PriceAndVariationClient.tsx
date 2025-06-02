@@ -230,7 +230,31 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                                 const userId = (document.getElementById('session_user') as HTMLInputElement)?.value;
                                 const productId = typeof product._id === 'string' ? product._id : product._id?.toString?.() || '';
                                 if (!userId) {
-                                    window.location.href = "/signin?cb=" + window.location.pathname;
+                                    // Save to localStorage for both add to cart and buy now, allowing multiple items
+                                    let pendingCart: any[] = JSON.parse(localStorage.getItem('pending_cart') || '[]');
+                                    const newItem = {
+                                        productId,
+                                        quantity,
+                                        variation: variation || '',
+                                        selectedColor,
+                                        selectedSize,
+                                        productData: product,
+                                        action: 'buy_now'
+                                    };
+                                    // Check for existing item with same productId, variation, selectedColor, selectedSize
+                                    const existingIndex = pendingCart.findIndex((item: any) =>
+                                        item.productId === newItem.productId &&
+                                        item.variation === newItem.variation &&
+                                        item.selectedColor === newItem.selectedColor &&
+                                        item.selectedSize === newItem.selectedSize
+                                    );
+                                    if (existingIndex !== -1) {
+                                        pendingCart[existingIndex].quantity += newItem.quantity;
+                                        pendingCart[existingIndex].action = 'buy_now';
+                                    } else {
+                                        pendingCart.push(newItem);
+                                    }
+                                    localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
                                     setActionLoading(false);
                                     return;
                                 }
@@ -256,7 +280,31 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                                 const userId = (document.getElementById('session_user') as HTMLInputElement)?.value;
                                 const productId = typeof product._id === 'string' ? product._id : product._id?.toString?.() || '';
                                 if (!userId) {
-                                    window.location.href = "/signin?cb=" + window.location.pathname;
+                                    // Save to localStorage for both add to cart and buy now, allowing multiple items
+                                    let pendingCart: any[] = JSON.parse(localStorage.getItem('pending_cart') || '[]');
+                                    const newItem = {
+                                        productId,
+                                        quantity,
+                                        variation: variation || '',
+                                        selectedColor,
+                                        selectedSize,
+                                        productData: product,
+                                        action: 'add_to_cart'
+                                    };
+                                    // Check for existing item with same productId, variation, selectedColor, selectedSize
+                                    const existingIndex = pendingCart.findIndex((item: any) =>
+                                        item.productId === newItem.productId &&
+                                        item.variation === newItem.variation &&
+                                        item.selectedColor === newItem.selectedColor &&
+                                        item.selectedSize === newItem.selectedSize
+                                    );
+                                    if (existingIndex !== -1) {
+                                        pendingCart[existingIndex].quantity += newItem.quantity;
+                                        pendingCart[existingIndex].action = 'add_to_cart';
+                                    } else {
+                                        pendingCart.push(newItem);
+                                    }
+                                    localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
                                     setActionLoading(false);
                                     return;
                                 }
@@ -273,9 +321,8 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                     </>
                 )}
             </div>
-            <input className='hidden' type='hidden' value={JSON.stringify(product)} id='prod_data' />
         </>
-    )
+    );
 }
 
-export default PriceAndVariationClient
+export default PriceAndVariationClient;

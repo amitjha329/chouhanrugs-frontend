@@ -12,6 +12,9 @@ import Script from 'next/script'
 import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 import getUserCartitems from '@/backend/serverActions/getUserCartitems'
 import { redirect } from 'next/navigation'
+import dynamic from 'next/dynamic'
+
+const GuestMainSection = dynamic(() => import('@/ui/Cart/Checkout/GuestMainSection'))
 
 const CheckoutPage = async (
     props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
@@ -22,8 +25,22 @@ const CheckoutPage = async (
     // const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : currencyList[0]
     const cart = await getUserCartitems((session?.user as { id: string })?.id)
 
-    if(cart.length === 0) {
-        redirect('/cart')
+    // if(cart.length === 0) {
+    //     redirect('/cart')
+    // }
+
+    // Render guest section if not logged in
+    if (!session || !session.user) {
+        return <GuestMainSection userCurrency={{
+            _id: "",
+            active: true,
+            currency: "USD",
+            exchangeRates: 1,
+            ISO: "US",
+            country: "US",
+            currencySymbol: "$",
+            default: true
+        }} />
     }
 
     return (

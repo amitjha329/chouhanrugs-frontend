@@ -34,6 +34,7 @@ import generateRazorPayOrder from '@/backend/serverActions/generateRazorPayOrder
 import validateCoupon from '@/backend/serverActions/validateCoupon'
 import generateStripePaymentIntent from '@/backend/serverActions/generateStripePaymentIntent'
 import CartItemClient from '../CartItemClient'
+import syncLocalCartToUser from '@/utils/syncLocalCartToUser'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -71,6 +72,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         couponData: CouponDataModel
     }>()
     const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayDataModel | null>()
+    const [syncingLocalCart, setSyncingLocalCart] = useState(false)
+
     const currentTax = useMemo(() => {
         // return taxation.find(item => item.ISO === userCurrency?.ISO) ?? { taxRate: 0 }
         return userCurrency?.ISO == "IN" ? { taxRate: 5 } : { taxRate: 0 }
@@ -79,7 +82,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     // const orderTotal = useMemo(() => {
     //     return Number(cartTotal + (currentShipping ? parseFloat(currentShipping.shippingCharges.split(' ')[1]) : 0)) - deductable
     // }, [currentTax, currentShipping, cartTotal, deductable])
-    
+
     // Memoize calculateProductPrice to avoid recalculating for same item
     const calculateProductPrice = useCallback((item: CartDataModel): number => {
         var priceInitial = 0
@@ -387,6 +390,40 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             setSelectedAddress(addresses[0])
         }
     }, [addresses])
+
+    // Sync local cart to user cart on first mount if needed
+    useEffect(() => {
+        if (typeof window !== 'undefined' && session?.user?.id) {
+            const localCartRaw = localStorage.getItem('pending_cart')
+            if (localCartRaw) {
+                setSyncingLocalCart(true)
+                syncLocalCartToUser(session.user.id, async (userId: string, productId: string, quantity: number, variationCode: string, onSuccess?: () => void, onError?: (err: any) => void) => {
+                    try {
+                        const res = await fetch('/api/user/addtocart', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ productId, userId, quantity, variationCode })
+                        });
+                        if (res.ok) {
+                            if (onSuccess) onSuccess();
+                        } else {
+                            if (onError) onError(await res.text());
+                        }
+                    } catch (err) {
+                        if (onError) onError(err);
+                    }
+                }).then(() => {
+                    setSyncingLocalCart(false)
+                    // Optionally, refresh cart after sync
+                    getUserCartitems(session.user.id).then(cartRes => setCart(cartRes.filter(it => it.cartProduct.length > 0)))
+                })
+            }
+        }
+    }, [session?.user?.id])
+
+    if (syncingLocalCart) {
+        return <Loader />
+    }
 
     return (
         !Array.isArray(queryParams?.redirect_status) && stringEmptyOrNull(queryParams?.redirect_status) ? <>

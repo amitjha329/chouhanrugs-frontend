@@ -4,11 +4,15 @@ import { auth } from '@/auth'
 import getUserCartitems from '@/backend/serverActions/getUserCartitems'
 import CartItem from '@/ui/Cart/CartItem'
 import CartTotalSection from '@/ui/Cart/CartTotalSection'
+import dynamic from 'next/dynamic'
+
+const CartLocalStorage = dynamic(() => import('@/ui/Cart/CartLocalStorage'))
 
 const CartPage = async () => {
     const session = await auth()
     const cart = await getUserCartitems((session?.user as { id: string })?.id)
-    return (
+    const isLoggedIn = !!session?.user
+    return isLoggedIn ?
         <div className="container py-0 sm:py-10 mx-auto">
             <div className="flex shadow-none sm:shadow-lg rounded-none sm:rounded-md overflow-hidden flex-col">
                 <div className="bg-white px-10 py-10">
@@ -25,7 +29,7 @@ const CartPage = async () => {
                     </Link>
                     <div className="flex justify-between border-b pb-8 mb-5 sm:mb-auto">
                         <h1 className="font-semibold text-2xl">Shopping Cart</h1>
-                        <h2 className="font-semibold text-2xl">{cart.length} Items</h2>
+                        <h2 className="font-semibold text-2xl">{cart.length}</h2>
                     </div>
                     <div className="hidden sm:flex mt-10 mb-5 justify-between items-center">
                         <h3 className="font-semibold text-gray-600 text-xs uppercase w-64">
@@ -57,11 +61,10 @@ const CartPage = async () => {
                             </div>
                         )
                     }
-                    {cart && cart.length > 0 && <CartTotalSection cartItems={cart} />}
+                    {isLoggedIn && cart && cart.length > 0 && <CartTotalSection cartItems={cart} />}
                 </div>
             </div>
-        </div>
-    )
+        </div> : <CartLocalStorage />
 }
 
 export default CartPage
