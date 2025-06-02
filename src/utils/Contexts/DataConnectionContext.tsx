@@ -30,24 +30,47 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
     const [wishlistItems, setWishlistitems] = useState<string[]>([])
     const { data: session } = useSession()
 
+    // Helper to get local cart count
+    const getLocalCartCount = () => {
+        if (typeof window !== 'undefined') {
+            const localCartRaw = localStorage.getItem('pending_cart')
+            if (localCartRaw) {
+                try {
+                    const localCart = JSON.parse(localCartRaw)
+                    if (Array.isArray(localCart)) return localCart.length
+                } catch { }
+            }
+        }
+        return 0
+    }
+
     const refreshWishList = () => {
-        getUserAllWishlist((session?.user as { id: string }).id, false).then(result => {
+        getUserAllWishlist((session?.user as { id: string })?.id, false).then(result => {
             setWishlistitems(result?.itemIds ?? [])
         }).catch(err => console.log(err))
     }
 
     const refreshCartItems = () => {
-        getUserCartItemCount((session?.user as { id: string }).id).then(result => {
-            setCartCount(result.cartItemCount)
-        }).catch(err => console.log(err))
+        if (session?.user) {
+            getUserCartItemCount((session?.user as { id: string }).id).then(result => {
+                setCartCount(result.cartItemCount)
+            }).catch(err => console.log(err))
+        } else {
+            setCartCount(getLocalCartCount())
+        }
     }
 
     useEffect(() => {
+        // On mount or session change, update cart count from server or localStorage
+        if (session?.user) {
+            getUserCartItemCount((session?.user as { id: string }).id).then(result => {
+                setCartCount(result.cartItemCount)
+            }).catch(err => console.log(err))
+        } else {
+            setCartCount(getLocalCartCount())
+        }
         (!mainSocket || mainSocket.readyState !== WebSocket.OPEN) && webSocketInitializer(window.location.host).then((result) => {
             setMainSocket(result)
-        }).catch(err => console.log(err))
-        session && getUserCartItemCount((session?.user as { id: string }).id).then(result => {
-            setCartCount(result.cartItemCount)
         }).catch(err => console.log(err))
         session && getUserAllWishlist((session?.user as { id: string }).id, false).then(result => {
             setWishlistitems(result?.itemIds ?? [])
@@ -73,6 +96,15 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
             }
         }
     }, [mainSocket, session])
+
+    useEffect(() => {
+        // Listen for local cart changes (add/remove) while logged out
+        if (!session?.user) {
+            const handleStorage = () => setCartCount(getLocalCartCount())
+            window.addEventListener('storage', handleStorage)
+            return () => window.removeEventListener('storage', handleStorage)
+        }
+    }, [session])
 
     const value = useMemo(() => ({
         mainSocket,

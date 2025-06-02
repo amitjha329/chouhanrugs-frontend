@@ -3,6 +3,7 @@ import ColorDataModel from '@/types/ColorDataModel'
 import { ProductDataModel } from '@/types/ProductDataModel'
 import SizeDataModel from '@/types/SizeDataModel'
 import { useProductContext } from '@/utils/Contexts/ProductContext'
+import onPageNotifications from '@/utils/onPageNotifications'
 import clsx from 'clsx'
 import React from 'react'
 
@@ -256,6 +257,10 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                                     }
                                     localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
                                     setActionLoading(false);
+                                    onPageNotifications('success', 'Item added to cart.').then(() => {
+                                        window.location.href = "/cart/checkout";
+                                    }
+                                    );
                                     return;
                                 }
                                 await handleBuyNow(
@@ -306,6 +311,9 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                                     }
                                     localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
                                     setActionLoading(false);
+                                    onPageNotifications('success', 'Item added to cart.').then(() => {
+                                        window.location.reload();
+                                    });
                                     return;
                                 }
                                 await handleAddToCart(
