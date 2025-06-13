@@ -16,9 +16,9 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
         })
     }
     const incrementQuantity = () => {
-        updateQuantity(quantity + 1)
-        // If quantity is less than 10, allow incrementing
         if (quantity < 10) {
+            updateQuantity(quantity + 1)
+            // If quantity is less than 10, allow incrementing
             increaseDeacreaseCartItem(item._id, 1).then(() => {
                 window.location.reload()
             })
@@ -28,9 +28,9 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
     }
 
     const decrementQuantity = () => {
-        updateQuantity(quantity - 1)
-        // If quantity is greater than 1, allow decrementing
         if (quantity > 1) {
+            updateQuantity(quantity - 1)
+            // If quantity is greater than 1, allow decrementing
             increaseDeacreaseCartItem(item._id, -1).then(() => {
                 window.location.reload()
             })
