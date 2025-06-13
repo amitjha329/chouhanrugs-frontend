@@ -35,6 +35,7 @@ import validateCoupon from '@/backend/serverActions/validateCoupon'
 import generateStripePaymentIntent from '@/backend/serverActions/generateStripePaymentIntent'
 import CartItemClient from '../CartItemClient'
 import syncLocalCartToUser from '@/utils/syncLocalCartToUser'
+import CartItem from '../CartItem'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -456,7 +457,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         }
                         <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-8">Review Order Items</div>
                         {
-                            cart?.map(item => <CartItemClient item={item} key={item._id} userCurrency={userCurrency} />)
+                            cart?.map(item => <CartItem item={item} key={item._id} userCurrency={userCurrency} />)
                         }
                     </div>
                     <div className="px-10 py-10 lg:basis-1/3 hidden md:block sticky bottom-0 top-[170px]">

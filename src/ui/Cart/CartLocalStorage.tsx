@@ -98,15 +98,15 @@ const CartLocalStorage = () => {
                                             <a href={`/products/${item.cartProduct[0].productURL}`} className="flex items-center min-w-0">
                                                 <div className="w-fit">
                                                     <img
-                                                        height={96}
-                                                        width={96}
-                                                        className="sm:h-24 sm:w-24 object-scale-down w-20 h-20"
+                                                        height={140}
+                                                        width={140}
+                                                        className="sm:h-36 sm:w-36 object-scale-down w-28 h-28"
                                                         src={item.cartProduct[0].images[item.cartProduct[0].productPrimaryImageIndex]}
                                                         alt=""
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-start ml-4 flex-grow min-w-0">
-                                                    <span className="font-bold text-sm max-sm:text-xs max-w-[250px] truncate">{item.cartProduct[0].productName}</span>
+                                                    <span className="font-medium text-xs max-w-[250px] truncate">{item.cartProduct[0].productName}</span>
                                                     <span className="opacity-80 max-sm:text-sm truncate">Brand: {item.cartProduct[0].productBrand}</span>
                                                     <div className='flex gap-2 flex-wrap'>
                                                         {item.variationCode && <>
@@ -154,11 +154,11 @@ const CartLocalStorage = () => {
                                         </div>
                                         {/* Price/Qty. */}
                                         <div className="flex items-center justify-center w-32">
-                                            <span className="font-semibold text-sm">${calculateProductPrice({ productData: item.cartProduct[0], variation: item.variationCode, quantity: 1, customSize: item.customSize })?.toFixed(2)}</span>
+                                            <span className="font-semibold text-xs">${calculateProductPrice({ productData: item.cartProduct[0], variation: item.variationCode, quantity: 1, customSize: item.customSize })?.toFixed(2)}</span>
                                         </div>
                                         {/* Total */}
                                         <div className="flex items-center justify-center w-32">
-                                            <span className="font-semibold text-sm">${calculateProductPrice({ productData: item.cartProduct[0], variation: item.variationCode, quantity: item.quantity, customSize: item.customSize })?.toFixed(2)}</span>
+                                            <span className="font-semibold text-xs">${calculateProductPrice({ productData: item.cartProduct[0], variation: item.variationCode, quantity: item.quantity, customSize: item.customSize })?.toFixed(2)}</span>
                                         </div>
                                         {/* Remove */}
                                         <div className="flex items-center justify-center w-16">
@@ -203,15 +203,15 @@ const CartLocalStorage = () => {
                                             <a href={`/products/${item.cartProduct[0].productURL}`} className="flex items-center">
                                                 <div className="w-fit">
                                                     <img
-                                                        height={80}
-                                                        width={80}
-                                                        className="h-20 w-20 object-scale-down rounded"
+                                                        height={140}
+                                                        width={140}
+                                                        className="h-28 w-28 object-scale-down rounded"
                                                         src={item.cartProduct[0].images[item.cartProduct[0].productPrimaryImageIndex]}
                                                         alt=""
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-start ml-3 flex-grow">
-                                                    <span className="font-bold text-base max-w-[180px] truncate">{item.cartProduct[0].productName}</span>
+                                                    <span className="font-medium text-xs max-w-[180px] truncate">{item.cartProduct[0].productName}</span>
                                                     <span className="opacity-80 text-sm">Brand: {item.cartProduct[0].productBrand}</span>
                                                     <div className='flex gap-2 flex-wrap mt-1'>
                                                         {item.variationCode && <>
@@ -269,11 +269,11 @@ const CartLocalStorage = () => {
                                             </div>
                                             <div className="flex flex-col text-right ml-auto">
                                                 <span className="text-xs text-gray-500">Price/Qty.</span>
-                                                <span className="font-semibold text-base">${calculateProductPrice({ productData: item.cartProduct[0], variation: item.variationCode, quantity: 1, customSize: item.customSize })?.toFixed(2)}</span>
+                                                <span className="font-semibold text-sm">${calculateProductPrice({ productData: item.cartProduct[0], variation: item.variationCode, quantity: 1, customSize: item.customSize })?.toFixed(2)}</span>
                                             </div>
                                             <div className="flex flex-col text-right">
                                                 <span className="text-xs text-gray-500">Total</span>
-                                                <span className="font-semibold text-base">${calculateProductPrice({ productData: item.cartProduct[0], variation: item.variationCode, quantity: item.quantity, customSize: item.customSize })?.toFixed(2)}</span>
+                                                <span className="font-semibold text-sm">${calculateProductPrice({ productData: item.cartProduct[0], variation: item.variationCode, quantity: item.quantity, customSize: item.customSize })?.toFixed(2)}</span>
                                             </div>
                                         </div>
                                     </div>
