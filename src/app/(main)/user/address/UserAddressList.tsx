@@ -175,7 +175,7 @@ const UserAddressList = ({ addressList: initialAddressList }: { addressList: Use
                         <div className="h-72 w-full flex flex-col justify-center items-center bg-base-100 rounded-2xl border border-base-300">
                             <div className="text-6xl mb-4 opacity-20">📍</div>
                             <span className="opacity-60 text-xl md:text-2xl font-semibold text-center">No addresses found</span>
-                            <span className="opacity-40 text-sm mt-2 text-center">Click "Add Address" to get started</span>
+                            <span className="opacity-40 text-sm mt-2 text-center">Click &quot;Add Address&quot; to get started</span>
                         </div>
                     )
                 )}
