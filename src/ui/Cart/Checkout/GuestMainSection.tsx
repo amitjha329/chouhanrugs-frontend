@@ -8,6 +8,7 @@ import Currency from '@/types/Currency'
 import GuestCartItemClient from './GuestCartItemClient'
 import validateCoupon from '@/backend/serverActions/validateCoupon'
 import onPageNotifications from '@/utils/onPageNotifications'
+import Link from 'next/link'
 
 const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
     const [cart, setCart] = useState<CartDataModel[]>([])
@@ -138,9 +139,11 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
         setCart(prev => {
             const newCart = prev.map((item, i) => {
                 if (i === idx) {
-                    const newQty = item.quantity + delta
-                    return { ...item, quantity: newQty > 1 ? newQty : 1 }
-                }
+                const newQty = item.quantity + delta;
+                // Ensure quantity is between 1 and 10
+                const clampedQty = Math.max(1, Math.min(10, newQty));
+                return { ...item, quantity: clampedQty };
+            }
                 return item
             })
             syncCart(newCart)
@@ -160,7 +163,18 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
             <div className="flex flex-col md:flex-row items-start gap-8">
                 {/* Cart Items Section */}
                 <div className="flex flex-col w-full md:w-2/3 px-4 sm:px-8 md:px-0 md:pl-5">
-                    <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-8 sm:mt-0">Your Cart</div>
+                    <Link href="/">
+                        <div className="flex font-semibold text-primary text-sm mt-4 cursor-pointer">
+                            <svg
+                                className="fill-current mr-2 text-primary w-4"
+                                viewBox="0 0 448 512"
+                            >
+                                <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
+                            </svg>
+                            Continue Shopping
+                        </div>
+                    </Link>
+                    <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-4 sm:mt-0">Your Cart</div>
                     {cartWithPrices && cartWithPrices.length > 0 ? (
                         cartWithPrices.map((item, idx) => (
                             <GuestCartItemClient

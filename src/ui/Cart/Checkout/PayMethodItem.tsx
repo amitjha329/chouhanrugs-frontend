@@ -1,6 +1,6 @@
 // @ts-nocheck
 'use client'
-import { RadioGroup } from "@headlessui/react"
+import { RadioGroup, Radio, Label } from "@headlessui/react"
 import { FaPaypal, FaStripe } from "react-icons/fa"
 import { MdCheckCircleOutline } from "react-icons/md"
 import { SiRazorpay } from 'react-icons/si'
@@ -23,64 +23,55 @@ const PayMethodItem = ({ pgList, selected, setSelected, currency }: {
             }
         }
     }, [pgList])
+    
     return (
         <RadioGroup value={selected} onChange={setSelected}>
-            <div className="space-y-2">
+            <div className="space-y-3">
                 {pgList.map((paymentPartners) => (
-                    currency?.currency === "INR" ? paymentPartners.partner === "RZP" && <RadioGroup.Option
+                    currency?.currency === "INR" ? paymentPartners.partner === "RZP" && <Radio
                         key={paymentPartners._id}
                         value={paymentPartners}
-                        className={({ active, checked }) =>
-                            `${active
-                                ? 'ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300'
-                                : ''
-                            }
-                  ${checked ? 'bg-sky-900 bg-opacity-75 text-white' : 'bg-white'
-                            }
-                    relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
+                        className={({ checked, focus: active }) =>
+                            `${active ? 'ring-2 ring-primary ring-opacity-60 ring-offset-2' : ''}
+                            ${checked ? 'bg-primary text-primary-content border-primary shadow-lg' : 'bg-base-100 border-base-300 hover:border-primary/50 hover:shadow-md'} 
+                            relative flex cursor-pointer rounded-xl border-2 px-6 py-5 shadow-sm transition-all duration-200 ease-in-out focus:outline-none`
                         }
                     >
-                        {({ active, checked }) => <div className="flex w-full items-center justify-between">
+                        {({ checked }) => <div className="flex w-full items-center justify-between">
                             <div className="flex items-center">
                                 <div className="text-sm">
-                                    <RadioGroup.Label
+                                    <Label
                                         as="p"
-                                        className={`font-medium flex items-center  ${checked ? 'text-white' : 'text-gray-900'
-                                            }`}>
+                                        className={`font-semibold text-lg flex items-center ${checked ? 'text-primary-content' : 'text-base-content'}`}>
                                         {
                                             paymentPartners.partner == "RZP" &&
                                             <><SiRazorpay className="h-6 w-6 mr-4" />Razorpay</>
                                         }
-                                    </RadioGroup.Label>
+                                    </Label>
                                 </div>
                             </div>
                             {checked && (
-                                <div className="shrink-0 text-white">
+                                <div className="shrink-0 text-primary-content">
                                     <MdCheckCircleOutline className="h-6 w-6" />
                                 </div>
                             )}
                         </div>
                         }
-                    </RadioGroup.Option> : paymentPartners.partner !== "RZP" && <RadioGroup.Option
+                    </Radio> : paymentPartners.partner !== "RZP" && <Radio
                         key={paymentPartners._id}
                         value={paymentPartners}
-                        className={({ active, checked }) =>
-                            `${active
-                                ? 'ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300'
-                                : ''
-                            }
-                  ${checked ? 'bg-sky-900 bg-opacity-75 text-white' : 'bg-white'
-                            }
-                    relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
+                        className={({ checked, focus: active }) =>
+                            `${active ? 'ring-2 ring-primary ring-opacity-60 ring-offset-2' : ''}
+                            ${checked ? 'bg-primary text-primary-content border-primary shadow-lg' : 'bg-base-100 border-base-300 hover:border-primary/50 hover:shadow-md'} 
+                            relative flex cursor-pointer rounded-xl border-2 px-6 py-5 shadow-sm transition-all duration-200 ease-in-out focus:outline-none`
                         }
                     >
-                        {({ active, checked }) => <div className="flex w-full items-center justify-between">
+                        {({ checked }) => <div className="flex w-full items-center justify-between">
                             <div className="flex items-center">
                                 <div className="text-sm">
-                                    <RadioGroup.Label
+                                    <Label
                                         as="p"
-                                        className={`font-medium flex items-center  ${checked ? 'text-white' : 'text-gray-900'
-                                            }`}>
+                                        className={`font-semibold text-lg flex items-center ${checked ? 'text-primary-content' : 'text-base-content'}`}>
                                         {
                                             paymentPartners.partner == "STRIPE" &&
                                             <><FaStripe className="h-6 w-6 mr-4" />Stripe</>
@@ -89,17 +80,17 @@ const PayMethodItem = ({ pgList, selected, setSelected, currency }: {
                                             paymentPartners.partner == "PAYPAL" &&
                                             <><FaPaypal className="h-6 w-6 mr-4" />PayPal</>
                                         }
-                                    </RadioGroup.Label>
+                                    </Label>
                                 </div>
                             </div>
                             {checked && (
-                                <div className="shrink-0 text-white">
+                                <div className="shrink-0 text-primary-content">
                                     <MdCheckCircleOutline className="h-6 w-6" />
                                 </div>
                             )}
                         </div>
                         }
-                    </RadioGroup.Option>
+                    </Radio>
                 ))}
             </div>
         </RadioGroup>

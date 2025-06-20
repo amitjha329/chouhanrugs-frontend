@@ -42,8 +42,7 @@ const CartItem = ({ item }: { item: CartDataModel, }) => {
 
     return (
         <>
-            {
-                item.cartProduct[0] ? <div className="flex items-center justify-between hover:bg-gray-100 mb-2 ">
+            {                item.cartProduct[0] ? <div className="flex items-center justify-between hover:bg-base-200 mb-2 rounded-lg transition-colors duration-200 p-2">
                     <a href={`/products/${item.cartProduct[0].productURL}`} className="flex">
                         {" "}
                         {/* product */}
@@ -102,8 +101,7 @@ const CartItem = ({ item }: { item: CartDataModel, }) => {
                         {userCurrency?.currencySymbol} {calculateProductPrice().toFixed(2)}
                     </span>
                     <DeleteFromCartLg item={item} />
-                </div> :
-                    <div className="flex items-center justify-between hover:bg-gray-100 mb-2 ">
+                </div> :                    <div className="flex items-center justify-between hover:bg-base-200 mb-2 rounded-lg transition-colors duration-200 p-2">
                         <div className="flex">
                             {" "}
                             {/* product */}

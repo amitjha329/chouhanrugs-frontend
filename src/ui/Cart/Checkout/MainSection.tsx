@@ -10,7 +10,7 @@ import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/re
 import { GrFormClose } from 'react-icons/gr'
 import { Elements } from '@stripe/react-stripe-js'
 import { Session } from 'next-auth'
-import UserAddressForm from '@/app/(main)/user/address/UserAddressForm'
+import UserAddressFormEnhanced from './UserAddressFormEnhanced'
 import { capturePayment, createOrder } from '@/backend/serverActions/paypal'
 import stringEmptyOrNull, { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CouponDataModel from '@/types/CouponDataModel'
@@ -36,6 +36,8 @@ import generateStripePaymentIntent from '@/backend/serverActions/generateStripeP
 import CartItemClient from '../CartItemClient'
 import syncLocalCartToUser from '@/utils/syncLocalCartToUser'
 import CartItem from '../CartItem'
+import updateUserAddress from '@/backend/serverActions/updateUserAddress'
+import deleteUserAddress from '@/backend/serverActions/deleteUserAddress'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -64,6 +66,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     const [deductable, setDeductable] = useState(0)
     const [showStripe, setShowStripe] = useState(false)
     const [addAddress, setAddAddress] = useState(false)
+    const [editingAddress, setEditingAddress] = useState<UserAddressDataModel | null>(null)
     const [selectedAddress, setSelectedAddress] = useState<UserAddressDataModel | null>(null)
     // const [taxation, setTaxation] = useState<TaxationDataModel[]>([])
     const [taxation, setTaxation] = useState<[]>([])
@@ -269,6 +272,54 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 onPageNotifications("error", "Copon Not Apllicable")
             }
         }).catch(err => onPageNotifications("error", "Something Went Wrong"))
+    }    // Address management handlers
+    const handleEditAddress = (address: UserAddressDataModel) => {
+        setEditingAddress(address)
+        setAddAddress(true)
+    }
+
+    const handleAddAddressToggle = (value: boolean) => {
+        setAddAddress(value)
+        if (!value) {
+            setEditingAddress(null) // Clear editing state when closing form
+        }
+    }
+
+    const handleDeleteAddress = async (addressId: string) => {
+        try {
+            if (!session?.user?.id) {
+                onPageNotifications("error", "Please login to delete address")
+                return
+            }
+
+            const result = await deleteUserAddress(addressId, (session.user as { id: string }).id)
+            
+            if (result.ack) {
+                onPageNotifications("success", "Address deleted successfully")
+                // Remove the deleted address from the local state
+                setaddress(prevAddresses => prevAddresses.filter(addr => addr._id !== addressId))
+                // If the deleted address was selected, clear the selection
+                if (selectedAddress?._id === addressId) {
+                    setSelectedAddress(null)
+                }
+            } else {
+                onPageNotifications("error", "Failed to delete address")
+            }
+        } catch (error) {
+            console.error('Error deleting address:', error)
+            onPageNotifications("error", "Something went wrong while deleting address")
+        }
+    }
+
+    const refreshAddressList = async () => {
+        if (session?.user?.id) {
+            try {
+                const addressList = await getUserAddressList((session.user as { id: string }).id)
+                setaddress(addressList)
+            } catch (error) {
+                console.error('Error refreshing address list:', error)
+            }
+        }
     }
 
     useEffect(() => { setDeductable(0); setCouponCode("") }, [userCurrency])
@@ -437,19 +488,28 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         }
                         {
                             addresses.length > 0 && !addAddress && <>
-                                <ShippingSelector addresses={addresses} selectedAddress={selectedAddress} selectionHandler={setSelectedAddress} />
-                                <div className="relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none justify-between bg-white mt-2" onClick={_ => setAddAddress(true)}>
-                                    <span>New Address</span> <BsPlus className="w-7 h-7" />
+                                <ShippingSelector 
+                                    addresses={addresses} 
+                                    selectedAddress={selectedAddress} 
+                                    selectionHandler={setSelectedAddress}
+                                    onEditAddress={handleEditAddress}
+                                    onDeleteAddress={handleDeleteAddress}
+                                />                                <div className="relative flex cursor-pointer rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/50 px-5 py-4 shadow-lg focus:outline-none justify-between bg-base-100 hover:bg-base-50 mt-3 transition-all duration-200" onClick={_ => handleAddAddressToggle(true)}>
+                                    <span className="font-medium text-primary">Add New Address</span> 
+                                    <BsPlus className="w-7 h-7 text-primary" />
                                 </div>
                             </>
                         }
-                        {
-                            (!addAddress && addresses.length == 0 && !addressLoading) && <div className="bg-white relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none justify-between" onClick={_ => setAddAddress(true)}>
-                                <span>New Address</span> <BsPlus className="w-7 h-7" />
+                        {                            (!addAddress && addresses.length == 0 && !addressLoading) && <div className="bg-base-100 relative flex cursor-pointer rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/50 px-5 py-4 shadow-lg focus:outline-none justify-between hover:bg-base-50 transition-all duration-200" onClick={_ => handleAddAddressToggle(true)}>
+                                <span className="font-medium text-primary">Add New Address</span> 
+                                <BsPlus className="w-7 h-7 text-primary" />
                             </div>
                         }
-                        {
-                            addAddress && <UserAddressForm addAddressHandler={setAddAddress} />
+                        {                            addAddress && <UserAddressFormEnhanced 
+                                addAddressHandler={handleAddAddressToggle} 
+                                editingAddress={editingAddress}
+                                onSaveComplete={refreshAddressList}
+                            />
                         }
                         <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-8">Payment Options</div>
                         {
@@ -698,7 +758,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <DialogPanel className="w-full max-w-5xl transform overflow-hidden rounded-2xl bg-white p-7 text-left align-middle shadow-xl transition-all">
+                                <DialogPanel className="w-full max-w-5xl transform overflow-hidden rounded-2xl bg-base-100 p-7 text-left align-middle shadow-xl transition-all">
                                     <GrFormClose className="absolute top-3 right-3 h-7 w-7 text-gray-500" onClick={_ => { setShowStripe(false) }} />
                                     {stripeClientSecret && paymentMethod?.partner == "STRIPE" && stripePromise != null &&
                                         <Suspense fallback={<div>Loading Stripe...</div>}>

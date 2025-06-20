@@ -16,7 +16,7 @@ const GuestCartItemClient = ({ item, userCurrency, onQuantityChange, onRemove }:
     }
     const variation = getVariation()
     return (
-        <div className="flex flex-col sm:flex-row w-full gap-3 sm:gap-6 items-stretch bg-white rounded-xl shadow-sm p-3 sm:p-6 border border-gray-100">
+        <div className="flex flex-col sm:flex-row w-full gap-3 sm:gap-6 items-stretch bg-base-100 rounded-xl shadow-sm p-3 sm:p-6 border border-base-300">
             {/* Product Image & Name Row */}
             <div className="flex flex-row items-start gap-3 w-full sm:w-2/5">
                 <a href={`/products/${item.cartProduct[0].productURL}`} className="flex-shrink-0 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden aspect-square min-h-[140px] max-h-[140px] w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40">
@@ -59,7 +59,7 @@ const GuestCartItemClient = ({ item, userCurrency, onQuantityChange, onRemove }:
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mt-3">
                     <div className="flex items-center gap-2">
                         <button className="px-2 py-1 text-lg font-bold text-gray-600 bg-gray-100 rounded-l hover:bg-gray-200 transition" onClick={() => onQuantityChange(-1)} aria-label="Decrease quantity">-</button>
-                        <span className="px-3 py-1 text-base font-medium bg-white border border-gray-200 rounded min-w-[2.5rem] text-center">{item.quantity}</span>
+                        <span className="px-3 py-1 text-base font-medium bg-base-100 border border-base-300 rounded min-w-[2.5rem] text-center">{item.quantity}</span>
                         <button className="px-2 py-1 text-lg font-bold text-gray-600 bg-gray-100 rounded-r hover:bg-gray-200 transition" onClick={() => onQuantityChange(1)} aria-label="Increase quantity">+</button>
                     </div>
                     <div className="flex flex-row gap-3 items-center justify-between w-full sm:w-auto">

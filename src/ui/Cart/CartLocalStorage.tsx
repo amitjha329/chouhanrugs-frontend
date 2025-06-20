@@ -47,7 +47,9 @@ const CartLocalStorage = () => {
         const newCart = cart.map((item, i) => {
             if (i === idx) {
                 const newQty = item.quantity + delta;
-                return { ...item, quantity: newQty > 1 ? newQty : 1 };
+                // Ensure quantity is between 1 and 10
+                const clampedQty = Math.max(1, Math.min(10, newQty));
+                return { ...item, quantity: clampedQty };
             }
             return item;
         });
@@ -67,7 +69,7 @@ const CartLocalStorage = () => {
     return (
         <div className="container py-0 sm:py-10 mx-auto">
             <div className="flex shadow-none sm:shadow-lg rounded-none sm:rounded-md overflow-hidden flex-col">
-                <div className="bg-white px-10 py-10">
+                <div className="bg-base-100 px-10 py-10">
                     <Link href="/">
                         <div className="flex font-semibold text-primary text-sm mb-7 cursor-pointer">
                             <svg className="fill-current mr-2 text-primary w-4" viewBox="0 0 448 512">
@@ -198,7 +200,7 @@ const CartLocalStorage = () => {
                             {/* Mobile Card Rows */}
                             {mappedCart.map((item, idx) => (
                                 item.cartProduct[0] ? (
-                                    <div key={idx} className="flex flex-col sm:hidden bg-white rounded-lg shadow mb-4 p-4">
+                                    <div key={idx} className="flex flex-col sm:hidden bg-base-100 rounded-lg shadow mb-4 p-4 border border-base-300">
                                         <div className="flex items-center mb-2">
                                             <a href={`/products/${item.cartProduct[0].productURL}`} className="flex items-center">
                                                 <div className="w-fit">
@@ -278,9 +280,9 @@ const CartLocalStorage = () => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div key={idx} className="flex flex-col sm:hidden bg-white rounded-lg shadow mb-4 p-4">
+                                    <div key={idx} className="flex flex-col sm:hidden bg-base-100 rounded-lg shadow mb-4 p-4 border border-base-300">
                                         <div className="flex items-center mb-2">
-                                            <span className="inline-flex items-center justify-center w-20 h-20 bg-gray-200 text-gray-400">No Image</span>
+                                            <span className="inline-flex items-center justify-center w-20 h-20 bg-base-200 text-base-content/40">No Image</span>
                                             <div className="flex flex-col justify-start ml-3 flex-grow">
                                                 <span className="font-bold text-base max-w-[180px] truncate">Product no Longer Available</span>
                                             </div>

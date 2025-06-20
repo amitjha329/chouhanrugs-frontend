@@ -84,6 +84,9 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                                 onChange={e => setEmail(e.currentTarget.value)}
                                 placeholder="Email"
                             />
+                            <p className="mt-6 max-sm:mb-6 text-xs text-center">
+                                <b className='text-red-600'>Note:</b> An OTP will be sent to this email address for verification. Please check your <b>inbox</b> or <b>spam/junk</b> folder.
+                            </p>
                             {
                                 searchParams.get('error') && <p className='mb-6 text-red-600 text-opacity-70 font-semibold'>Wrong OTP Was Provided, Please Retry Sign In.</p>
                             }
@@ -113,7 +116,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 }
                 {
                     isOTPForm && <div className='mx-auto max-w-xs sm:max-w-sm '>
-                        <p className='mb-6 text-primary text-opacity-70'>An OTP has been sen to your email address: {email}</p>
+                        <p className='mb-6 text-primary text-opacity-70 text-center'>An OTP has been sent to {email} for verification. Please check your <b>inbox</b> or <b>spam/junk</b> folder.</p>
                         <input className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white' maxLength={6} type='text' placeholder='OTP: XXXXXX' onChange={e => setCode(e.currentTarget.value)} onKeyDown={onKeyPress} />
                         <button className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none" onClick={_ => onReady()}>
                             <FaSignInAlt className="w-6 h-6 -ml-2" />

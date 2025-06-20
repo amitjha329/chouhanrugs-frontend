@@ -1,11 +1,17 @@
 'use client'
+import addProductToWishlist from '@/backend/serverActions/addProductToWishlist'
+import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFromWishlist'
 import ColorDataModel from '@/types/ColorDataModel'
 import { ProductDataModel } from '@/types/ProductDataModel'
 import SizeDataModel from '@/types/SizeDataModel'
+import { useDataConnectionContext } from '@/utils/Contexts/DataConnectionContext'
 import { useProductContext } from '@/utils/Contexts/ProductContext'
 import onPageNotifications from '@/utils/onPageNotifications'
 import clsx from 'clsx'
-import React from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import React, { MouseEventHandler, useState } from 'react'
+import { FaHeart } from 'react-icons/fa'
 
 interface VariationExtraDataModel extends ProductDataModel {
     colorData: ColorDataModel[],
@@ -15,9 +21,6 @@ interface VariationExtraDataModel extends ProductDataModel {
 const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel }) => {
     const {
         variation,
-        setVariation,
-        isVariation,
-        setIsVariation,
         selectedColor,
         setSelectedColor,
         selectedSize,
@@ -26,6 +29,31 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
         handleBuyNow,
         priceLoading, // Use context's priceLoading
     } = useProductContext() || {};
+
+    const [wishAnimate, setWishAnimate] = useState(false)
+    const { wishlistItems, refreshWishList } = useDataConnectionContext()
+    const { data: session } = useSession()
+    const router = useRouter()
+
+    const addToWishlist: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.preventDefault()
+        if (session?.user === undefined) {
+            router.push("/signin?cb=" + encodeURIComponent(window.location.pathname))
+            return
+        }
+        !wishlistItems.includes((product._id ?? product.objectID).toString() ?? "") ? addProductToWishlist(product._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {
+            res.ack ? onPageNotifications("success", "Added To Wishlist").catch(e => console.log(e)) : res.ack && onPageNotifications("error", "Failed Adding To Wishlist").catch(e => console.log(e))
+        }).catch(err => {
+            onPageNotifications("error", "Failed Adding To Wishlist").catch(e => console.log(e))
+            console.log(err)
+        }).finally(() => { refreshWishList() }) : deleteProductFromWishlist(product._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {
+            res.ack ? onPageNotifications("success", "Removed From Wishlist").catch(e => console.log(e)) : res.ack && onPageNotifications("error", "Failed Removing From Wishlist").catch(e => console.log(e))
+        }).catch(err => {
+            onPageNotifications("error", "Failed Removing From Wishlist").catch(e => console.log(e))
+            console.log(err)
+        }).finally(() => { refreshWishList() })
+        setWishAnimate(!wishAnimate)
+    }
 
     // Add state for quantity
     const [quantity, setQuantity] = React.useState(1);
@@ -326,6 +354,12 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                                 );
                             }}
                         >Add to Cart</button>
+                        <button className={`w-full sm:w-auto rounded-full border-2 border-accent text-accent font-bold py-3 px-3 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-base tracking-wide max-md:hidden ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`} onClick={addToWishlist}>
+                            {
+                                wishlistItems.includes((product._id ?? product.objectID).toString() ?? "") ?
+                                    <FaHeart className={clsx("text-red-600 animate-pulse")} /> : <FaHeart className='text-gray-400 animate-pulse' />
+                            }
+                        </button>
                     </>
                 )}
             </div>

@@ -30,6 +30,14 @@
     z-index: 9999;
 }
 
+.aa-PanelLayout {
+    @apply divide-y divide-gray-100 !max-h-96;
+}
+
+.aa-ItemContentTitle{
+    @apply line-clamp-2 text-gray-900 dark:text-gray-100;
+}
+
 // @import '../../node_modules/flickity/css/flickity.css';
 
 // @import './custom/misc';

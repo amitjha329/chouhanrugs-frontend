@@ -5,7 +5,6 @@ import getUserCartitems from '@/backend/serverActions/getUserCartitems'
 import CartItem from '@/ui/Cart/CartItem'
 import CartTotalSection from '@/ui/Cart/CartTotalSection'
 import dynamic from 'next/dynamic'
-import CartItemClient from '@/ui/Cart/CartItemClient'
 
 const CartLocalStorage = dynamic(() => import('@/ui/Cart/CartLocalStorage'))
 

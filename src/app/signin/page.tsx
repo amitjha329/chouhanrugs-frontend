@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import banner from "./banner.jpg"
-import banner_mobile from "./banner-mobile.jpg"
+import banner from "./banner.webp"
+import banner_mobile from "./banner-mobile.webp"
 import getSiteData from "@/backend/serverActions/getSiteData";
 import SigninForm from "./SigninForm";
 import { auth } from "@/auth";

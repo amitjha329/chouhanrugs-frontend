@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   experimental: {
     webpackMemoryOptimizations: true
   },
+  env: {
+    NEXT_PUBLIC_ALGOLIA_APPID: process.env.ALGOLIA_APPID,
+    NEXT_PUBLIC_ALGOLIA_KEY_CLIENT: process.env.ALGOLIA_KEY_CLIENT,
+    NEXT_PUBLIC_ALGOLIA_INDEX: process.env.ALGOLIA_INDEX,
+    NEXT_PUBLIC_ALGOLIA_QUERY_INDEX: process.env.ALGOLIA_QUERY_INDEX,
+  },
   turbopack: {
     // Example: Add aliases and externals for Turbopack (experimental, API may change)
     resolveAlias: {

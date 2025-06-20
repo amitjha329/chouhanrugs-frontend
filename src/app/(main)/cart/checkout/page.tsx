@@ -11,7 +11,6 @@ import MainSection from '@/ui/Cart/Checkout/MainSection'
 import Script from 'next/script'
 import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 import getUserCartitems from '@/backend/serverActions/getUserCartitems'
-import { redirect } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
 const GuestMainSection = dynamic(() => import('@/ui/Cart/Checkout/GuestMainSection'))

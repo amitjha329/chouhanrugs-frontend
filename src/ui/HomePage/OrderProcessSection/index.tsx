@@ -21,7 +21,7 @@ const OrderProcessSection = () => {
         {
             icon: "FreeShipping.svg",
             title: "Free Shipping",
-            description: "All you products will reach you as fast as possible and at no extra cost."
+            description: "All of our Rugs will reach you wherever you are in the world like US, UK, Australia, etc. as fast as possible and at no extra cost."
         },
         {
             icon: "SafeDelivery.svg",
@@ -31,7 +31,7 @@ const OrderProcessSection = () => {
     ]
     return (
         <div className='fluid_container relative ~py-5/14 ~px-5/0'>
-            <div className='~text-lg/3xl max-w-xl mx-auto font-semibold md:text-center ~py-5/10'>Ordering Process for <h2 className='inline'><Link href='/'>Jute Rugs</Link></h2> <h2 className='inline'><Link href='/'>Kilim Rugs</Link></h2> and <h2 className='inline'><Link href="/" >Cushions Covers</Link></h2></div>
+            <div className='~text-lg/3xl max-w-3xl mx-auto font-semibold text-center ~py-5/10'>Considering Rugs for your Kitchen, Living Room, and Bed Room look at our extensive collection of <h2 className='inline'><Link href='/'>Jute Rugs</Link></h2>, <h2 className='inline'><Link href='/'>Kilim Rugs</Link></h2> and <h2 className='inline'><Link href="/" >Cushions Covers</Link></h2></div>
             <div className='flex flex-col gap-5 md:~max-w-xl/3xl'>
                 {
                     orderrocess.map((order, index) => (

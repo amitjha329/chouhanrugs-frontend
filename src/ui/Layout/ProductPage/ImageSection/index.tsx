@@ -1,12 +1,20 @@
 "use client"
 import Image from "next/image"
-import React, { useEffect, useRef } from "react"
+import React, { MouseEventHandler, useRef, useState } from "react"
 import clsx from "clsx"
 import './ProductImageGallery.scss'
 import { useProductContext } from '@/utils/Contexts/ProductContext'
+import addProductToWishlist from "@/backend/serverActions/addProductToWishlist"
+import deleteProductFromWishlist from "@/backend/serverActions/deleteProductFromWishlist"
+import { useDataConnectionContext } from "@/utils/Contexts/DataConnectionContext"
+import onPageNotifications from "@/utils/onPageNotifications"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { FaHeart } from "react-icons/fa"
 
 const ImageSection = ({ className, mobile }: { mobile: boolean, className?: string }) => {
     const {
+        product,
         selectedImageIndex,
         handleThumbnailHover,
         zoomPosition,
@@ -21,9 +29,40 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
     // Default size for magnifier
     const magnifierSize = 340;
 
+    const [wishAnimate, setWishAnimate] = useState(false)
+    const { wishlistItems, refreshWishList } = useDataConnectionContext()
+    const { data: session } = useSession()
+    const router = useRouter()
+
+    const addToWishlist: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.preventDefault()
+        if (session?.user === undefined) {
+            router.push("/signin?cb=" + encodeURIComponent(window.location.pathname))
+            return
+        }
+        !wishlistItems.includes((product?._id ?? product?.objectID ?? "").toString() ?? "") ? addProductToWishlist(product?._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {
+            res.ack ? onPageNotifications("success", "Added To Wishlist").catch(e => console.log(e)) : res.ack && onPageNotifications("error", "Failed Adding To Wishlist").catch(e => console.log(e))
+        }).catch(err => {
+            onPageNotifications("error", "Failed Adding To Wishlist").catch(e => console.log(e))
+            console.log(err)
+        }).finally(() => { refreshWishList() }) : deleteProductFromWishlist(product?._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {
+            res.ack ? onPageNotifications("success", "Removed From Wishlist").catch(e => console.log(e)) : res.ack && onPageNotifications("error", "Failed Removing From Wishlist").catch(e => console.log(e))
+        }).catch(err => {
+            onPageNotifications("error", "Failed Removing From Wishlist").catch(e => console.log(e))
+            console.log(err)
+        }).finally(() => { refreshWishList() })
+        setWishAnimate(!wishAnimate)
+    }
+
     return (
         <>
-            <section className={className}>
+            <section className={clsx(className, "relative")}>
+                <button className={`absolute right-1 top-3 z-50 bg-white/50 rounded-full p-3 md:hidden`} onClick={addToWishlist}>
+                    {
+                        wishlistItems.includes((product?._id ?? product?.objectID ?? "").toString() ?? "") ?
+                            <FaHeart className={clsx("text-red-600 animate-pulse w-6 h-6")} /> : <FaHeart className='text-gray-600 animate-pulse w-6 h-6' />
+                    }
+                </button>
                 <div className={clsx("sm:overflow-visible items-center justify-center flex")} id="image-carousel-container">
                     {/* Hidden input for legacy JS, can be removed if not needed */}
                     {/* <input type="hidden" value={JSON.stringify(images.map(it => `/_next/image?url=${encodeURIComponent(it)}&w=1920&q=100`))} id="imagesProducts" /> */}

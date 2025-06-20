@@ -79,9 +79,8 @@ export default function CheckoutForm({ clientSecret, shippingId }: { clientSecre
 
     setIsLoading(false);
   };
-
   return (
-    <form id="payment-form" onSubmit={handleSubmit} className="card card-body mt-5 shadow-md bg-white">
+    <form id="payment-form" onSubmit={handleSubmit} className="card card-body mt-5 shadow-lg bg-base-100 border border-base-300">
       <LinkAuthenticationElement
         id="link-authentication-element"
         onChange={(e) => setEmail(e.value.email)}
@@ -90,13 +89,17 @@ export default function CheckoutForm({ clientSecret, shippingId }: { clientSecre
       <PaymentElement id="payment-element" options={{
         layout: "tabs", defaultValues: { billingDetails: { email: session?.user?.email ?? "", name: session?.user?.name ?? "" } }
       }} />
-      <button disabled={isLoading || !stripe || !elements} id="submit" className="btn btn-primary">
+      <button disabled={isLoading || !stripe || !elements} id="submit" className="btn btn-primary text-primary-content">
         <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+          {isLoading ? <div className="loading loading-spinner loading-sm"></div> : "Pay now"}
         </span>
       </button>
       {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
+      {message && <div id="payment-message" className={`mt-3 p-3 rounded-lg text-sm ${
+        message.includes("succeeded") ? "bg-success/10 text-success border border-success/20" : 
+        message.includes("processing") ? "bg-info/10 text-info border border-info/20" :
+        "bg-error/10 text-error border border-error/20"
+      }`}>{message}</div>}
     </form>
   );
 }

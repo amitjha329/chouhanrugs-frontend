@@ -20,7 +20,7 @@ const WishListButton = ({ productDetails }: { productDetails: ProductDataModel }
     const addToWishlist: MouseEventHandler<HTMLDivElement> = (e) => {
         e.preventDefault()
         if (session?.user === undefined) {
-            router.push("/signin")
+            router.push("/signin?cb=" + encodeURIComponent(window.location.pathname))
             return
         }
         !wishlistItems.includes((productDetails._id ?? productDetails.objectID).toString() ?? "") ? addProductToWishlist(productDetails._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {

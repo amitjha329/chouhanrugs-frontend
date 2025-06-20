@@ -8,7 +8,7 @@ import { ImBin } from 'react-icons/im'
 const WishlistProductDeleteButton = ({ productId, userId }: { productId: string, userId: string }) => {
     return (
         <button
-            className="btn rounded-xl max-sm:w-full btn-error btn-outline flex items-center gap-2 hover:bg-red-500 hover:text-white transition-colors shadow-sm h-24 w-24"
+            className="btn rounded-lg w-full sm:w-14 sm:h-14 md:w-16 md:h-16 btn-error btn-outline flex items-center justify-center gap-1 hover:bg-red-500 hover:text-white transition-colors shadow-sm text-xs sm:text-sm"
             onClick={e => {
                 e.preventDefault()
                 deleteProductFromWishlist(productId, userId).then(res => {
@@ -21,8 +21,8 @@ const WishlistProductDeleteButton = ({ productId, userId }: { productId: string,
             aria-label="Remove from wishlist"
             title="Remove from wishlist"
         >
-            <ImBin className="w-4 h-4" />
-            <span className="sr-only">Remove</span>
+            <ImBin className="w-3 h-3" />
+            <span className="sm:sr-only">Remove</span>
         </button>
     )
 }

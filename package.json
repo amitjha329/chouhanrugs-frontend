@@ -2,7 +2,7 @@
   "name": "ecom-web-app",
   "version": "1.0.0",
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS='--inspect' next dev --turbopack",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -26,7 +26,6 @@
     "autoprefixer": "^10.4.21",
     "clsx": "^2.1.1",
     "convert": "^5.12.0",
-    "cross-env": "^7.0.3",
     "daisyui": "^4.12.24",
     "eslint": "^9.27.0",
     "eslint-config-next": "15.3.3",
@@ -34,7 +33,7 @@
     "instantsearch.js": "^4.78.3",
     "jose": "^6.0.11",
     "mongodb": "^6.16.0",
-    "next": "15.3.3",
+    "next": "15.3.4",
     "next-auth": "5.0.0-beta.25",
     "nextjs-toploader": "^3.8.16",
     "node-fetch": "^3.3.2",
@@ -75,7 +74,10 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "sharp"
+      "@parcel/watcher",
+      "core-js",
+      "sharp",
+      "unrs-resolver"
     ]
   }
 }

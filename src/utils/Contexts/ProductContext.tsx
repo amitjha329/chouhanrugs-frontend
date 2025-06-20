@@ -32,6 +32,10 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
     const [selectedImageIndex, setSelectedImageIndex] = useState(0)
     const [zoomPosition, setZoomPosition] = useState<{ x: number; y: number } | null>(null)
 
+    useEffect(()=>{
+        console.log("Product images:", product)
+    }, [product])
+
     // New state for color and size selection (handle missing colorData/sizeData gracefully)
     // Find the smallest size by area for default selection
     const getSmallestSizeCode = () => {
