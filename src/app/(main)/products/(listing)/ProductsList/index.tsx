@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import Loader from '@/ui/Loader'

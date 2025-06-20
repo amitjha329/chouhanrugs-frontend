@@ -36,11 +36,13 @@ export async function generateMetadata(props: { params: Promise<{ categoryname: 
 }
 
 const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: string }> }) => {
-    const params = await props.params;
-    const promotedProducts = await getProductPromoted(decodeURIComponent(params.categoryname))
+    const {categoryname} = await props.params;
+    console.log("Category Name:", decodeURIComponent(categoryname))
+    const promotedProducts = await getProductPromoted(decodeURIComponent(categoryname))
     console.log(promotedProducts)
     return (
-        <ProductList categoryParam={params.categoryname} predefinedProducts={promotedProducts} />
+        <ProductList categoryParam={categoryname} predefinedProducts={promotedProducts} />
+        // <div></div>
     )
 }
 

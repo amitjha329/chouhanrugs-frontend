@@ -84,7 +84,7 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
                                 searchParams: {
                                     query,
                                     hitsPerPage: 4,
-                                    attributesToRetrieve: ['objectID', 'productName', 'productPrice', 'productImage', 'productSlug']
+                                    attributesToRetrieve: ['objectID', 'productName', 'productSellingPrice', 'images', 'productURL']
                                 }
                             }).then(({ hits }) => hits)
                         },
@@ -94,14 +94,14 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">
                       <div class="aa-ItemIcon">
-                        <img src="${(item as any)._highlightResult.images[0].value}" alt="${(item as any).productName}" width="40" height="40"/>
+                        <img src="${(item as any).images[0]}" alt="${(item as any).productName}" width="40" height="40"/>
                       </div>
                       <div class="aa-ItemContentBody">
                         <div class="aa-ItemContentTitle">
                           ${(item as any).productName}
                         </div>
                         <div class="aa-ItemContentDescription">
-                          $${(item as any)._highlightResult.productSellingPrice ? (item as any)._highlightResult.productSellingPrice.value : (item as any).productPrice}
+                          $${(item as any).productSellingPrice}
                         </div>
                       </div>
                     </div>
@@ -113,7 +113,7 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
                             }
                         },
                         onSelect({ item }: { item: any }) {
-                            router.push(`/products/${(item as any)._highlightResult.productURL.value}`)
+                            router.push(`/products/${(item as any).productURL}`)
                         }
                     }
                 ]
