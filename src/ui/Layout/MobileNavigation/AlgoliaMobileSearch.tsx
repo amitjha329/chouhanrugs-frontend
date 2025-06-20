@@ -8,89 +8,88 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
 interface AlgoliaMobileSearchProps {
-    appId: string
-    apiKey: string
-    indexName: string
-    querySuggestionsIndex: string
+  appId: string
+  apiKey: string
+  indexName: string
+  querySuggestionsIndex: string
 }
 
 const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
-    appId,
-    apiKey,
-    indexName,
-    querySuggestionsIndex
+  appId,
+  apiKey,
+  indexName,
+  querySuggestionsIndex
 }) => {
-    const containerRef = useRef<HTMLDivElement>(null)
-    const router = useRouter()
-    const searchClient = algoliasearch(appId, apiKey)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const searchClient = algoliasearch(appId, apiKey)
 
-    useEffect(() => {
-        if (!containerRef.current) return
+  useEffect(() => {
+    if (!containerRef.current) return
 
-        // Recent searches plugin
-        const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
-            key: 'chouhanrugs-recent-searches-mobile',
-            limit: 3,
-            transformSource({ source }) {
-                return {
-                    ...source,
-                    templates: {
-                        ...source.templates,
-                        header({ html }) {
-                            return html`<div class="aa-SourceHeaderTitle">Recent Searches</div>`
-                        }
-                    }
-                }
+    // Recent searches plugin
+    const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
+      key: 'chouhanrugs-recent-searches-mobile',
+      limit: 3,
+      transformSource({ source }) {
+        return {
+          ...source,
+          templates: {
+            ...source.templates,
+            header({ html }) {
+              return html`<div class="aa-SourceHeaderTitle">Recent Searches</div>`
             }
-        })
+          }
+        }
+      }
+    })
 
-        // Query suggestions plugin  
-        const querySuggestionsPlugin = createQuerySuggestionsPlugin({
-            searchClient,
-            indexName: querySuggestionsIndex,
-            getSearchParams() {
-                return {
-                    hitsPerPage: 5
+    // Query suggestions plugin  
+    const querySuggestionsPlugin = createQuerySuggestionsPlugin({
+      searchClient,
+      indexName: querySuggestionsIndex,
+      getSearchParams() {
+        return {
+          hitsPerPage: 5
+        }
+      },
+      transformSource({ source }) {
+        return {
+          ...source,
+          templates: {
+            ...source.templates,
+            header({ html }) {
+              return html`<div class="aa-SourceHeaderTitle">Suggestions</div>`
+            }
+          }
+        }
+      }
+    })
+
+    const autocompleteInstance = autocomplete({
+      container: containerRef.current,
+      placeholder: 'Search',
+      openOnFocus: true,
+      detachedMediaQuery: 'none',
+      plugins: [recentSearchesPlugin, querySuggestionsPlugin],
+      getSources() {
+        return [
+          {
+            sourceId: 'products',
+            getItems({ query }: { query: string }) {
+              if (!query) return []
+
+              return searchClient.searchSingleIndex({
+                indexName,
+                searchParams: {
+                  query,
+                  hitsPerPage: 4,
+                  attributesToRetrieve: ['objectID', 'productName', 'productSellingPrice', 'images', 'productURL']
                 }
+              }).then(({ hits }) => hits)
             },
-            transformSource({ source }) {
-                return {
-                    ...source,
-                    templates: {
-                        ...source.templates,
-                        header({ html }) {
-                            return html`<div class="aa-SourceHeaderTitle">Suggestions</div>`
-                        }
-                    }
-                }
-            }
-        })
-
-        const autocompleteInstance = autocomplete({
-            container: containerRef.current,
-            placeholder: 'Search',
-            openOnFocus: true,
-            detachedMediaQuery: 'none',
-            plugins: [recentSearchesPlugin, querySuggestionsPlugin],
-            getSources() {
-                return [
-                    {
-                        sourceId: 'products',
-                        getItems({ query }: { query: string }) {
-                            if (!query) return []
-
-                            return searchClient.searchSingleIndex({
-                                indexName,
-                                searchParams: {
-                                    query,
-                                    hitsPerPage: 4,
-                                    attributesToRetrieve: ['objectID', 'productName', 'productSellingPrice', 'images', 'productURL']
-                                }
-                            }).then(({ hits }) => hits)
-                        },
-                        templates: {
-                            item({ item, html }) {
-                                return html`
+            templates: {
+              item({ item, html }) {
+                return html`
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">
                       <div class="aa-ItemIcon">
@@ -107,33 +106,33 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
                     </div>
                   </div>
                 `
-                            },
-                            header({ html }) {
-                                return html`<div class="aa-SourceHeaderTitle">Products</div>`
-                            }
-                        },
-                        onSelect({ item }: { item: any }) {
-                            router.push(`/products/${(item as any).productURL}`)
-                        }
-                    }
-                ]
+              },
+              header({ html }) {
+                return html`<div class="aa-SourceHeaderTitle">Products</div>`
+              }
             },
-            onSubmit({ state }) {
-                if (state.query.trim()) {
-                    router.push(`/products?search=${encodeURIComponent(state.query.trim())}`)
-                }
+            onSelect({ item }: { item: any }) {
+              window.location.href = `/products/${(item as any).productURL}`
             }
-        })
-
-        return () => {
-            autocompleteInstance.destroy()
+          }
+        ]
+      },
+      onSubmit({ state }) {
+        if (state.query.trim()) {
+          window.location.href = `/products?search=${encodeURIComponent(state.query.trim())}`
         }
-    }, [appId, apiKey, indexName, querySuggestionsIndex, router])
+      }
+    })
 
-    return (
-        <div className="w-full">
-            <div ref={containerRef} />
-            <style jsx global>{`
+    return () => {
+      autocompleteInstance.destroy()
+    }
+  }, [appId, apiKey, indexName, querySuggestionsIndex])
+
+  return (
+    <div className="w-full">
+      <div ref={containerRef} />
+      <style jsx global>{`
         /* Mobile-specific Algolia styles */
         .aa-Form {
           @apply join join-horizontal w-full;
@@ -252,8 +251,8 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
           }
         }
       `}</style>
-        </div>
-    )
+    </div>
+  )
 }
 
 export default AlgoliaMobileSearch

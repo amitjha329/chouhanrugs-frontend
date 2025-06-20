@@ -21,7 +21,6 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
     querySuggestionsIndex
 }) => {
     const containerRef = useRef<HTMLDivElement>(null)
-    const router = useRouter()
     const searchClient = algoliasearch(appId, apiKey)
 
     useEffect(() => {
@@ -113,14 +112,14 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
                             }
                         },
                         onSelect({ item }: { item: any }) {
-                            router.push(`/products/${(item as any).productURL}`)
+                            window.location.href = `/products/${(item as any).productURL}`
                         }
                     }
                 ]
             },
             onSubmit({ state }) {
                 if (state.query.trim()) {
-                    router.push(`/products?search=${encodeURIComponent(state.query.trim())}`)
+                    window.location.href = `/products?search=${encodeURIComponent(state.query.trim())}`
                 }
             }
         })
@@ -128,7 +127,7 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
         return () => {
             autocompleteInstance.destroy()
         }
-    }, [appId, apiKey, indexName, querySuggestionsIndex, router])
+    }, [appId, apiKey, indexName, querySuggestionsIndex])
 
     return (
         <div className="w-full mx-auto">
