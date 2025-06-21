@@ -63,6 +63,15 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                             count: "color-[grey]",
                         }} />
                     </Container>
+                    <Container showAsAccordion accordionLable='Color'>
+                        <RefinementList attribute="variations.variationColor" showMoreLimit={100} limit={5} showMore classNames={{
+                            checkbox: "checkbox",
+                            label: "label cursor-pointer",
+                            labelText: "label-text capitalize",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary",
+                            count: "color-[grey]",
+                        }} />
+                    </Container>
                     <Container showAsAccordion accordionLable='Brands'>
                         <RefinementList attribute="productBrand" showMore classNames={{
                             checkbox: "checkbox",

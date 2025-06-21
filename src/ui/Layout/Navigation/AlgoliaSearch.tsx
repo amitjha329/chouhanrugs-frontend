@@ -92,8 +92,8 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
                                 return html`
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">
-                      <div class="aa-ItemIcon aa-ItemIcon--picture aa-ItemIcon--alignTop">
-                      <img src="${(item as any).images[0]}" alt="${(item as any).productName}" width="40" height="40"/>
+                      <div class="aa-ItemIcon aa-ItemIcon--picture aa-ItemIcon--alignTop aa-imageIcon">
+                      <img src="${(item as any).images[0]}" alt="${(item as any).productName}"/>
                       </div>
                       <div class="aa-ItemContentBody">
                         <div class="aa-ItemContentTitle">

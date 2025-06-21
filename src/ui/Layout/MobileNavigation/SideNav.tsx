@@ -13,7 +13,7 @@ import Link from 'next/link'
 const SideNav = async () => {
     const session = await auth()
     return (
-        <div className='z-10 fixed left-0 top-0 bg-secondary w-screen h-screen overflow-hidden'>
+        <div className='z-10 fixed left-0 top-0 bg-secondary w-screen h-screen overflow-hidden !text-primary'>
             <div className='w-3/4 mr-auto'>
                 <div className="flex flex-col justify-between h-full w-full sm:w-80 rounded">
                     <div className="flex justify-between items-center w-full mb-5 py-4 px-3">
@@ -25,8 +25,8 @@ const SideNav = async () => {
                             <a
                                 href="/user/profile"
                             >
-                                <div className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <FaRegUserCircle className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
+                                    <FaRegUserCircle className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="ml-3 font-bold">{session?.user?.name ?? session?.user?.email}</span>
                                 </div>
                             </a>
@@ -35,28 +35,28 @@ const SideNav = async () => {
                             <a
                                 href="/products/category"
                             >
-                                <div className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <BiCategoryAlt className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg">
+                                    <BiCategoryAlt className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="ml-3">All Categories</span>
                                 </div>
                             </a>
                         </li>
-                        <li>
+                        {/* <li>
                             <a
                                 href="/user/bulk"
                             >
-                                <div className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <CiBoxes className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
+                                    <CiBoxes className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="ml-3">Bulk Orders</span>
                                 </div>
                             </a>
-                        </li>
+                        </li> */}
                         <li>
                             <a
                                 href="/user/orders"
                             >
-                                <div className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <FiShoppingBag className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
+                                    <FiShoppingBag className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="flex-1 ml-3 whitespace-nowrap">My Orders</span>
                                 </div>
                             </a>
@@ -65,8 +65,8 @@ const SideNav = async () => {
                             <a
                                 href="/user/wishlist"
                             >
-                                <div className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <FiHeart className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
+                                    <FiHeart className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="flex-1 ml-3 whitespace-nowrap">My Wishlist</span>
                                 </div>
                             </a>
@@ -75,8 +75,8 @@ const SideNav = async () => {
                             <a
                                 href="/about-us"
                             >
-                                <div className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <FiInfo className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
+                                    <FiInfo className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="flex-1 ml-3 whitespace-nowrap">About</span>
                                 </div>
                             </a>
@@ -85,16 +85,16 @@ const SideNav = async () => {
                             <a
                                 href="/contact-us"
                             >
-                                <div className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <FiHelpCircle className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
+                                    <FiHelpCircle className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="flex-1 ml-3 whitespace-nowrap">Contact Us</span>
                                 </div>
                             </a>
                         </li>
                         <li className="border-t-[0.5px] border-gray-200">
                             {
-                                session?.user ? <SignoutButton /> : <Link href="/signin" className='flex items-center p-2 text-base font-bold text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:bg-gray-700'>
-                                    <FaSignInAlt className="flex-shrink-0 w-6 h-6 transition duration-75 text-gray-900 dark:text-white" />
+                                session?.user ? <SignoutButton /> : <Link href="/signin" className='flex items-center p-2 text-base font-bold text-primary rounded-lg dark:text-white bg-gray-100 dark:bg-gray-700'>
+                                    <FaSignInAlt className="flex-shrink-0 w-6 h-6 transition duration-75 text-primary dark:text-white" />
                                     <span className="flex-1 ml-3 whitespace-nowrap">Log In</span>
                                 </Link>
                             }

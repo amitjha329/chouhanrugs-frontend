@@ -1,15 +1,16 @@
-import { auth } from '@/auth'
-// import getUserBulkPurchaseRequests from '@/lib/actions/getUserBulkPurchaseRequests'
+// import { auth } from '@/auth'
 // import clsx from 'clsx'
+// import Link from 'next/link'
+// import getUserBulkPurchaseRequests from '@/lib/actions/getUserBulkPurchaseRequests'
 import { notFound } from 'next/navigation'
 // import Link from 'next/link'
 import React from 'react'
 // import { BsSendFill } from 'react-icons/bs'
 
 const BulkOrderListPage = async () => {
-  const session = await auth()
+  // const session = await auth()
   // const BulkOrders = await getUserBulkPurchaseRequests((session?.user as { id: string }).id)
-  const BulkOrders = []
+  // const BulkOrders = []
   return notFound()
   // return (
   //   <div className="basis-full max-sm:max-w-[100vw] lg:basis-3/4">

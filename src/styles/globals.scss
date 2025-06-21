@@ -34,8 +34,32 @@
     @apply divide-y divide-gray-100 !max-h-96;
 }
 
-.aa-ItemContentTitle{
-    @apply line-clamp-2 text-primary;
+.aa-ItemContentTitle {
+    --tw-text-opacity: 1;
+    color: var(--fallback-p, oklch(var(--p)/var(--tw-text-opacity, 1)));
+    overflow: hidden !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    font-size: 0.75rem
+        /* 14px */
+        !important;
+    line-height: 1.25rem
+        /* 20px */
+        !important
+}
+
+.aa-imageIcon {
+    width: 5rem !important;
+    height: 5rem !important;
+
+    img{
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        max-width: 100% !important;
+        object-fit: cover !important;
+    }
 }
 
 // @import '../../node_modules/flickity/css/flickity.css';

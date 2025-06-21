@@ -53,7 +53,7 @@ const ProductCardItem = (props: CompoProps) => {
             <WishListButton productDetails={props} />
             <Link href={'/products/' + props.productURL} className="" prefetch={false}>
                 <div className="relative rounded-2xl overflow-hidden">
-                    <Image src={props.images[props.productPrimaryImageIndex]} alt={props.productName} className="!w-full !relative !~h-40/60 object-cover" width={300} height={240} />
+                    <Image src={props.images[props.productPrimaryImageIndex]} alt={props.productName} className="!w-full !relative !~h-52/60 object-cover" width={400} height={320} />
                     <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{props.productDiscountPercentage}</div>
                     {props.sponsered && <div className='rounded-full text-primary py-1 px-2 text-xs bg-white absolute max-md:bottom-2 md:top-2 left-1/2 -translate-x-1/2'>Sponsored</div>}
                     {props.colorMap && <div className='absolute bottom-2 left-2'>
@@ -75,11 +75,11 @@ const ProductCardItem = (props: CompoProps) => {
                     </div>}
                 </div>
                 <div className="p-4">
-                    <div className="font-light text-gray-500 text-center">{props.productCategory}</div>
-                    <div className="text-sm font-medium text-gray-800 mt-1 line-clamp-2">{props.productName}</div>
-                    <div className="flex items-center mt-2 justify-center">
+                    <div className="font-light text-gray-500 text-center max-md:text-xs">{props.productCategory}</div>
+                    <div className="text-xs font-medium text-gray-800 mt-1 line-clamp-2">{props.productName}</div>
+                    <div className="flex items-center mt-2 justify-center max-md:text-sm">
                         <div className="text-primary">$ {leastSellingPrice}</div>
-                        <div className="text-gray-500 line-through ml-2">$ {leastMSRP}</div>
+                        <div className="text-gray-500 line-through ml-2 max-md:text-xs">$ {leastMSRP}</div>
                     </div>
                 </div>
             </Link>

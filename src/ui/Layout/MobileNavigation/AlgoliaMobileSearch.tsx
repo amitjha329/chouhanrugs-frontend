@@ -92,8 +92,8 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
                 return html`
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">
-                      <div class="aa-ItemIcon">
-                        <img src="${(item as any).images[0]}" alt="${(item as any).productName}" width="40" height="40"/>
+                      <div class="aa-ItemIcon aa-imageIcon">
+                        <img src="${(item as any).images[0]}" alt="${(item as any).productName}"/>
                       </div>
                       <div class="aa-ItemContentBody">
                         <div class="aa-ItemContentTitle">

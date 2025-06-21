@@ -22,7 +22,7 @@ const WishlistProductDeleteButton = ({ productId, userId }: { productId: string,
             title="Remove from wishlist"
         >
             <ImBin className="w-3 h-3" />
-            <span className="sm:sr-only">Remove</span>
+            <span className="sr-only">Remove</span>
         </button>
     )
 }

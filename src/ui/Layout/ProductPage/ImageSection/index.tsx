@@ -57,7 +57,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
     return (
         <>
             <section className={clsx(className, "relative")}>
-                <button className={`absolute right-1 top-3 z-50 bg-white/50 rounded-full p-3 md:hidden`} onClick={addToWishlist}>
+                <button className={`absolute right-1 top-3 z-20 bg-white/50 rounded-full p-3 md:hidden`} onClick={addToWishlist}>
                     {
                         wishlistItems.includes((product?._id ?? product?.objectID ?? "").toString() ?? "") ?
                             <FaHeart className={clsx("text-red-600 animate-pulse w-6 h-6")} /> : <FaHeart className='text-gray-600 animate-pulse w-6 h-6' />
@@ -107,7 +107,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                         ></div>
                     </div>
                 </div>
-                <div className="carousel w-full gap-3 py-3" id="thumbnail-carousel">
+                <div className="carousel w-full gap-3 py-3 pl-2" id="thumbnail-carousel">
                     {
                         images?.map((image, index) => (
                             <div

@@ -9,6 +9,7 @@ import Image from 'next/image'
 import ColorDataModel from '@/types/ColorDataModel'
 import SizeDataModel from '@/types/SizeDataModel'
 import PriceAndVariationClient from './PriceAndVariationClient'
+import getSiteData from '@/backend/serverActions/getSiteData'
 
 interface returnProps extends ProductDataModel {
     colorData: ColorDataModel[],
@@ -16,6 +17,7 @@ interface returnProps extends ProductDataModel {
 }
 
 const PriceAndVariation = async ({ product }: { product: returnProps }) => {
+    const siteData = await getSiteData()
     return (
         <div className='basis-1/2'>
             <div className="p-6 max-w-xl mx-auto">
@@ -24,7 +26,9 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
                 </div>
                 <h1 className="~text-lg/2xl font-bold mb-2">{product.productName}</h1>
                 <div className="flex items-center mb-4 text-gray-500 text-sm">
-                    <div className="rating rating-sm">
+                    <div className="rating rating-sm pointer-events-none">
+                        <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
+                        <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
                         <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
                         <input
                             type="radio"
@@ -32,14 +36,12 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
                             className="mask mask-star-2 bg-orange-400"
                             defaultChecked />
                         <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
-                        <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
-                        <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
                     </div>
-                    <span className="ml-2">1 Reviews</span>
+                    <span className="ml-2">99+ Reviews</span>
                     <span className="mx-2">/</span>
-                    <a href="#">Write A Review</a>
+                    {/* <a href="#">Write A Review</a> */}
                 </div>
-                <PriceAndVariationClient product={product} />
+                <PriceAndVariationClient product={product} siteData={siteData} />
                 <div className="flex items-center mb-4 text-brown-700 ~text-xs/base">
                     {product.productDescriptionShort}
                 </div>

@@ -3,12 +3,14 @@ import addProductToWishlist from '@/backend/serverActions/addProductToWishlist'
 import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFromWishlist'
 import ColorDataModel from '@/types/ColorDataModel'
 import { ProductDataModel } from '@/types/ProductDataModel'
+import SiteDataModel from '@/types/SiteDataModel'
 import SizeDataModel from '@/types/SizeDataModel'
 import { useDataConnectionContext } from '@/utils/Contexts/DataConnectionContext'
 import { useProductContext } from '@/utils/Contexts/ProductContext'
 import onPageNotifications from '@/utils/onPageNotifications'
 import clsx from 'clsx'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { MouseEventHandler, useState } from 'react'
 import { FaHeart } from 'react-icons/fa'
@@ -18,7 +20,7 @@ interface VariationExtraDataModel extends ProductDataModel {
     sizeData: SizeDataModel[]
 }
 
-const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel }) => {
+const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtraDataModel, siteData: SiteDataModel }) => {
     const {
         variation,
         selectedColor,
@@ -238,128 +240,166 @@ const PriceAndVariationClient = ({ product }: { product: VariationExtraDataModel
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="flex flex-col sm:flex-row items-center gap-3 mb-4 w-full">
+            </div>            <div className="flex flex-col gap-3 mb-4 w-full">
                 {priceLoading ? (
                     <>
-                        <div className="skeleton h-12 w-full sm:w-40 rounded-xl" aria-busy="true" />
-                        <div className="skeleton h-12 w-full sm:w-40 rounded-xl" aria-busy="true" />
+                        <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                        <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                        <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
                     </>
                 ) : (
                     <>
-                        <button
-                            className={`w-full sm:w-auto rounded-full bg-accent text-white font-bold py-3 px-8 shadow-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-base tracking-wide ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                            id='buy_now_btn'
-                            tabIndex={0}
-                            aria-label="Buy Now"
-                            disabled={actionLoading}
-                            onClick={async () => {
-                                if (!handleBuyNow) return;
-                                setActionLoading(true);
-                                const userId = (document.getElementById('session_user') as HTMLInputElement)?.value;
-                                const productId = typeof product._id === 'string' ? product._id : product._id?.toString?.() || '';
-                                if (!userId) {
-                                    // Save to localStorage for both add to cart and buy now, allowing multiple items
-                                    let pendingCart: any[] = JSON.parse(localStorage.getItem('pending_cart') || '[]');
-                                    const newItem = {
+                        {/* Primary Action Buttons Row */}
+                        <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+                            <button
+                                className={`w-full flex-1 rounded-full bg-accent text-white font-bold py-3 px-4 shadow-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                id='buy_now_btn'
+                                tabIndex={0}
+                                aria-label="Buy Now"
+                                disabled={actionLoading}
+                                onClick={async () => {
+                                    if (!handleBuyNow) return;
+                                    setActionLoading(true);
+                                    const userId = (document.getElementById('session_user') as HTMLInputElement)?.value;
+                                    const productId = typeof product._id === 'string' ? product._id : product._id?.toString?.() || '';
+                                    if (!userId) {
+                                        // Save to localStorage for both add to cart and buy now, allowing multiple items
+                                        let pendingCart: any[] = JSON.parse(localStorage.getItem('pending_cart') || '[]');
+                                        const newItem = {
+                                            productId,
+                                            quantity,
+                                            variation: variation || '',
+                                            selectedColor,
+                                            selectedSize,
+                                            productData: product,
+                                            action: 'buy_now'
+                                        };
+                                        // Check for existing item with same productId, variation, selectedColor, selectedSize
+                                        const existingIndex = pendingCart.findIndex((item: any) =>
+                                            item.productId === newItem.productId &&
+                                            item.variation === newItem.variation &&
+                                            item.selectedColor === newItem.selectedColor &&
+                                            item.selectedSize === newItem.selectedSize
+                                        );
+                                        if (existingIndex !== -1) {
+                                            pendingCart[existingIndex].quantity += newItem.quantity;
+                                            pendingCart[existingIndex].action = 'buy_now';
+                                        } else {
+                                            pendingCart.push(newItem);
+                                        }
+                                        localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
+                                        setActionLoading(false);
+                                        onPageNotifications('success', 'Item added to cart.').then(() => {
+                                            window.location.href = "/cart/checkout";
+                                        }
+                                        );
+                                        return;
+                                    }
+                                    await handleBuyNow(
+                                        userId,
                                         productId,
                                         quantity,
-                                        variation: variation || '',
-                                        selectedColor,
-                                        selectedSize,
-                                        productData: product,
-                                        action: 'buy_now'
-                                    };
-                                    // Check for existing item with same productId, variation, selectedColor, selectedSize
-                                    const existingIndex = pendingCart.findIndex((item: any) =>
-                                        item.productId === newItem.productId &&
-                                        item.variation === newItem.variation &&
-                                        item.selectedColor === newItem.selectedColor &&
-                                        item.selectedSize === newItem.selectedSize
+                                        variation || '',
+                                        () => { window.location.href = "/cart/checkout"; },
+                                        () => setActionLoading(false)
                                     );
-                                    if (existingIndex !== -1) {
-                                        pendingCart[existingIndex].quantity += newItem.quantity;
-                                        pendingCart[existingIndex].action = 'buy_now';
-                                    } else {
-                                        pendingCart.push(newItem);
+                                }}
+                            >
+                                Buy Now
+                            </button>
+
+                            <button
+                                className={`w-full flex-1 rounded-full border-2 border-accent text-accent font-bold py-3 px-4 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                id='add_to_cart_btn'
+                                tabIndex={0}
+                                aria-label="Add to Cart"
+                                disabled={actionLoading}
+                                onClick={async () => {
+                                    if (!handleAddToCart) return;
+                                    setActionLoading(true);
+                                    const userId = (document.getElementById('session_user') as HTMLInputElement)?.value;
+                                    const productId = typeof product._id === 'string' ? product._id : product._id?.toString?.() || '';
+                                    if (!userId) {
+                                        // Save to localStorage for both add to cart and buy now, allowing multiple items
+                                        let pendingCart: any[] = JSON.parse(localStorage.getItem('pending_cart') || '[]');
+                                        const newItem = {
+                                            productId,
+                                            quantity,
+                                            variation: variation || '',
+                                            selectedColor,
+                                            selectedSize,
+                                            productData: product,
+                                            action: 'add_to_cart'
+                                        };
+                                        // Check for existing item with same productId, variation, selectedColor, selectedSize
+                                        const existingIndex = pendingCart.findIndex((item: any) =>
+                                            item.productId === newItem.productId &&
+                                            item.variation === newItem.variation &&
+                                            item.selectedColor === newItem.selectedColor &&
+                                            item.selectedSize === newItem.selectedSize
+                                        );
+                                        if (existingIndex !== -1) {
+                                            pendingCart[existingIndex].quantity += newItem.quantity;
+                                            pendingCart[existingIndex].action = 'add_to_cart';
+                                        } else {
+                                            pendingCart.push(newItem);
+                                        }
+                                        localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
+                                        setActionLoading(false);
+                                        onPageNotifications('success', 'Item added to cart.').then(() => {
+                                            window.location.reload();
+                                        });
+                                        return;
                                     }
-                                    localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
-                                    setActionLoading(false);
-                                    onPageNotifications('success', 'Item added to cart.').then(() => {
-                                        window.location.href = "/cart/checkout";
-                                    }
-                                    );
-                                    return;
-                                }
-                                await handleBuyNow(
-                                    userId,
-                                    productId,
-                                    quantity,
-                                    variation || '',
-                                    () => { window.location.href = "/cart/checkout"; },
-                                    () => setActionLoading(false)
-                                );
-                            }}
-                        >Buy Now</button>
-                        <button
-                            className={`w-full sm:w-auto rounded-full border-2 border-accent text-accent font-bold py-3 px-8 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-base tracking-wide ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                            id='add_to_cart_btn'
-                            tabIndex={0}
-                            aria-label="Add to Cart"
-                            disabled={actionLoading}
-                            onClick={async () => {
-                                if (!handleAddToCart) return;
-                                setActionLoading(true);
-                                const userId = (document.getElementById('session_user') as HTMLInputElement)?.value;
-                                const productId = typeof product._id === 'string' ? product._id : product._id?.toString?.() || '';
-                                if (!userId) {
-                                    // Save to localStorage for both add to cart and buy now, allowing multiple items
-                                    let pendingCart: any[] = JSON.parse(localStorage.getItem('pending_cart') || '[]');
-                                    const newItem = {
+                                    await handleAddToCart(
+                                        userId,
                                         productId,
                                         quantity,
-                                        variation: variation || '',
-                                        selectedColor,
-                                        selectedSize,
-                                        productData: product,
-                                        action: 'add_to_cart'
-                                    };
-                                    // Check for existing item with same productId, variation, selectedColor, selectedSize
-                                    const existingIndex = pendingCart.findIndex((item: any) =>
-                                        item.productId === newItem.productId &&
-                                        item.variation === newItem.variation &&
-                                        item.selectedColor === newItem.selectedColor &&
-                                        item.selectedSize === newItem.selectedSize
+                                        variation || '',
+                                        () => { window.location.reload(); },
+                                        () => setActionLoading(false)
                                     );
-                                    if (existingIndex !== -1) {
-                                        pendingCart[existingIndex].quantity += newItem.quantity;
-                                        pendingCart[existingIndex].action = 'add_to_cart';
-                                    } else {
-                                        pendingCart.push(newItem);
-                                    }
-                                    localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
-                                    setActionLoading(false);
-                                    onPageNotifications('success', 'Item added to cart.').then(() => {
-                                        window.location.reload();
-                                    });
-                                    return;
-                                }
-                                await handleAddToCart(
-                                    userId,
-                                    productId,
-                                    quantity,
-                                    variation || '',
-                                    () => { window.location.reload(); },
-                                    () => setActionLoading(false)
-                                );
-                            }}
-                        >Add to Cart</button>
-                        <button className={`w-full sm:w-auto rounded-full border-2 border-accent text-accent font-bold py-3 px-3 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-base tracking-wide max-md:hidden ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`} onClick={addToWishlist}>
-                            {
-                                wishlistItems.includes((product._id ?? product.objectID).toString() ?? "") ?
-                                    <FaHeart className={clsx("text-red-600 animate-pulse")} /> : <FaHeart className='text-gray-400 animate-pulse' />
-                            }
-                        </button>
+                                }}
+                            >
+                                Add to Cart
+                            </button>
+
+                            {/* Wishlist button - only on desktop, fixed size */}
+                            <button
+                                className={`hidden sm:flex items-center justify-center w-12 h-12 rounded-full border-2 border-accent text-accent shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                onClick={addToWishlist}
+                                aria-label={wishlistItems.includes((product._id ?? product.objectID).toString() ?? "") ? "Remove from wishlist" : "Add to wishlist"}
+                                disabled={actionLoading}
+                            >
+                                <FaHeart className={clsx(
+                                    "text-lg",
+                                    wishlistItems.includes((product._id ?? product.objectID).toString() ?? "")
+                                        ? "text-red-600"
+                                        : "text-gray-400"
+                                )} />
+                            </button>
+                        </div>
+
+                        {/* Secondary Action Buttons Row */}
+                        <div className="flex flex-row gap-3 w-full">
+                            <Link
+                                className={`w-full flex-1 rounded-full border-2 border-accent text-accent font-bold py-3 px-4 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide text-center ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                aria-label="Request bulk order"
+                                target='_blank'
+                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20bulk%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${product.productURL ? encodeURIComponent(product.productURL) : ''}`}
+                            >
+                                Bulk Order
+                            </Link>
+
+                            <Link
+                                className={`w-full flex-1 rounded-full border-2 border-accent text-accent font-bold py-3 px-4 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide text-center ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                aria-label="Request custom order"
+                                target='_blank'
+                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20custom%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${product.productURL ? encodeURIComponent(product.productURL) : ''}`}
+                            >
+                                Custom Order
+                            </Link>
+                        </div>
                     </>
                 )}
             </div>
