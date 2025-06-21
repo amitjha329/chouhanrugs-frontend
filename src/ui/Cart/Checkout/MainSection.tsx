@@ -682,7 +682,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         <Suspense fallback={<div>Loading PayPal...</div>}>
                             <LazyPayPalButtons
                                 style={{ color: "blue" }}
-                                createOrder={() => createOrder(`${orderTotal}`, userCurrency?.currency ?? "USD")}
+                                createOrder={() => createOrder(`${orderTotal.toFixed(2)}`, userCurrency?.currency ?? "USD")}
                                 onApprove={async (data: any, actions: any) => {
                                     capturePayment(data.orderID).then(value => {
                                         if (value.status == "COMPLETED") {
@@ -705,7 +705,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                                 paymentCode: value.purchase_units[0].payments.captures[0].id,
                                                 subtotal: Number(cartTotal),
                                                 taxation: Number(cartTotal * (currentTax.taxRate / 100)),
-                                                orderValue: orderTotal,
+                                                orderValue: orderTotal.toFixed(2),
                                                 userCurrency: { ...userCurrency },
                                                 userId: (session?.user as { id: string }).id,
                                                 _id: "",
