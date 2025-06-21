@@ -36,7 +36,7 @@ const ProductLayout = async (
                         key="product-breadcrumbs"></script>
                 </>
             }
-            <input value={session?.user?.id ?? ""} id='session_user' className='hidden' />
+            <input value={session?.user?.id ?? ""} id='session_user' className='hidden' readOnly />
             <ProductDataContextProvider product={productObj}>
                 {
                     children

@@ -8,8 +8,7 @@ export default auth((req) => {
     if (token) {
         return NextResponse.next()
     }
-    console.log(JSON.stringify(req))
-    return NextResponse.redirect(new URL('/signin', req.url))
+    return NextResponse.redirect(new URL(`/signin?cb=${req.nextUrl.pathname}`, req.url))
 })
 
 export const config = {

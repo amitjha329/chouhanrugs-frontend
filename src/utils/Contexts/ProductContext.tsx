@@ -204,18 +204,30 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
 
     // Universal loading state for price/variation
     const [priceLoading, setPriceLoading] = useState(true);
+
     useEffect(() => {
-        // If product has no variations, or both colorData and sizeData are empty, loading should be false
-        if (
-            (!product.variations || product.variations.length === 0) ||
-            ((Array.isArray(product.colorData) && product.colorData.length === 0) && (Array.isArray(product.sizeData) && product.sizeData.length === 0))
-        ) {
+        // Check if all required product data is loaded and present
+        const hasVariations = Array.isArray(product.variations) && product.variations.length > 0;
+        const hasColors = Array.isArray(product.colorData) && product.colorData.length > 0;
+        const hasSizes = Array.isArray(product.sizeData) && product.sizeData.length > 0;
+
+        // If there are no variations, or no color/size options, loading is done
+        if (!hasVariations || (!hasColors && !hasSizes)) {
             setPriceLoading(false);
-        } else if (selectedSize && (selectedColor !== undefined)) {
-            setPriceLoading(false);
-        } else {
-            setPriceLoading(true);
+            return;
         }
+
+        // If color and/or size are required, check if they are selected
+        if (
+            (hasColors && !selectedColor) ||
+            (hasSizes && !selectedSize)
+        ) {
+            setPriceLoading(true);
+            return;
+        }
+
+        // All required data is present
+        setPriceLoading(false);
     }, [selectedSize, selectedColor, product.variations, product.colorData, product.sizeData]);
 
     const value = useMemo(() => ({
