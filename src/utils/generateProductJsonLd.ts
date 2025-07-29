@@ -1,8 +1,13 @@
 import { ProductDataModel } from "../types/ProductDataModel";
 
 export default function generateProductJsonLd(productData: ProductDataModel) {
-    return {
-        __html: `{
+  // "aggregateRating": {
+  //       "@type": "AggregateRating",
+  //       "ratingValue": "${productData.productReviews.average}",
+  //       "reviewCount": "${productData.productReviews.totalReviews}"
+  //     },
+  return {
+    __html: `{
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": "${productData.productName}",
@@ -14,11 +19,6 @@ export default function generateProductJsonLd(productData: ProductDataModel) {
         "@type": "Brand",
         "name": "${productData.productBrand}"
       },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "${productData.productReviews.average}",
-        "reviewCount": "${productData.productReviews.totalReviews}"
-      },
       "offers": {
         "@type": "Offer",
         "priceCurrency": "USD",
@@ -27,5 +27,5 @@ export default function generateProductJsonLd(productData: ProductDataModel) {
       }
     }
   `,
-    };
+  };
 }

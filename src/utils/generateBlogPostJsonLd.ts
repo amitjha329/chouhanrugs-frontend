@@ -12,13 +12,13 @@ export default function generateBlogPostJsonLd(data: BlogDataModel, siteData: Si
       "dateModified": "${new Date(data.updated).toISOString()}",
       "author": [{
           "@type": "Person",
-          "name": "${data.author.name}",
+          "name": "${data.author.name}"
         }],
       "publisher":
         {
           "name": "${siteData.title}",
           "url": "${siteData.url}"
-        },
+        }
     }
   `,
   };
