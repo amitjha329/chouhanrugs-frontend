@@ -26,14 +26,15 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
     return (
         <html>
             <head>
-                <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleTagData.code}`}></script>
+                {/* <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleTagData.code}`}></script> */}
 
                 <script dangerouslySetInnerHTML={{
-                    __html: `window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', '${googleTagData.code}');`
+                    __html: `
+                    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${googleTagData.code}');`
                 }}>
                 </script>
                 <script
@@ -57,6 +58,8 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
                 />
             </head>
             <body className={clsx(poppins.className)}>
+                <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${googleTagData.code}`}
+                    height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe></noscript>
                 <div className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none">
                     <div className="bg-red-500 hidden" />
                     <div className="bg-yellow-500 hidden" />
