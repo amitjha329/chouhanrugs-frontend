@@ -53,14 +53,14 @@ const nextConfig: NextConfig = {
   async headers() {
     const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' tiny.cloud *.tiny.cloud stripe.com algolianet.com *.algolianet.com algolia.net *.algolia.net *.stripe.com razorpay.com *.razorpay.com paypal.com *.paypal.com *.googletagmanager.com *.doubleclick.net *.googleadservices.com 'unsafe-inline' 'unsafe-eval';
-  connect-src 'self' tiny.cloud *.tiny.cloud stripe.com *.stripe.com razorpay.com algolianet.com algolia.net *.algolia.net *.algolianet.com *.razorpay.com paypal.com *.paypal.com ipapi.co *.ipapi.co google-analytics.com *.google-analytics.com *.google.com data: gap: ws: 'unsafe-inline' 'unsafe-eval';
-  frame-src 'self' stripe.com *.stripe.com algolianet.com *.algolianet.com algolia.net *.doubleclick.net *.googletagmanager.com *.algolia.net razorpay.com *.razorpay.com paypal.com *.paypal.com 'unsafe-inline' 'unsafe-eval';
+  script-src 'self' tiny.cloud *.google-analytics.com *.tiny.cloud stripe.com algolianet.com *.algolianet.com algolia.net *.algolia.net *.stripe.com razorpay.com *.razorpay.com paypal.com *.paypal.com *.googletagmanager.com *.doubleclick.net *.googleadservices.com 'unsafe-inline' 'unsafe-eval';
+  connect-src 'self' tiny.cloud *.google-analytics.com *.tiny.cloud stripe.com *.stripe.com razorpay.com algolianet.com algolia.net *.algolia.net *.algolianet.com *.razorpay.com paypal.com *.paypal.com *.googletagmanager.com ipapi.co *.ipapi.co google-analytics.com *.google-analytics.com *.google.com data: gap: ws: 'unsafe-inline' 'unsafe-eval';
+  frame-src 'self' stripe.com *.googletagmanager.com *.google-analytics.com *.stripe.com algolianet.com *.algolianet.com algolia.net *.doubleclick.net *.googletagmanager.com *.algolia.net razorpay.com *.razorpay.com paypal.com *.paypal.com 'unsafe-inline' 'unsafe-eval';
   child-src 'self' stripe.com *.stripe.com razorpay.com algolianet.com algolia.net *.algolia.net *.algolianet.com *.razorpay.com paypal.com *.paypal.com 'unsafe-inline' 'unsafe-eval';
   style-src 'self' tiny.cloud *.tiny.cloud stripe.com algolianet.com algolia.net *.algolia.net *.algolianet.com *.stripe.com razorpay.com *.razorpay.com paypal.com *.paypal.com fonts.googleapis.com 'unsafe-inline';
   font-src * 'self';
   object-src * 'self' data: blob:;
-  img-src * 'self' data: blob:;
+  img-src * 'self' *.google-analytics.com *.googletagmanager.com data: blob:;
   media-src * 'self' *.chouhanrugs.com *.caredone.in data: blob:;
   `
     return [
