@@ -32,9 +32,10 @@ function printprice(price: number, discountpercent: number, exchangerate: number
     return ((price - (price * (discountpercent / 100))) * exchangerate) * quantity >> 0
 }
 
-export default async function Invoice({ params }: Readonly<{ params: { invoice: string } }>) {
+export default async function Invoice({ params }: Readonly<{ params: Promise<{ invoice: string }> }>) {
     const siteData = await getSiteData()
-    const orderData = await getOrderDetails(params.invoice)
+    const parameters = await params
+    const orderData = await getOrderDetails(parameters.invoice)
     let deductable = 0
     let subTotal = 0
     let totalValue = 0
@@ -234,7 +235,7 @@ export default async function Invoice({ params }: Readonly<{ params: { invoice: 
                             {/* QR Code Section */}
                             <div className="flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300 print:bg-white print:border print:border-black print:p-4">
                                 <img
-                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(process.env.NEXTAUTH_URL + "/invoice/" + params.invoice)}`}
+                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(process.env.NEXTAUTH_URL + "/invoice/" + parameters.invoice)}`}
                                     alt="Invoice QR Code"
                                     height={150}
                                     width={150}
