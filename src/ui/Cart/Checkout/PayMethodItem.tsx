@@ -2,7 +2,7 @@
 'use client'
 import { RadioGroup, Radio, Label } from "@headlessui/react"
 import { FaPaypal, FaStripe } from "react-icons/fa"
-import { MdCheckCircleOutline } from "react-icons/md"
+import { MdCheckCircleOutline, MdPayment } from "react-icons/md"
 import { SiRazorpay } from 'react-icons/si'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import Currency from "@/types/Currency"
@@ -79,6 +79,10 @@ const PayMethodItem = ({ pgList, selected, setSelected, currency }: {
                                         {
                                             paymentPartners.partner == "PAYPAL" &&
                                             <><FaPaypal className="h-6 w-6 mr-4" />PayPal</>
+                                        }
+                                        {
+                                            paymentPartners.partner == "PAYONEER" &&
+                                            <><MdPayment className="h-6 w-6 mr-4" />Payoneer</>
                                         }
                                     </Label>
                                 </div>

@@ -38,6 +38,7 @@ import syncLocalCartToUser from '@/utils/syncLocalCartToUser'
 import CartItem from '../CartItem'
 import updateUserAddress from '@/backend/serverActions/updateUserAddress'
 import deleteUserAddress from '@/backend/serverActions/deleteUserAddress'
+import { initiatePayoneerPayment } from '@/backend/serverActions/payoneer'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -247,6 +248,82 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     return
                 }
                 onPageNotifications("error", `PayPal Does Not Support ${userCurrency?.currency}`)
+                break;
+            case "PAYONEER":
+                // Build order data object
+                const payoneerOrderData: OrderDataModel = {
+                    products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
+                        return {
+                            productId: cartProduct[0]._id?.toString() ?? "",
+                            productPrice: cartProduct[0].productSellingPrice,
+                            productMSRP: cartProduct[0].productMSRP,
+                            quantity: quantity,
+                            variation: variationCode ?? "",
+                            customSize
+                        }
+                    }),
+                    shippingType: currentShipping?.name || "Standard",
+                    shippingAddress: selectedAddress?._id ?? "",
+                    paymentStatus: "pending", // Will be updated by webhook
+                    paymentMode: "Payoneer",
+                    couponApplied: couponData?.couponApplicable ? couponData.couponData : null,
+                    paymentCode: "", // Will be updated by webhook
+                    subtotal: Number(cartTotal),
+                    taxation: Number(cartTotal * (currentTax.taxRate / 100)),
+                    orderValue: orderTotal,
+                    userCurrency: { ...userCurrency! },
+                    userId: (session?.user as { id: string }).id,
+                    _id: "",
+                    orderPlacedOn: 0,
+                    orderStatus: "pending", // Will be updated by webhook
+                    tracking: {
+                        trackingNum: "",
+                        type: ""
+                    }
+                }
+
+                // Create order FIRST with pending status (before redirect)
+                const payoneerOrderResult = await saveOrderAfterPay(payoneerOrderData)
+
+                if (!payoneerOrderResult.ack) {
+                    onPageNotifications("error", "Failed to create order")
+                    return
+                }
+
+                const orderNumber = payoneerOrderResult.result.data
+
+                // Store order number for callback page
+                sessionStorage.setItem('payoneerOrderNumber', orderNumber)
+
+                // Initiate Payoneer payment with the created order number
+                const payoneerResult = await initiatePayoneerPayment({
+                    orderId: orderNumber,
+                    amount: orderTotal,
+                    currency: userCurrency?.currency || 'USD',
+                    customerEmail: session?.user?.email,
+                    customerName: session?.user?.name,
+                    shippingAddress: selectedAddress ? {
+                        fname: selectedAddress.fname,
+                        lname: selectedAddress.lname,
+                        email: selectedAddress.email,
+                        streetAddress: selectedAddress.streetAddress,
+                        city: selectedAddress.city,
+                        state: selectedAddress.state,
+                        country: selectedAddress.country,
+                        postalCode: selectedAddress.postalCode
+                    } : undefined,
+                    customerNumber: (session?.user as { id: string })?.id
+                })
+
+                if (payoneerResult.success && payoneerResult.redirectUrl) {
+                    // Redirect to Payoneer payment page
+                    console.log('✅ Order created:', orderNumber)
+                    console.log('Redirecting to Payoneer:', payoneerResult.redirectUrl)
+                    window.location.href = payoneerResult.redirectUrl
+                } else {
+                    sessionStorage.removeItem('payoneerOrderNumber')
+                    onPageNotifications("error", payoneerResult.error || "Failed to initiate Payoneer payment")
+                }
                 break;
             default:
                 onPageNotifications("info", "Select Payment Gateway First.").catch(e => console.log(e))

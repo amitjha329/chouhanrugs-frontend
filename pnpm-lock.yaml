@@ -47,6 +47,9 @@ importers:
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
+      '@yusifaliyevpro/countries':
+        specifier: ^2.2.2
+        version: 2.2.2
       algoliasearch:
         specifier: 5.25.0
         version: 5.25.0
@@ -1589,6 +1592,9 @@ packages:
     resolution: {integrity: sha512-hHKFx+opG5BA3/owMXon8ypwSotBGTdblG6oda/iOu9+OEYnk0cxD2uIcGyGT8jCK578kV+xMrNxqbn8Zjlpgw==}
     cpu: [x64]
     os: [win32]
+
+  '@yusifaliyevpro/countries@2.2.2':
+    resolution: {integrity: sha512-2chsv5XtnBFFz3dG25xWHx+E0lKRZuyP+T/3aICBHXCWvcsCO4OUhIibRKrJcmZQyD4cMiwkG/kFoXBkb8vMEw==}
 
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -5428,6 +5434,8 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.7.8':
     optional: true
+
+  '@yusifaliyevpro/countries@2.2.2': {}
 
   abbrev@1.1.1: {}
 

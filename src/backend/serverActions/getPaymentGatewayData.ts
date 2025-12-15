@@ -4,7 +4,7 @@ import clientPromise from "@/lib/clientPromise"
 import PaymentGatewayDataModel from "@/types/PaymentGatewayDataModel"
 import converter from "@/utils/mongoObjectConversionUtility"
 
-export default async function getPaymentGatewayData(partner: "RZP" | "STRIPE" | "PAYTM" | "PAYPAL"|"PAYPAL_DEV"): Promise<PaymentGatewayDataModel> {
+export default async function getPaymentGatewayData(partner: "RZP" | "STRIPE" | "PAYTM" | "PAYPAL"|"PAYPAL_DEV" | "PAYONEER"): Promise<PaymentGatewayDataModel> {
     const mongoClient = await clientPromise
     try {
         const collectionBranches = mongoClient.db(process.env.MONGODB_DB).collection("paymentGateway")

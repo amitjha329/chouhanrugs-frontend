@@ -1,6 +1,6 @@
 type PaymentGatewayDataModel = {
     _id: string,
-    partner: "RZP" | "STRIPE" | "PAYTM" | "PAYPAL"|"PAYPAL_DEV",
+    partner: "RZP" | "STRIPE" | "PAYTM" | "PAYPAL"|"PAYPAL_DEV" | "PAYONEER",
     key_id: string,
     key_secret?: string,
     updatedOn: number,

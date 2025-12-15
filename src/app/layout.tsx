@@ -7,6 +7,8 @@ import { Metadata, Viewport } from 'next'
 import FloatingButtonChat from '@/ui/HomePage/FlotingButtonChat'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
+import GlobalPopupWrapper from '@/ui/GlobalPopup/GlobalPopupWrapper'
+import { headers } from 'next/headers'
 
 const poppins = Poppins({
     weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -22,6 +24,10 @@ export const metadata: Metadata = {
 }
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
+    const headersList = await headers()
+    const pathname = headersList.get('x-pathname') || ''
+    const isAuthPage = pathname === '/signin' || pathname === '/login'
+    
     const [siteData, googleTagData] = await Promise.all([getSiteData(), getAnalyticsData("GTM")])
     return (
         <html>
@@ -73,6 +79,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     zIndex={1600} />
                 {children}
                 <FloatingButtonChat siteData={siteData} />
+                {!isAuthPage && <GlobalPopupWrapper />}
             </body>
         </html>
     )

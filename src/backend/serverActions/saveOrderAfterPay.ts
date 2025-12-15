@@ -65,7 +65,7 @@ export default async function saveOrderAfterPay(orderDataParam: OrderDataModel) 
             },
             userId: new ObjectId(user?._id),
             orderPlacedOn: orderDate,
-            orderStatus: ORDER_STAUTS.PLACED
+            orderStatus: orderStatus.length > 0 ? orderStatus : ORDER_STAUTS.PLACED
         }
         const cartDelete = await collectionCarts.deleteMany({ userId: user?._id })
         console.log(cartDelete)
