@@ -30,7 +30,7 @@ export default function combinedMiddleware(req: NextRequest) {
     const isAuthRoute = authRoutes.some(route => req.nextUrl.pathname.startsWith(route))
     
     if (isAuthRoute) {
-        return authMiddleware(req)
+        return authMiddleware(req, {} as any)
     }
     
     // For all other routes, just add the pathname header
