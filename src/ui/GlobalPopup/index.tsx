@@ -5,7 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import PopUpDataModel from '@/types/PopUpDataModel'
 import { IoMdClose } from 'react-icons/io'
-import submitCustomSizeRequest from '@/backend/serverActions/submitCustomSizeRequest'
+import addSubscriber from '@/lib/actions/addSubscriber'
+import addCustomSizeEnquiry from '@/lib/actions/addCustomSizeEnquiry'
 
 type ActiveForm = 'none' | 'subscribe' | 'customSize'
 
@@ -114,7 +115,12 @@ const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
         setCustomSizeMessage('')
 
         try {
-            const result = await submitCustomSizeRequest(customSizeData)
+            const result = await addCustomSizeEnquiry(
+                customSizeData.email,
+                customSizeData.mobile,
+                customSizeData.requirements,
+                'popup'
+            )
             
             if (result.ack) {
                 setCustomSizeMessage(result.result.message)
@@ -140,19 +146,19 @@ const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
         setSubscriptionMessage('')
 
         try {
-            // Add your subscription API call here
-            // Example: await fetch('/api/subscribe', { method: 'POST', body: JSON.stringify({ email }) })
+            const result = await addSubscriber(email, 'popup')
             
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            
-            setSubscriptionMessage('Thank you for subscribing!')
-            setEmail('')
-            
-            // Close popup after successful subscription
-            setTimeout(() => {
-                handleClose()
-            }, 2000)
+            if (result.ack) {
+                setSubscriptionMessage(result.result.message)
+                setEmail('')
+                
+                // Close popup after successful subscription
+                setTimeout(() => {
+                    handleClose()
+                }, 2000)
+            } else {
+                setSubscriptionMessage(result.result.message)
+            }
         } catch (error) {
             setSubscriptionMessage('Something went wrong. Please try again.')
         } finally {

@@ -88,8 +88,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     //     return Number(cartTotal + (currentShipping ? parseFloat(currentShipping.shippingCharges.split(' ')[1]) : 0)) - deductable
     // }, [currentTax, currentShipping, cartTotal, deductable])
 
-    // Memoize calculateProductPrice to avoid recalculating for same item
-    const calculateProductPrice = useCallback((item: CartDataModel): number => {
+    // Helper function to get individual item price (without quantity)
+    const getItemUnitPrice = useCallback((item: CartDataModel): number => {
         var priceInitial = 0
         if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
             const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!);
@@ -110,8 +110,13 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         } else {
             priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0;
         }
-        return priceInitial * item.quantity
+        return priceInitial
     }, [])
+
+    // Memoize calculateProductPrice to avoid recalculating for same item
+    const calculateProductPrice = useCallback((item: CartDataModel): number => {
+        return getItemUnitPrice(item) * item.quantity
+    }, [getItemUnitPrice])
     const orderTotal = useMemo(() => {
         return Number(cart.reduce((total, item) => {
             const itemPrice = calculateProductPrice(item)
@@ -252,14 +257,15 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             case "PAYONEER":
                 // Build order data object
                 const payoneerOrderData: OrderDataModel = {
-                    products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
+                    products: cart.map((item) => {
+                        const unitPrice = getItemUnitPrice(item)
                         return {
-                            productId: cartProduct[0]._id?.toString() ?? "",
-                            productPrice: cartProduct[0].productSellingPrice,
-                            productMSRP: cartProduct[0].productMSRP,
-                            quantity: quantity,
-                            variation: variationCode ?? "",
-                            customSize
+                            productId: item.cartProduct[0]._id?.toString() ?? "",
+                            productPrice: unitPrice,
+                            productMSRP: item.cartProduct[0].productMSRP,
+                            quantity: item.quantity,
+                            variation: item.variationCode ?? "",
+                            customSize: item.customSize
                         }
                     }),
                     shippingType: currentShipping?.name || "Standard",
@@ -407,14 +413,15 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         console.log(response)
         if (paymentVerification) {
             const orderData: OrderDataModel = {
-                products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
+                products: cart.map((item) => {
+                    const unitPrice = getItemUnitPrice(item)
                     return {
-                        productId: cartProduct[0]._id?.toString() ?? "",
-                        productPrice: cartProduct[0].productSellingPrice,
-                        productMSRP: cartProduct[0].productMSRP,
-                        quantity: quantity,
-                        variation: variationCode ?? "",
-                        customSize
+                        productId: item.cartProduct[0]._id?.toString() ?? "",
+                        productPrice: unitPrice,
+                        productMSRP: item.cartProduct[0].productMSRP,
+                        quantity: item.quantity,
+                        variation: item.variationCode ?? "",
+                        customSize: item.customSize
                     }
                 }),
                 shippingType: "Standard",
@@ -459,14 +466,15 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         if (queryParams.redirect_status == "succeeded" && cart.length > 0 && calledStripeFinal == 0) {
             ++calledStripeFinal
             const orderData: OrderDataModel = {
-                products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
+                products: cart.map((item) => {
+                    const unitPrice = getItemUnitPrice(item)
                     return {
-                        productId: cartProduct[0]._id?.toString() ?? "",
-                        productPrice: cartProduct[0].productSellingPrice,
-                        productMSRP: cartProduct[0].productMSRP,
-                        quantity: quantity,
-                        variation: variationCode ?? "",
-                        customSize
+                        productId: item.cartProduct[0]._id?.toString() ?? "",
+                        productPrice: unitPrice,
+                        productMSRP: item.cartProduct[0].productMSRP,
+                        quantity: item.quantity,
+                        variation: item.variationCode ?? "",
+                        customSize: item.customSize
                     }
                 }),
                 shippingType: "Standard",
@@ -764,14 +772,15 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     capturePayment(data.orderID).then(value => {
                                         if (value.status == "COMPLETED") {
                                             const orderData: OrderDataModel = {
-                                                products: cart.map(({ cartProduct, quantity, variationCode, customSize }) => {
+                                                products: cart.map((item) => {
+                                                    const unitPrice = getItemUnitPrice(item)
                                                     return {
-                                                        productId: cartProduct[0]._id?.toString() ?? "",
-                                                        productPrice: cartProduct[0].productSellingPrice,
-                                                        productMSRP: cartProduct[0].productMSRP,
-                                                        quantity: quantity,
-                                                        variation: variationCode ?? "",
-                                                        customSize
+                                                        productId: item.cartProduct[0]._id?.toString() ?? "",
+                                                        productPrice: unitPrice,
+                                                        productMSRP: item.cartProduct[0].productMSRP,
+                                                        quantity: item.quantity,
+                                                        variation: item.variationCode ?? "",
+                                                        customSize: item.customSize
                                                     }
                                                 }),
                                                 shippingType: "Standard",

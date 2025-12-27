@@ -11,89 +11,229 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress }: { orderItem
 
     return (
         <div className="basis-full lg:basis-3/4">
-            <div className="mx-auto px-4 sm:px-6">
-                <div className="container mx-auto my-8 drop-shadow-lg card card-bordered bg-white card-body">
-                    <div className='card-title justify-between'>
-                        <span>Order # {orderItem._id}</span>
-                        <DownloadInvoiceButton orderId={orderItem._id} className='btn btn-sm btn-outline' text='Invoice' />
-                    </div>
-                    <div className='flex justify-between text-sm'>
-                        <div><span className='text-gray-500'>Order Date:</span> {new Date(orderItem.orderPlacedOn).toLocaleDateString("en-US", {
-                            dateStyle: "medium"
-                        })}</div>
-                        <div><span className='text-gray-500'>Est. Delivery:</span> {new Date(orderItem.orderPlacedOn).toLocaleDateString("en-US", {
-                            dateStyle: "medium"
-                        })}</div>
-                    </div>
-                    <div className='divider'></div>
-                    {
-                        productsList.map((product, index) => product ? <div key={product._id?.toString()} className="mt-4 md:mt-6 flex  flex-col md:flex-row justify-start items-center md:items-center md:space-x-6 xl:space-x-8 w-full border-gray-200 border-b">
-                            <figure className='w-24 hidden md:block relative'>
-                                <Image className="!w-full !h-auto !relative" sizes='10vw' quality={20} src={product.images[product.productPrimaryImageIndex]} alt="dress" fill />
-                            </figure>
-                            <div className="md:flex-row flex-col flex justify-between items-start w-full  pb-8 space-y-4 md:space-y-0">
-                                <div className="w-full flex flex-col justify-start items-start space-y-8">
-                                    <h3 className="leading-6 text-gray-800 mr-2">{product.productName}</h3>
-                                    <div className='flex gap-2'>
-                                        {
-                                            orderItem.products[index].variation && <>
-                                                {product.variations.find(varItem => varItem.variationCode == orderItem.products[index].variation)?.variationSize != null && <span className="opacity-80 text-xs">Size: {product.variations.find(varItem => varItem.variationCode == orderItem.products[index].variation)?.variationSize}</span>}
-                                                {product.variations.find(varItem => varItem.variationCode == orderItem.products[index].variation)?.variationColor != null && <span className="opacity-80 text-xs">Color: {product.variations.find(varItem => varItem.variationCode == orderItem.products[index].variation)?.variationColor}</span>}
-                                            </>
-                                        }
-                                    </div>
+            <div className="mx-auto px-3 sm:px-4 max-w-6xl">
+                {/* Header Section with Gradient */}
+                <div className="bg-gradient-to-r from-amber-700 to-amber-900 rounded-t-xl shadow-lg p-4 md:p-5 mt-6">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div className="text-white">
+                            <h1 className="text-lg md:text-xl font-bold mb-1.5">Order #{orderItem._id}</h1>
+                            <div className="flex flex-wrap gap-3 text-xs md:text-sm opacity-90">
+                                <div className="flex items-center gap-1.5">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Ordered: {new Date(orderItem.orderPlacedOn).toLocaleDateString("en-US", { dateStyle: "medium" })}</span>
                                 </div>
-                                <div className="flex justify-between space-x-8 items-start w-full">
-                                    <p className="text-base xl:text-lg leading-6">
-                                        {orderItem.userCurrency.currencySymbol}{(orderItem.products[index].productPrice * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)} <span className="text-red-300 line-through"> {orderItem.userCurrency.currencySymbol}{(orderItem.products[index].productMSRP * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)}</span>
-                                    </p>
-                                    <p className="text-base xl:text-lg leading-6 text-gray-800">{orderItem.products[index].quantity}</p>
-                                    <p className="text-base xl:text-lg font-semibold leading-6 text-gray-800">{orderItem.userCurrency.currencySymbol}{(Number(orderItem.products[index].productPrice) * Number(orderItem.products[index].quantity) * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)}</p>
+                                <div className="flex items-center gap-1.5">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <span>Payment: {orderItem.paymentMode}</span>
                                 </div>
-                            </div>
-                        </div> : <div key={product ?? "" + index.toString() + randomInt(999).toString()} className='card bordered card-body card-title p-14'>Product Not Available</div>
-                        )
-                    }
-                    <OrderTrackingProgressbar orderStatus={orderItem.orderStatus} className="felx flex-col !pt-8" />
-                    <div className='divider'></div>
-                    <div className='flex justify-between items-stretch gap-x-7 max-md:flex-col-reverse'>
-                        <div className='md:basis-1/2'>
-                            <div className='card-title mb-3'>Order Summary</div>
-                            <div className="flex justify-center items-center w-full space-y-4 flex-col border-gray-300 border-b pb-4">
-                                <div className="flex justify-between w-full">
-                                    <p className="text-base leading-4 text-gray-800 text-left">Subtotal</p>
-                                    <p className="text-base leading-4 text-gray-600 text-right">{orderItem.userCurrency.currencySymbol}{orderItem.subtotal}</p>
-                                </div>
-                                <div className="flex justify-between items-center w-full">
-                                    <p className="text-base leading-4 text-gray-800 text-left">
-                                        Discount
-                                    </p>
-                                    <p className="text-base leading-4 text-gray-600 text-right">-{orderItem.couponApplied?.value ?? 0}%</p>
-                                </div>
-                                <div className="flex justify-between items-center w-full">
-                                    <p className="text-base leading-4 text-gray-800 text-left">Shipping</p>
-                                    <p className="text-base leading-4 text-gray-600 text-right">Free</p>
-                                </div>
-                                <div className="flex justify-between items-center w-full">
-                                    <p className="text-base leading-4 text-gray-800 text-left">Tax</p>
-                                    <p className="text-base leading-4 text-gray-600 text-right">{orderItem.userCurrency.currencySymbol}{Number(orderItem.taxation).toFixed(2)}</p>
-                                </div>
-                            </div>
-                            <div className="flex justify-between items-center w-full mt-5">
-                                <p className="text-base font-semibold leading-4 text-gray-800 text-left">Total</p>
-                                <p className="text-base font-semibold leading-4 text-gray-600 text-right">{orderItem.userCurrency.currencySymbol}{orderItem.orderValue.toFixed(0)}</p>
                             </div>
                         </div>
-                        <div className='flex justify-between items-center md:basis-1/2 max-[482px]:flex-col max-md:mb-5 max-[482px]:gap-5'>
-                            <div className="flex justify-center md:justify-start  items-center md:items-start flex-col space-y-4">
-                                <p className="text-base font-semibold leading-4 text-center md:text-left text-gray-800">Delivery Address</p>
-                                <p className="w-48 lg:w-full xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
-                                    {shippingAddress.streetAddress}, {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.postalCode}<br /> {shippingAddress.country}
-                                </p>
+                        <DownloadInvoiceButton 
+                            orderId={orderItem._id} 
+                            className="btn btn-xs md:btn-sm bg-white text-amber-900 hover:bg-amber-50 border-0 shadow font-semibold text-xs" 
+                            text="Invoice" 
+                        />
+                    </div>
+                </div>
+
+                {/* Main Content Card */}
+                <div className="bg-white rounded-b-xl shadow-lg overflow-hidden">
+                    {/* Order Tracking */}
+                    <div className="p-4 md:p-5 bg-gradient-to-b from-amber-50 to-white border-b border-amber-100">
+                        <OrderTrackingProgressbar orderStatus={orderItem.orderStatus} className="flex flex-col" />
+                    </div>
+
+                    {/* Products Section */}
+                    <div className="p-4 md:p-5">
+                        <h2 className="text-base md:text-lg font-bold text-gray-900 mb-3 flex items-center gap-1.5">
+                            <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </h2>
+                        <div className="space-y-3">
+                            {productsList.map((product, index) => product ? (
+                                <div 
+                                    key={product._id?.toString()} 
+                                    className="group bg-gradient-to-r from-gray-50 to-white hover:from-amber-50 hover:to-orange-50 rounded-lg p-3 md:p-4 border border-gray-200 hover:border-amber-300 transition-all duration-300 shadow-sm hover:shadow"
+                                >
+                                    <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+                                        {/* Product Image */}
+                                        <div className="relative w-full md:w-20 h-20 rounded-md overflow-hidden bg-white shadow-sm flex-shrink-0">
+                                            <Image 
+                                                className="object-cover hover:scale-110 transition-transform duration-300" 
+                                                sizes="(max-width: 768px) 100vw, 80px" 
+                                                quality={60} 
+                                                src={product.images[product.productPrimaryImageIndex]} 
+                                                alt={product.productName} 
+                                                fill 
+                                            />
+                                        </div>
+
+                                        {/* Product Details */}
+                                        <div className="flex-1 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-sm md:text-base font-semibold text-gray-900 mb-1.5 group-hover:text-amber-900 transition-colors truncate">
+                                                    {product.productName}
+                                                </h3>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {orderItem.products[index].variation && orderItem.products[index].variation !== "customSize" && (
+                                                        <>
+                                                            {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationSize && (
+                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] md:text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                                                                    <svg className="w-2.5 h-2.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                                                                    </svg>
+                                                                    {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationSize}
+                                                                </span>
+                                                            )}
+                                                            {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationColor && (
+                                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] md:text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+                                                                    <svg className="w-2.5 h-2.5 mr-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path d="M12 22C6.49 22 2 17.51 2 12S6.49 2 12 2s10 4.04 10 9c0 3.31-2.69 6-6 6h-1.77c-.28 0-.5.22-.5.5 0 .12.05.23.13.33.41.47.64 1.06.64 1.67A2.5 2.5 0 0112 22zm0-18c-4.41 0-8 3.59-8 8s3.59 8 8 8c.28 0 .5-.22.5-.5a.54.54 0 00-.14-.35c-.41-.46-.63-1.05-.63-1.65a2.5 2.5 0 012.5-2.5H16c2.21 0 4-1.79 4-4 0-3.86-3.59-7-8-7z" />
+                                                                    </svg>
+                                                                    {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationColor}
+                                                                </span>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                    {orderItem.products[index].customSize && (
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] md:text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                                            <svg className="w-2.5 h-2.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
+                                                            </svg>
+                                                            Custom: {orderItem.products[index].customSize.shape}
+                                                            {orderItem.products[index].customSize.dimensions.length && ` ${orderItem.products[index].customSize.dimensions.length}×${orderItem.products[index].customSize.dimensions.width}`}
+                                                            {orderItem.products[index].customSize.dimensions.diameter && ` Ø${orderItem.products[index].customSize.dimensions.diameter}`}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Price and Quantity */}
+                                            <div className="flex md:flex-col items-center md:items-end gap-3 md:gap-1.5 text-xs md:text-sm">
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="text-gray-600">Qty:</span>
+                                                    <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-amber-100 text-amber-900 font-semibold">
+                                                        {orderItem.products[index].quantity}
+                                                    </span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="text-[10px] text-gray-600 mb-0.5">Unit Price</div>
+                                                    <div className="text-xs md:text-sm font-semibold text-gray-900">
+                                                        {orderItem.userCurrency.currencySymbol}
+                                                        {(Number(orderItem.products[index].productPrice) * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)}
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="text-[10px] text-gray-600 mb-0.5">Total</div>
+                                                    <div className="text-sm md:text-base font-bold text-amber-900">
+                                                        {orderItem.userCurrency.currencySymbol}
+                                                        {(Number(orderItem.products[index].productPrice) * Number(orderItem.products[index].quantity) * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div key={product ?? "" + index.toString() + randomInt(999).toString()} className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                                    <svg className="w-8 h-8 text-red-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <p className="text-sm font-semibold text-red-900">Product Not Available</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Summary and Address Section */}
+                    <div className="bg-gradient-to-b from-gray-50 to-white p-4 md:p-5 border-t border-gray-200">
+                        <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                            {/* Order Summary */}
+                            <div>
+                                <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2.5 flex items-center gap-1.5">
+                                    <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                    Order Summary
+                                </h3>
+                                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center pb-2 border-b border-gray-200 text-xs md:text-sm">
+                                            <span className="text-gray-700">Subtotal</span>
+                                            <span className="font-semibold text-gray-900">{orderItem.userCurrency.currencySymbol}{orderItem.subtotal}</span>
+                                        </div>
+                                        {orderItem.couponApplied && (
+                                            <div className="flex justify-between items-center pb-2 border-b border-gray-200 text-xs md:text-sm">
+                                                <span className="text-gray-700">Discount</span>
+                                                <span className="font-semibold text-green-600">-{orderItem.couponApplied.value}%</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between items-center pb-2 border-b border-gray-200 text-xs md:text-sm">
+                                            <span className="text-gray-700">Shipping</span>
+                                            <span className="font-semibold text-green-600">Free</span>
+                                        </div>
+                                        <div className="flex justify-between items-center pb-2 border-b border-gray-200 text-xs md:text-sm">
+                                            <span className="text-gray-700">Tax</span>
+                                            <span className="font-semibold text-gray-900">{orderItem.userCurrency.currencySymbol}{Number(orderItem.taxation).toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2 bg-gradient-to-r from-amber-50 to-orange-50 -mx-4 -mb-4 px-4 py-3 rounded-b-lg">
+                                            <span className="text-sm md:text-base font-bold text-gray-900">Total</span>
+                                            <span className="text-lg md:text-xl font-bold text-amber-900">{orderItem.userCurrency.currencySymbol}{orderItem.orderValue.toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex justify-center md:justify-start  items-center md:items-start flex-col space-y-4 ">
-                                <p className="text-base font-semibold leading-4 text-center md:text-left text-gray-800">Billing Address</p>
-                                <p className="w-48 lg:w-full xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">{shippingAddress.streetAddress}, {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.postalCode}<br /> {shippingAddress.country}</p>
+
+                            {/* Addresses */}
+                            <div>
+                                <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2.5 flex items-center gap-1.5">
+                                    <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    Delivery Info
+                                </h3>
+                                <div className="space-y-3">
+                                    <div className="bg-white rounded-lg p-3.5 shadow-sm border border-gray-200">
+                                        <div className="flex items-start gap-2.5">
+                                            <div className="p-1.5 bg-amber-100 rounded-md flex-shrink-0">
+                                                <svg className="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                                </svg>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-xs md:text-sm font-semibold text-gray-900 mb-1">Delivery Address</h4>
+                                                <p className="text-xs text-gray-700 leading-relaxed">
+                                                    {shippingAddress.streetAddress}<br />
+                                                    {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.postalCode}<br />
+                                                    {shippingAddress.country}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white rounded-lg p-3.5 shadow-sm border border-gray-200">
+                                        <div className="flex items-start gap-2.5">
+                                            <div className="p-1.5 bg-orange-100 rounded-md flex-shrink-0">
+                                                <svg className="w-4 h-4 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-xs md:text-sm font-semibold text-gray-900 mb-1">Billing Address</h4>
+                                                <p className="text-xs text-gray-700 leading-relaxed">
+                                                    {shippingAddress.streetAddress}<br />
+                                                    {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.postalCode}<br />
+                                                    {shippingAddress.country}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

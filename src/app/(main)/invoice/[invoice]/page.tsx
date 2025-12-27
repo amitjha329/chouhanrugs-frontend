@@ -5,31 +5,9 @@ import { ProductDataModel } from '@/types/ProductDataModel'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getOrderDetails from '@/backend/serverActions/getOrderDetails'
 
-function getCustomSizePrice(item: OrderProduct, productPriceSqFt: number, quantity: number = 1) {
-    switch (item.customSize?.shape) {
-        case "Rectangle":
-        case "Runner":
-        case "Square":
-            return productPriceSqFt * (item.customSize?.dimensions.length ?? 1) * (item.customSize?.dimensions.width ?? 1)
-        case "Round":
-            return productPriceSqFt * (Math.pow((item.customSize?.dimensions.diameter ?? 1) / 2, 2) * Math.PI)
-        default:
-            return 0
-    }
-}
-
-const calculateProductPrice = (orderProduct: OrderProduct, list: ProductDataModel[]): number => {
-    return (orderProduct.variation ?
-        orderProduct.variation != "customSize" ?
-            parseInt(list.find(item => item._id == orderProduct.productId)?.variations[(list.find(item => item._id == orderProduct.productId)?.variations ?? []).findIndex(i => i.variationCode == orderProduct.variation)].variationPrice ?? '0')
-            :
-            getCustomSizePrice(orderProduct, list.find(item => item._id == orderProduct.productId)?.productPriceSqFt ?? 0, orderProduct.quantity)
-        :
-        orderProduct.productPrice) * orderProduct.quantity >> 0
-}
-
-function printprice(price: number, discountpercent: number, exchangerate: number, quantity: number = 1) {
-    return ((price - (price * (discountpercent / 100))) * exchangerate) * quantity >> 0
+// Use the stored order price (purchase price) instead of recalculating from live product data
+const calculateProductPrice = (orderProduct: OrderProduct): number => {
+    return Number(orderProduct.productPrice) * orderProduct.quantity
 }
 
 export default async function Invoice({ params }: Readonly<{ params: Promise<{ invoice: string }> }>) {
@@ -40,7 +18,7 @@ export default async function Invoice({ params }: Readonly<{ params: Promise<{ i
     let subTotal = 0
     let totalValue = 0
     orderData.products.forEach(item => {
-        subTotal = subTotal + calculateProductPrice(item, orderData.productList)
+        subTotal = subTotal + calculateProductPrice(item)
     })
     totalValue = Number((subTotal * (orderData.userCurrency?.exchangeRates ?? 1)).toFixed(2))
     if (orderData?.couponApplied != null) {
@@ -196,31 +174,11 @@ export default async function Invoice({ params }: Readonly<{ params: Promise<{ i
                                                     </td>
                                                     <td className="py-4 px-4 text-right font-medium text-gray-900 border-r border-gray-200 print:py-2 print:px-2 print:text-xs print:text-black print:border-r print:border-black">
                                                         {orderData.userCurrency.currencySymbol}
-                                                        {
-                                                            product.variation && product.variation != "customSize" && variation
-                                                                ? printprice(
-                                                                    parseInt(variation.variationPrice ?? '0'),
-                                                                    parseInt(variation.variationDiscount ?? '0'),
-                                                                    (orderData.userCurrency.exchangeRates ?? 1)
-                                                                ).toLocaleString()
-                                                                : product.variation == "customSize"
-                                                                    ? getCustomSizePrice(product, productDetails?.productPriceSqFt ?? 0).toLocaleString()
-                                                                    : (product.productPrice * (orderData.userCurrency.exchangeRates ?? 1)).toLocaleString()
-                                                        }
+                                                        {(Number(product.productPrice) * (orderData.userCurrency.exchangeRates ?? 1)).toLocaleString()}
                                                     </td>
                                                     <td className="py-4 px-6 text-right font-semibold text-gray-900 print:py-2 print:px-3 print:text-xs print:text-black">
                                                         {orderData.userCurrency.currencySymbol}
-                                                        {
-                                                            product.variation && product.variation != "customSize" && variation
-                                                                ? (printprice(
-                                                                    parseInt(variation.variationPrice ?? '0'),
-                                                                    parseInt(variation.variationDiscount ?? '0'),
-                                                                    (orderData.userCurrency.exchangeRates ?? 1)
-                                                                ) * product.quantity).toLocaleString()
-                                                                : product.variation == "customSize"
-                                                                    ? getCustomSizePrice(product, productDetails?.productPriceSqFt ?? 0, product.quantity).toLocaleString()
-                                                                    : (product.productPrice * product.quantity * (orderData.userCurrency.exchangeRates ?? 1)).toLocaleString()
-                                                        }
+                                                        {(Number(product.productPrice) * product.quantity * (orderData.userCurrency.exchangeRates ?? 1)).toLocaleString()}
                                                     </td>
                                                 </tr>
                                             )
