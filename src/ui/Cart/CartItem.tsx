@@ -12,12 +12,20 @@ const CartItem = ({ item }: { item: CartDataModel, }) => {
     // const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : null
     const userCurrency = null
 
+    // Cache variation lookup to avoid redundant .find() calls
+    const currentVariation = React.useMemo(() => {
+        if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize" && item.cartProduct[0]) {
+            return item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode);
+        }
+        return null;
+    }, [item.variationCode, item.cartProduct]);
+
     const calculateProductPrice = (): number => {
         var priceInitial = 0
         if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
             const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!);
             const variationPrice = Number(item.cartProduct[0].variations[variationindex].variationPrice);
-            const variationDiscount = Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationDiscount ?? 0);
+            const variationDiscount = Number(currentVariation?.variationDiscount ?? 0);
             priceInitial = variationPrice - (variationPrice * (variationDiscount / 100));
         } else if (item.variationCode == "customSize") {
             switch (item.customSize?.shape) {
@@ -61,9 +69,9 @@ const CartItem = ({ item }: { item: CartDataModel, }) => {
                             <span className="opacity-80 max-sm:text-sm">Brand: {item.cartProduct[0].productBrand}</span>
                             <div className='flex gap-2'>
                                 {
-                                    item.variationCode && <>
-                                        {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationSize != null && <span className="opacity-80 text-xs">Size: {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationSize}</span>}
-                                        {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationColor != null && <span className="opacity-80 text-xs">Color: {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationColor}</span>}
+                                    currentVariation && <>
+                                        {currentVariation.variationSize != null && <span className="opacity-80 text-xs">Size: {currentVariation.variationSize}</span>}
+                                        {currentVariation.variationColor != null && <span className="opacity-80 text-xs">Color: {currentVariation.variationColor}</span>}
                                     </>
                                 }
                                 {

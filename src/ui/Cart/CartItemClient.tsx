@@ -11,12 +11,20 @@ import Currency from '@/types/Currency'
 
 const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurrency: Currency }) => {
 
+    // Cache variation lookup to avoid redundant .find() calls
+    const currentVariation = React.useMemo(() => {
+        if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize" && item.cartProduct[0]) {
+            return item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode);
+        }
+        return null;
+    }, [item.variationCode, item.cartProduct]);
+
     const calculateProductPrice = (): number => {
         var priceInitial = 0
         if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
             const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!);
             const variationPrice = Number(item.cartProduct[0].variations[variationindex].variationPrice);
-            const variationDiscount = Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationDiscount ?? 0);
+            const variationDiscount = Number(currentVariation?.variationDiscount ?? 0);
             priceInitial = variationPrice - (variationPrice * (variationDiscount / 100));
         } else if (item.variationCode == "customSize") {
             switch (item.customSize?.shape) {
@@ -64,13 +72,13 @@ const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurre
                     {/* Product Info & Controls */}
                     <div className="flex flex-col flex-1 min-w-0 justify-between mt-2 sm:mt-0 sm:pl-2 md:pl-4">
                         <div className="flex flex-wrap gap-2 mt-1 text-xs sm:text-sm md:text-base text-gray-500">
-                            {item.variationCode && item.variationCode !== 'customSize' && (
+                            {currentVariation && (
                                 <>
-                                    {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationSize && (
-                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Size: {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationSize}</span>
+                                    {currentVariation.variationSize && (
+                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Size: {currentVariation.variationSize}</span>
                                     )}
-                                    {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationColor && (
-                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Color: {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationColor}</span>
+                                    {currentVariation.variationColor && (
+                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Color: {currentVariation.variationColor}</span>
                                     )}
                                 </>
                             )}

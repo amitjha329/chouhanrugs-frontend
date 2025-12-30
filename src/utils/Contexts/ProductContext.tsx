@@ -32,13 +32,11 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
     const [selectedImageIndex, setSelectedImageIndex] = useState(0)
     const [zoomPosition, setZoomPosition] = useState<{ x: number; y: number } | null>(null)
 
-    useEffect(()=>{
-        console.log("Product images:", product)
-    }, [product])
+
 
     // New state for color and size selection (handle missing colorData/sizeData gracefully)
     // Find the smallest size by area for default selection
-    const getSmallestSizeCode = () => {
+    const getSmallestSizeCode = useMemo(() => {
         if (!product.sizeData || product.sizeData.length === 0) return '';
         const parse = (s: string) => {
             const match = s.match(/(\d+(?:\.\d+)?)\s*[xX]\s*(\d+(?:\.\d+)?)/);
@@ -51,17 +49,17 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
             return (aw * ah) - (bw * bh);
         });
         return sorted[0]?.sizeCode || '';
-    };
+    }, [product.sizeData]);
     const [selectedColor, setSelectedColor] = useState(product.colorData?.[0]?.name || '');
-    const [selectedSize, setSelectedSize] = useState(getSmallestSizeCode());
+    const [selectedSize, setSelectedSize] = useState(getSmallestSizeCode);
 
     // If sizeData changes, update selectedSize to the new smallest
     useEffect(() => {
         if (product.sizeData && product.sizeData.length > 0) {
-            const smallest = getSmallestSizeCode();
+            const smallest = getSmallestSizeCode;
             setSelectedSize((prev: string) => (product.sizeData.some((s: any) => s.sizeCode === prev) ? prev : smallest));
         }
-    }, [product.sizeData])
+    }, [product.sizeData, getSmallestSizeCode])
 
     useEffect(() => {
         if (selectedColor && selectedSize) {
@@ -119,7 +117,7 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
             setImages(product.images);
             setSelectedImageIndex(0);
         }
-    }, [selectedColor, selectedSize, product.images, product.variations, getCurrentVariation]);
+    }, [selectedColor, selectedSize, product.images, getCurrentVariation]);
     useEffect(() => {
         if (typeof window !== 'undefined' && product.colorData && selectedColor) {
             const colorObj = product.colorData.find((c: any) => c.name === selectedColor);

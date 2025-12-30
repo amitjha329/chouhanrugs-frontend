@@ -30,8 +30,8 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
     const [wishlistItems, setWishlistitems] = useState<string[]>([])
     const { data: session } = useSession()
 
-    // Helper to get local cart count
-    const getLocalCartCount = () => {
+    // Helper to get local cart count - memoized to avoid repeated localStorage parsing
+    const getLocalCartCount = useMemo(() => {
         if (typeof window !== 'undefined') {
             const localCartRaw = localStorage.getItem('pending_cart')
             if (localCartRaw) {
@@ -42,7 +42,7 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
             }
         }
         return 0
-    }
+    }, [])
 
     const refreshWishList = () => {
         getUserAllWishlist((session?.user as { id: string })?.id, false).then(result => {
@@ -56,7 +56,7 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
                 setCartCount(result.cartItemCount)
             }).catch(err => console.log(err))
         } else {
-            setCartCount(getLocalCartCount())
+            setCartCount(getLocalCartCount)
         }
     }
 
@@ -67,7 +67,7 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
                 setCartCount(result.cartItemCount)
             }).catch(err => console.log(err))
         } else {
-            setCartCount(getLocalCartCount())
+            setCartCount(getLocalCartCount)
         }
         (!mainSocket || mainSocket.readyState !== WebSocket.OPEN) && webSocketInitializer(window.location.host).then((result) => {
             setMainSocket(result)
@@ -100,7 +100,22 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
     useEffect(() => {
         // Listen for local cart changes (add/remove) while logged out
         if (!session?.user) {
-            const handleStorage = () => setCartCount(getLocalCartCount())
+            const handleStorage = () => {
+                // Recompute local cart count from localStorage when storage changes
+                if (typeof window !== 'undefined') {
+                    const localCartRaw = localStorage.getItem('pending_cart')
+                    if (localCartRaw) {
+                        try {
+                            const localCart = JSON.parse(localCartRaw)
+                            if (Array.isArray(localCart)) {
+                                setCartCount(localCart.length)
+                                return
+                            }
+                        } catch { }
+                    }
+                    setCartCount(0)
+                }
+            }
             window.addEventListener('storage', handleStorage)
             return () => window.removeEventListener('storage', handleStorage)
         }
