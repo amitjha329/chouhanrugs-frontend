@@ -14,39 +14,44 @@ interface CompoProps extends ProductDataModelWithColorMap {
 const ProductCardItem = (props: CompoProps) => {
     const productVariations = props.variations ?? []
 
-    // Calculate least selling price (after discount) among all variations and the main product
-    let leastSellingPrice: string;
-    if (productVariations.length > 0) {
-        leastSellingPrice = Number(
-            productVariations.reduce((min, variation) => {
-                const price = Number(variation.variationPrice ?? '0');
-                const discount = Number(variation.variationDiscount ?? '0');
-                const sellingPrice = price - (discount / 100) * price;
-                if (isNaN(sellingPrice) || sellingPrice < 0) {
-                    return min;
-                }
-                return Math.min(min, sellingPrice);
-            }, Number.POSITIVE_INFINITY)
-        ).toFixed(2);
-    } else {
-        leastSellingPrice = Number(props.productSellingPrice).toFixed(2);
-    }
+    // Memoize price calculations to avoid recalculating on every render
+    const { leastSellingPrice, leastMSRP } = React.useMemo(() => {
+        // Calculate least selling price (after discount) among all variations and the main product
+        let leastSelling: string;
+        if (productVariations.length > 0) {
+            leastSelling = Number(
+                productVariations.reduce((min, variation) => {
+                    const price = Number(variation.variationPrice ?? '0');
+                    const discount = Number(variation.variationDiscount ?? '0');
+                    const sellingPrice = price - (discount / 100) * price;
+                    if (isNaN(sellingPrice) || sellingPrice < 0) {
+                        return min;
+                    }
+                    return Math.min(min, sellingPrice);
+                }, Number.POSITIVE_INFINITY)
+            ).toFixed(2);
+        } else {
+            leastSelling = Number(props.productSellingPrice).toFixed(2);
+        }
 
-    // Calculate least MSRP among all variations and the main product
-    let leastMSRP: string;
-    if (productVariations.length > 0) {
-        leastMSRP = Number(
-            productVariations.reduce((min, variation) => {
-                const msrp = Number(variation.variationPrice ?? '0');
-                if (isNaN(msrp) || msrp < 0) {
-                    return min;
-                }
-                return Math.min(min, msrp);
-            }, Number.POSITIVE_INFINITY)
-        ).toFixed(2);
-    } else {
-        leastMSRP = Number(props.productMSRP).toFixed(2);
-    }
+        // Calculate least MSRP among all variations and the main product
+        let leastMSRPValue: string;
+        if (productVariations.length > 0) {
+            leastMSRPValue = Number(
+                productVariations.reduce((min, variation) => {
+                    const msrp = Number(variation.variationPrice ?? '0');
+                    if (isNaN(msrp) || msrp < 0) {
+                        return min;
+                    }
+                    return Math.min(min, msrp);
+                }, Number.POSITIVE_INFINITY)
+            ).toFixed(2);
+        } else {
+            leastMSRPValue = Number(props.productMSRP).toFixed(2);
+        }
+
+        return { leastSellingPrice: leastSelling, leastMSRP: leastMSRPValue };
+    }, [productVariations, props.productSellingPrice, props.productMSRP]);
 
     return (
         <div className={clsx('bg-white rounded-xl overflow-hidden w-full text-center relative mr-3', props.className, ProductsCardStyle.product_card)}>
@@ -87,4 +92,4 @@ const ProductCardItem = (props: CompoProps) => {
     )
 }
 
-export default ProductCardItem
+export default React.memo(ProductCardItem)
