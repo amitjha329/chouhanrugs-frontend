@@ -117,7 +117,7 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
             setImages(product.images);
             setSelectedImageIndex(0);
         }
-    }, [selectedColor, selectedSize, product.images, getCurrentVariation]);
+    }, [getCurrentVariation, product.images]);
     useEffect(() => {
         if (typeof window !== 'undefined' && product.colorData && selectedColor) {
             const colorObj = product.colorData.find((c: any) => c.name === selectedColor);
