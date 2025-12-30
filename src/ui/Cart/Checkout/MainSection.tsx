@@ -112,15 +112,21 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         }
         return priceInitial * item.quantity
     }, [])
+    
+    // Memoize cart total calculation
+    const cartTotal = useMemo(() => {
+        let subTotal = 0
+        cart.forEach(item => {
+            subTotal += calculateProductPrice(item)
+        })
+        return Number((subTotal * (userCurrency?.exchangeRates ?? 1)).toFixed(2))
+    }, [cart, userCurrency, calculateProductPrice])
+    
     const orderTotal = useMemo(() => {
-        return Number(cart.reduce((total, item) => {
-            const itemPrice = calculateProductPrice(item)
-            return total + itemPrice
-        }, 0) + (currentShipping ? parseFloat(currentShipping.shippingCharges.split(' ')[1]) : 0)) + Number((cart.reduce((total, item) => {
-            const itemPrice = calculateProductPrice(item)
-            return total + itemPrice
-        }, 0) * currentTax.taxRate / 100).toFixed(2)) - deductable
-    }, [currentTax, currentShipping, cart, deductable])
+        const shipping = currentShipping ? parseFloat(currentShipping.shippingCharges.split(' ')[1]) : 0;
+        const tax = Number((cartTotal * currentTax.taxRate / 100).toFixed(2));
+        return Number(cartTotal + shipping + tax - deductable);
+    }, [currentTax, currentShipping, cartTotal, deductable])
     const payEnabled = useMemo(() => {
         return cartCount != 0 && paymentMethod && paymentMethod.partner != undefined && currentShipping != undefined
     }, [cartCount, paymentMethod, currentShipping])
@@ -145,15 +151,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         return "";
     };
 
-    // Memoize cart total calculation
-    const cartTotal = useMemo(() => {
-        let subTotal = 0
-        cart.forEach(item => {
-            subTotal += calculateProductPrice(item)
-        })
-        return Number((subTotal * (userCurrency?.exchangeRates ?? 1)).toFixed(2))
-    }, [cart, userCurrency, calculateProductPrice])
-
     // Batch state updates for cart and address
     useEffect(() => {
         let isMounted = true
@@ -168,7 +165,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             setAddrLoading(false)
         }).catch(e => console.log(e))
         return () => { isMounted = false }
-    }, [userCurrency, currentTax])
+    }, [session, userCurrency])
 
     // Debounce coupon input
     const [debouncedCoupon, setDebouncedCoupon] = useState("")

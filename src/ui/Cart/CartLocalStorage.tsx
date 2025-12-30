@@ -92,8 +92,13 @@ const CartLocalStorage = () => {
                     {cart && cart.length > 0 ? (
                         <>
                             {/* Desktop Table Rows */}
-                            {mappedCart.map((item, idx) => (
-                                item.cartProduct[0] ? (
+                            {mappedCart.map((item, idx) => {
+                                // Cache variation lookup to avoid redundant .find() calls
+                                const currentVariation = item.variationCode && item.cartProduct[0]
+                                    ? item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)
+                                    : null;
+                                
+                                return item.cartProduct[0] ? (
                                     <div key={idx} className="hidden sm:flex items-center justify-between hover:bg-gray-100 mb-2 w-full">
                                         {/* Product Details */}
                                         <div className="flex min-w-0 w-64">
@@ -111,9 +116,9 @@ const CartLocalStorage = () => {
                                                     <span className="font-medium text-xs max-w-[250px] truncate">{item.cartProduct[0].productName}</span>
                                                     <span className="opacity-80 max-sm:text-sm truncate">Brand: {item.cartProduct[0].productBrand}</span>
                                                     <div className='flex gap-2 flex-wrap'>
-                                                        {item.variationCode && <>
-                                                            {item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)?.variationSize != null && <span className="opacity-80 text-xs">Size: {item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)?.variationSize}</span>}
-                                                            {item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)?.variationColor != null && <span className="opacity-80 text-xs">Color: {item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)?.variationColor}</span>}
+                                                        {currentVariation && <>
+                                                            {currentVariation.variationSize != null && <span className="opacity-80 text-xs">Size: {currentVariation.variationSize}</span>}
+                                                            {currentVariation.variationColor != null && <span className="opacity-80 text-xs">Color: {currentVariation.variationColor}</span>}
                                                         </>}
                                                         {item.variationCode == "customSize" && <div className='flex flex-col'>
                                                             <div className='flex gap-2'>
@@ -196,10 +201,15 @@ const CartLocalStorage = () => {
                                         <div className="flex items-center justify-center w-16"></div>
                                     </div>
                                 )
-                            ))}
+                            })}
                             {/* Mobile Card Rows */}
-                            {mappedCart.map((item, idx) => (
-                                item.cartProduct[0] ? (
+                            {mappedCart.map((item, idx) => {
+                                // Cache variation lookup to avoid redundant .find() calls
+                                const currentVariation = item.variationCode && item.cartProduct[0]
+                                    ? item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)
+                                    : null;
+                                
+                                return item.cartProduct[0] ? (
                                     <div key={idx} className="flex flex-col sm:hidden bg-base-100 rounded-lg shadow mb-4 p-4 border border-base-300">
                                         <div className="flex items-center mb-2">
                                             <a href={`/products/${item.cartProduct[0].productURL}`} className="flex items-center">
@@ -216,9 +226,9 @@ const CartLocalStorage = () => {
                                                     <span className="font-medium text-xs max-w-[180px] truncate">{item.cartProduct[0].productName}</span>
                                                     <span className="opacity-80 text-sm">Brand: {item.cartProduct[0].productBrand}</span>
                                                     <div className='flex gap-2 flex-wrap mt-1'>
-                                                        {item.variationCode && <>
-                                                            {item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)?.variationSize != null && <span className="opacity-80 text-xs">Size: {item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)?.variationSize}</span>}
-                                                            {item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)?.variationColor != null && <span className="opacity-80 text-xs">Color: {item.cartProduct[0].variations.find((varItem:Variation) => varItem.variationCode == item.variationCode)?.variationColor}</span>}
+                                                        {currentVariation && <>
+                                                            {currentVariation.variationSize != null && <span className="opacity-80 text-xs">Size: {currentVariation.variationSize}</span>}
+                                                            {currentVariation.variationColor != null && <span className="opacity-80 text-xs">Color: {currentVariation.variationColor}</span>}
                                                         </>}
                                                         {item.variationCode == "customSize" && <div className='flex flex-col'>
                                                             <div className='flex gap-2'>
@@ -297,7 +307,7 @@ const CartLocalStorage = () => {
                                         </div>
                                     </div>
                                 )
-                            ))}
+                            })}
                         </>
                     ) : (
                         <div className="flex flex-col items-center justify-center w-full h-64 sm:h-80 bg-base-100 rounded-lg shadow-inner my-8 px-4 sm:px-0">

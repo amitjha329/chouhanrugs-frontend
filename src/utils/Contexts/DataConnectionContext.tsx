@@ -30,7 +30,7 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
     const [wishlistItems, setWishlistitems] = useState<string[]>([])
     const { data: session } = useSession()
 
-    // Helper to get local cart count
+    // Helper to get local cart count - not memoized because localStorage can change
     const getLocalCartCount = () => {
         if (typeof window !== 'undefined') {
             const localCartRaw = localStorage.getItem('pending_cart')

@@ -9,12 +9,13 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
     // const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : null
     const userCurrency = null
 
-    const calculateProductPrice = (item: CartDataModel): number => {
+    const calculateProductPrice = React.useCallback((item: CartDataModel): number => {
         var priceInitial = 0
         if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
             const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!);
             const variationPrice = Number(item.cartProduct[0].variations[variationindex].variationPrice);
-            const variationDiscount = Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationDiscount ?? 0);
+            const variation = item.cartProduct[0].variations[variationindex];
+            const variationDiscount = Number(variation?.variationDiscount ?? 0);
             priceInitial = variationPrice - (variationPrice * (variationDiscount / 100));
         } else if (item.variationCode == "customSize") {
             switch (item.customSize?.shape) {
@@ -32,13 +33,15 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
         }
 
         return priceInitial * item.quantity
-    }
+    }, [])
 
-    let subTotal = 0
-    cartItems.forEach((item: CartDataModel) => {
-        subTotal = subTotal + calculateProductPrice(item)
-    })
-    let cartTotal = subTotal
+    const cartTotal = React.useMemo(() => {
+        let subTotal = 0
+        cartItems.forEach((item: CartDataModel) => {
+            subTotal = subTotal + calculateProductPrice(item)
+        })
+        return subTotal
+    }, [cartItems, calculateProductPrice])
 
     return (
         <div className="flex flex-col border-t pt-8 items-end w-full">
