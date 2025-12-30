@@ -151,15 +151,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         return "";
     };
 
-    // Memoize cart total calculation
-    const cartTotal = useMemo(() => {
-        let subTotal = 0
-        cart.forEach(item => {
-            subTotal += calculateProductPrice(item)
-        })
-        return Number((subTotal * (userCurrency?.exchangeRates ?? 1)).toFixed(2))
-    }, [cart, userCurrency, calculateProductPrice])
-
     // Batch state updates for cart and address
     useEffect(() => {
         let isMounted = true
