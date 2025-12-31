@@ -3,6 +3,7 @@ import { Metadata } from 'next'
 import React from 'react'
 import UserAllOrders from './UserAllOrders'
 import getUserOrdersList from '@/backend/serverActions/getUserOrdersList'
+import { redirect } from 'next/navigation'
 
 export const metadata:Metadata = {
     title:"My Orders"
@@ -10,7 +11,12 @@ export const metadata:Metadata = {
 
 const UserOrdersPage = async () => {
     const session = await auth()
-    const orderItems = await getUserOrdersList((session?.user as { id: string }).id)
+    
+    if (!session?.user || !(session.user as { id: string }).id) {
+        redirect('/signin?callbackUrl=/user/orders')
+    }
+    
+    const orderItems = await getUserOrdersList((session.user as { id: string }).id)
     return (
         <UserAllOrders className="basis-full lg:basis-3/4" orderItems={orderItems} />
     )

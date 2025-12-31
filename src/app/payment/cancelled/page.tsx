@@ -133,12 +133,6 @@ export default function PaymentCancelledPage() {
 
                     {/* Action Buttons */}
                     <div className="space-y-3">
-                        <Link
-                            href="/cart/checkout"
-                            className="block w-full bg-primary text-white py-3 px-6 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-                        >
-                            Try Again
-                        </Link>
                         
                         <Link
                             href="/cart"

@@ -6,8 +6,69 @@ import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import UserAddressDataModel from '@/types/UserAddressDataModel'
 import DownloadInvoiceButton from '../DownloadInvoiceButton'
 import OrderTrackingProgressbar from '../OrderTrackingProgressbar'
+import { FaBoxOpen, FaTruck, FaCheckCircle, FaTimesCircle, FaUndoAlt, FaClock } from 'react-icons/fa'
+
+// Status configuration for different order states
+const statusConfig = {
+    pending: {
+        label: 'Pending Review',
+        color: 'bg-amber-500',
+        textColor: 'text-amber-100',
+        icon: FaClock,
+    },
+    placed: {
+        label: 'Order Placed',
+        color: 'bg-blue-500',
+        textColor: 'text-blue-100',
+        icon: FaBoxOpen,
+    },
+    dispatched: {
+        label: 'Dispatched',
+        color: 'bg-indigo-500',
+        textColor: 'text-indigo-100',
+        icon: FaTruck,
+    },
+    transit: {
+        label: 'In Transit',
+        color: 'bg-purple-500',
+        textColor: 'text-purple-100',
+        icon: FaTruck,
+    },
+    'out-for-delivery': {
+        label: 'Out for Delivery',
+        color: 'bg-cyan-500',
+        textColor: 'text-cyan-100',
+        icon: FaTruck,
+    },
+    delivered: {
+        label: 'Delivered',
+        color: 'bg-green-500',
+        textColor: 'text-green-100',
+        icon: FaCheckCircle,
+    },
+    cancelled: {
+        label: 'Cancelled',
+        color: 'bg-red-500',
+        textColor: 'text-red-100',
+        icon: FaTimesCircle,
+    },
+    returned: {
+        label: 'Returned',
+        color: 'bg-gray-500',
+        textColor: 'text-gray-100',
+        icon: FaUndoAlt,
+    }
+}
 
 const UserOrderView = ({ orderItem, productsList, shippingAddress }: { orderItem: OrderDataModel, productsList: (ProductDataModelWithColorMap | null)[], shippingAddress: UserAddressDataModel }) => {
+    const status = orderItem.orderStatus as keyof typeof statusConfig
+    const config = statusConfig[status] || statusConfig.pending
+    const StatusIcon = config.icon
+    const isCancelled = status === 'cancelled'
+    const isPending = status === 'pending'
+    const isReturned = status === 'returned'
+    // Invoice only available after order is accepted (not pending/cancelled)
+    const showInvoice = !isPending && !isCancelled
 
     return (
         <div className="basis-full lg:basis-3/4 w-full min-w-0">
@@ -15,37 +76,72 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress }: { orderItem
                 {/* Header Section with Gradient */}
                 <div className="bg-gradient-to-r from-amber-700 to-amber-900 rounded-t-xl shadow-lg p-3 sm:p-4 md:p-5 mt-4 sm:mt-6">
                     <div className="flex flex-col gap-3">
-                        <div className="text-white">
-                            <h1 className="text-base sm:text-lg md:text-xl font-bold mb-1.5 break-all sm:break-normal">Order #{orderItem._id}</h1>
-                            <div className="flex flex-col xs:flex-row xs:flex-wrap gap-2 sm:gap-3 text-[11px] sm:text-xs md:text-sm opacity-90">
-                                <div className="flex items-center gap-1.5">
-                                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    <span>Ordered: {new Date(orderItem.orderPlacedOn).toLocaleDateString("en-US", { dateStyle: "medium" })}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    <span>Payment: {orderItem.paymentMode}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                            <div className="text-white">
+                                <h1 className="text-base sm:text-lg md:text-xl font-bold mb-1.5 break-all sm:break-normal">Order #{orderItem._id}</h1>
+                                <div className="flex flex-col xs:flex-row xs:flex-wrap gap-2 sm:gap-3 text-[11px] sm:text-xs md:text-sm opacity-90">
+                                    <div className="flex items-center gap-1.5">
+                                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span>Ordered: {new Date(orderItem.orderPlacedOn).toLocaleDateString("en-US", { dateStyle: "medium" })}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <span>Payment: {orderItem.paymentMode}</span>
+                                    </div>
                                 </div>
                             </div>
+                            {/* Status Badge */}
+                            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full ${config.color} text-white text-[11px] sm:text-xs font-semibold shadow-lg w-fit`}>
+                                <StatusIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                <span>{config.label}</span>
+                            </div>
                         </div>
-                        <DownloadInvoiceButton 
-                            orderId={orderItem._id} 
-                            className="btn btn-xs sm:btn-sm bg-white text-amber-900 hover:bg-amber-50 border-0 shadow font-semibold text-[11px] sm:text-xs w-fit" 
-                            text="Invoice" 
-                        />
+                        {showInvoice && (
+                            <DownloadInvoiceButton 
+                                orderId={orderItem._id} 
+                                className="btn btn-xs sm:btn-sm bg-white text-amber-900 hover:bg-amber-50 border-0 shadow font-semibold text-[11px] sm:text-xs w-fit" 
+                                text="Invoice" 
+                            />
+                        )}
                     </div>
                 </div>
 
-                {/* Main Content Card */}
-                <div className="bg-white rounded-b-xl shadow-lg overflow-hidden">
-                    {/* Order Tracking */}
-                    <div className="p-3 sm:p-4 md:p-5 bg-gradient-to-b from-amber-50 to-white border-b border-amber-100 overflow-x-auto">
-                        <OrderTrackingProgressbar orderStatus={orderItem.orderStatus} className="flex flex-col min-w-[280px]" />
+                {/* Cancelled/Returned Order Notice */}
+                {(isCancelled || isReturned) && (
+                    <div className={`${isCancelled ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'} border-x border-b p-3 sm:p-4`}>
+                        <div className="flex items-center gap-2">
+                            {isCancelled ? (
+                                <FaTimesCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                            ) : (
+                                <FaUndoAlt className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                            )}
+                            <div>
+                                <p className={`text-xs sm:text-sm font-medium ${isCancelled ? 'text-red-800' : 'text-gray-800'}`}>
+                                    {isCancelled ? 'This order has been cancelled' : 'This order has been returned'}
+                                </p>
+                                <p className={`text-[10px] sm:text-xs ${isCancelled ? 'text-red-600' : 'text-gray-600'}`}>
+                                    {isCancelled 
+                                        ? 'If any amount was deducted, it will be refunded within 5-7 business days.'
+                                        : 'Refund will be processed within 5-7 business days.'
+                                    }
+                                </p>
+                            </div>
+                        </div>
                     </div>
+                )}
+
+                {/* Main Content Card */}
+                <div className={`bg-white ${isCancelled || isReturned ? '' : 'rounded-b-xl'} shadow-lg overflow-hidden ${isCancelled || isReturned ? 'rounded-b-xl' : ''}`}>
+                    {/* Order Tracking - Only show for active orders */}
+                    {!isCancelled && !isReturned && (
+                        <div className="p-3 sm:p-4 md:p-5 bg-gradient-to-b from-amber-50 to-white border-b border-amber-100 overflow-x-auto">
+                            <OrderTrackingProgressbar orderStatus={orderItem.orderStatus} className="flex flex-col min-w-[280px]" />
+                        </div>
+                    )}
 
                     {/* Products Section */}
                     <div className="p-3 sm:p-4 md:p-5">
