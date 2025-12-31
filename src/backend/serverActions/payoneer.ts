@@ -116,15 +116,10 @@ export async function initiatePayoneerPayment(orderData: {
                 language: "en_US",
                 hostedVersion: "v4"
             },
-            // callback: {
-            //     returnUrl: `https://congestive-tabetha-saturninely.ngrok-free.dev/payment/callback`,
-            //     cancelUrl: `https://congestive-tabetha-saturninely.ngrok-free.dev/checkout`,
-            //     notificationUrl: `https://congestive-tabetha-saturninely.ngrok-free.dev/api/payoneer/webhook`
-            // },
             callback: {
-                returnUrl: `https://stagin.chouhanrugs.in/payment/callback`,
-                cancelUrl: `https://stagin.chouhanrugs.in/checkout`,
-                notificationUrl: `https://stagin.chouhanrugs.in/api/payoneer/webhook`
+                returnUrl: `https://chouhanrugs.com/payment/callback`,
+                cancelUrl: `https://chouhanrugs.com/checkout`,
+                notificationUrl: `https://chouhanrugs.com/api/payoneer/webhook`
             }
         }
 
