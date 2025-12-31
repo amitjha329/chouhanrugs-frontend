@@ -64,7 +64,15 @@ const OurPopularCategories = async () => {
                         (<div key={category.title + category.link} className={`col-span-${category.lgspan} min-h-60 ${(isMobile && category.span === 2) || (!isMobile && category.lgspan === 1) ? "bg-accent" : "bg-secondary/50"} card card-body relative overflow-hidden flex flex-col gap-5 items-start w-full ${isMobile && "p-5"}`} style={{
                             ...(isMobile && { gridColumn: `span ${category.span} / span ${category.span}` })
                         }}>
-                            <Image src={category.image} alt={category.title} height={400} width={400} className={`absolute z-10 ${!isMobile ? category.lgspan == 2 ? "-bottom-40 -right-40" : "-bottom-28 -right-28" : category.span == 2 ? "-bottom-16 -right-16" : "-bottom-28 -right-28"} opacity-50`} />
+                            <Image 
+                                src={category.image} 
+                                alt={category.title} 
+                                height={400} 
+                                width={400} 
+                                className={`absolute z-10 ${!isMobile ? category.lgspan == 2 ? "-bottom-40 -right-40" : "-bottom-28 -right-28" : category.span == 2 ? "-bottom-16 -right-16" : "-bottom-28 -right-28"} opacity-50`}
+                                placeholder="blur"
+                                loading="lazy"
+                            />
                             <h2 className='~text-base/2xl font-semibold z-20'>
                                 {category.title}
                             </h2>

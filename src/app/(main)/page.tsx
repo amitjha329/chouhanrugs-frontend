@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import HeroSection from '@/ui/HomePage/HeroSection'
 import NewProductsSection from '@/ui/HomePage/NewProductsSection'
@@ -20,6 +20,12 @@ import getSlider from '@/backend/serverActions/getSlider'
 import { headers } from 'next/headers'
 import getDevice from '@/utils/getDevice'
 import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
+import {
+  HeroSkeleton,
+  ProductGridSkeleton,
+  SectionTitleSkeleton,
+  CategorySkeleton
+} from './loading'
 
 const DynamicTestimonials = dynamic(() => import('@/ui/Testimonials'), { loading: () => <div className="min-h-[200px] flex items-center justify-center">Loading testimonials...</div> })
 const DynamicAboveFooterSEOContet = dynamic(() => import('@/ui/HomePage/AboveFooterSEOContet'))
@@ -57,36 +63,93 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+// Wrapper component for Best Sellers section with its own data fetching
+async function BestSellersSection({ isMobile }: { isMobile: boolean }) {
+  const products = await getNewProductsTopSelling({ limit: 10 })
+  return <ProductCarouselBasic products={products} sectionHeading='Best Sellers' isMobile={isMobile} />
+}
+
+// Wrapper component for Hero with slider data
+async function HeroWithSlider({ sliderId }: { sliderId: number }) {
+  const sliderData = await getSlider(sliderId)
+  return <HeroSection slider={sliderData} />
+}
+
+// Wrapper component for footer SEO content
+async function FooterSEOContent() {
+  const footerContent = await getPageFooterContent("home")
+  return (
+    <div className="container mx-auto pb-5 text-xs">
+      <DynamicAboveFooterSEOContet data={footerContent} />
+    </div>
+  )
+}
+
 const HomePage = async () => {
-  const footerContentPromise = getPageFooterContent("home")
-  const homePageDataPromise = getPageData("home")
-  const productsPromise = getNewProductsTopSelling({ limit: 10 });
-  const siteDataPromise = getSiteData();
+  // Single headers() call for device detection - passed down to children
   const header = await headers()
   const isMobile = getDevice({ headers: header }) == "mobile"
-  const [footerContent, homePageData, products, siteData] = await Promise.all([
-    footerContentPromise,
-    homePageDataPromise,
-    productsPromise,
-    siteDataPromise
-  ])
-  const sliderData = await getSlider(homePageData.sliderId ?? 1)
+  
+  // Fetch only what's needed for initial render
+  const homePageData = await getPageData("home")
+  
   return (
     <>
-      <HeroSection slider={sliderData} />
-      <NewProductsSection />
-      <FeaturedProducts />
+      {/* Hero Section - Critical above-fold content */}
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroWithSlider sliderId={homePageData.sliderId ?? 1} />
+      </Suspense>
+      
+      {/* New Products Section */}
+      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <NewProductsSection />
+      </Suspense>
+      
+      {/* Featured Products */}
+      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <FeaturedProducts />
+      </Suspense>
+      
+      {/* Order Process - Static content, no Suspense needed */}
       <OrderProcessSection />
-      <OurPopularCategories />
-      <TrendingProducts />
-      <ShopBySize />
-      <ShopByColor />
-      <ShopByRoom />
-      <ProductCarouselBasic products={products} sectionHeading='Best Sellers' isMobile={isMobile} />
+      
+      {/* Popular Categories */}
+      <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+        <OurPopularCategories />
+      </Suspense>
+      
+      {/* Trending Products */}
+      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <TrendingProducts />
+      </Suspense>
+      
+      {/* Shop by Size */}
+      <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+        <ShopBySize />
+      </Suspense>
+      
+      {/* Shop by Color */}
+      <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+        <ShopByColor />
+      </Suspense>
+      
+      {/* Shop by Room */}
+      <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+        <ShopByRoom />
+      </Suspense>
+      
+      {/* Best Sellers Carousel */}
+      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <BestSellersSection isMobile={isMobile} />
+      </Suspense>
+      
+      {/* Testimonials */}
       <DynamicTestimonials />
-      <div className="container mx-auto pb-5 text-xs">
-        <DynamicAboveFooterSEOContet data={footerContent} />
-      </div>
+      
+      {/* SEO Footer Content */}
+      <Suspense fallback={<div className="container mx-auto pb-5 animate-pulse"><div className="h-20 bg-gray-200 rounded" /></div>}>
+        <FooterSEOContent />
+      </Suspense>
     </>
   )
 }

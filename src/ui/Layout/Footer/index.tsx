@@ -15,7 +15,9 @@ const Footer = async () => {
           <Logo className='text-left text-white' taglineClass='text-xs' />
           <div className='space-y-5'>
             <p className='font-bold text-lg ~leading-6/7'>Welcome to Chouhan Rugs - Your Source for the Finest Handmade Jute Rugs & Other Natural Jute Products</p>
-            <p className='font-light text-xs'>We specializes in crafting eco-friendly jute products - rugs, cotton rugs, hemp rugs, cushion covers, pillow covers, handbags, and wall macrame. Elevate your Bed Room, Living Room, Hallway, Entry Way and Kitchen sustainably with us. We cater to our clients all over the world including <Link href="/">US</Link>, <Link href="/">UK</Link>, <Link href="/">Australia</Link>  etc.</p>
+            <p className='font-light text-xs'>
+              <b>India:</b> Kanji nagar, Plot no 43, Agra Rd, Kanzi Nagar, Jaipur, Rajasthan, 302031<br />
+              <b>US Office:</b> 1001 S MAIN ST STE 500 KALISPELL, MT 59901-5635-016</p>
           </div>
         </div>
         <div className='lg:basis-1/3 ~p-10/0'>

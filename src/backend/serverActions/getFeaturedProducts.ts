@@ -1,8 +1,9 @@
+import { unstable_cache } from "next/cache";
 import clientPromise from "@/lib/clientPromise";
 import { ProductDataModelWithColorMap } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
-export async function getFeaturedProducts({ limit }: { limit: number }): Promise<ProductDataModelWithColorMap[]> {
+async function fetchFeaturedProducts(limit: number): Promise<ProductDataModelWithColorMap[]> {
     try {
         const client = await clientPromise;
         const db = client.db();
@@ -52,7 +53,18 @@ export async function getFeaturedProducts({ limit }: { limit: number }): Promise
         ]).toArray();
         return products.map(p => converter.fromWithNoFieldChange<ProductDataModelWithColorMap>(p));
     } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching featured products:", error);
         return [];
     }
+}
+
+export const getFeaturedProducts = ({ limit }: { limit: number }): Promise<ProductDataModelWithColorMap[]> => {
+    return unstable_cache(
+        () => fetchFeaturedProducts(limit),
+        [`featured-products-${limit}`],
+        {
+            revalidate: 300, // 5 minutes
+            tags: ['products', 'featured-products']
+        }
+    )();
 }

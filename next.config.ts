@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    qualities: [5, 10, 15, 25, 50, 75],
     remotePatterns: [
       { protocol: 'https', hostname: '**.googleusercontent.com' },
       { protocol: 'https', hostname: '**.tailwindui.com' },
