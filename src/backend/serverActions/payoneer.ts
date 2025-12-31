@@ -86,7 +86,7 @@ export async function initiatePayoneerPayment(orderData: {
 
         // Determine API endpoint based on environment
         const baseUrl = process.env.NEXT_PUBLIC_PAYONEER_ENV === 'production'
-            ? 'https://api.oscato.com'
+            ? 'https://api.live.oscato.com'
             : 'https://api.sandbox.oscato.com'
 
         // IMPORTANT: The division field in the payload should be your Store/Division Code
