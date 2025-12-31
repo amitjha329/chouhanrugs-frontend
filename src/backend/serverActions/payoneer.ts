@@ -85,9 +85,8 @@ export async function initiatePayoneerPayment(orderData: {
         const apiToken = config.key_secret // API Token
 
         // Determine API endpoint based on environment
-        const baseUrl = process.env.NEXT_PUBLIC_PAYONEER_ENV === 'production'
-            ? 'https://api.live.oscato.com'
-            : 'https://api.sandbox.oscato.com'
+        const baseUrl = 'https://api.live.oscato.com'
+        // const baseUrl = 'https://api.sandbox.oscato.com'
 
         // IMPORTANT: The division field in the payload should be your Store/Division Code
         // The key_id for authentication should be your Merchant Code (API Username)
