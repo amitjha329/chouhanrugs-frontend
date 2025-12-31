@@ -30,6 +30,7 @@ export async function revalidateProducts() {
     revalidateTag('featured-products', 'max')
     revalidateTag('hot-trending-products', 'max')
     revalidateTag('top-selling-products', 'max')
+    revalidateTag('related-products', 'max')
 }
 
 /**

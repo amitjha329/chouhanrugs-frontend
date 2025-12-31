@@ -4,13 +4,14 @@ import converter from "@/utils/mongoObjectConversionUtility";
 import { extractColorsAndSizes } from "./extractColorsSizesFromVariation";
 import ColorDataModel from "@/types/ColorDataModel";
 import SizeDataModel from "@/types/SizeDataModel";
+import { unstable_cache } from "next/cache";
 
 interface ProductWithSizeandColorData extends ProductDataModel{
     colorData:ColorDataModel[],
     sizeData:SizeDataModel[]
 }
 
-export async function getProductWithSlug(slug: string): Promise< ProductWithSizeandColorData| undefined> {
+async function getProductWithSlugInternal(slug: string): Promise< ProductWithSizeandColorData| undefined> {
     try {
         const client = await clientPromise;
         const db = client.db();
@@ -40,3 +41,9 @@ export async function getProductWithSlug(slug: string): Promise< ProductWithSize
         return undefined;
     }
 }
+
+export const getProductWithSlug = unstable_cache(
+    getProductWithSlugInternal,
+    ["product-with-slug"],
+    { revalidate: 3600, tags: ["products"] } // Cache for 1 hour
+);

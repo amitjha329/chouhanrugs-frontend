@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image"
-import React, { MouseEventHandler, useRef, useState } from "react"
+import React, { MouseEventHandler, useRef, useState, useCallback, useMemo } from "react"
 import clsx from "clsx"
 import './ProductImageGallery.scss'
 import { useProductContext } from '@/utils/Contexts/ProductContext'
@@ -34,7 +34,13 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
     const { data: session } = useSession()
     const router = useRouter()
 
-    const addToWishlist: MouseEventHandler<HTMLButtonElement> = (e) => {
+    // Memoize zoom background URL
+    const zoomBackgroundUrl = useMemo(() => 
+        `/_next/image?url=${encodeURIComponent(selectedImage)}&w=1920&q=90`,
+        [selectedImage]
+    )
+
+    const addToWishlist: MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
         e.preventDefault()
         if (session?.user === undefined) {
             router.push("/signin?cb=" + encodeURIComponent(window.location.pathname))
@@ -52,7 +58,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
             console.log(err)
         }).finally(() => { refreshWishList() })
         setWishAnimate(!wishAnimate)
-    }
+    }, [session?.user, wishlistItems, product, router, wishAnimate, refreshWishList])
 
     return (
         <>
@@ -64,23 +70,23 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                     }
                 </button>
                 <div className={clsx("sm:overflow-visible items-center justify-center flex")} id="image-carousel-container">
-                    {/* Hidden input for legacy JS, can be removed if not needed */}
-                    {/* <input type="hidden" value={JSON.stringify(images.map(it => `/_next/image?url=${encodeURIComponent(it)}&w=1920&q=100`))} id="imagesProducts" /> */}
                     <div
                         data-image-container
                         className={clsx("rounded-3xl mb-4 relative img-zoom-container md:!h-[500px] max-md:aspect-square max-md:w-full max-md:h-auto overflow-hidden ")}
                         onMouseMove={e => handleImageMouseMove && handleImageMouseMove(e, mainImageRef)}
                         onMouseLeave={handleImageMouseLeave}
                     >
-                        <img
+                        <Image
                             ref={mainImageRef}
-                            src={`/_next/image?url=${encodeURIComponent(selectedImage)}&w=1920&q=100`}
-                            alt='image-viewing'
+                            src={selectedImage}
+                            alt={product?.productName ?? 'Product image'}
                             data-main-image
                             className="!relative object-cover h-full w-full"
-                            fetchPriority="high"
-                            loading="eager"
-                            decoding="async"
+                            priority
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            width={800}
+                            height={800}
+                            quality={85}
                         />
                         <div
                             className="img-zoomed z-10"
@@ -94,7 +100,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                                 boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                                 left: showMagnifier && zoomPosition ? `calc(${zoomPosition.x}% - ${magnifierSize / 2}px)` : undefined,
                                 top: showMagnifier && zoomPosition ? `calc(${zoomPosition.y}% - ${magnifierSize / 2}px)` : undefined,
-                                backgroundImage: `url("/_next/image?url=${encodeURIComponent(selectedImage)}&w=1920&q=100")`,
+                                backgroundImage: `url("${zoomBackgroundUrl}")`,
                                 backgroundRepeat: "no-repeat",
                                 backgroundColor: "#fff",
                                 backgroundPositionX: zoomPosition ? `${zoomPosition.x}%` : undefined,
@@ -121,13 +127,13 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                                 onMouseOver={() => handleThumbnailHover && handleThumbnailHover(index)}
                             >
                                 <Image src={image}
-                                    alt={`image-${index}`}
+                                    alt={`${product?.productName ?? 'Product'} - Image ${index + 1}`}
                                     height={100}
                                     width={100}
                                     className={clsx("!relative object-cover")}
-                                    quality={5}
-                                    loading="eager"
-                                    decoding="async"
+                                    quality={40}
+                                    loading={index < 3 ? "eager" : "lazy"}
+                                    sizes="80px"
                                 />
                             </div>
                         ))

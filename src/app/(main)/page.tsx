@@ -70,7 +70,7 @@ async function BestSellersSection({ isMobile }: { isMobile: boolean }) {
 }
 
 // Wrapper component for Hero with slider data
-async function HeroWithSlider({ sliderId }: { sliderId: number }) {
+async function HeroWithSlider({ sliderId, isMobile }: { sliderId: number, isMobile: boolean }) {
   const sliderData = await getSlider(sliderId)
   return <HeroSection slider={sliderData} />
 }
@@ -96,8 +96,8 @@ const HomePage = async () => {
   return (
     <>
       {/* Hero Section - Critical above-fold content */}
-      <Suspense fallback={<HeroSkeleton />}>
-        <HeroWithSlider sliderId={homePageData.sliderId ?? 1} />
+      <Suspense fallback={<HeroSkeleton isMobile={isMobile} />}>
+        <HeroWithSlider sliderId={homePageData.sliderId ?? 1} isMobile={isMobile} />
       </Suspense>
       
       {/* New Products Section */}

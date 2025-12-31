@@ -1,8 +1,9 @@
 import clientPromise from "@/lib/clientPromise";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
+import { unstable_cache } from "next/cache";
 
-export default async function getRelatedProducts(currentProduct: ProductDataModel): Promise<ProductDataModel[]> {
+async function getRelatedProductsInternal(categoryId: string, excludeProductId: string): Promise<ProductDataModel[]> {
     try {
         const client = await clientPromise;
         const db = client.db();
@@ -11,8 +12,8 @@ export default async function getRelatedProducts(currentProduct: ProductDataMode
         const relatedProducts = await db.collection("products").aggregate([
             {
                 $match: {
-                    productCategory: currentProduct.productCategory,
-                    _id: { $ne: currentProduct._id }, // Exclude the current product
+                    productCategory: categoryId,
+                    _id: { $ne: excludeProductId },
                 },
             },
             { $sample: { size: 10 } }, // Get 10 random products
@@ -23,4 +24,17 @@ export default async function getRelatedProducts(currentProduct: ProductDataMode
         console.error("Error fetching related products:", error);
         return [];
     }
+}
+
+const getCachedRelatedProducts = unstable_cache(
+    getRelatedProductsInternal,
+    ["related-products"],
+    { revalidate: 1800, tags: ["products", "related-products"] } // Cache for 30 minutes
+);
+
+export default async function getRelatedProducts(currentProduct: ProductDataModel): Promise<ProductDataModel[]> {
+    return getCachedRelatedProducts(
+        currentProduct.productCategory?.toString() ?? "",
+        currentProduct._id?.toString() ?? ""
+    );
 }
