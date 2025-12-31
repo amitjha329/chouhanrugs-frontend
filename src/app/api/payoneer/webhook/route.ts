@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Determine payment status based on status code and interaction
-        let paymentStatus: 'paid' | 'failed' | 'pending' | null = null
+        let paymentStatus: 'paid' | 'failed' | 'pending' | 'cancelled' | null = null
 
         // Handle successful payment
         if (statusCode === 'listed' && interactionCode === 'PROCEED') {
@@ -108,10 +108,23 @@ export async function POST(request: NextRequest) {
             paymentStatus = 'paid'
             console.log(`✅ Order ${transactionId} - Payment successful`)
         }
+        // Handle cancelled payment (user cancelled)
+        else if (statusCode === 'canceled' ||
+                 statusCode === 'cancelled' ||
+                 interactionCode === 'ABORT' ||
+                 interactionReason === 'CLIENTSIDE_ERROR' ||
+                 interactionReason === 'CUSTOMER_ABORT' ||
+                 interactionReason === 'SYSTEM_ABORT') {
+            paymentStatus = 'cancelled'
+            console.log(`⚠️ Order ${transactionId} - Payment cancelled by user`)
+        }
         // Handle failed/aborted payment
         else if (statusCode === 'aborted' || 
-                 interactionCode === 'ABORT' ||
-                 statusCode === 'failed') {
+                 statusCode === 'failed' ||
+                 statusCode === 'declined' ||
+                 interactionCode === 'RETRY' ||
+                 interactionCode === 'TRY_OTHER_ACCOUNT' ||
+                 interactionCode === 'TRY_OTHER_NETWORK') {
             paymentStatus = 'failed'
             console.log(`❌ Order ${transactionId} - Payment failed/aborted`)
         }

@@ -117,7 +117,7 @@ export async function initiatePayoneerPayment(orderData: {
             },
             callback: {
                 returnUrl: `https://chouhanrugs.com/payment/callback`,
-                cancelUrl: `https://chouhanrugs.com/checkout`,
+                cancelUrl: `https://chouhanrugs.com/payment/cancelled`,
                 notificationUrl: `https://chouhanrugs.com/api/payoneer/webhook`
             }
         }
@@ -286,7 +286,7 @@ export async function verifyPayoneerSignature(
 export async function updatePayoneerOrderStatus(
     orderId: string,
     transactionId: string,
-    status: 'paid' | 'failed' | 'pending'
+    status: 'paid' | 'failed' | 'pending' | 'cancelled'
 ): Promise<{ success: boolean; error?: string }> {
     try {
         const mongoClient = await clientPromise
@@ -301,6 +301,13 @@ export async function updatePayoneerOrderStatus(
         if (status === 'paid') {
             updateData.paidAt = new Date()
             updateData.orderStatus = 'placed'
+        }
+        
+        // Handle cancelled payments - mark order as cancelled
+        if (status === 'cancelled' || status === 'failed') {
+            updateData.orderStatus = 'cancelled'
+            updateData.cancelledAt = new Date()
+            updateData.cancellationReason = status === 'cancelled' ? 'Payment cancelled by user' : 'Payment failed'
         }
 
         // Try to find order by both orderId field and _id field
@@ -326,6 +333,58 @@ export async function updatePayoneerOrderStatus(
         return { success: true }
     } catch (error) {
         console.error("Error updating Payoneer order status:", error)
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error"
+        }
+    }
+}
+
+/**
+ * Cancel/Delete an order if Payoneer service fails during initiation
+ * @param orderId Order ID to cancel
+ * @param reason Reason for cancellation
+ */
+export async function cancelPayoneerOrder(
+    orderId: string,
+    reason: string = 'Payoneer service unavailable'
+): Promise<{ success: boolean; error?: string }> {
+    try {
+        const mongoClient = await clientPromise
+        const ordersCollection = mongoClient.db(process.env.MONGODB_DB).collection("orders")
+
+        // Update order status to cancelled instead of deleting
+        // This preserves the record for admin visibility while marking it as invalid
+        const result = await ordersCollection.updateOne(
+            {
+                $or: [
+                    { orderId: orderId },
+                    { _id: orderId as unknown as ObjectId }
+                ]
+            },
+            {
+                $set: {
+                    orderStatus: 'cancelled',
+                    paymentStatus: 'failed',
+                    cancelledAt: new Date(),
+                    cancellationReason: reason,
+                    updatedAt: new Date()
+                }
+            }
+        )
+
+        if (result.matchedCount === 0) {
+            console.error(`Order not found for cancellation: ${orderId}`)
+            return {
+                success: false,
+                error: "Order not found"
+            }
+        }
+
+        console.log(`✅ Order ${orderId} cancelled due to: ${reason}`)
+        return { success: true }
+    } catch (error) {
+        console.error("Error cancelling Payoneer order:", error)
         return {
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"

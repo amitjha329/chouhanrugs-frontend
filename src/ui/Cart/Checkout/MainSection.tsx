@@ -38,7 +38,7 @@ import syncLocalCartToUser from '@/utils/syncLocalCartToUser'
 import CartItem from '../CartItem'
 import updateUserAddress from '@/backend/serverActions/updateUserAddress'
 import deleteUserAddress from '@/backend/serverActions/deleteUserAddress'
-import { initiatePayoneerPayment } from '@/backend/serverActions/payoneer'
+import { initiatePayoneerPayment, cancelPayoneerOrder } from '@/backend/serverActions/payoneer'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -327,8 +327,11 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     console.log('Redirecting to Payoneer:', payoneerResult.redirectUrl)
                     window.location.href = payoneerResult.redirectUrl
                 } else {
+                    // Payoneer service failed - cancel the created order
+                    console.error('❌ Payoneer service failed, cancelling order:', orderNumber)
+                    await cancelPayoneerOrder(orderNumber, payoneerResult.error || 'Payoneer service unavailable')
                     sessionStorage.removeItem('payoneerOrderNumber')
-                    onPageNotifications("error", payoneerResult.error || "Failed to initiate Payoneer payment")
+                    onPageNotifications("error", payoneerResult.error || "Failed to initiate Payoneer payment. Please try again or use a different payment method.")
                 }
                 break;
             default:
