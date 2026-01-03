@@ -7,7 +7,15 @@ const AboutHeader = () => {
   return (
     <div className='fluid_container ~py-5/14 ~px-5/0 flex flex-col items-center gap-5'>
       <div className='rounded-2xl overflow-hidden w-full h-96 relative'>
-        <Image src={about_header} alt='ABout Header' className='object-cover object-bottom' fill />
+        <Image 
+          src={about_header} 
+          alt='About Us Header - Chouhan Rugs authentic jute products' 
+          className='object-cover object-bottom' 
+          fill 
+          sizes="100vw"
+          placeholder="blur"
+          loading="lazy"
+        />
       </div>
       <SectionTitle title='We Make Authentic Jute Products' className='text-primary text-center' />
       <div className='~text-xs/sm text-gray-500 text-center'>

@@ -290,7 +290,9 @@ export async function updatePayoneerOrderStatus(
 ): Promise<{ success: boolean; error?: string }> {
     try {
         const mongoClient = await clientPromise
-        const ordersCollection = mongoClient.db(process.env.MONGODB_DB).collection("orders")
+        const db = mongoClient.db(process.env.MONGODB_DB)
+        const ordersCollection = db.collection("orders")
+        const dataPointsCollection = db.collection("data_points")
 
         const updateData: any = {
             paymentStatus: status,
@@ -308,6 +310,61 @@ export async function updatePayoneerOrderStatus(
             updateData.orderStatus = 'cancelled'
             updateData.cancelledAt = new Date()
             updateData.cancellationReason = status === 'cancelled' ? 'Payment cancelled by user' : 'Payment failed'
+            
+            // Get order details to find user email for notification removal
+            const order = await ordersCollection.findOne({
+                $or: [
+                    { orderId: orderId },
+                    { _id: orderId as unknown as ObjectId }
+                ]
+            })
+            
+            if (order) {
+                // Get user email to match notification
+                const usersCollection = db.collection("users")
+                const user = await usersCollection.findOne({ _id: new ObjectId(order.userId) })
+                
+                if (user?.email) {
+                    // Remove the notification for this cancelled order and decrement counters
+                    const notificationMessage = `There has been a new order from ${user.email}`
+                    
+                    await dataPointsCollection.updateOne(
+                        { dataFor: "notification" },
+                        {
+                            $pull: {
+                                notifications: { message: notificationMessage }
+                            } as any,
+                            $inc: {
+                                newNotifCount: -1,
+                                pendingOrders: -1
+                            }
+                        }
+                    )
+                    
+                    // Ensure counts don't go below 0
+                    await dataPointsCollection.updateOne(
+                        { dataFor: "notification", newNotifCount: { $lt: 0 } },
+                        { $set: { newNotifCount: 0 } }
+                    )
+                    await dataPointsCollection.updateOne(
+                        { dataFor: "notification", pendingOrders: { $lt: 0 } },
+                        { $set: { pendingOrders: 0 } }
+                    )
+                    
+                    // Check if there are any remaining unread notifications
+                    const dataPoint = await dataPointsCollection.findOne({ dataFor: "notification" })
+                    const hasUnreadNotifications = dataPoint?.notifications?.some((n: any) => !n.read) || false
+                    
+                    if (!hasUnreadNotifications) {
+                        await dataPointsCollection.updateOne(
+                            { dataFor: "notification" },
+                            { $set: { newOrder: false } }
+                        )
+                    }
+                    
+                    console.log(`✅ Notification data reset for cancelled order ${orderId}`)
+                }
+            }
         }
 
         // Try to find order by both orderId field and _id field
@@ -351,7 +408,17 @@ export async function cancelPayoneerOrder(
 ): Promise<{ success: boolean; error?: string }> {
     try {
         const mongoClient = await clientPromise
-        const ordersCollection = mongoClient.db(process.env.MONGODB_DB).collection("orders")
+        const db = mongoClient.db(process.env.MONGODB_DB)
+        const ordersCollection = db.collection("orders")
+        const dataPointsCollection = db.collection("data_points")
+
+        // Get order details to find user email for notification removal
+        const order = await ordersCollection.findOne({
+            $or: [
+                { orderId: orderId },
+                { _id: orderId as unknown as ObjectId }
+            ]
+        })
 
         // Update order status to cancelled instead of deleting
         // This preserves the record for admin visibility while marking it as invalid
@@ -378,6 +445,52 @@ export async function cancelPayoneerOrder(
             return {
                 success: false,
                 error: "Order not found"
+            }
+        }
+
+        // Reset notification data for cancelled order
+        if (order) {
+            const usersCollection = db.collection("users")
+            const user = await usersCollection.findOne({ _id: new ObjectId(order.userId) })
+            
+            if (user?.email) {
+                const notificationMessage = `There has been a new order from ${user.email}`
+                
+                await dataPointsCollection.updateOne(
+                    { dataFor: "notification" },
+                    {
+                        $pull: {
+                            notifications: { message: notificationMessage }
+                        } as any,
+                        $inc: {
+                            newNotifCount: -1,
+                            pendingOrders: -1
+                        }
+                    }
+                )
+                
+                // Ensure counts don't go below 0
+                await dataPointsCollection.updateOne(
+                    { dataFor: "notification", newNotifCount: { $lt: 0 } },
+                    { $set: { newNotifCount: 0 } }
+                )
+                await dataPointsCollection.updateOne(
+                    { dataFor: "notification", pendingOrders: { $lt: 0 } },
+                    { $set: { pendingOrders: 0 } }
+                )
+                
+                // Check if there are any remaining unread notifications
+                const dataPoint = await dataPointsCollection.findOne({ dataFor: "notification" })
+                const hasUnreadNotifications = dataPoint?.notifications?.some((n: any) => !n.read) || false
+                
+                if (!hasUnreadNotifications) {
+                    await dataPointsCollection.updateOne(
+                        { dataFor: "notification" },
+                        { $set: { newOrder: false } }
+                    )
+                }
+                
+                console.log(`✅ Notification data reset for cancelled order ${orderId}`)
             }
         }
 

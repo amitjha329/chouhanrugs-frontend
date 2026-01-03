@@ -3,11 +3,6 @@ import dynamic from 'next/dynamic'
 import HeroSection from '@/ui/HomePage/HeroSection'
 import NewProductsSection from '@/ui/HomePage/NewProductsSection'
 import OrderProcessSection from '@/ui/HomePage/OrderProcessSection'
-import ShopByRoom from '@/ui/HomePage/ShopByRoom'
-import ShopByColor from '@/ui/HomePage/ShopByColor'
-import TrendingProducts from '@/ui/HomePage/TrendingProducts'
-import OurPopularCategories from '@/ui/HomePage/OurPopularCategories'
-import ShopBySize from '@/ui/HomePage/ShopBySize'
 import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
 import { getNewProductsTopSelling } from '@/backend/serverActions/getNewProductsTopSelling'
 import stringEmptyOrNull from '@/lib/stringEmptyOrNull'
@@ -20,12 +15,20 @@ import getSlider from '@/backend/serverActions/getSlider'
 import { headers } from 'next/headers'
 import getDevice from '@/utils/getDevice'
 import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
+import LazySection from '@/ui/LazySection'
 import {
   HeroSkeleton,
   ProductGridSkeleton,
   SectionTitleSkeleton,
   CategorySkeleton
 } from './loading'
+
+// Lazy load below-the-fold sections to reduce initial DOM size
+const ShopByRoom = dynamic(() => import('@/ui/HomePage/ShopByRoom'), { ssr: true })
+const ShopByColor = dynamic(() => import('@/ui/HomePage/ShopByColor'), { ssr: true })
+const TrendingProducts = dynamic(() => import('@/ui/HomePage/TrendingProducts'), { ssr: true })
+const OurPopularCategories = dynamic(() => import('@/ui/HomePage/OurPopularCategories'), { ssr: true })
+const ShopBySize = dynamic(() => import('@/ui/HomePage/ShopBySize'), { ssr: true })
 
 const DynamicTestimonials = dynamic(() => import('@/ui/Testimonials'), { loading: () => <div className="min-h-[200px] flex items-center justify-center">Loading testimonials...</div> })
 const DynamicAboveFooterSEOContet = dynamic(() => import('@/ui/HomePage/AboveFooterSEOContet'))
@@ -113,35 +116,47 @@ const HomePage = async () => {
       {/* Order Process - Static content, no Suspense needed */}
       <OrderProcessSection />
       
-      {/* Popular Categories */}
-      <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
-        <OurPopularCategories />
-      </Suspense>
+      {/* Popular Categories - Uses content-visibility for perf */}
+      <LazySection minHeight="300px">
+        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+          <OurPopularCategories />
+        </Suspense>
+      </LazySection>
       
-      {/* Trending Products */}
-      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
-        <TrendingProducts />
-      </Suspense>
+      {/* Trending Products - Uses content-visibility for perf */}
+      <LazySection minHeight="500px">
+        <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+          <TrendingProducts />
+        </Suspense>
+      </LazySection>
       
-      {/* Shop by Size */}
-      <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
-        <ShopBySize />
-      </Suspense>
+      {/* Shop by Size - Uses content-visibility for perf */}
+      <LazySection minHeight="600px">
+        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+          <ShopBySize />
+        </Suspense>
+      </LazySection>
       
-      {/* Shop by Color */}
-      <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
-        <ShopByColor />
-      </Suspense>
+      {/* Shop by Color - Uses content-visibility for perf */}
+      <LazySection minHeight="300px">
+        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+          <ShopByColor />
+        </Suspense>
+      </LazySection>
       
-      {/* Shop by Room */}
-      <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
-        <ShopByRoom />
-      </Suspense>
+      {/* Shop by Room - Uses content-visibility for perf */}
+      <LazySection minHeight="500px">
+        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+          <ShopByRoom />
+        </Suspense>
+      </LazySection>
       
-      {/* Best Sellers Carousel */}
-      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
-        <BestSellersSection isMobile={isMobile} />
-      </Suspense>
+      {/* Best Sellers Carousel - Uses content-visibility for perf */}
+      <LazySection minHeight="400px">
+        <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+          <BestSellersSection isMobile={isMobile} />
+        </Suspense>
+      </LazySection>
       
       {/* Testimonials */}
       <DynamicTestimonials />

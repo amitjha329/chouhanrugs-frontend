@@ -48,7 +48,13 @@ const BlogListPage = async () => {
                                 <Link href={`/blog/${blogItem.slug}`} key={blogItem._id} >
                                     <div className="bg-white rounded-lg border border-gray-200 shadow-md card card-body">
                                         <figure className="px-3 pt-3 overflow-hidden aspect-square relative rounded-xl">
-                                            <Image src={blogItem.featuredImage} alt={blogItem.title} fill />
+                                            <Image 
+                                                src={blogItem.featuredImage} 
+                                                alt={blogItem.title} 
+                                                fill 
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                                loading="lazy"
+                                            />
                                         </figure>
                                         <div className='card-body'>
                                             <div className="flex justify-between items-center mb-5 text-gray-500">

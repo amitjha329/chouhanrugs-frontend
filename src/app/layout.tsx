@@ -9,10 +9,17 @@ import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
 import GlobalPopupWrapper from '@/ui/GlobalPopup/GlobalPopupWrapper'
 import { headers } from 'next/headers'
+import Script from 'next/script'
 
+// Optimized font loading: Only load weights actually used in the app
+// Removed: 100, 200, 300, 800, 900 (rarely used)
+// display: 'swap' prevents FOIT (Flash of Invisible Text)
 const poppins = Poppins({
-    weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-    subsets: ["latin"]
+    weight: ["400", "500", "600", "700"],
+    subsets: ["latin"],
+    display: "swap",
+    preload: true,
+    variable: "--font-poppins"
 })
 export const viewport: Viewport = {
     width: "device-width",
@@ -32,17 +39,16 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
     return (
         <html>
             <head>
-                {/* <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleTagData.code}`}></script> */}
-
-                <script dangerouslySetInnerHTML={{
-                    __html: `
-                    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${googleTagData.code}');`
-                }}>
-                </script>
+                {/* Preconnect to critical third-party origins for faster resource loading */}
+                <link rel="preconnect" href="https://cdn.chouhanrugs.com" />
+                <link rel="preconnect" href="https://www.googletagmanager.com" />
+                <link rel="preconnect" href="https://www.google-analytics.com" />
+                <link rel="preconnect" href="https://www.googleadservices.com" />
+                <link rel="dns-prefetch" href="https://cdn.chouhanrugs.com" />
+                <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+                <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+                <link rel="dns-prefetch" href="https://www.googleadservices.com" />
+                
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{
@@ -63,17 +69,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     key="org-jsonld"
                 />
             </head>
-            <body className={clsx(poppins.className)}>
+            <body className={clsx(poppins.className, poppins.variable)}>
+                {/* GTM uses lazyOnload to minimize main thread blocking during page load */}
+                <Script
+                    id="gtm-script"
+                    strategy="lazyOnload"
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${googleTagData.code}');`
+                    }}
+                />
                 <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${googleTagData.code}`}
                     height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe></noscript>
-                <div className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none">
-                    <div className="bg-red-500 hidden" />
-                    <div className="bg-yellow-500 hidden" />
-                    <div className="bg-blue-500 hidden" />
-                    <div className="bg-green-500 hidden" />
-                    {/* Notification container */}
-                </div>
-                <div className='btn-disabled'></div>
+                <div id="notification-container" className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none" />
                 <NextTopLoader
                     color='#6c4624'
                     zIndex={1600} />

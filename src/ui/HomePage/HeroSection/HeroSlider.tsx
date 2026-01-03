@@ -57,12 +57,26 @@ const HeroSLider = ({ isMobile, slider }: { isMobile: boolean, slider: SliderDat
             ssr>
             {
                 slider.images.map((image, index) => {
-                    return <Image src={image.src.toString() ?? banner_2} key={image.src.toString()} alt='nbanner 1' style={{
-                        display: 'block',
-                        height: '100%',
-                        margin: 'auto',
-                        width: '100%'
-                    }} priority {...(image.src.toString() != null) && { fill: true }} />
+                    const isFirstSlide = index === 0
+                    return (
+                        <Image 
+                            src={image.src.toString() ?? banner_2} 
+                            key={image.src.toString()} 
+                            alt={`Hero banner ${index + 1}`}
+                            style={{
+                                display: 'block',
+                                height: '100%',
+                                margin: 'auto',
+                                width: '100%'
+                            }} 
+                            // priority={true} is the correct way to set fetchpriority=high in Next.js Image
+                            priority={isFirstSlide}
+                            loading={isFirstSlide ? "eager" : "lazy"}
+                            {...(image.src.toString() != null) && { fill: true }} 
+                            // sizes is critical for fill images - tells browser what size to download
+                            sizes="100vw"
+                        />
+                    )
                 })
             }
         </Carousel>

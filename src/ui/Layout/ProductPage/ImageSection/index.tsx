@@ -82,7 +82,8 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                             alt={product?.productName ?? 'Product image'}
                             data-main-image
                             className="!relative object-cover h-full w-full"
-                            priority
+                            preload={true}
+                            loading="eager"
                             sizes="(max-width: 768px) 100vw, 50vw"
                             width={800}
                             height={800}

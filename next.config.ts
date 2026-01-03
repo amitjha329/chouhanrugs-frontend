@@ -17,7 +17,16 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    qualities: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100],
+    // Optimized quality array - fewer options means better caching
+    // 75 is default, 85 for high quality, 50 for thumbnails
+    qualities: [50, 75, 85],
+    // AVIF has better compression than WebP (20% smaller)
+    formats: ['image/avif', 'image/webp'],
+    // Optimize device sizes for common breakpoints
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    // Cache images longer (4 hours default -> 24 hours)
+    minimumCacheTTL: 86400,
     
     remotePatterns: [
       { protocol: 'https', hostname: '**.googleusercontent.com' },

@@ -8,7 +8,7 @@ const ColorList = async () => {
         <>
             <div className='flex flex-wrap gap-4 justify-center items-center'>
                 {
-                    colors.slice(0, 21).map(color => <ColorItem key={color._id} {...color} />)
+                    colors.slice(0, 12).map(color => <ColorItem key={color._id} {...color} />)
                 }
             </div>
             <div className="collapse">
@@ -18,7 +18,7 @@ const ColorList = async () => {
                 </div>
                 <div className="collapse-content flex flex-wrap justify-center items-center gap-4 p-0">
                     {
-                        colors.slice(8).map(color => <ColorItem key={color._id} {...color} />)
+                        colors.slice(12).map(color => <ColorItem key={color._id} {...color} />)
                     }
                 </div>
             </div>
@@ -32,7 +32,7 @@ const ColorListMobile = async () => {
         <>
             <div className='flex flex-wrap justify-center items-center gap-4'>
                 {
-                    colors.slice(0, 8).map(color => <ColorItem key={color._id} {...color} />)
+                    colors.slice(0, 6).map(color => <ColorItem key={color._id} {...color} />)
                 }
             </div>
             <div className="collapse">
@@ -42,7 +42,7 @@ const ColorListMobile = async () => {
                 </div>
                 <div className="collapse-content flex flex-wrap justify-center items-center gap-4 p-0">
                     {
-                        colors.slice(8).map(color => <ColorItem key={color._id} {...color} />)
+                        colors.slice(6).map(color => <ColorItem key={color._id} {...color} />)
                     }
                 </div>
             </div>

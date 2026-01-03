@@ -18,7 +18,15 @@ const HeroSection = async ({ slider }: { slider: SliderDataModel }) => {
         <div className={clsx('flex w-full overflow-hidden relative', { "flex-col": isMobile })}>
             {
                 !isMobile && <>
-                    <Image className='z-10 object-cover' src={bg_section} alt='banner' fill priority />
+                    <Image 
+                        className='z-10 object-cover' 
+                        src={bg_section} 
+                        alt='Hero section background' 
+                        fill 
+                        priority={true}
+                        sizes="100vw"
+                        placeholder="blur"
+                    />
                     <div className='h-full w-full z-20 bg-secondary/80 absolute'></div>
                 </>
             }

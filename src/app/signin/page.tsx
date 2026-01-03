@@ -15,8 +15,24 @@ const SignIn = async () => {
     const siteInfo = await getSiteData()
     return (
         <div className="h-screen w-full text-gray-900 max-sm:flex max-sm:flex-col">
-            <Image fill src={banner} alt="Banner SignIn" className="-z-20 max-sm:hidden" />
-            <Image fill src={banner_mobile} alt="Banner SignIn" className="-z-20 sm:hidden !relative rounded-b-3xl overflow-hidden" />
+            <Image 
+                fill 
+                src={banner} 
+                alt="Sign in banner" 
+                className="-z-20 max-sm:hidden" 
+                sizes="100vw"
+                placeholder="blur"
+                loading="eager"
+            />
+            <Image 
+                fill 
+                src={banner_mobile} 
+                alt="Sign in banner mobile" 
+                className="-z-20 sm:hidden !relative rounded-b-3xl overflow-hidden" 
+                sizes="100vw"
+                placeholder="blur"
+                loading="eager"
+            />
             <div className="flex">
                 <div className="sm:basis-2/3 h-screen max-sm:hidden"></div>
                 <div className="sm:basis-1/3 sm:h-screen max-sm:w-screen flex flex-col items-center justify-center">

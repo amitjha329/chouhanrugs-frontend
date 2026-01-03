@@ -79,7 +79,7 @@ export default async function saveOrderAfterPay(orderDataParam: OrderDataModel) 
             },
             $inc: {
                 newNotifCount: 1,
-                processingOrders: 1
+                pendingOrders: 1
             },
             $set: { newOrder: true }
         }, { upsert: true })

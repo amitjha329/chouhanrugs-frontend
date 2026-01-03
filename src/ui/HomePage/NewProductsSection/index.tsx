@@ -15,7 +15,15 @@ const NewProductsSection = async () => {
 
   return (
     <div className='relative'>
-      <Image className='z-10 object-cover' src={bg_section} alt='banner' fill loading="lazy" />
+      <Image 
+        className='z-10 object-cover' 
+        src={bg_section} 
+        alt='New products section background' 
+        fill 
+        loading="lazy"
+        sizes="100vw"
+        placeholder="blur"
+      />
       <div className='h-full w-full z-10 bg-secondary/80 absolute'></div>
       <SectionTitle className='z-30 absolute ~top-5/10 left-1/2 -translate-x-1/2' title='New Products' />
       <div className={clsx('fluid_container mx-auto ~pb-10/20 ~pt-20/40', { "grid grid-cols-4 gap-5": !isMobile })}>

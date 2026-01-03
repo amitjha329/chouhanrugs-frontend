@@ -65,21 +65,20 @@ const ProductCardItem = (props: CompoProps) => {
                     />
                     <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{props.productDiscountPercentage}</div>
                     {props.sponsered && <div className='rounded-full text-primary py-1 px-2 text-xs bg-white absolute max-md:bottom-2 md:top-2 left-1/2 -translate-x-1/2'>Sponsored</div>}
-                    {props.colorMap && <div className='absolute bottom-2 left-2'>
+                    {props.colorMap && props.colorMap.length > 0 && <div className='absolute bottom-2 left-2'>
                         <div className="avatar-group -space-x-3 rtl:space-x-reverse">
                             {
-                                props.colorMap.slice(0, 4).map(color => {
-                                    return <div className="avatar border border-black" key={color._id?.toString()}>
-                                        <div className="w-6 h-6" style={{
-                                            backgroundColor: color.colorCode.hex
-                                        }}>
-                                        </div>
+                                props.colorMap.slice(0, 3).map(color => (
+                                    <div className="avatar border border-black" key={color._id?.toString()}>
+                                        <div className="w-6 h-6" style={{ backgroundColor: color.colorCode.hex }}></div>
                                     </div>
-                                })
+                                ))
                             }
-                            {
-                                (props.colorMap ?? []).length > 4 && <div className="ml-2 w-6 h-6 avatar  border border-black bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-gray-600">+</div>
-                            }
+                            {props.colorMap.length > 3 && (
+                                <div className="ml-2 w-6 h-6 avatar border border-black bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-gray-600">
+                                    +{props.colorMap.length - 3}
+                                </div>
+                            )}
                         </div>
                     </div>}
                 </div>

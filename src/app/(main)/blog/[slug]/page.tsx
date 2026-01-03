@@ -93,7 +93,14 @@ const BlogPostPage = async (props: { params: Promise<{ slug: string }> }) => {
                                     </div>
                                 </div>
                             </address>
-                            <Image src={blogData.featuredImage} fill alt={blogData.title} className='!relative !w-full !h-auto' />
+                            <Image 
+                                src={blogData.featuredImage} 
+                                fill 
+                                alt={blogData.title} 
+                                className='!relative !w-full !h-auto' 
+                                sizes="(max-width: 768px) 100vw, 672px"
+                                loading="eager"
+                            />
                         </header>
                         <div dangerouslySetInnerHTML={{ __html: blogData.content }}></div>
                     </article>
