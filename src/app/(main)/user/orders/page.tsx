@@ -18,7 +18,7 @@ const UserOrdersPage = async () => {
     
     const orderItems = await getUserOrdersList((session.user as { id: string }).id)
     return (
-        <UserAllOrders className="basis-full lg:basis-3/4" orderItems={orderItems} />
+        <UserAllOrders orderItems={orderItems} />
     )
 }
 

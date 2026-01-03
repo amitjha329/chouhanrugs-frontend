@@ -2,23 +2,35 @@ import { auth } from '@/auth'
 import getUserAddressList from '@/backend/serverActions/getUserAddressList'
 import React from 'react'
 import UserAddressList from './UserAddressList'
+import { HiOutlineMapPin } from 'react-icons/hi2'
 
 const AddressPage = async () => {
     const session = await auth()
     const addressList = await getUserAddressList((session?.user as { id: string }).id)
-    console.log(addressList)
     return (
-        <section className="w-full flex flex-col items-center justify-center">
-                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden w-full">
-                    <div className="bg-gradient-to-r from-pink-100 to-indigo-100 px-6 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b">
-                        <h1 className="text-xl sm:text-3xl font-bold text-gray-800 tracking-tight">Your Addresses</h1>
-                        <span className="text-sm text-gray-500 font-medium">{addressList?.length ?? 0} address{(addressList?.length ?? 0) !== 1 ? 'es' : ''}</span>
-                    </div>
-                    <div className="p-4 sm:p-8 min-h-[300px] flex flex-col gap-6">
-                        <UserAddressList addressList={addressList} />
-                    </div>
+        <div className="w-full">
+            {/* Page Header */}
+            <div className="mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold text-base-content flex items-center gap-3">
+                    <HiOutlineMapPin className="w-8 h-8 text-primary" />
+                    Address Book
+                </h1>
+                <p className="text-base-content/60 mt-1">Manage your shipping and billing addresses</p>
+            </div>
+
+            {/* Address List Card */}
+            <div className="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden">
+                <div className="px-6 py-4 border-b border-base-300/50 bg-gradient-to-r from-primary/5 to-transparent flex items-center justify-between">
+                    <h2 className="font-semibold text-base-content">Saved Addresses</h2>
+                    <span className="badge badge-primary badge-outline">
+                        {addressList?.length ?? 0} {(addressList?.length ?? 0) === 1 ? 'address' : 'addresses'}
+                    </span>
                 </div>
-        </section>
+                <div className="p-4 sm:p-6">
+                    <UserAddressList addressList={addressList} />
+                </div>
+            </div>
+        </div>
     )
 }
 

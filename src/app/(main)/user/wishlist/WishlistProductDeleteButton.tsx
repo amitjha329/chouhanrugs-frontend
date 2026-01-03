@@ -2,27 +2,38 @@
 "use client"
 import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFromWishlist'
 import onPageNotifications from '@/utils/onPageNotifications'
-import React from 'react'
-import { ImBin } from 'react-icons/im'
+import React, { useState } from 'react'
+import { HiOutlineTrash } from 'react-icons/hi2'
 
 const WishlistProductDeleteButton = ({ productId, userId }: { productId: string, userId: string }) => {
+    const [isDeleting, setIsDeleting] = useState(false)
+
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        setIsDeleting(true)
+        try {
+            await deleteProductFromWishlist(productId, userId)
+            window.location.reload()
+        } catch (error) {
+            console.log(error)
+            await onPageNotifications("error", "Failed to remove from wishlist")
+            setIsDeleting(false)
+        }
+    }
+
     return (
         <button
-            className="btn rounded-lg w-full sm:w-14 sm:h-14 md:w-16 md:h-16 btn-error btn-outline flex items-center justify-center gap-1 hover:bg-red-500 hover:text-white transition-colors shadow-sm text-xs sm:text-sm"
-            onClick={e => {
-                e.preventDefault()
-                deleteProductFromWishlist(productId, userId).then(res => {
-                    window.location.reload()
-                }).catch(e => {
-                    console.log(e)
-                    onPageNotifications("error", "Failed Removing From Wishlist").catch(e => console.log(e))
-                })
-            }}
+            className="btn btn-ghost btn-sm text-error hover:bg-error/10"
+            onClick={handleDelete}
+            disabled={isDeleting}
             aria-label="Remove from wishlist"
             title="Remove from wishlist"
         >
-            <ImBin className="w-3 h-3" />
-            <span className="sr-only">Remove</span>
+            {isDeleting ? (
+                <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+                <HiOutlineTrash className="w-5 h-5" />
+            )}
         </button>
     )
 }

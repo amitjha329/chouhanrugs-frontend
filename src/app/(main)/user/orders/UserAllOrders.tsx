@@ -2,11 +2,11 @@
 import React, { useState, useMemo } from 'react'
 import OrderDataModel from '@/types/OrderDataModel'
 import OrderItemCard from './OrderItemCard'
-import { FaBox, FaTimes } from 'react-icons/fa'
+import { HiOutlineShoppingBag, HiOutlineMagnifyingGlass, HiXMark } from 'react-icons/hi2'
 
 type FilterType = 'all' | 'active' | 'cancelled' | 'delivered'
 
-const UserAllOrders = ({ className, orderItems }: { className: string, orderItems: OrderDataModel[] }) => {
+const UserAllOrders = ({ orderItems }: { orderItems: OrderDataModel[] }) => {
     const [filter, setFilter] = useState<FilterType>('all')
     const [searchQuery, setSearchQuery] = useState('')
 
@@ -51,101 +51,111 @@ const UserAllOrders = ({ className, orderItems }: { className: string, orderItem
         return filtered
     }, [orderItems, filter, searchQuery])
 
-    const filterButtons: { key: FilterType; label: string; shortLabel: string; count: number }[] = [
-        { key: 'all', label: 'All', shortLabel: 'All', count: stats.total },
-        { key: 'active', label: 'Active', shortLabel: 'Active', count: stats.active },
-        { key: 'delivered', label: 'Delivered', shortLabel: 'Done', count: stats.delivered },
-        { key: 'cancelled', label: 'Cancelled', shortLabel: 'Cancel', count: stats.cancelled },
+    const filterButtons: { key: FilterType; label: string; count: number; color: string }[] = [
+        { key: 'all', label: 'All Orders', count: stats.total, color: 'primary' },
+        { key: 'active', label: 'Active', count: stats.active, color: 'info' },
+        { key: 'delivered', label: 'Delivered', count: stats.delivered, color: 'success' },
+        { key: 'cancelled', label: 'Cancelled', count: stats.cancelled, color: 'error' },
     ]
 
     return (
-        <section className={className}>
-            <div className="mx-auto px-2 sm:px-4">
-                <div className="container mx-auto my-2 sm:my-4">
-                    {/* Header Section - Compact */}
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 sm:p-4 mb-3">
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                            <h1 className="text-base sm:text-lg font-bold text-gray-900 flex items-center gap-1.5">
-                                <FaBox className="text-primary text-sm" />
-                                My Orders
-                            </h1>
-                            
-                            {/* Search Bar - Compact */}
-                            <div className="relative flex-1 max-w-[180px] sm:max-w-[200px]">
-                                <input
-                                    type="text"
-                                    placeholder="Search..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-2.5 pr-7 py-1.5 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-primary/20 focus:border-primary"
-                                />
-                                {searchQuery && (
-                                    <button
-                                        onClick={() => setSearchQuery('')}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
-                                    >
-                                        <FaTimes size={10} />
-                                    </button>
-                                )}
-                            </div>
-                        </div>
+        <div className="w-full">
+            {/* Page Header */}
+            <div className="mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold text-base-content flex items-center gap-3">
+                    <HiOutlineShoppingBag className="w-8 h-8 text-primary" />
+                    My Orders
+                </h1>
+                <p className="text-base-content/60 mt-1">Track and manage your orders</p>
+            </div>
 
-                        {/* Filter Tabs - Compact */}
-                        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mx-1 px-1">
-                            {filterButtons.map(({ key, label, shortLabel, count }) => (
+            {/* Filters & Search Card */}
+            <div className="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden mb-6">
+                <div className="px-6 py-4 border-b border-base-300/50 bg-gradient-to-r from-primary/5 to-transparent">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h2 className="font-semibold text-base-content">Order History</h2>
+                        
+                        {/* Search Bar */}
+                        <div className="relative w-full sm:w-64">
+                            <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40" />
+                            <input
+                                type="text"
+                                placeholder="Search by order ID..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="input input-bordered input-sm w-full pl-9 pr-8 focus:input-primary"
+                            />
+                            {searchQuery && (
                                 <button
-                                    key={key}
-                                    onClick={() => setFilter(key)}
-                                    className={`flex-shrink-0 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
-                                        filter === key 
-                                            ? 'bg-primary text-white' 
-                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                    }`}
+                                    onClick={() => setSearchQuery('')}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle"
                                 >
-                                    <span className="hidden sm:inline">{label}</span>
-                                    <span className="sm:hidden">{shortLabel}</span>
-                                    <span className="ml-1 opacity-75">({count})</span>
+                                    <HiXMark className="w-4 h-4" />
                                 </button>
-                            ))}
+                            )}
                         </div>
-                    </div>
-
-                    {/* Orders List */}
-                    <div className="space-y-2 sm:space-y-3">
-                        {filteredOrders.length > 0 ? (
-                            filteredOrders.map(order => (
-                                order && <OrderItemCard key={order._id} orderItem={order} />
-                            ))
-                        ) : (
-                            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 text-center">
-                                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <FaBox className="text-gray-400 text-lg" />
-                                </div>
-                                <h3 className="text-sm font-semibold text-gray-800 mb-1">
-                                    No orders found
-                                </h3>
-                                <p className="text-xs text-gray-500">
-                                    {filter !== 'all' 
-                                        ? `No ${filter} orders.`
-                                        : searchQuery 
-                                            ? `No match for "${searchQuery}"`
-                                            : "Start shopping to see orders here!"
-                                    }
-                                </p>
-                                {(filter !== 'all' || searchQuery) && (
-                                    <button
-                                        onClick={() => { setFilter('all'); setSearchQuery(''); }}
-                                        className="mt-2 text-primary text-xs font-medium"
-                                    >
-                                        Clear filters
-                                    </button>
-                                )}
-                            </div>
-                        )}
                     </div>
                 </div>
+
+                {/* Filter Tabs */}
+                <div className="px-4 py-3 bg-base-100 border-b border-base-300/50 overflow-x-auto">
+                    <div className="flex gap-2 min-w-max">
+                        {filterButtons.map(({ key, label, count, color }) => (
+                            <button
+                                key={key}
+                                onClick={() => setFilter(key)}
+                                className={`btn btn-sm gap-2 ${
+                                    filter === key 
+                                        ? 'btn-primary' 
+                                        : 'btn-ghost'
+                                }`}
+                            >
+                                {label}
+                                <span className={`badge badge-sm ${filter === key ? 'badge-primary-content bg-white/20' : 'badge-ghost'}`}>
+                                    {count}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Orders List */}
+                <div className="p-4 sm:p-6">
+                    {filteredOrders.length > 0 ? (
+                        <div className="space-y-4">
+                            {filteredOrders.map(order => (
+                                order && <OrderItemCard key={order._id} orderItem={order} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                            <div className="w-20 h-20 bg-base-200 rounded-full flex items-center justify-center mb-4">
+                                <HiOutlineShoppingBag className="w-10 h-10 text-base-content/30" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-base-content mb-1">
+                                No orders found
+                            </h3>
+                            <p className="text-sm text-base-content/60 max-w-sm">
+                                {filter !== 'all' 
+                                    ? `You don't have any ${filter} orders.`
+                                    : searchQuery 
+                                        ? `No orders match "${searchQuery}"`
+                                        : "Start shopping to see your orders here!"
+                                }
+                            </p>
+                            {(filter !== 'all' || searchQuery) && (
+                                <button
+                                    onClick={() => { setFilter('all'); setSearchQuery(''); }}
+                                    className="btn btn-primary btn-sm mt-4"
+                                >
+                                    Clear filters
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
-        </section>
+        </div>
     )
 }
 

@@ -1,62 +1,55 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { randomInt } from 'crypto'
 import OrderDataModel from '@/types/OrderDataModel'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import UserAddressDataModel from '@/types/UserAddressDataModel'
 import DownloadInvoiceButton from '../DownloadInvoiceButton'
 import OrderTrackingProgressbar from '../OrderTrackingProgressbar'
-import { FaBoxOpen, FaTruck, FaCheckCircle, FaTimesCircle, FaUndoAlt, FaClock } from 'react-icons/fa'
+import { HiOutlineCube, HiOutlineTruck, HiOutlineCheckCircle, HiOutlineXCircle, HiOutlineArrowPath, HiOutlineClock, HiOutlineArrowLeft, HiOutlineDocumentText, HiOutlineShoppingBag, HiOutlineMapPin, HiOutlineReceiptPercent, HiOutlineExclamationTriangle } from 'react-icons/hi2'
 
 // Status configuration for different order states
 const statusConfig = {
     pending: {
         label: 'Pending Review',
-        color: 'bg-amber-500',
-        textColor: 'text-amber-100',
-        icon: FaClock,
+        color: 'badge-warning',
+        icon: HiOutlineClock,
     },
     placed: {
         label: 'Order Placed',
-        color: 'bg-blue-500',
-        textColor: 'text-blue-100',
-        icon: FaBoxOpen,
+        color: 'badge-info',
+        icon: HiOutlineCube,
     },
     dispatched: {
         label: 'Dispatched',
-        color: 'bg-indigo-500',
-        textColor: 'text-indigo-100',
-        icon: FaTruck,
+        color: 'badge-primary',
+        icon: HiOutlineTruck,
     },
     transit: {
         label: 'In Transit',
-        color: 'bg-purple-500',
-        textColor: 'text-purple-100',
-        icon: FaTruck,
+        color: 'badge-secondary',
+        icon: HiOutlineTruck,
     },
     'out-for-delivery': {
         label: 'Out for Delivery',
-        color: 'bg-cyan-500',
-        textColor: 'text-cyan-100',
-        icon: FaTruck,
+        color: 'badge-accent',
+        icon: HiOutlineTruck,
     },
     delivered: {
         label: 'Delivered',
-        color: 'bg-green-500',
-        textColor: 'text-green-100',
-        icon: FaCheckCircle,
+        color: 'badge-success',
+        icon: HiOutlineCheckCircle,
     },
     cancelled: {
         label: 'Cancelled',
-        color: 'bg-red-500',
-        textColor: 'text-red-100',
-        icon: FaTimesCircle,
+        color: 'badge-error',
+        icon: HiOutlineXCircle,
     },
     returned: {
         label: 'Returned',
-        color: 'bg-gray-500',
-        textColor: 'text-gray-100',
-        icon: FaUndoAlt,
+        color: 'badge-neutral',
+        icon: HiOutlineArrowPath,
     }
 }
 
@@ -67,63 +60,64 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress }: { orderItem
     const isCancelled = status === 'cancelled'
     const isPending = status === 'pending'
     const isReturned = status === 'returned'
-    // Invoice only available after order is accepted (not pending/cancelled)
+    const isDelivered = status === 'delivered'
     const showInvoice = !isPending && !isCancelled
 
     return (
-        <div className="basis-full lg:basis-3/4 w-full min-w-0">
-            <div className="mx-auto px-2 sm:px-4 max-w-6xl">
-                {/* Header Section with Gradient */}
-                <div className="bg-gradient-to-r from-amber-700 to-amber-900 rounded-t-xl shadow-lg p-3 sm:p-4 md:p-5 mt-4 sm:mt-6">
-                    <div className="flex flex-col gap-3">
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                            <div className="text-white">
-                                <h1 className="text-base sm:text-lg md:text-xl font-bold mb-1.5 break-all sm:break-normal">Order #{orderItem._id}</h1>
-                                <div className="flex flex-col xs:flex-row xs:flex-wrap gap-2 sm:gap-3 text-[11px] sm:text-xs md:text-sm opacity-90">
-                                    <div className="flex items-center gap-1.5">
-                                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        <span>Ordered: {new Date(orderItem.orderPlacedOn).toLocaleDateString("en-US", { dateStyle: "medium" })}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5">
-                                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
-                                        <span>Payment: {orderItem.paymentMode}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Status Badge */}
-                            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full ${config.color} text-white text-[11px] sm:text-xs font-semibold shadow-lg w-fit`}>
-                                <StatusIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                <span>{config.label}</span>
+        <div className="w-full">
+            {/* Back Button */}
+            <Link href="/user/orders" className="inline-flex items-center gap-2 text-sm text-base-content/70 hover:text-primary transition-colors mb-4">
+                <HiOutlineArrowLeft className="w-4 h-4" />
+                Back to Orders
+            </Link>
+
+            {/* Order Header Card */}
+            <div className="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden mb-6">
+                <div className="px-6 py-5 bg-gradient-to-r from-primary/10 to-transparent border-b border-base-300/50">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h1 className="text-xl sm:text-2xl font-bold text-base-content mb-2">
+                                Order #{orderItem._id}
+                            </h1>
+                            <div className="flex flex-wrap items-center gap-3 text-sm text-base-content/70">
+                                <span className="flex items-center gap-1.5">
+                                    <HiOutlineClock className="w-4 h-4" />
+                                    {new Date(orderItem.orderPlacedOn).toLocaleDateString("en-US", { dateStyle: "long" })}
+                                </span>
+                                <span className="w-1 h-1 bg-base-content/30 rounded-full"></span>
+                                <span>Payment: {orderItem.paymentMode}</span>
                             </div>
                         </div>
-                        {showInvoice && (
-                            <DownloadInvoiceButton 
-                                orderId={orderItem._id} 
-                                className="btn btn-xs sm:btn-sm bg-white text-amber-900 hover:bg-amber-50 border-0 shadow font-semibold text-[11px] sm:text-xs w-fit" 
-                                text="Invoice" 
-                            />
-                        )}
+                        <div className="flex items-center gap-3">
+                            <div className={`badge ${config.color} badge-lg gap-2`}>
+                                <StatusIcon className="w-4 h-4" />
+                                {config.label}
+                            </div>
+                            {showInvoice && (
+                                <DownloadInvoiceButton 
+                                    orderId={orderItem._id} 
+                                    className="btn btn-outline btn-sm gap-2" 
+                                    text={<><HiOutlineDocumentText className="w-4 h-4" /> Invoice</>} 
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                {/* Cancelled/Returned Order Notice */}
+                {/* Cancelled/Returned Notice */}
                 {(isCancelled || isReturned) && (
-                    <div className={`${isCancelled ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'} border-x border-b p-3 sm:p-4`}>
-                        <div className="flex items-center gap-2">
+                    <div className={`px-6 py-4 ${isCancelled ? 'bg-error/5' : 'bg-neutral/5'}`}>
+                        <div className="flex items-center gap-3">
                             {isCancelled ? (
-                                <FaTimesCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                <HiOutlineXCircle className="w-5 h-5 text-error flex-shrink-0" />
                             ) : (
-                                <FaUndoAlt className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                <HiOutlineArrowPath className="w-5 h-5 text-neutral flex-shrink-0" />
                             )}
                             <div>
-                                <p className={`text-xs sm:text-sm font-medium ${isCancelled ? 'text-red-800' : 'text-gray-800'}`}>
+                                <p className={`font-medium ${isCancelled ? 'text-error' : 'text-base-content'}`}>
                                     {isCancelled ? 'This order has been cancelled' : 'This order has been returned'}
                                 </p>
-                                <p className={`text-[10px] sm:text-xs ${isCancelled ? 'text-red-600' : 'text-gray-600'}`}>
+                                <p className="text-sm text-base-content/60">
                                     {isCancelled 
                                         ? 'If any amount was deducted, it will be refunded within 5-7 business days.'
                                         : 'Refund will be processed within 5-7 business days.'
@@ -134,203 +128,168 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress }: { orderItem
                     </div>
                 )}
 
-                {/* Main Content Card */}
-                <div className={`bg-white ${isCancelled || isReturned ? '' : 'rounded-b-xl'} shadow-lg overflow-hidden ${isCancelled || isReturned ? 'rounded-b-xl' : ''}`}>
-                    {/* Order Tracking - Only show for active orders */}
-                    {!isCancelled && !isReturned && (
-                        <div className="p-3 sm:p-4 md:p-5 bg-gradient-to-b from-amber-50 to-white border-b border-amber-100 overflow-x-auto">
-                            <OrderTrackingProgressbar orderStatus={orderItem.orderStatus} className="flex flex-col min-w-[280px]" />
-                        </div>
-                    )}
-
-                    {/* Products Section */}
-                    <div className="p-3 sm:p-4 md:p-5">
-                        <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-3 flex items-center gap-1.5">
-                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                            <span>Order Items</span>
-                        </h2>
-                        <div className="space-y-2 sm:space-y-3">
-                            {productsList.map((product, index) => product ? (
-                                <div 
-                                    key={product._id?.toString()} 
-                                    className="group bg-gradient-to-r from-gray-50 to-white hover:from-amber-50 hover:to-orange-50 rounded-lg p-2.5 sm:p-3 md:p-4 border border-gray-200 hover:border-amber-300 transition-all duration-300 shadow-sm hover:shadow"
-                                >
-                                    <div className="flex gap-2.5 sm:gap-3 md:gap-4">
-                                        {/* Product Image */}
-                                        <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden bg-white shadow-sm flex-shrink-0">
-                                            <Image 
-                                                className="object-cover hover:scale-110 transition-transform duration-300" 
-                                                sizes="(max-width: 640px) 64px, 80px" 
-                                                quality={60} 
-                                                src={product.images[product.productPrimaryImageIndex]} 
-                                                alt={product.productName} 
-                                                fill 
-                                            />
-                                        </div>
-
-                                        {/* Product Details */}
-                                        <div className="flex-1 min-w-0 flex flex-col gap-2">
-                                            <div className="min-w-0">
-                                                <h3 className="text-xs sm:text-sm md:text-base font-semibold text-gray-900 mb-1 sm:mb-1.5 group-hover:text-amber-900 transition-colors line-clamp-2">
-                                                    {product.productName}
-                                                </h3>
-                                                <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                                                    {orderItem.products[index].variation && orderItem.products[index].variation !== "customSize" && (
-                                                        <>
-                                                            {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationSize && (
-                                                                <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] md:text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                                                                    <svg className="w-2 h-2 sm:w-2.5 sm:h-2.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                                                                    </svg>
-                                                                    {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationSize}
-                                                                </span>
-                                                            )}
-                                                            {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationColor && (
-                                                                <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] md:text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
-                                                                    <svg className="w-2 h-2 sm:w-2.5 sm:h-2.5 mr-0.5" fill="currentColor" viewBox="0 0 24 24">
-                                                                        <path d="M12 22C6.49 22 2 17.51 2 12S6.49 2 12 2s10 4.04 10 9c0 3.31-2.69 6-6 6h-1.77c-.28 0-.5.22-.5.5 0 .12.05.23.13.33.41.47.64 1.06.64 1.67A2.5 2.5 0 0112 22zm0-18c-4.41 0-8 3.59-8 8s3.59 8 8 8c.28 0 .5-.22.5-.5a.54.54 0 00-.14-.35c-.41-.46-.63-1.05-.63-1.65a2.5 2.5 0 012.5-2.5H16c2.21 0 4-1.79 4-4 0-3.86-3.59-7-8-7z" />
-                                                                    </svg>
-                                                                    {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationColor}
-                                                                </span>
-                                                            )}
-                                                        </>
-                                                    )}
-                                                    {orderItem.products[index].customSize && (
-                                                        <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] md:text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
-                                                            <svg className="w-2 h-2 sm:w-2.5 sm:h-2.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
-                                                            </svg>
-                                                            <span className="truncate max-w-[100px] sm:max-w-none">Custom: {orderItem.products[index].customSize.shape}
-                                                            {orderItem.products[index].customSize.dimensions.length && ` ${orderItem.products[index].customSize.dimensions.length}×${orderItem.products[index].customSize.dimensions.width}`}
-                                                            {orderItem.products[index].customSize.dimensions.diameter && ` Ø${orderItem.products[index].customSize.dimensions.diameter}`}</span>
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {/* Price and Quantity - Mobile optimized */}
-                                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] sm:text-xs md:text-sm">
-                                                <div className="flex items-center gap-1">
-                                                    <span className="text-gray-600">Qty:</span>
-                                                    <span className="inline-flex items-center justify-center min-w-[20px] sm:min-w-[24px] h-5 sm:h-6 px-1.5 sm:px-2 rounded-full bg-amber-100 text-amber-900 font-semibold">
-                                                        {orderItem.products[index].quantity}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <span className="text-gray-600">@</span>
-                                                    <span className="font-semibold text-gray-900">
-                                                        {orderItem.userCurrency.currencySymbol}
-                                                        {(Number(orderItem.products[index].productPrice) * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-1 ml-auto">
-                                                    <span className="text-gray-600">Total:</span>
-                                                    <span className="text-xs sm:text-sm md:text-base font-bold text-amber-900">
-                                                        {orderItem.userCurrency.currencySymbol}
-                                                        {(Number(orderItem.products[index].productPrice) * Number(orderItem.products[index].quantity) * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div key={product ?? "" + index.toString() + randomInt(999).toString()} className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                                    <svg className="w-8 h-8 text-red-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <p className="text-sm font-semibold text-red-900">Product Not Available</p>
-                                </div>
-                            ))}
-                        </div>
+                {/* Order Tracking */}
+                {!isCancelled && !isReturned && (
+                    <div className="p-6 bg-gradient-to-b from-base-200/30 to-transparent">
+                        <OrderTrackingProgressbar orderStatus={orderItem.orderStatus} className="flex flex-col" />
                     </div>
+                )}
+            </div>
 
-                    {/* Summary and Address Section */}
-                    <div className="bg-gradient-to-b from-gray-50 to-white p-3 sm:p-4 md:p-5 border-t border-gray-200">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                            {/* Order Summary */}
-                            <div>
-                                <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-2 sm:mb-2.5 flex items-center gap-1.5">
-                                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                    </svg>
-                                    Order Summary
-                                </h3>
-                                <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200">
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between items-center pb-2 border-b border-gray-200 text-[11px] sm:text-xs md:text-sm">
-                                            <span className="text-gray-700">Subtotal</span>
-                                            <span className="font-semibold text-gray-900">{orderItem.userCurrency.currencySymbol}{orderItem.subtotal}</span>
-                                        </div>
-                                        {orderItem.couponApplied && (
-                                            <div className="flex justify-between items-center pb-2 border-b border-gray-200 text-[11px] sm:text-xs md:text-sm">
-                                                <span className="text-gray-700">Discount</span>
-                                                <span className="font-semibold text-green-600">-{orderItem.couponApplied.value}%</span>
-                                            </div>
-                                        )}
-                                        <div className="flex justify-between items-center pb-2 border-b border-gray-200 text-[11px] sm:text-xs md:text-sm">
-                                            <span className="text-gray-700">Shipping</span>
-                                            <span className="font-semibold text-green-600">Free</span>
-                                        </div>
-                                        <div className="flex justify-between items-center pb-2 border-b border-gray-200 text-[11px] sm:text-xs md:text-sm">
-                                            <span className="text-gray-700">Tax</span>
-                                            <span className="font-semibold text-gray-900">{orderItem.userCurrency.currencySymbol}{Number(orderItem.taxation).toFixed(2)}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center pt-2 bg-gradient-to-r from-amber-50 to-orange-50 -mx-3 sm:-mx-4 -mb-3 sm:-mb-4 px-3 sm:px-4 py-2.5 sm:py-3 rounded-b-lg">
-                                            <span className="text-xs sm:text-sm md:text-base font-bold text-gray-900">Total</span>
-                                            <span className="text-base sm:text-lg md:text-xl font-bold text-amber-900">{orderItem.userCurrency.currencySymbol}{orderItem.orderValue.toFixed(2)}</span>
-                                        </div>
-                                    </div>
-                                </div>
+            {/* Products Section */}
+            <div className="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden mb-6">
+                <div className="px-6 py-4 border-b border-base-300/50 bg-gradient-to-r from-primary/5 to-transparent">
+                    <h2 className="font-semibold text-base-content flex items-center gap-2">
+                        <HiOutlineShoppingBag className="w-5 h-5 text-primary" />
+                        Order Items ({productsList.length})
+                    </h2>
+                </div>
+                <div className="p-4 sm:p-6 space-y-4">
+                    {productsList.map((product, index) => product ? (
+                        <div 
+                            key={product._id?.toString()} 
+                            className="group flex flex-col sm:flex-row gap-4 p-4 bg-base-100 rounded-xl border border-base-300/50 hover:border-primary/30 hover:shadow-md transition-all"
+                        >
+                            {/* Product Image */}
+                            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden bg-base-200 flex-shrink-0">
+                                <Image 
+                                    className="object-cover group-hover:scale-105 transition-transform duration-300" 
+                                    sizes="(max-width: 640px) 80px, 96px" 
+                                    quality={60} 
+                                    src={product.images[product.productPrimaryImageIndex]} 
+                                    alt={product.productName} 
+                                    fill 
+                                />
                             </div>
 
-                            {/* Addresses */}
-                            <div>
-                                <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-2 sm:mb-2.5 flex items-center gap-1.5">
-                                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-amber-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    Delivery Info
+                            {/* Product Details */}
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-semibold text-base-content group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                                    {product.productName}
                                 </h3>
-                                <div className="space-y-2 sm:space-y-3">
-                                    <div className="bg-white rounded-lg p-2.5 sm:p-3.5 shadow-sm border border-gray-200">
-                                        <div className="flex items-start gap-2 sm:gap-2.5">
-                                            <div className="p-1 sm:p-1.5 bg-amber-100 rounded-md flex-shrink-0">
-                                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                                </svg>
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className="text-[11px] sm:text-xs md:text-sm font-semibold text-gray-900 mb-0.5 sm:mb-1">Delivery Address</h4>
-                                                <p className="text-[10px] sm:text-xs text-gray-700 leading-relaxed break-words">
-                                                    {shippingAddress.streetAddress}<br />
-                                                    {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.postalCode}<br />
-                                                    {shippingAddress.country}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="bg-white rounded-lg p-2.5 sm:p-3.5 shadow-sm border border-gray-200">
-                                        <div className="flex items-start gap-2 sm:gap-2.5">
-                                            <div className="p-1 sm:p-1.5 bg-orange-100 rounded-md flex-shrink-0">
-                                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className="text-[11px] sm:text-xs md:text-sm font-semibold text-gray-900 mb-0.5 sm:mb-1">Billing Address</h4>
-                                                <p className="text-[10px] sm:text-xs text-gray-700 leading-relaxed break-words">
-                                                    {shippingAddress.streetAddress}<br />
-                                                    {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.postalCode}<br />
-                                                    {shippingAddress.country}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                
+                                {/* Variation Badges */}
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    {orderItem.products[index].variation && orderItem.products[index].variation !== "customSize" && (
+                                        <>
+                                            {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationSize && (
+                                                <span className="badge badge-outline badge-sm">
+                                                    Size: {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationSize}
+                                                </span>
+                                            )}
+                                            {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationColor && (
+                                                <span className="badge badge-outline badge-sm">
+                                                    Color: {product.variations.find(varItem => varItem.variationCode === orderItem.products[index].variation)?.variationColor}
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                    {orderItem.products[index].customSize && (
+                                        <span className="badge badge-primary badge-sm">
+                                            Custom: {orderItem.products[index].customSize.shape}
+                                            {orderItem.products[index].customSize.dimensions.length && ` ${orderItem.products[index].customSize.dimensions.length}×${orderItem.products[index].customSize.dimensions.width}`}
+                                            {orderItem.products[index].customSize.dimensions.diameter && ` Ø${orderItem.products[index].customSize.dimensions.diameter}`}
+                                        </span>
+                                    )}
                                 </div>
+
+                                {/* Price Info */}
+                                <div className="flex flex-wrap items-center gap-4 text-sm">
+                                    <span className="text-base-content/70">
+                                        Qty: <span className="font-semibold text-base-content">{orderItem.products[index].quantity}</span>
+                                    </span>
+                                    <span className="text-base-content/70">
+                                        @ <span className="font-semibold text-base-content">
+                                            {orderItem.userCurrency.currencySymbol}
+                                            {(Number(orderItem.products[index].productPrice) * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)}
+                                        </span>
+                                    </span>
+                                    <span className="ml-auto text-lg font-bold text-primary">
+                                        {orderItem.userCurrency.currencySymbol}
+                                        {(Number(orderItem.products[index].productPrice) * Number(orderItem.products[index].quantity) * (orderItem.userCurrency.exchangeRates ?? 1)).toFixed(2)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div key={product ?? "" + index.toString() + randomInt(999).toString()} className="flex items-center gap-4 p-4 bg-error/5 border border-error/20 rounded-xl">
+                            <div className="w-16 h-16 bg-error/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <HiOutlineExclamationTriangle className="w-8 h-8 text-error" />
+                            </div>
+                            <div>
+                                <p className="font-medium text-error">Product Not Available</p>
+                                <p className="text-sm text-base-content/60">This product is no longer in our catalog</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Summary and Address Grid */}
+            <div className="grid md:grid-cols-2 gap-6">
+                {/* Order Summary */}
+                <div className="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-base-300/50 bg-gradient-to-r from-primary/5 to-transparent">
+                        <h2 className="font-semibold text-base-content flex items-center gap-2">
+                            <HiOutlineReceiptPercent className="w-5 h-5 text-primary" />
+                            Order Summary
+                        </h2>
+                    </div>
+                    <div className="p-6 space-y-3">
+                        <div className="flex justify-between items-center text-base-content/70">
+                            <span>Subtotal</span>
+                            <span className="font-medium text-base-content">{orderItem.userCurrency.currencySymbol}{orderItem.subtotal}</span>
+                        </div>
+                        {orderItem.couponApplied && (
+                            <div className="flex justify-between items-center text-base-content/70">
+                                <span>Discount</span>
+                                <span className="font-medium text-success">-{orderItem.couponApplied.value}%</span>
+                            </div>
+                        )}
+                        <div className="flex justify-between items-center text-base-content/70">
+                            <span>Shipping</span>
+                            <span className="font-medium text-success">Free</span>
+                        </div>
+                        <div className="flex justify-between items-center text-base-content/70">
+                            <span>Tax</span>
+                            <span className="font-medium text-base-content">{orderItem.userCurrency.currencySymbol}{Number(orderItem.taxation).toFixed(2)}</span>
+                        </div>
+                        <div className="border-t border-base-300/50 pt-3 mt-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-lg font-semibold text-base-content">Total</span>
+                                <span className="text-xl font-bold text-primary">{orderItem.userCurrency.currencySymbol}{orderItem.orderValue.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Delivery Address */}
+                <div className="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-base-300/50 bg-gradient-to-r from-primary/5 to-transparent">
+                        <h2 className="font-semibold text-base-content flex items-center gap-2">
+                            <HiOutlineMapPin className="w-5 h-5 text-primary" />
+                            Delivery Address
+                        </h2>
+                    </div>
+                    <div className="p-6">
+                        <div className="flex items-start gap-4">
+                            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span className="text-lg font-bold text-primary">
+                                    {shippingAddress.fname[0]}{shippingAddress.lname[0]}
+                                </span>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-base-content mb-1">
+                                    {shippingAddress.fname} {shippingAddress.lname}
+                                </h4>
+                                <p className="text-sm text-base-content/70 leading-relaxed">
+                                    {shippingAddress.streetAddress}<br />
+                                    {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.postalCode}<br />
+                                    {shippingAddress.country}
+                                </p>
+                                {shippingAddress.email && (
+                                    <p className="text-sm text-base-content/60 mt-2">{shippingAddress.email}</p>
+                                )}
                             </div>
                         </div>
                     </div>

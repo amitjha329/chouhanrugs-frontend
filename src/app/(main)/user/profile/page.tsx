@@ -6,7 +6,7 @@ import React from 'react'
 const UserProfilePage = async () => {
     const session = await auth()
     return (
-        <UserProfileSettings className="basis-full lg:basis-3/4" userData={session?.user as UserProfileDataModel} />
+        <UserProfileSettings userData={session?.user as UserProfileDataModel} />
     )
 }
 
