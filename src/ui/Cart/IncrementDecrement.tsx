@@ -4,23 +4,33 @@ import increaseDeacreaseCartItem from '@/backend/serverActions/increaseDeacrease
 import CartDataModel from '@/types/CartDataModel'
 import onPageNotifications from '@/utils/onPageNotifications'
 import React, { useState } from 'react'
+import { HiMinus, HiPlus } from 'react-icons/hi2'
 
 const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
     const [quantity, updateQuantity] = useState(item.quantity)
+    const [isLoading, setIsLoading] = useState(false)
+
     const removeCartItem = async (id: string) => {
+        setIsLoading(true)
         await deleteProductFromCart(id).then((res) => {
             onPageNotifications("success", "Product Deleted")
             window.location.reload()
         }).catch(err => {
             onPageNotifications("error", "Something Went Wrong.")
+            setIsLoading(false)
         })
     }
+
     const incrementQuantity = () => {
+        if (isLoading) return
         if (quantity < 10) {
+            setIsLoading(true)
             updateQuantity(quantity + 1)
-            // If quantity is less than 10, allow incrementing
             increaseDeacreaseCartItem(item._id, 1).then(() => {
                 window.location.reload()
+            }).catch(() => {
+                updateQuantity(quantity)
+                setIsLoading(false)
             })
         } else {
             onPageNotifications("info", "Large Quantity Can Only Be Ordered Using Bulk Request")
@@ -28,38 +38,46 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
     }
 
     const decrementQuantity = () => {
+        if (isLoading) return
         if (quantity > 1) {
+            setIsLoading(true)
             updateQuantity(quantity - 1)
-            // If quantity is greater than 1, allow decrementing
             increaseDeacreaseCartItem(item._id, -1).then(() => {
                 window.location.reload()
+            }).catch(() => {
+                updateQuantity(quantity)
+                setIsLoading(false)
             })
         } else {
             removeCartItem(item._id)
         }
     }
+
     return (
-        <div className="flex flex-col-reverse sm:flex-row items-center gap-3 justify-center">
-            <svg
-                className="fill-current text-gray-600 w-3 cursor-pointer"
-                viewBox="0 0 448 512"
-                onClick={_ => decrementQuantity()}
+        <div className="inline-flex items-center rounded-lg border border-base-300 bg-base-100 overflow-hidden">
+            <button
+                onClick={decrementQuantity}
+                disabled={isLoading}
+                className="flex items-center justify-center w-9 h-9 text-base-content/70 hover:bg-base-200 hover:text-base-content transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Decrease quantity"
             >
-                <path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
-            </svg>
-            <input
-                className="mx-2 input input-sm input-bordered border text-center w-16"
-                type="text"
-                value={quantity}
-                readOnly
-            />
-            <svg
-                className="fill-current text-gray-600 w-3 cursor-pointer"
-                viewBox="0 0 448 512"
-                onClick={_ => incrementQuantity()}
+                <HiMinus className="w-4 h-4" />
+            </button>
+            <div className="flex items-center justify-center w-12 h-9 text-sm font-semibold text-base-content border-x border-base-300 bg-base-50">
+                {isLoading ? (
+                    <span className="loading loading-spinner loading-xs"></span>
+                ) : (
+                    quantity
+                )}
+            </div>
+            <button
+                onClick={incrementQuantity}
+                disabled={isLoading || quantity >= 10}
+                className="flex items-center justify-center w-9 h-9 text-base-content/70 hover:bg-base-200 hover:text-base-content transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Increase quantity"
             >
-                <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
-            </svg>
+                <HiPlus className="w-4 h-4" />
+            </button>
         </div>
     )
 }

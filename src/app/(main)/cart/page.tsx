@@ -5,6 +5,7 @@ import getUserCartitems from '@/backend/serverActions/getUserCartitems'
 import CartItem from '@/ui/Cart/CartItem'
 import CartTotalSection from '@/ui/Cart/CartTotalSection'
 import dynamic from 'next/dynamic'
+import { HiArrowLeft, HiOutlineShoppingBag, HiOutlineShieldCheck, HiOutlineTruck } from 'react-icons/hi2'
 
 const CartLocalStorage = dynamic(() => import('@/ui/Cart/CartLocalStorage'))
 
@@ -12,59 +13,113 @@ const CartPage = async () => {
     const session = await auth()
     const cart = await getUserCartitems((session?.user as { id: string })?.id)
     const isLoggedIn = !!session?.user
-    return isLoggedIn ?
-        <div className="container py-0 sm:py-10 mx-auto">
-            <div className="flex shadow-none sm:shadow-lg rounded-none sm:rounded-md overflow-hidden flex-col">
-                <div className="bg-white px-10 py-10">
-                    <Link href="/">
-                        <div className="flex font-semibold text-primary text-sm mb-7 cursor-pointer">
-                            <svg
-                                className="fill-current mr-2 text-primary w-4"
-                                viewBox="0 0 448 512"
-                            >
-                                <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
-                            </svg>
+    
+    return isLoggedIn ? (
+        <div className="min-h-screen bg-gradient-to-b from-base-200/50 to-base-100">
+            <div className="container max-w-6xl py-6 sm:py-10 px-4 mx-auto">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                    <div>
+                        <Link href="/" className="inline-flex items-center gap-2 text-sm text-base-content/70 hover:text-primary transition-colors mb-2">
+                            <HiArrowLeft className="w-4 h-4" />
                             Continue Shopping
+                        </Link>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-base-content flex items-center gap-3">
+                            <HiOutlineShoppingBag className="w-8 h-8 text-primary" />
+                            Shopping Cart
+                        </h1>
+                    </div>
+                    {cart && cart.length > 0 && (
+                        <div className="badge badge-primary badge-lg gap-2">
+                            {cart.length} {cart.length === 1 ? 'item' : 'items'}
                         </div>
-                    </Link>
-                    <div className="flex justify-between border-b pb-8 mb-5 sm:mb-auto">
-                        <h1 className="font-semibold text-2xl">Shopping Cart</h1>
-                        <h2 className="font-semibold text-2xl">{cart.length}</h2>
-                    </div>
-                    <div className="hidden sm:flex mt-10 mb-5 justify-between items-center">
-                        <h3 className="font-semibold text-gray-600 text-xs uppercase w-64">
-                            Product Details
-                        </h3>
-                        <h3 className="font-semibold text-center text-gray-600 text-xs uppercase">
-                            Quantity
-                        </h3>
-                        <h3 className="font-semibold text-center text-gray-600 text-xs uppercase">
-                            Price/Qty.
-                        </h3>
-                        <h3 className="font-semibold text-center text-gray-600 text-xs uppercase">
-                            Total
-                        </h3>
-                    </div>
-                    {
-                        cart && cart.length > 0 ? (
-                            cart.map((item, index) => <CartItem item={item} key={item?._id} />)
-                        ) : (
-                            <div className="flex flex-col items-center justify-center w-full h-64 sm:h-80 bg-base-100 rounded-lg shadow-inner my-8 px-4 sm:px-0">
-                                <svg className="w-12 h-12 sm:w-16 sm:h-16 text-primary mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m5-9v9m4-9v9m4-9l2 9" />
-                                </svg>
-                                <h2 className="font-bold text-lg sm:text-2xl text-gray-700 mb-2 text-center">Your cart is empty</h2>
-                                <p className="text-gray-500 mb-4 text-center text-sm sm:text-base">Looks like you haven&apos;t added anything yet.</p>
-                                <Link href="/">
-                                    <button className="btn btn-primary w-full sm:w-auto">Continue Shopping</button>
-                                </Link>
-                            </div>
-                        )
-                    }
-                    {isLoggedIn && cart && cart.length > 0 && <CartTotalSection cartItems={cart} />}
+                    )}
                 </div>
+
+                {cart && cart.length > 0 ? (
+                    <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+                        {/* Cart Items */}
+                        <div className="lg:col-span-2 space-y-4">
+                            {cart.map((item) => (
+                                <CartItem item={item} key={item?._id} />
+                            ))}
+                        </div>
+
+                        {/* Cart Summary Sidebar */}
+                        <div className="lg:col-span-1">
+                            <div className="sticky top-24">
+                                <CartTotalSection cartItems={cart} />
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-16 px-4">
+                        <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                            <HiOutlineShoppingBag className="w-12 h-12 text-primary" />
+                        </div>
+                        <h2 className="font-bold text-xl sm:text-2xl text-base-content mb-2 text-center">
+                            Your cart is empty
+                        </h2>
+                        <p className="text-base-content/60 mb-6 text-center max-w-md">
+                            Looks like you haven&apos;t added anything yet. Start exploring our collection!
+                        </p>
+                        <Link href="/">
+                            <button className="btn btn-primary gap-2">
+                                <HiArrowLeft className="w-4 h-4" />
+                                Start Shopping
+                            </button>
+                        </Link>
+                    </div>
+                )}
+
+                {/* Trust Badges */}
+                {cart && cart.length > 0 && (
+                    <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="flex items-center gap-3 p-4 bg-base-100 rounded-xl border border-base-300/50">
+                            <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                <HiOutlineShieldCheck className="w-5 h-5 text-success" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium text-base-content">Secure Checkout</p>
+                                <p className="text-xs text-base-content/60">SSL Encrypted</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 bg-base-100 rounded-xl border border-base-300/50">
+                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                <HiOutlineTruck className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium text-base-content">Free Shipping</p>
+                                <p className="text-xs text-base-content/60">On orders $100+</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 bg-base-100 rounded-xl border border-base-300/50">
+                            <div className="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg className="w-5 h-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium text-base-content">Easy Returns</p>
+                                <p className="text-xs text-base-content/60">30-day policy</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 bg-base-100 rounded-xl border border-base-300/50">
+                            <div className="w-10 h-10 bg-info/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg className="w-5 h-5 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium text-base-content">24/7 Support</p>
+                                <p className="text-xs text-base-content/60">Dedicated help</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
-        </div> : <CartLocalStorage />
+        </div>
+    ) : <CartLocalStorage />
 }
 
 export default CartPage

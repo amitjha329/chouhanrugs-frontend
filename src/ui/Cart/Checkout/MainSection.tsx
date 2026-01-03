@@ -567,198 +567,318 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
 
     return (
         !Array.isArray(queryParams?.redirect_status) && stringEmptyOrNull(queryParams?.redirect_status) ? <>
-            <div className="container py-0 sm:py-10 mx-auto">
-                <div className="flex flex-col md:flex-row items-start">
-                    <div className='flex flex-col lg:basis-2/3 w-full px-8 md:px-0 md:pl-5'>
-                        <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-8 sm:mt-0">Delivery Address</div>
-                        {
-                            addressLoading && <div className="h-20 flex items-center justify-center w-full"><span className="loading loading-dots loading-lg"></span></div>
-                        }
-                        {
-                            addresses.length > 0 && !addAddress && <>
-                                <ShippingSelector 
-                                    addresses={addresses} 
-                                    selectedAddress={selectedAddress} 
-                                    selectionHandler={setSelectedAddress}
-                                    onEditAddress={handleEditAddress}
-                                    onDeleteAddress={handleDeleteAddress}
-                                />                                <div className="relative flex cursor-pointer rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/50 px-5 py-4 shadow-lg focus:outline-none justify-between bg-base-100 hover:bg-base-50 mt-3 transition-all duration-200" onClick={_ => handleAddAddressToggle(true)}>
-                                    <span className="font-medium text-primary">Add New Address</span> 
-                                    <BsPlus className="w-7 h-7 text-primary" />
-                                </div>
-                            </>
-                        }
-                        {                            (!addAddress && addresses.length == 0 && !addressLoading) && <div className="bg-base-100 relative flex cursor-pointer rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/50 px-5 py-4 shadow-lg focus:outline-none justify-between hover:bg-base-50 transition-all duration-200" onClick={_ => handleAddAddressToggle(true)}>
-                                <span className="font-medium text-primary">Add New Address</span> 
-                                <BsPlus className="w-7 h-7 text-primary" />
-                            </div>
-                        }
-                        {                            addAddress && <UserAddressFormEnhanced 
-                                addAddressHandler={handleAddAddressToggle} 
-                                editingAddress={editingAddress}
-                                onSaveComplete={refreshAddressList}
-                            />
-                        }
-                        <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-8">Payment Options</div>
-                        {
-                            pg && <PayMethodItem pgList={pg} selected={paymentMethod} setSelected={setPaymentMethod} currency={userCurrency} />
-                        }
-                        <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-8">Review Order Items</div>
-                        {
-                            cart?.map(item => <CartItem item={item} key={item._id} userCurrency={userCurrency} />)
-                        }
+            <div className="min-h-screen bg-gradient-to-b from-base-200/50 to-base-100">
+                <div className="container max-w-7xl py-6 sm:py-10 mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Page Header */}
+                    <div className="mb-8">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-base-content">Checkout</h1>
+                        <p className="text-base-content/60 mt-1">Complete your order securely</p>
                     </div>
-                    <div className="px-10 py-10 lg:basis-1/3 hidden md:block sticky bottom-0 top-[170px]">
-                        <div id="summary" className=" flex flex-col justify-between bg-gray-200 px-8 pt-10 pb-16 sm:pb-10">
-                            <h1 className="font-semibold text-2xl border-b border-black pb-8">Order Summary</h1>
-                            <div className="flex justify-between mt-10 mb-5">
-                                <span className="font-semibold text-sm uppercase">Items {cart.length}</span>
-                                <span className="font-semibold text-sm">{userCurrency?.currencySymbol} {cartTotal}</span>
-                            </div>
-                            <div>
-                                <label className="font-medium inline-block mb-3 text-sm uppercase">
-                                    Shipping
-                                </label>
-                                <select className="block p-2 select select-bordered text-gray-600 w-full text-sm" id="shipping_mode_preference">
-                                    {
-                                        !selectedAddress && <option disabled>Select Your Address First</option>
-                                    }
-                                    {
-                                        selectedAddress && <option>{(currentShipping) ? `Standard shipping - ${currentShipping.shippingCharges}` : "Sorry Delivery Not Supported"}</option>
-                                    }
-                                </select>
-                            </div>
-                            <div className={`py-10 ${couponData?.couponApplicable ? 'border-success' : 'border-error'}`}>
-                                <label
-                                    htmlFor="promo"
-                                    className="font-semibold inline-block mb-3 text-sm uppercase"
-                                >
-                                    Promo Code
-                                </label>
-                                <div className="join w-full">
-                                    <input
-                                        type="text"
-                                        id="promo"
-                                        placeholder="Enter your code"
-                                        className={clsx("input input-bordered w-full join-item", { "border-success": couponData?.couponApplicable }, { "border-error": couponData?.couponApplicable == false })}
-                                        value={couponCode}
-                                        onChange={e => setCouponCode(e.target.value)}
-                                    />
 
-                                    <button className="btn btn-active join-item" onClick={e => handleCouponApply()}>
-                                        Apply
-                                    </button>
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        {/* Main Content - Left Side */}
+                        <div className="flex-1 space-y-6">
+                            {/* Delivery Address Section */}
+                            <div className="bg-base-100 rounded-2xl shadow-sm border border-base-300/50 overflow-hidden">
+                                <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">1</div>
+                                        <h2 className="text-lg font-semibold text-base-content">Delivery Address</h2>
+                                    </div>
+                                </div>
+                                <div className="p-6">
+                                    {addressLoading && (
+                                        <div className="h-24 flex items-center justify-center">
+                                            <span className="loading loading-spinner loading-lg text-primary"></span>
+                                        </div>
+                                    )}
+                                    {addresses.length > 0 && !addAddress && (
+                                        <>
+                                            <ShippingSelector 
+                                                addresses={addresses} 
+                                                selectedAddress={selectedAddress} 
+                                                selectionHandler={setSelectedAddress}
+                                                onEditAddress={handleEditAddress}
+                                                onDeleteAddress={handleDeleteAddress}
+                                            />
+                                            <button 
+                                                className="mt-4 w-full flex items-center justify-center gap-2 py-4 px-5 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 text-primary font-medium transition-all duration-200" 
+                                                onClick={_ => handleAddAddressToggle(true)}
+                                            >
+                                                <BsPlus className="w-6 h-6" />
+                                                Add New Address
+                                            </button>
+                                        </>
+                                    )}
+                                    {!addAddress && addresses.length === 0 && !addressLoading && (
+                                        <button 
+                                            className="w-full flex items-center justify-center gap-2 py-6 px-5 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 text-primary font-medium transition-all duration-200" 
+                                            onClick={_ => handleAddAddressToggle(true)}
+                                        >
+                                            <BsPlus className="w-6 h-6" />
+                                            Add New Address
+                                        </button>
+                                    )}
+                                    {addAddress && (
+                                        <UserAddressFormEnhanced 
+                                            addAddressHandler={handleAddAddressToggle} 
+                                            editingAddress={editingAddress}
+                                            onSaveComplete={refreshAddressList}
+                                        />
+                                    )}
                                 </div>
                             </div>
-                            <div className="border-t border-black mt-8">
-                                <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                    <span>Sub Total</span>
-                                    <span>{userCurrency?.currencySymbol} {cartTotal}</span>
-                                </div>
-                                <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                    <span>Delivery</span>
-                                    <span>{currentShipping && Number(currentShipping.shippingCharges.split(' ')[1]) > 0 ? currentShipping.shippingCharges : "Free"}</span>
-                                </div>
-                                {
-                                    <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                        <span>Taxation</span>
-                                        <span>{(cartTotal * (currentTax.taxRate / 100)).toFixed(2)}</span>
+
+                            {/* Payment Options Section */}
+                            <div className="bg-base-100 rounded-2xl shadow-sm border border-base-300/50 overflow-hidden">
+                                <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">2</div>
+                                        <h2 className="text-lg font-semibold text-base-content">Payment Method</h2>
                                     </div>
-                                }
-                                {
-                                    couponData?.couponApplicable && <div className="flex font-semibold justify-between py-6 text-sm uppercase">
-                                        <span>Coupon Applied</span>
-                                        <span>{userCurrency?.currencySymbol} {deductable.toFixed(2)}</span>
-                                    </div>
-                                }
-                                <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                    <span>Total cost</span>
-                                    <span>{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
                                 </div>
-                                <button onClick={processPayment} className={clsx("btn btn-primary w-full", isPayDisabled && 'btn-disabled')} disabled={isPayDisabled}>
-                                    Pay
-                                </button>
-                                {isPayDisabled && (
-                                    <div className="text-xs text-red-500 mt-2 text-center">
-                                        {getPayDisabledReason()}
+                                <div className="p-6">
+                                    {pg && <PayMethodItem pgList={pg} selected={paymentMethod} setSelected={setPaymentMethod} currency={userCurrency} />}
+                                </div>
+                            </div>
+
+                            {/* Order Items Section */}
+                            <div className="bg-base-100 rounded-2xl shadow-sm border border-base-300/50 overflow-hidden">
+                                <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">3</div>
+                                            <h2 className="text-lg font-semibold text-base-content">Review Items</h2>
+                                        </div>
+                                        <span className="text-sm text-base-content/60">{cart.length} {cart.length === 1 ? 'item' : 'items'}</span>
                                     </div>
-                                )}
+                                </div>
+                                <div className="p-6 space-y-4">
+                                    {cartLoading ? (
+                                        <div className="h-24 flex items-center justify-center">
+                                            <span className="loading loading-spinner loading-lg text-primary"></span>
+                                        </div>
+                                    ) : (
+                                        cart?.map(item => <CartItem item={item} key={item._id} userCurrency={userCurrency} />)
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className='sm:px-10 py-10 md:hidden w-full'>
-                        <div id="summary" className=" flex flex-col justify-between bg-gray-200 px-8 pt-10 pb-16 sm:pb-10">
-                            <h1 className="font-semibold text-2xl border-b border-black pb-8">Order Summary</h1>
-                            <div className="flex justify-between mt-10 mb-5">
-                                <span className="font-semibold text-sm uppercase">Items {cart.length}</span>
-                                <span className="font-semibold text-sm">{userCurrency?.currencySymbol} {cartTotal}</span>
-                            </div>
-                            <div>
-                                <label className="font-medium inline-block mb-3 text-sm uppercase">
-                                    Shipping
-                                </label>
-                                <select className="block p-2 select select-bordered text-gray-600 w-full text-sm" id="shipping_mode_preference">
-                                    {
-                                        !selectedAddress && <option disabled>Select Your Address First</option>
-                                    }
-                                    {
-                                        selectedAddress && <option>{(currentShipping) ? `Standard shipping - ${currentShipping.shippingCharges}` : "Sorry Delivery Not Supported"}</option>
-                                    }
-                                </select>
-                            </div>
-                            <div className="py-10">
-                                <label
-                                    htmlFor="promo"
-                                    className="font-semibold inline-block mb-3 text-sm uppercase"
-                                >
-                                    Promo Code
-                                </label>
-                                <div className="join w-full">
-                                    <input
-                                        type="text"
-                                        id="promo"
-                                        placeholder="Enter your code"
-                                        className="input input-bordered w-full join-item"
-                                    />
 
-                                    <button className="btn btn-active join-item">
-                                        Apply
-                                    </button>
+                        {/* Order Summary - Right Side (Desktop) */}
+                        <div className="lg:w-[380px] hidden lg:block">
+                            <div className="sticky top-[100px]">
+                                <div className="bg-base-100 rounded-2xl shadow-lg border border-base-300/50 overflow-hidden">
+                                    <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-5">
+                                        <h2 className="text-xl font-bold text-primary-content">Order Summary</h2>
+                                    </div>
+                                    <div className="p-6 space-y-5">
+                                        {/* Items Count */}
+                                        <div className="flex justify-between items-center text-base-content">
+                                            <span className="text-base-content/70">Items ({cart.length})</span>
+                                            <span className="font-medium">{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
+                                        </div>
+
+                                        {/* Shipping */}
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-base-content/70 uppercase tracking-wide">Shipping</label>
+                                            <div className="bg-base-200/50 rounded-lg px-4 py-3 text-sm">
+                                                {!selectedAddress ? (
+                                                    <span className="text-base-content/50 italic">Select address first</span>
+                                                ) : currentShipping ? (
+                                                    <div className="flex justify-between items-center">
+                                                        <span>Standard Delivery</span>
+                                                        <span className="font-medium">
+                                                            {Number(currentShipping.shippingCharges.split(' ')[1]) > 0 
+                                                                ? currentShipping.shippingCharges 
+                                                                : <span className="text-success">Free</span>}
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-error text-xs">Delivery not available for this location</span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Promo Code */}
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-base-content/70 uppercase tracking-wide">Promo Code</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter code"
+                                                    className={clsx(
+                                                        "input input-bordered flex-1 bg-base-200/50 focus:bg-base-100",
+                                                        couponData?.couponApplicable && "border-success",
+                                                        couponData?.couponApplicable === false && "border-error"
+                                                    )}
+                                                    value={couponCode}
+                                                    onChange={e => setCouponCode(e.target.value)}
+                                                />
+                                                <button 
+                                                    className="btn btn-primary px-6"
+                                                    onClick={handleCouponApply}
+                                                >
+                                                    Apply
+                                                </button>
+                                            </div>
+                                            {couponData?.couponApplicable && (
+                                                <p className="text-success text-xs flex items-center gap-1">
+                                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                                                    Coupon applied successfully!
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* Divider */}
+                                        <div className="border-t border-base-300 my-2"></div>
+
+                                        {/* Price Breakdown */}
+                                        <div className="space-y-3 text-sm">
+                                            <div className="flex justify-between text-base-content/70">
+                                                <span>Subtotal</span>
+                                                <span>{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
+                                            </div>
+                                            <div className="flex justify-between text-base-content/70">
+                                                <span>Delivery</span>
+                                                <span>{currentShipping && Number(currentShipping.shippingCharges.split(' ')[1]) > 0 ? currentShipping.shippingCharges : "Free"}</span>
+                                            </div>
+                                            {currentTax.taxRate > 0 && (
+                                                <div className="flex justify-between text-base-content/70">
+                                                    <span>Tax ({currentTax.taxRate}%)</span>
+                                                    <span>{userCurrency?.currencySymbol} {(cartTotal * (currentTax.taxRate / 100)).toFixed(2)}</span>
+                                                </div>
+                                            )}
+                                            {couponData?.couponApplicable && (
+                                                <div className="flex justify-between text-success">
+                                                    <span>Discount</span>
+                                                    <span>- {userCurrency?.currencySymbol} {deductable.toFixed(2)}</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Divider */}
+                                        <div className="border-t border-base-300 my-2"></div>
+
+                                        {/* Total */}
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-lg font-bold text-base-content">Total</span>
+                                            <span className="text-2xl font-bold text-primary">{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
+                                        </div>
+
+                                        {/* Pay Button */}
+                                        <button 
+                                            onClick={processPayment} 
+                                            className={clsx(
+                                                "btn btn-primary w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200",
+                                                isPayDisabled && "btn-disabled opacity-50"
+                                            )} 
+                                            disabled={isPayDisabled}
+                                        >
+                                            {isPayDisabled ? "Complete All Steps" : `Pay ${userCurrency?.currencySymbol} ${orderTotal.toFixed(2)}`}
+                                        </button>
+                                        {isPayDisabled && (
+                                            <p className="text-xs text-center text-error mt-2">{getPayDisabledReason()}</p>
+                                        )}
+
+                                        {/* Security Badge */}
+                                        <div className="flex items-center justify-center gap-2 text-xs text-base-content/50 mt-4">
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>
+                                            <span>Secure SSL Encrypted Payment</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="border-t border-black mt-8">
-                                <div className="flex font-semibold justify-between py-6 text-sm uppercase">
-                                    <span>Sub Total</span>
-                                    <span>{userCurrency?.currencySymbol} {cartTotal}</span>
+                        </div>
+
+                        {/* Order Summary - Mobile (Bottom Sheet Style) */}
+                        <div className="lg:hidden">
+                            <div className="bg-base-100 rounded-2xl shadow-lg border border-base-300/50 overflow-hidden">
+                                <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-4">
+                                    <h2 className="text-lg font-bold text-primary-content">Order Summary</h2>
                                 </div>
-                                <div className="flex font-semibold justify-between py-6 text-sm uppercase">
-                                    <span>Delivery</span>
-                                    <span>{currentShipping && Number(currentShipping.shippingCharges.split(' ')[1]) > 0 ? currentShipping.shippingCharges : "Free"}</span>
+                                <div className="p-5 space-y-4">
+                                    {/* Items Count */}
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-base-content/70">Items ({cart.length})</span>
+                                        <span className="font-medium">{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
+                                    </div>
+
+                                    {/* Shipping Info */}
+                                    <div className="bg-base-200/50 rounded-lg px-4 py-3 text-sm">
+                                        {!selectedAddress ? (
+                                            <span className="text-base-content/50 italic">Select address first</span>
+                                        ) : currentShipping ? (
+                                            <div className="flex justify-between items-center">
+                                                <span>Shipping</span>
+                                                <span className="font-medium">
+                                                    {Number(currentShipping.shippingCharges.split(' ')[1]) > 0 
+                                                        ? currentShipping.shippingCharges 
+                                                        : <span className="text-success">Free</span>}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <span className="text-error text-xs">Delivery not available</span>
+                                        )}
+                                    </div>
+
+                                    {/* Promo Code */}
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Promo code"
+                                            className={clsx(
+                                                "input input-bordered input-sm flex-1 bg-base-200/50",
+                                                couponData?.couponApplicable && "border-success",
+                                                couponData?.couponApplicable === false && "border-error"
+                                            )}
+                                            value={couponCode}
+                                            onChange={e => setCouponCode(e.target.value)}
+                                        />
+                                        <button className="btn btn-primary btn-sm" onClick={handleCouponApply}>Apply</button>
+                                    </div>
+
+                                    <div className="border-t border-base-300 pt-3 space-y-2 text-sm">
+                                        <div className="flex justify-between text-base-content/70">
+                                            <span>Subtotal</span>
+                                            <span>{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex justify-between text-base-content/70">
+                                            <span>Delivery</span>
+                                            <span>{currentShipping && Number(currentShipping.shippingCharges.split(' ')[1]) > 0 ? currentShipping.shippingCharges : "Free"}</span>
+                                        </div>
+                                        {currentTax.taxRate > 0 && (
+                                            <div className="flex justify-between text-base-content/70">
+                                                <span>Tax</span>
+                                                <span>{userCurrency?.currencySymbol} {(cartTotal * (currentTax.taxRate / 100)).toFixed(2)}</span>
+                                            </div>
+                                        )}
+                                        {couponData?.couponApplicable && (
+                                            <div className="flex justify-between text-success">
+                                                <span>Discount</span>
+                                                <span>- {userCurrency?.currencySymbol} {deductable.toFixed(2)}</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Total & Pay */}
+                                    <div className="border-t border-base-300 pt-4">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <span className="font-bold text-base-content">Total</span>
+                                            <span className="text-xl font-bold text-primary">{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
+                                        </div>
+                                        <button 
+                                            onClick={processPayment} 
+                                            className={clsx("btn btn-primary w-full", isPayDisabled && "btn-disabled")} 
+                                            disabled={isPayDisabled}
+                                        >
+                                            {isPayDisabled ? "Complete All Steps" : "Pay Now"}
+                                        </button>
+                                        {isPayDisabled && (
+                                            <p className="text-xs text-center text-error mt-2">{getPayDisabledReason()}</p>
+                                        )}
+                                    </div>
                                 </div>
-                                {
-                                    <div className="flex font-semibold justify-between py-6 text-sm uppercase">
-                                        <span>Taxation</span>
-                                        <span>{userCurrency?.currencySymbol} {cartTotal * (currentTax.taxRate / 100)}</span>
-                                    </div>
-                                }
-                                {
-                                    couponData?.couponApplicable && <div className="flex font-semibold justify-between py-6 text-sm uppercase">
-                                        <span>Coupon Applied</span>
-                                        <span>{userCurrency?.currencySymbol} {deductable.toFixed(2)}</span>
-                                    </div>
-                                }
-                                <div className="flex font-semibold justify-between py-6 text-sm uppercase">
-                                    <span>Total cost</span>
-                                    <span>{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
-                                </div>
-                                <button onClick={processPayment} className={clsx("btn btn-primary w-full", isPayDisabled && 'btn-disabled')} disabled={isPayDisabled}>
-                                    Pay
-                                </button>
-                                {isPayDisabled && (
-                                    <div className="text-xs text-red-500 mt-2 text-center">
-                                        {getPayDisabledReason()}
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>

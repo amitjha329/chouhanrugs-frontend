@@ -3,38 +3,66 @@
 import deleteProductFromCart from '@/backend/serverActions/deleteProductFromCart'
 import CartDataModel from '@/types/CartDataModel'
 import onPageNotifications from '@/utils/onPageNotifications'
-import React from 'react'
-import { BsTrash } from 'react-icons/bs'
+import React, { useState } from 'react'
+import { HiOutlineTrash } from 'react-icons/hi2'
 
 const DeleteFromCartLg = ({ item }: { item: CartDataModel }) => {
+    const [isDeleting, setIsDeleting] = useState(false)
+
     const removeCartItem = async (id: string) => {
+        setIsDeleting(true)
         await deleteProductFromCart(id).then((res) => {
             onPageNotifications("success", "Product Deleted")
             window.location.reload()
         }).catch(err => {
             onPageNotifications("error", "Something Went Wrong.")
+            setIsDeleting(false)
         })
     }
+
     return (
-        <div className='hidden sm:flex shrink items-center justify-center w-20 sm:px-[1.875rem] sm:py-16 btn btn-error btn-outline rounded-none' onClick={_ => { removeCartItem(item._id) }}>
-            <BsTrash className='w-5 h-5' />
-        </div>
+        <button 
+            className="btn btn-ghost btn-sm text-error hover:bg-error/10 gap-2"
+            onClick={() => removeCartItem(item._id)}
+            disabled={isDeleting}
+        >
+            {isDeleting ? (
+                <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+                <HiOutlineTrash className="w-5 h-5" />
+            )}
+            <span className="hidden sm:inline">Remove</span>
+        </button>
     )
 }
 
 const DeleteFromCartSm = ({ item }: { item: CartDataModel }) => {
+    const [isDeleting, setIsDeleting] = useState(false)
+
     const removeCartItem = async (id: string) => {
+        setIsDeleting(true)
         await deleteProductFromCart(id).then((res) => {
             onPageNotifications("success", "Product Deleted")
             window.location.reload()
         }).catch(err => {
             onPageNotifications("error", "Something Went Wrong.")
+            setIsDeleting(false)
         })
     }
+
     return (
-        <div className='hidden sm:flex shrink items-center justify-center w-20 sm:px-[1.875rem] sm:py-16 btn btn-error btn-outline rounded-none' onClick={_ => { removeCartItem(item._id) }}>
-            <BsTrash className='w-5 h-5' />
-        </div>
+        <button 
+            className="btn btn-ghost btn-sm text-error hover:bg-error/10"
+            onClick={() => removeCartItem(item._id)}
+            disabled={isDeleting}
+            title="Remove from cart"
+        >
+            {isDeleting ? (
+                <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+                <HiOutlineTrash className="w-5 h-5" />
+            )}
+        </button>
     )
 }
 

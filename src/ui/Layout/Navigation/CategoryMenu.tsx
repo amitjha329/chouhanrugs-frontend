@@ -18,7 +18,7 @@ const CategoryMenu = async () => {
         <nav className='bg-secondary text-secondary-content font-[500] flex items-center justify-center gap-10 py-5 sticky top-0 z-50' id='category_links'>
             {
                 categories.map(category => {
-                    return category.popular && <CategoryMenuItem
+                    return category.active && category.popular && <CategoryMenuItem
                         key={category._id}
                         label={category.name}
                         href={'/products/category/' + category.name}

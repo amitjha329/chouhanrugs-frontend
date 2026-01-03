@@ -2,7 +2,7 @@
 'use client'
 import React from 'react'
 import Image from 'next/image'
-import { BsExclamation, BsTrash } from 'react-icons/bs'
+import { BsExclamation } from 'react-icons/bs'
 import { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CartDataModel from '@/types/CartDataModel'
 import IncrementDecrement from './IncrementDecrement'
@@ -35,123 +35,108 @@ const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurre
         return priceInitial * (userCurrency?.exchangeRates ?? 1) * item.quantity
     }
 
-    // useEffect(() => {
-    //     productSubtotalItem = quantity * item.cartProduct[0].productPrimaryImageIndex
-    // }, [quantity])
-
     return (
         <>
-            {item.cartProduct[0] ? (                <div className="flex flex-col sm:flex-row w-full gap-3 sm:gap-6 items-stretch bg-base-100 rounded-xl shadow-sm p-3 sm:p-6 border border-base-300">
-                    {/* Product Image & Name Row */}
-                    <div className="flex flex-row items-start gap-3 w-full sm:w-2/5">
-                        <a href={`/products/${item.cartProduct[0].productURL}`} className="flex-shrink-0 flex items-center justify-center bg-base-200 rounded-lg overflow-hidden aspect-square min-h-[140px] max-h-[140px] w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40">
-                            <Image
-                                height={140}
-                                width={140}
-                                quality={10}
-                                className="object-contain w-full h-full"
-                                src={item.cartProduct[0].images[item.cartProduct[0].productPrimaryImageIndex]}
-                                alt={item.cartProduct[0].productName || ''}
-                            />
-                        </a>
-                        <div className="flex flex-col flex-1 min-w-0 justify-center">
-                            <a href={`/products/${item.cartProduct[0].productURL}`} className="font-medium text-xs text-gray-800 hover:underline line-clamp-2 md:line-clamp-3 lg:line-clamp-none" style={{display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', WebkitLineClamp: 3}}>
+            {item.cartProduct[0] ? (
+                <div className="group flex flex-col sm:flex-row gap-4 p-4 bg-base-100 rounded-xl border border-base-300/50 hover:border-primary/30 hover:shadow-md transition-all duration-200">
+                    {/* Product Image */}
+                    <a 
+                        href={`/products/${item.cartProduct[0].productURL}`} 
+                        className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-base-200 rounded-lg overflow-hidden"
+                    >
+                        <Image
+                            height={128}
+                            width={128}
+                            quality={75}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            src={item.cartProduct[0].images[item.cartProduct[0].productPrimaryImageIndex]}
+                            alt={item.cartProduct[0].productName || ''}
+                        />
+                    </a>
+
+                    {/* Product Details */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                        <div>
+                            <a 
+                                href={`/products/${item.cartProduct[0].productURL}`} 
+                                className="font-semibold text-base-content hover:text-primary transition-colors line-clamp-2"
+                            >
                                 {item.cartProduct[0].productName}
                             </a>
-                            <span className="opacity-80 text-xs sm:text-sm truncate">Brand: {item.cartProduct[0].productBrand}</span>
-                        </div>
-                    </div>
-                    {/* Product Info & Controls */}
-                    <div className="flex flex-col flex-1 min-w-0 justify-between mt-2 sm:mt-0 sm:pl-2 md:pl-4">
-                        <div className="flex flex-wrap gap-2 mt-1 text-xs sm:text-sm md:text-base text-gray-500">
-                            {item.variationCode && item.variationCode !== 'customSize' && (
-                                <>
-                                    {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationSize && (
-                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Size: {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationSize}</span>
-                                    )}
-                                    {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationColor && (
-                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Color: {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationColor}</span>
-                                    )}
-                                </>
-                            )}
-                            {item.variationCode === 'customSize' && (
-                                <div className='flex flex-col gap-1'>
-                                    <div className='flex gap-2'>
-                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Custom Size</span>
-                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Shape: {item.customSize?.shape}</span>
+                            <p className="text-sm text-base-content/60 mt-1">
+                                Brand: {item.cartProduct[0].productBrand}
+                            </p>
+
+                            {/* Variation Details */}
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {item.variationCode && item.variationCode !== 'customSize' && (
+                                    <>
+                                        {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationSize && (
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                                Size: {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationSize}
+                                            </span>
+                                        )}
+                                        {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationColor && (
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-secondary/10 text-secondary">
+                                                Color: {item.cartProduct[0].variations.find(varItem => varItem.variationCode == item.variationCode)?.variationColor}
+                                            </span>
+                                        )}
+                                    </>
+                                )}
+                                {item.variationCode === 'customSize' && (
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent">
+                                            Custom Size
+                                        </span>
+                                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-base-200 text-base-content/70">
+                                            Shape: {item.customSize?.shape}
+                                        </span>
+                                        {item.customSize?.shape === 'Round' && (
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-base-200 text-base-content/70">
+                                                Ø {item.customSize?.dimensions.diameter?.toFixed(2)}
+                                            </span>
+                                        )}
+                                        {(item.customSize?.shape === 'Rectangle' || item.customSize?.shape === 'Runner') && (
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-base-200 text-base-content/70">
+                                                {item.customSize?.dimensions.length?.toFixed(2)} × {item.customSize?.dimensions.width?.toFixed(2)}
+                                            </span>
+                                        )}
+                                        {item.customSize?.shape === 'Square' && (
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-base-200 text-base-content/70">
+                                                {item.customSize?.dimensions.length?.toFixed(2)} × {item.customSize?.dimensions.length?.toFixed(2)}
+                                            </span>
+                                        )}
                                     </div>
-                                    {item.customSize?.shape === 'Round' && (
-                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Diameter: {item.customSize?.dimensions.diameter?.toFixed(2)}</span>
-                                    )}
-                                    {(item.customSize?.shape === 'Rectangle' || item.customSize?.shape === 'Runner') && (
-                                        <>
-                                            <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Length: {item.customSize?.dimensions.length?.toFixed(2)}</span>
-                                            <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Width: {item.customSize?.dimensions.width?.toFixed(2)}</span>
-                                        </>
-                                    )}
-                                    {item.customSize?.shape === 'Square' && (
-                                        <span className="bg-gray-100 px-2 py-1 rounded text-xs sm:text-sm md:text-base">Size: {item.customSize?.dimensions.length?.toFixed(2)}</span>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                        {/* Price & Controls */}
-                        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mt-3">
-                            <div className="flex items-center gap-2">
-                                {/* Custom increment/decrement UI to match GuestCartItemClient */}
-                                <button className="px-2 py-1 text-lg font-bold text-gray-600 bg-gray-100 rounded-l hover:bg-gray-200 transition" onClick={() => IncrementDecrement({item, delta: -1})} aria-label="Decrease quantity">-</button>
-                                <span className="px-3 py-1 text-base sm:text-lg md:text-xl font-medium bg-base-100 border border-base-300 rounded min-w-[2.5rem] text-center">{item.quantity}</span>
-                                <button className="px-2 py-1 text-lg font-bold text-gray-600 bg-gray-100 rounded-r hover:bg-gray-200 transition" onClick={() => IncrementDecrement({item, delta: 1})} aria-label="Increase quantity">+</button>
+                                )}
                             </div>
-                            <div className="flex flex-row gap-3 items-center justify-between w-full sm:w-auto">
-                                <span className="font-semibold text-sm sm:text-base md:text-lg text-gray-700">{userCurrency?.currencySymbol} {calculateProductPrice().toFixed(2)}</span>
-                                <button className="ml-2 px-3 py-1 text-xs sm:text-sm md:text-base rounded bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition" onClick={() => DeleteFromCartLg({item})} title="Remove">Remove</button>
+                        </div>
+
+                        {/* Price, Quantity & Actions */}
+                        <div className="flex flex-wrap items-center justify-between gap-4 mt-4 pt-3 border-t border-base-300/50">
+                            <div className="flex items-center gap-4">
+                                <IncrementDecrement item={item} />
+                                <DeleteFromCartSm item={item} />
+                            </div>
+                            <div className="text-right">
+                                <span className="text-lg font-bold text-base-content">
+                                    {userCurrency?.currencySymbol} {calculateProductPrice().toFixed(2)}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             ) : (
-                <div className="flex items-center justify-between hover:bg-gray-100 mb-2 ">
-                    <div className="flex">
-                        {" "}
-                        {/* product */}
-                        <div className="w-fit">
-                            <BsExclamation
-                                height={96}
-                                width={96}
-                                className="sm:h-24 sm:w-24 object-scale-down w-20 h-20"
-                            />
-                        </div>
-                        <div className="flex flex-col justify-start ml-4 flex-grow">
-                            <span className="font-bold text-sm max-sm:text-xs max-w-[250px]">Product no Longer Available</span>
-                        </div>
+                <div className="flex items-center gap-4 p-4 bg-error/5 border border-error/20 rounded-xl">
+                    <div className="w-16 h-16 bg-error/10 rounded-lg flex items-center justify-center">
+                        <BsExclamation className="w-8 h-8 text-error" />
                     </div>
-                    <div className="flex flex-col-reverse sm:flex-row items-center gap-3 justify-center">
-                        <svg
-                            className="fill-current text-gray-600 w-3 cursor-pointer"
-                            viewBox="0 0 448 512"
-                            // onClick={_ => { }}
-                        >
-                            <path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
-                        </svg>
-                        <input
-                            className="mx-2 input input-sm input-bordered border text-center w-16"
-                            type="text"
-                            value={item.quantity}
-                            readOnly
-                        />
-                        <svg
-                            className="fill-current text-gray-600 w-3 cursor-pointer"
-                            viewBox="0 0 448 512"
-                            // onClick={_ => { }}
-                        >
-                            <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
-                        </svg>
+                    <div className="flex-1">
+                        <p className="font-medium text-error">Product No Longer Available</p>
+                        <p className="text-sm text-base-content/60">This item has been removed from your cart</p>
                     </div>
                     <DeleteFromCartSm item={item} />
                 </div>
             )}
-            <div className='divider'></div>
         </>
     )
 }

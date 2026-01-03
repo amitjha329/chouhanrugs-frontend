@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useSession } from 'next-auth/react'
+import { HiOutlineLockClosed } from 'react-icons/hi2'
 
 const GoToCheckoutBtn = ({ isDisabled }: { isDisabled: boolean }) => {
     const router = useRouter()
@@ -9,16 +10,17 @@ const GoToCheckoutBtn = ({ isDisabled }: { isDisabled: boolean }) => {
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        // if (session?.user) {
-            router.push('/cart/checkout');
-        // } else {
-        //     router.push('/signin?cb=/cart/checkout');
-        // }
+        router.push('/cart/checkout');
     }
 
     return (
-        <button className="w-full sm:w-1/2 lg:w-1/4 btn btn-primary mt-4" onClick={handleClick} disabled={isDisabled}>
-            Proceed To Checkout
+        <button 
+            className="w-full btn btn-primary btn-lg gap-2 mt-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200" 
+            onClick={handleClick} 
+            disabled={isDisabled}
+        >
+            <HiOutlineLockClosed className="w-5 h-5" />
+            Proceed to Checkout
         </button>
     )
 }
