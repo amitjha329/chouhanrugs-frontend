@@ -64,7 +64,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 email,
                 tkId,
                 code,
-                redirectTo: window.location.protocol + "//" + window.location.host + searchParams.get('cb') ?? '/',
+                redirectTo: window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/'),
                 redirect: false
             });
 
@@ -73,7 +73,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 setIsLoading(false);
             } else if (result?.ok) {
                 // Redirect will be handled by NextAuth
-                window.location.href = window.location.protocol + "//" + window.location.host + searchParams.get('cb') ?? '/';
+                window.location.href = window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/');
             } else {
                 setError('Sign-in failed. Please try again.');
                 setIsLoading(false);
@@ -100,7 +100,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 {
                     !isOTPForm && <>
                         <div className="flex flex-col items-center">
-                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { signIn("google", { redirectTo:  window.location.protocol + "//" + window.location.host + searchParams.get('cb') ?? '/' }) }}>
+                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { signIn("google", { redirectTo:  window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/') }) }}>
                                 <div className="bg-white p-2 rounded-full">
                                     <svg className="w-4" viewBox="0 0 533.5 544.3">
                                         <path
