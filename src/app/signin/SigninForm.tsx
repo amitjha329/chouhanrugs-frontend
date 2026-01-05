@@ -18,26 +18,26 @@ const SigninForm = ({ siteTitle }: propTypes) => {
     const [code, setCode] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
-    
+
     const handleSignInUsingEmail = useCallback(async () => {
         if (isLoading) return; // Prevent duplicate calls
         if (!email || !email.includes('@')) {
             setError('Please enter a valid email address');
             return;
         }
-        
+
         setIsLoading(true);
         setError('');
-        
+
         try {
             const result = await sendOtp({ to: email });
-            
+
             if (!result) {
                 setError('Failed to send OTP. Please check your email address or try again later.');
                 setIsLoading(false);
                 return;
             }
-            
+
             setTkid(result);
             setIsOTPForm(true);
             setError('');
@@ -55,25 +55,25 @@ const SigninForm = ({ siteTitle }: propTypes) => {
             setError('Please enter a valid 6-digit OTP');
             return;
         }
-        
+
         setIsLoading(true);
         setError('');
-        
+
         try {
-            const result = await signIn('credentials', { 
-                email, 
-                tkId, 
-                code, 
-                redirectTo: window.location.protocol+ "//"+window.location.host+searchParams.get('cb') ?? undefined,
+            const result = await signIn('credentials', {
+                email,
+                tkId,
+                code,
+                redirectTo: window.location.protocol + "//" + window.location.host + searchParams.get('cb') ?? '/',
                 redirect: false
             });
-            
+
             if (result?.error) {
                 setError('Invalid OTP. Please check and try again.');
                 setIsLoading(false);
             } else if (result?.ok) {
                 // Redirect will be handled by NextAuth
-                window.location.href = window.location.protocol+ "//"+window.location.host+searchParams.get('cb') ?? '/';
+                window.location.href = window.location.protocol + "//" + window.location.host + searchParams.get('cb') ?? '/';
             } else {
                 setError('Sign-in failed. Please try again.');
                 setIsLoading(false);
@@ -100,7 +100,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 {
                     !isOTPForm && <>
                         <div className="flex flex-col items-center">
-                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { signIn("google", { redirectTo: searchParams.get('cb') ?? undefined }) }}>
+                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { signIn("google", { redirectTo:  window.location.protocol + "//" + window.location.host + searchParams.get('cb') ?? '/' }) }}>
                                 <div className="bg-white p-2 rounded-full">
                                     <svg className="w-4" viewBox="0 0 533.5 544.3">
                                         <path
@@ -154,8 +154,8 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                                 onChange={e => setPassword(e.currentTarget.value)}
                                 placeholder="Password"
                             /> */}
-                            <button 
-                                className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed" 
+                            <button
+                                className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={_ => handleSignInUsingEmail()}
                                 disabled={isLoading}
                             >
@@ -181,25 +181,25 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                             error && <p className='mb-6 text-red-600 text-opacity-70 font-semibold text-center'>{error}</p>
                         }
                         <p className='mb-6 text-primary text-opacity-70 text-center'>An OTP has been sent to {email} for verification. Please check your <b>inbox</b> or <b>spam/junk</b> folder.</p>
-                        <input 
-                            className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white' 
-                            maxLength={6} 
-                            type='text' 
-                            placeholder='OTP: XXXXXX' 
-                            onChange={e => setCode(e.currentTarget.value)} 
+                        <input
+                            className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white'
+                            maxLength={6}
+                            type='text'
+                            placeholder='OTP: XXXXXX'
+                            onChange={e => setCode(e.currentTarget.value)}
                             onKeyDown={onKeyPress}
                             disabled={isLoading}
                         />
-                        <button 
-                            className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed" 
+                        <button
+                            className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={_ => onReady()}
                             disabled={isLoading}
                         >
                             <FaSignInAlt className="w-6 h-6 -ml-2" />
                             <span className="ml-3">{isLoading ? 'Verifying...' : 'Verify'}</span>
                         </button>
-                        <button 
-                            className="mt-3 text-sm text-primary underline hover:text-secondary transition-colors" 
+                        <button
+                            className="mt-3 text-sm text-primary underline hover:text-secondary transition-colors"
                             onClick={() => {
                                 setIsOTPForm(false);
                                 setCode('');
