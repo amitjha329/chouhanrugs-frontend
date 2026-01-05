@@ -16,21 +16,74 @@ const SigninForm = ({ siteTitle }: propTypes) => {
     const [tkId, setTkid] = React.useState("")
     const [isOTPForm, setIsOTPForm] = useState<boolean>(false)
     const [code, setCode] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    
     const handleSignInUsingEmail = useCallback(async () => {
-        // const result = await signIn("email", { email, redirect: false })
-        const result = await sendOtp({ to: email })
-        if (result) {
-            console.log("Enable to Send Email")
+        if (isLoading) return; // Prevent duplicate calls
+        if (!email || !email.includes('@')) {
+            setError('Please enter a valid email address');
+            return;
         }
-        if (result) {
-            setTkid(result)
-            setIsOTPForm(true)
+        
+        setIsLoading(true);
+        setError('');
+        
+        try {
+            const result = await sendOtp({ to: email });
+            
+            if (!result) {
+                setError('Failed to send OTP. Please check your email address or try again later.');
+                setIsLoading(false);
+                return;
+            }
+            
+            setTkid(result);
+            setIsOTPForm(true);
+            setError('');
+        } catch (err) {
+            setError('An error occurred while sending OTP. Please try again.');
+            console.error('Error sending OTP:', err);
+        } finally {
+            setIsLoading(false);
         }
-    }, [email])
+    }, [email, isLoading]);
 
-    const onReady = useCallback(() => {
-        signIn('credentials', { email, tkId, code, redirectTo: searchParams.get('cb') ?? undefined }).then(console.log).catch(console.log)
-    }, [code, email]);
+    const onReady = useCallback(async () => {
+        if (isLoading) return; // Prevent duplicate calls
+        if (!code || code.length !== 6) {
+            setError('Please enter a valid 6-digit OTP');
+            return;
+        }
+        
+        setIsLoading(true);
+        setError('');
+        
+        try {
+            const result = await signIn('credentials', { 
+                email, 
+                tkId, 
+                code, 
+                redirectTo: searchParams.get('cb') ?? undefined,
+                redirect: false
+            });
+            
+            if (result?.error) {
+                setError('Invalid OTP. Please check and try again.');
+                setIsLoading(false);
+            } else if (result?.ok) {
+                // Redirect will be handled by NextAuth
+                window.location.href = searchParams.get('cb') ?? '/';
+            } else {
+                setError('Sign-in failed. Please try again.');
+                setIsLoading(false);
+            }
+        } catch (err) {
+            setError('An error occurred during sign-in. Please try again.');
+            console.error('Error during sign-in:', err);
+            setIsLoading(false);
+        }
+    }, [code, email, tkId, searchParams, isLoading]);
 
     const onKeyPress = useCallback(
         (e: KeyboardEvent) => {
@@ -83,13 +136,17 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                                 defaultValue={email}
                                 onChange={e => setEmail(e.currentTarget.value)}
                                 placeholder="Email"
+                                disabled={isLoading}
                             />
-                            <p className="mt-6 max-sm:mb-6 text-xs text-center">
-                                <b className='text-red-600'>Note:</b> An OTP will be sent to this email address for verification. Please check your <b>inbox</b> or <b>spam/junk</b> folder.
-                            </p>
                             {
                                 searchParams.get('error') && <p className='mb-6 text-red-600 text-opacity-70 font-semibold'>Wrong OTP Was Provided, Please Retry Sign In.</p>
                             }
+                            {
+                                error && <p className='mb-6 text-red-600 text-opacity-70 font-semibold'>{error}</p>
+                            }
+                            <p className="mt-6 max-sm:mb-6 text-xs text-center">
+                                <b className='text-red-600'>Note:</b> An OTP will be sent to this email address for verification. Please check your <b>inbox</b> or <b>spam/junk</b> folder.
+                            </p>
                             {/* <input
                                 className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                                 type="password"
@@ -97,9 +154,13 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                                 onChange={e => setPassword(e.currentTarget.value)}
                                 placeholder="Password"
                             /> */}
-                            <button className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none" onClick={_ => handleSignInUsingEmail()}>
+                            <button 
+                                className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed" 
+                                onClick={_ => handleSignInUsingEmail()}
+                                disabled={isLoading}
+                            >
                                 <FaSignInAlt className="w-6 h-6 -ml-2" />
-                                <span className="ml-3">Sign In</span>
+                                <span className="ml-3">{isLoading ? 'Sending OTP...' : 'Sign In'}</span>
                             </button>
                             <p className="mt-6 max-sm:mb-6 text-xs text-gray-600 text-center">
                                 I agree to abide by {siteTitle}&nbsp;
@@ -116,11 +177,37 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 }
                 {
                     isOTPForm && <div className='mx-auto max-w-xs sm:max-w-sm '>
+                        {
+                            error && <p className='mb-6 text-red-600 text-opacity-70 font-semibold text-center'>{error}</p>
+                        }
                         <p className='mb-6 text-primary text-opacity-70 text-center'>An OTP has been sent to {email} for verification. Please check your <b>inbox</b> or <b>spam/junk</b> folder.</p>
-                        <input className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white' maxLength={6} type='text' placeholder='OTP: XXXXXX' onChange={e => setCode(e.currentTarget.value)} onKeyDown={onKeyPress} />
-                        <button className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none" onClick={_ => onReady()}>
+                        <input 
+                            className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white' 
+                            maxLength={6} 
+                            type='text' 
+                            placeholder='OTP: XXXXXX' 
+                            onChange={e => setCode(e.currentTarget.value)} 
+                            onKeyDown={onKeyPress}
+                            disabled={isLoading}
+                        />
+                        <button 
+                            className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed" 
+                            onClick={_ => onReady()}
+                            disabled={isLoading}
+                        >
                             <FaSignInAlt className="w-6 h-6 -ml-2" />
-                            <span className="ml-3">Verify</span>
+                            <span className="ml-3">{isLoading ? 'Verifying...' : 'Verify'}</span>
+                        </button>
+                        <button 
+                            className="mt-3 text-sm text-primary underline hover:text-secondary transition-colors" 
+                            onClick={() => {
+                                setIsOTPForm(false);
+                                setCode('');
+                                setError('');
+                            }}
+                            disabled={isLoading}
+                        >
+                            ← Back to email
                         </button>
                     </div>
                 }
