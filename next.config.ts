@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
   images: {
     // Optimized quality array - fewer options means better caching
     // 75 is default, 85 for high quality, 50 for thumbnails
-    qualities: [10, 40, 50, 60, 75, 85, 90],
+    qualities: [10, 40, 50, 60, 75, 85, 90, 95, 100],
     // AVIF has better compression than WebP (20% smaller)
     formats: ['image/avif', 'image/webp'],
     // Optimize device sizes for common breakpoints
