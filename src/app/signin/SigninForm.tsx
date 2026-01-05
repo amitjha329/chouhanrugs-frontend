@@ -64,7 +64,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 email, 
                 tkId, 
                 code, 
-                redirectTo: searchParams.get('cb') ?? undefined,
+                redirectTo: window.location.protocol+ "//"+window.location.host+searchParams.get('cb') ?? undefined,
                 redirect: false
             });
             
@@ -73,7 +73,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 setIsLoading(false);
             } else if (result?.ok) {
                 // Redirect will be handled by NextAuth
-                window.location.href = searchParams.get('cb') ?? '/';
+                window.location.href = window.location.protocol+ "//"+window.location.host+searchParams.get('cb') ?? '/';
             } else {
                 setError('Sign-in failed. Please try again.');
                 setIsLoading(false);

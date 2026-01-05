@@ -17,10 +17,17 @@ const MobileNavigation = async () => {
                     <Logo logoClass='text-accent' taglineClass='text-[8px] text-center' />
                     <div className='flex items-center gap-5'>
                         <Link href="/user/wishlist"><Image src="/vector/Heart.svg" alt="My Wishlist" width={20} height={20} /></Link>
-                        <Link href="/user/profile" className='flex items-center flex-col justify-center'>
-                            <Image src="/vector/UserIcon.svg" alt="My Profile" width={20} height={20} />
-                            <span className='text-xs'>{session?.user?.name?.split(' ')[0].slice(0,4) ?? ""}</span>
-                        </Link>
+                        {session?.user ? (
+                            <Link href="/user/profile" className='flex items-center flex-col justify-center'>
+                                <Image src="/vector/UserIcon.svg" alt="My Profile" width={20} height={20} />
+                                <span className='text-xs'>{session?.user?.name?.split(' ')[0].slice(0,4) ?? ""}</span>
+                            </Link>
+                        ) : (
+                            <Link href="/signin" className='flex items-center flex-col justify-center'>
+                                <Image src="/vector/UserIcon.svg" alt="Login" width={20} height={20} />
+                                <span className='text-xs'>Login</span>
+                            </Link>
+                        )}
                         <Link href="/cart"><HeaderCartItemMobile /></Link>
                     </div>
                 </div>                <div className='pb-4 pt-5 px-3'>

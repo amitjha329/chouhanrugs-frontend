@@ -5,37 +5,34 @@ import type { NextRequest } from "next/server"
 
 const { auth } = NextAuth(authConfig)
 
+// Protected routes that require authentication
+const protectedRoutes = ['/user', '/order']
+
 // Proxy to add pathname header for all requests
-export function proxy(req: NextRequest) {
-    const response = NextResponse.next()
-    response.headers.set('x-pathname', req.nextUrl.pathname)
+function addPathnameHeader(response: NextResponse, pathname: string) {
+    response.headers.set('x-pathname', pathname)
     return response
 }
 
-// Auth proxy wrapper
+// Auth proxy wrapper - checks authentication for protected routes
 const authProxy = auth((req) => {
-    const token = req.auth
-    const response = token ? NextResponse.next() : NextResponse.redirect(new URL(`/signin?cb=${req.nextUrl.pathname}`, req.url))
+    const { auth: session, nextUrl } = req
+    const isProtectedRoute = protectedRoutes.some(route => nextUrl.pathname.startsWith(route))
     
-    // Add pathname to headers for use in layout
-    response.headers.set('x-pathname', req.nextUrl.pathname)
-    
-    return response
-})
-
-// Export the appropriate proxy based on the route
-export default function combinedProxy(req: NextRequest) {
-    // Check if the route matches auth-protected routes
-    const authRoutes = ['/user', '/order']
-    const isAuthRoute = authRoutes.some(route => req.nextUrl.pathname.startsWith(route))
-    
-    if (isAuthRoute) {
-        return authProxy(req, {} as any)
+    // Redirect to signin if accessing protected route without authentication
+    if (isProtectedRoute && !session) {
+        const signinUrl = new URL('/signin', req.url)
+        signinUrl.searchParams.set('cb', nextUrl.pathname)
+        return NextResponse.redirect(signinUrl)
     }
     
-    // For all other routes, just add the pathname header
-    return proxy(req)
-}
+    // Add pathname to headers for use in layout
+    const response = NextResponse.next()
+    return addPathnameHeader(response, nextUrl.pathname)
+})
+
+// Export the auth proxy as the default proxy handler
+export default authProxy
 
 export const config = {
     matcher: [

@@ -13,7 +13,7 @@ const UserOrdersPage = async () => {
     const session = await auth()
     
     if (!session?.user || !(session.user as { id: string }).id) {
-        redirect('/signin?callbackUrl=/user/orders')
+        redirect('/signin?cb=/user/orders')
     }
     
     const orderItems = await getUserOrdersList((session.user as { id: string }).id)
