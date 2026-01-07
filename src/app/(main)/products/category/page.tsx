@@ -49,7 +49,7 @@ const MobileCategoryListPage = async () => {
                     <div className='flex flex-row flex-wrap gap-5 items-center justify-center pt-4 pb-10'>
                         {categories.map(category => {
                             return (
-                                <Link key={category._id} href={`/products/category/${category.name}`}>
+                                category.active && <Link key={category._id} href={`/products/category/${category.name}`}>
                                     <div className="card rounded-none w-[150px] carousel-item flex flex-col items-center shadow-md border-[1px] border-gray-200">
                                         <div className="bg-[#fcfaf6] min-w-full">
                                             {
