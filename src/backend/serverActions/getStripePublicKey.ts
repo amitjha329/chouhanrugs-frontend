@@ -1,8 +1,10 @@
 'use server'
+import { connection } from 'next/server'
 
 import clientPromise from "@/lib/clientPromise"
 
 export default async function getStripePublicKey(): Promise<string | undefined> {
+    await connection()
     const mongoClient = await clientPromise
     try {
         const collectionBranches = mongoClient.db(process.env.MONGODB_DB).collection("paymentGateway")

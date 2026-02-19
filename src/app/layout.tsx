@@ -1,14 +1,14 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, Suspense } from 'react'
 import '@/styles/globals.scss'
 import { Poppins } from 'next/font/google'
 import clsx from 'clsx'
 import NextTopLoader from 'nextjs-toploader'
 import { Metadata, Viewport } from 'next'
+import { connection } from 'next/server'
 import FloatingButtonChat from '@/ui/HomePage/FlotingButtonChat'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
 import GlobalPopupWrapper from '@/ui/GlobalPopup/GlobalPopupWrapper'
-import { headers } from 'next/headers'
 import Script from 'next/script'
 
 // Optimized font loading: Only load weights actually used in the app
@@ -31,10 +31,7 @@ export const metadata: Metadata = {
 }
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
-    const headersList = await headers()
-    const pathname = headersList.get('x-pathname') || ''
-    const isAuthPage = pathname === '/signin' || pathname === '/login'
-    
+    await connection()
     const [siteData, googleTagData] = await Promise.all([getSiteData(), getAnalyticsData("GTM")])
     return (
         <html>
@@ -91,7 +88,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     zIndex={1600} />
                 {children}
                 <FloatingButtonChat siteData={siteData} />
-                {!isAuthPage && <GlobalPopupWrapper />}
+                {/* GlobalPopupWrapper handles auth page check internally, wrapped in Suspense for DB fetch */}
+                <Suspense fallback={null}>
+                    <GlobalPopupWrapper />
+                </Suspense>
             </body>
         </html>
     )

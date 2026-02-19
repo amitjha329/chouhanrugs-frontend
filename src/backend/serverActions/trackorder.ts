@@ -1,4 +1,5 @@
 'use server'
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise";
 import stringEmptyOrNull from "@/lib/stringEmptyOrNull";
 import { DHLShipment, DHLShipmentConvert } from "@/types/DHLShipment";
@@ -7,6 +8,7 @@ import OrderDataModel from "@/types/OrderDataModel";
 import { ObjectId } from "mongodb"
 
 export default async function trackOrder(type: "DHL" | "DTDC" | "", trackingNo: string, isDel: boolean, orderId?: string): Promise<DHLShipment | DTDCShipment | undefined> {
+    await connection()
     if (stringEmptyOrNull(type)) return undefined;
     const mongoClient = await clientPromise
     const db = mongoClient.db(process.env.MONGODB_DB)

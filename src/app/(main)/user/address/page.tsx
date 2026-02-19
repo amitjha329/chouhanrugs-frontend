@@ -1,10 +1,12 @@
 import { auth } from '@/auth'
+import { connection } from 'next/server'
 import getUserAddressList from '@/backend/serverActions/getUserAddressList'
 import React from 'react'
 import UserAddressList from './UserAddressList'
 import { HiOutlineMapPin } from 'react-icons/hi2'
 
 const AddressPage = async () => {
+    await connection()
     const session = await auth()
     const addressList = await getUserAddressList((session?.user as { id: string }).id)
     return (

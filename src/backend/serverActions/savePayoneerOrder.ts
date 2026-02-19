@@ -1,4 +1,5 @@
 'use server'
+import { connection } from 'next/server'
 
 import clientPromise from "@/lib/clientPromise"
 import { ObjectId } from "mongodb"
@@ -20,6 +21,7 @@ export async function savePayoneerOrder(pendingOrderData: {
     couponCode?: string
     discount?: number
 }): Promise<{ success: boolean; error?: string; orderNumber?: string }> {
+    await connection()
     try {
         const mongoClient = await clientPromise
         const db = mongoClient.db(process.env.MONGODB_DB)

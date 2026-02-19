@@ -1,24 +1,24 @@
-import React, { ReactNode } from 'react'
-import Footer from './Footer'
-import Navigation from './Navigation'
-import { headers } from 'next/headers';
-import getDevice from '@/utils/getDevice'
-import MobileNavigation from './MobileNavigation'
-import SideNav from './MobileNavigation/SideNav'
-import clsx from 'clsx'
+import React, { ReactNode, Suspense } from 'react'
+import DeviceAwareContent from './DeviceAwareContent'
 
-const MainLayout = async ({ children }: { children: ReactNode }) => {
-    const header = await headers()
+// Skeleton for the layout while device detection is happening
+const LayoutSkeleton = ({ children }: { children: ReactNode }) => (
+    <div className='bg-base-100' id='main_body_container'>
+        {/* Navigation skeleton */}
+        <div className="h-16 bg-base-200 animate-pulse" />
+        {children}
+        {/* Footer will render once content loads */}
+    </div>
+)
+
+const MainLayout = ({ children }: { children: ReactNode }) => {
     return (
         <main className='relative h-screen w-screen overflow-y-scroll overflow-x-clip' id='main-container'>
-            <div className={clsx('bg-base-100', { "absolute max-w-full transition-all z-20": getDevice({ headers: header }) == "mobile" })} id='main_body_container'>
-                {
-                    getDevice({ headers: header }) != "mobile" ? <Navigation /> : <MobileNavigation />
-                }
-                {children}
-                <Footer />
-            </div>
-            {getDevice({ headers: header }) == "mobile" && <SideNav />}
+            <Suspense fallback={<LayoutSkeleton>{children}</LayoutSkeleton>}>
+                <DeviceAwareContent>
+                    {children}
+                </DeviceAwareContent>
+            </Suspense>
             {/* eslint-disable-next-line @next/next/no-sync-scripts */}
             <script id='mobile_menu_handler' src='/mobile_menu_handler.js' defer></script>
         </main>

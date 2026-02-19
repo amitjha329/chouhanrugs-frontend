@@ -1,11 +1,13 @@
 'use server';
 
+import { connection } from 'next/server'
 import { auth } from "@/auth";
 import clientPromise from "@/lib/clientPromise";
 import CategoriesDataModel from "@/types/CategoriesDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 export default async function getCategoriesList(): Promise<CategoriesDataModel[]> {
+    await connection()
     const session = await auth();
     const { user } = session ?? {}
     let filter: object

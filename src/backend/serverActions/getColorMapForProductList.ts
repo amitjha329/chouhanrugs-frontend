@@ -1,4 +1,6 @@
 'use server';
+
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise";
 import { stringNotEmptyOrNull } from "@/lib/stringEmptyOrNull";
 import ColorDataModel from "@/types/ColorDataModel";
@@ -7,6 +9,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 import { ObjectId } from "mongodb";
 
 export default async function getColorMapForProductList(idList: string[]): Promise<Map<string, ColorDataModel[]>> {
+    await connection()
     try {
         const db = (await clientPromise).db(process.env.MONGODB_DB)
         const productCollection = db.collection("products")

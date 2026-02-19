@@ -1,8 +1,10 @@
 'use server'
+import { connection } from 'next/server'
 
 import clientPromise from "@/lib/clientPromise";
 import { ObjectId } from "mongodb";
 export default async function updateUserProfile(id: string, email: string, name: string, number: string, image?: string) {
+    await connection()
     try {
         const insertResponse = await (await clientPromise).db(process.env.MONGODB_DB).collection("users").findOneAndUpdate({ _id: ObjectId.createFromHexString(id) }, {
             $set: { name, email, ...(image && { image }), number }

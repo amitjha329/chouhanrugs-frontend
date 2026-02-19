@@ -1,4 +1,5 @@
 'use server'
+import { connection } from 'next/server'
 import { ObjectId, WithId } from "mongodb"
 import nodemailer from 'nodemailer'
 import hbs from 'nodemailer-express-handlebars'
@@ -11,6 +12,7 @@ import SiteDataModel from "@/types/SiteDataModel"
 import orderId from "@/utils/orderIdGenerator"
 
 export default async function saveOrderAfterPay(orderDataParam: OrderDataModel) {
+    await connection()
     const mongoClient = await clientPromise
     const db = mongoClient.db(process.env.MONGODB_DB)
     const collectionOrder = db.collection("orders")

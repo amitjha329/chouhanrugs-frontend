@@ -1,10 +1,12 @@
 'use server'
+import { connection } from 'next/server'
 
 import clientPromise from "@/lib/clientPromise"
 import UserAddressDataModel from "@/types/UserAddressDataModel"
 import { ObjectId } from "mongodb"
 
 export default async function updateUserAddress(addressData: UserAddressDataModel) {
+    await connection()
     const mongoClient = await clientPromise
     const db = mongoClient.db(process.env.MONGODB_DB)
     const collectionAddr = db.collection("addresses")

@@ -1,9 +1,11 @@
 'use server'
 
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise"
 import { ObjectId } from "mongodb"
 
 export default async function deleteUserAddress(addressId: string, userId: string) {
+    await connection()
     const mongoClient = await clientPromise
     const db = mongoClient.db(process.env.MONGODB_DB)
     const collectionAddr = db.collection("addresses")

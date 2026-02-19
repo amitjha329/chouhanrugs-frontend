@@ -1,4 +1,5 @@
 'use server'
+import { connection } from 'next/server'
 import { validatePaymentVerification } from 'razorpay/dist/utils/razorpay-utils';
 import RZP from "./razorpay";
 import clientPromise from '@/lib/clientPromise';
@@ -6,6 +7,7 @@ import PaymentGatewayDataModel from '@/types/PaymentGatewayDataModel';
 import converter from '@/utils/mongoObjectConversionUtility';
 
 export default async function verifyRazorpayPayment(razorpay_order_id: string, razorpay_payment_id: string, razorpay_signature: string): Promise<boolean> {
+    await connection()
     const mongoClient = await clientPromise
     const db = mongoClient.db(process.env.MONGODB_DB)
     const paymentGeteway = await db.collection('paymentGateway').findOne({

@@ -1,10 +1,12 @@
 'use server';
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise";
 import { ObjectId } from "mongodb";
 
 export default async function getUserCartItemCount(userId: string): Promise<{
     cartItemCount: number
 }> {
+    await connection()
     try {
         const data = await (await clientPromise).db(process.env.MONGODB_DB).collection("carts").countDocuments({
             userId: new ObjectId(userId)

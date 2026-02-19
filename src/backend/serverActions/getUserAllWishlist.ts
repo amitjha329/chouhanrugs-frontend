@@ -1,4 +1,5 @@
 'use server'
+import { connection } from 'next/server'
 import { ObjectId } from "mongodb";
 import getProductWithId from "./getProductWithId";
 import clientPromise from "@/lib/clientPromise";
@@ -7,6 +8,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 import WishlistDataModel from "./WishlistDataModel";
 
 export default async function getUserAllWishlist(userId: string, getProducts?: boolean): Promise<WishlistDataModel | undefined> {
+    await connection()
     const mongoClient = await clientPromise
     const collectionPartnerIds = mongoClient.db(process.env.MONGODB_DB).collection("wishlists")
     try {

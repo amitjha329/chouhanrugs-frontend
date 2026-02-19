@@ -1,6 +1,10 @@
 import { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  // Cache Components temporarily disabled - requires Suspense boundaries 
+  // around all dynamic data access patterns. Will re-enable after migration.
+  // cacheComponents: true,
+  allowedDevOrigins:['192.168.1.9'],
   experimental: {
     webpackMemoryOptimizations: true
   },

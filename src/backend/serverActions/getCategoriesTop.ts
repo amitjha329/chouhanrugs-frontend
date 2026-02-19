@@ -1,9 +1,11 @@
+import { connection } from "next/server";
 import clientPromise from "@/lib/clientPromise";
 import CategoriesDataModel from "@/types/CategoriesDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 export async function getCategoriesTop(): Promise<CategoriesDataModel[]> {
     try {
+        await connection();
         const client = await clientPromise;
         const db = client.db();
         const categories = await db.collection("categories").find({  active: true }).toArray();

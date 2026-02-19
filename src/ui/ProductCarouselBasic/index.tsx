@@ -3,9 +3,17 @@ import { ProductDataModelWithColorMap } from "@/types/ProductDataModel"
 import ProductCardItem from "../Product/ProductCardItem"
 import SectionTitle from "../SectionTitle"
 import clsx from "clsx";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 
-const ProductCarouselBasic = ({ products, sectionHeading, isMobile }: { products: ProductDataModelWithColorMap[], sectionHeading: string, isMobile: boolean }) => {
+const ProductCarouselBasic = memo(function ProductCarouselBasic({ 
+    products, 
+    sectionHeading, 
+    isMobile 
+}: { 
+    products: ProductDataModelWithColorMap[], 
+    sectionHeading: string, 
+    isMobile: boolean 
+}) {
     // Responsive visible count
     const visibleCount = isMobile ? 2 : 4;
     const total = products.length;
@@ -53,13 +61,13 @@ const ProductCarouselBasic = ({ products, sectionHeading, isMobile }: { products
                             className="flex transition-transform duration-300 ease-in-out"
                             style={{ width: sliderWidth, transform: sliderTransform }}
                         >
-                            {products.map((product) => (
+                            {products.map((product, index) => (
                                 <div
                                     key={product._id?.toString()}
                                     className="carousel-item flex-shrink-0"
                                     style={{ width: itemWidth }}
                                 >
-                                    <ProductCardItem {...product} />
+                                    <ProductCardItem {...product} index={index} />
                                 </div>
                             ))}
                         </div>
@@ -79,6 +87,6 @@ const ProductCarouselBasic = ({ products, sectionHeading, isMobile }: { products
             </div>
         </>
     )
-}
+})
 
 export default ProductCarouselBasic

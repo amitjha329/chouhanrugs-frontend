@@ -5,14 +5,24 @@ import Link from 'next/link'
 import React from 'react'
 import WishListButton from './WishListButton'
 import ProductsCardStyle from './WishlistButton.module.scss'
+import { blurPlaceholders, productImageSizes, imageQuality } from '@/utils/imageOptimization'
 
 interface CompoProps extends ProductDataModelWithColorMap {
     className?: string,
-    sponsered?: boolean
+    sponsered?: boolean,
+    /** Index in a list - used for determining eager vs lazy loading */
+    index?: number
 }
 
+/**
+ * Server Component for product cards - optimized for SEO
+ * Uses Next.js Image with blur placeholder for optimal loading without client-side state
+ */
 const ProductCardItem = (props: CompoProps) => {
     const productVariations = props.variations ?? []
+    
+    // Load first 4 images eagerly, rest lazy
+    const shouldLoadEager = (props.index ?? 0) < 4
 
     // Calculate least selling price (after discount) among all variations and the main product
     let leastSellingPrice: string;
@@ -56,12 +66,14 @@ const ProductCardItem = (props: CompoProps) => {
                     <Image 
                         src={props.images[props.productPrimaryImageIndex]} 
                         alt={props.productName} 
-                        className="!w-full !relative !~h-52/60 object-cover" 
+                        className="!w-full !relative !~h-52/60 object-cover"
                         width={400} 
                         height={320}
                         placeholder="blur"
-                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAHxAAAgICAgMBAAAAAAAAAAAAAQIDBAARBSESMUFR/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCN4jmLdTjWnnidZ7PkyhWGt+vz7zGMBH//2Q=="
-                        loading="lazy"
+                        blurDataURL={blurPlaceholders.warmNeutral}
+                        loading={shouldLoadEager ? "eager" : "lazy"}
+                        sizes={productImageSizes.card}
+                        quality={imageQuality.standard}
                     />
                     <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{props.productDiscountPercentage}</div>
                     {props.sponsered && <div className='rounded-full text-primary py-1 px-2 text-xs bg-white absolute max-md:bottom-2 md:top-2 left-1/2 -translate-x-1/2'>Sponsored</div>}

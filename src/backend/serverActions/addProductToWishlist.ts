@@ -1,10 +1,12 @@
 'use server'
 
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise";
 import AckResponse from "@/types/AckResponse";
 import { ObjectId } from "mongodb";
 
 export default async function addProductToWishlist(productId: string, userId: string): Promise<AckResponse> {
+    await connection()
     const client = await clientPromise
     try {
         const cartAdditionAck = await client.db(process.env.MONGODB_DB).collection("wishlists").findOneAndUpdate({

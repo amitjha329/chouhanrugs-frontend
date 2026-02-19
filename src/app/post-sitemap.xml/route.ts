@@ -1,7 +1,6 @@
 import clientPromise from "@/lib/clientPromise";
 import BlogDataModel from "@/types/BlogDataModel";
 import { NextRequest } from "next/server";
-export const dynamic = 'force-dynamic'
 
 function generateSiteMap(posts: BlogDataModel[]) {
     return `<?xml version="1.0" encoding="UTF-8"?>

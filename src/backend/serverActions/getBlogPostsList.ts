@@ -1,10 +1,12 @@
 'use server'
 
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise"
 import BlogDataModel from "@/types/BlogDataModel"
 import converter from "@/utils/mongoObjectConversionUtility"
 
 export default async function getBlogPostsList(): Promise<BlogDataModel[]> {
+    await connection()
     const mongoClient = await clientPromise
     const collectionPartnerIds = mongoClient.db(process.env.MONGODB_DB).collection("blogs")
     try {

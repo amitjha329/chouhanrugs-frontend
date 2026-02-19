@@ -1,4 +1,5 @@
 'use server'
+import { connection } from 'next/server'
 
 import clientPromise from "@/lib/clientPromise"
 import PaymentGatewayDataModel from "@/types/PaymentGatewayDataModel"
@@ -14,6 +15,7 @@ export async function getPayoneerConfig(): Promise<{
     isActive: boolean
     config?: PaymentGatewayDataModel
 }> {
+    await connection()
     try {
         const mongoClient = await clientPromise
         const collection = mongoClient.db(process.env.MONGODB_DB).collection("paymentGateway")
@@ -64,6 +66,7 @@ export async function initiatePayoneerPayment(orderData: {
     redirectUrl?: string
     error?: string
 }> {
+    await connection()
     try {
         // Fetch credentials from database
         const mongoClient = await clientPromise
@@ -288,6 +291,7 @@ export async function updatePayoneerOrderStatus(
     transactionId: string,
     status: 'paid' | 'failed' | 'pending' | 'cancelled'
 ): Promise<{ success: boolean; error?: string }> {
+    await connection()
     try {
         const mongoClient = await clientPromise
         const db = mongoClient.db(process.env.MONGODB_DB)
@@ -406,6 +410,7 @@ export async function cancelPayoneerOrder(
     orderId: string,
     reason: string = 'Payoneer service unavailable'
 ): Promise<{ success: boolean; error?: string }> {
+    await connection()
     try {
         const mongoClient = await clientPromise
         const db = mongoClient.db(process.env.MONGODB_DB)

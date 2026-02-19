@@ -1,11 +1,13 @@
 'use server'
 
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise"
 import { OrderDataModelWithProductsList } from "@/types/OrderDataModel"
 import converter from "@/utils/mongoObjectConversionUtility"
 
 
 export default async function getOrdersList(orderId: string): Promise<OrderDataModelWithProductsList> {
+    await connection()
     try {
         const mongoClient = await clientPromise
         const db = mongoClient.db(process.env.MONGODB_DB)

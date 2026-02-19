@@ -1,17 +1,17 @@
 'use server'
 
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise"
 import Stripe from "stripe"
 
 export default async function generateStripePaymentIntent(orderAmount: number, currency: string): Promise<string | null> {
+    await connection()
     const mongoClient = await clientPromise
     const db = mongoClient.db(process.env.MONGODB_DB)
     const paymentGeteway = await db.collection('paymentGateway').findOne({
         partner: "STRIPE"
     })
-    const stripe = new Stripe(paymentGeteway?.key_secret, {
-        apiVersion: "2025-05-28.basil"
-    })
+    const stripe = new Stripe(paymentGeteway?.key_secret)
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({

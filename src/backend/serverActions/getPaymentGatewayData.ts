@@ -1,10 +1,12 @@
 'use server'
+import { connection } from 'next/server'
 
 import clientPromise from "@/lib/clientPromise"
 import PaymentGatewayDataModel from "@/types/PaymentGatewayDataModel"
 import converter from "@/utils/mongoObjectConversionUtility"
 
 export default async function getPaymentGatewayData(partner: "RZP" | "STRIPE" | "PAYTM" | "PAYPAL"|"PAYPAL_DEV" | "PAYONEER"): Promise<PaymentGatewayDataModel> {
+    await connection()
     const mongoClient = await clientPromise
     try {
         const collectionBranches = mongoClient.db(process.env.MONGODB_DB).collection("paymentGateway")

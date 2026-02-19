@@ -1,10 +1,12 @@
 'use server'
 
+import { connection } from 'next/server'
 import { auth } from "@/auth";
 import clientPromise from "@/lib/clientPromise";
 import { ObjectId } from "mongodb";
 
 export default async function deleteProductFromCart(id: string) {
+    await connection()
     const client = await clientPromise
     const db = client.db(process.env.MONGODB_DB)
     const collectionUserProfile = db.collection("users")

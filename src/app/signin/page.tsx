@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
+import { Suspense } from "react";
 import banner from "./banner.webp"
 import banner_mobile from "./banner-mobile.webp"
 import getSiteData from "@/backend/serverActions/getSiteData";
@@ -8,6 +10,7 @@ import { auth } from "@/auth";
 import Link from "next/link";
 
 const SignIn = async () => {
+    await connection()
     const session = await auth()
     if (session?.user != null) {
         redirect('/')
@@ -51,7 +54,9 @@ const SignIn = async () => {
                             </h1>
                         }
                     </div>
-                    <SigninForm siteTitle={siteInfo.title} />
+                    <Suspense fallback={<div className="animate-pulse p-8">Loading...</div>}>
+                        <SigninForm siteTitle={siteInfo.title} />
+                    </Suspense>
                 </div>
             </div>
         </div>

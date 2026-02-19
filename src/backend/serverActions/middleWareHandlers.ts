@@ -1,8 +1,10 @@
 'use server'
+import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise"
 import { ObjectId } from "mongodb"
 
 export async function getTokenDB(credentials: Partial<Record<string, any>>) {
+    await connection()
     const clientMongo = await clientPromise
     const db = clientMongo.db(process.env.MONGODB_DB)
     const collection = db.collection("verification_tokens")
@@ -10,6 +12,7 @@ export async function getTokenDB(credentials: Partial<Record<string, any>>) {
 }
 
 export async function getUserMiddleWare(credentials: Partial<Record<string, any>>) {
+    await connection()
     const clientMongo = await clientPromise
     const db = clientMongo.db(process.env.MONGODB_DB)
     const collectionUsers = db.collection("users")

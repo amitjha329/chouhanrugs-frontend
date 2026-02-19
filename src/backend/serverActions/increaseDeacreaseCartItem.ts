@@ -1,9 +1,11 @@
 'use server'
+import { connection } from 'next/server'
 
 import clientPromise from "@/lib/clientPromise"
 import { ObjectId } from "mongodb"
 
 export default async function increaseDeacreaseCartItem(itemID: string, quantity: number) {
+    await connection()
     const mongoClient = await clientPromise
     const db = mongoClient.db(process.env.MONGODB_DB)
     const collectionCart = db.collection("carts")
