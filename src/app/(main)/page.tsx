@@ -29,6 +29,7 @@ const ShopByColor = dynamic(() => import('@/ui/HomePage/ShopByColor'), { ssr: tr
 const TrendingProducts = dynamic(() => import('@/ui/HomePage/TrendingProducts'), { ssr: true })
 const OurPopularCategories = dynamic(() => import('@/ui/HomePage/OurPopularCategories'), { ssr: true })
 const ShopBySize = dynamic(() => import('@/ui/HomePage/ShopBySize'), { ssr: true })
+const JuteHandBagsShowcase = dynamic(() => import('@/ui/HomePage/JuteHandBagsShowcase'), { ssr: true })
 
 const DynamicTestimonials = dynamic(() => import('@/ui/Testimonials'), { loading: () => <div className="min-h-[200px] flex items-center justify-center">Loading testimonials...</div> })
 const DynamicAboveFooterSEOContet = dynamic(() => import('@/ui/HomePage/AboveFooterSEOContet'))
@@ -111,6 +112,11 @@ const HomePage = async () => {
       {/* Featured Products */}
       <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
         <FeaturedProducts />
+      </Suspense>
+
+      {/* Jute Hand Bags Showcase — 50/50 split */}
+      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <JuteHandBagsShowcase />
       </Suspense>
       
       {/* Order Process - Static content, no Suspense needed */}

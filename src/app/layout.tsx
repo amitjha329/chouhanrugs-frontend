@@ -9,6 +9,8 @@ import FloatingButtonChat from '@/ui/HomePage/FlotingButtonChat'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
 import GlobalPopupWrapper from '@/ui/GlobalPopup/GlobalPopupWrapper'
+import PurchaseNotification from '@/ui/PurchaseNotification'
+import { getNewProducts } from '@/backend/serverActions/getNewProducts'
 import Script from 'next/script'
 
 // Optimized font loading: Only load weights actually used in the app
@@ -32,7 +34,12 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
     await connection()
-    const [siteData, googleTagData] = await Promise.all([getSiteData(), getAnalyticsData("GTM")])
+    const [siteData, googleTagData, notifProducts] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getNewProducts({ limit: 15 })])
+    const purchaseProducts = notifProducts.map(p => ({
+        name: p.productName,
+        url: `/products/${p.productURL}`,
+        image: p.images?.[p.productPrimaryImageIndex] ?? p.images?.[0] ?? "",
+    }))
     return (
         <html>
             <head>
@@ -88,6 +95,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     zIndex={1600} />
                 {children}
                 <FloatingButtonChat siteData={siteData} />
+                <PurchaseNotification products={purchaseProducts} />
                 {/* GlobalPopupWrapper handles auth page check internally, wrapped in Suspense for DB fetch */}
                 <Suspense fallback={null}>
                     <GlobalPopupWrapper />
