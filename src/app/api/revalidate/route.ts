@@ -22,9 +22,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'No tags provided' }, { status: 400 })
         }
 
-        // Revalidate each tag
+        // Revalidate each tag (Next.js 16+ requires cacheLife profile as 2nd arg)
         for (const tag of tags) {
-            revalidateTag(tag)
+            revalidateTag(tag, 'max')
         }
 
         return NextResponse.json({ revalidated: true, tags }, { status: 200 })
