@@ -3,13 +3,13 @@ import { useReportWebVitals } from 'next/web-vitals'
 
 declare global {
     interface Window {
-        gtag: (...args: any[]) => void;
+        gtag?: (...args: any[]) => void;
     }
 }
 
 export default function WebVitals() {
     useReportWebVitals((metric) => {
-        window.gtag('event', metric.name, {
+        window.gtag?.('event', metric.name, {
             value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value), // values must be integers
             event_label: metric.id, // id unique to current page load
             non_interaction: true, // avoids affecting bounce rate.
