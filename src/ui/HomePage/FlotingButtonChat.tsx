@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { FaEnvelope, FaWhatsapp } from "react-icons/fa";
 import { HiOutlineChatBubbleLeftRight, HiXMark } from "react-icons/hi2";
+import { useGoogleAdsConfig } from "@/components/GoogleAdsProvider";
+import { trackWhatsAppLead } from "@/lib/gtagConversion";
 
 const FloatingButtonChat = ({ siteData }: { className?: string, siteData: SiteDataModel }) => {
+    const googleAdsConfig = useGoogleAdsConfig();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -47,6 +50,7 @@ const FloatingButtonChat = ({ siteData }: { className?: string, siteData: SiteDa
             <Link
                 target="_blank"
                 href={`https://wa.me/${siteData.contact_details.whatsapp}`}
+                onClick={() => trackWhatsAppLead(googleAdsConfig)}
                 className={`
                     rounded-full p-3 bg-green-500 text-white shadow-lg 
                     transition-all duration-300 hover:scale-110 hover:shadow-xl

@@ -1,5 +1,7 @@
 'use client'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
+import { trackAddToCart } from '@/lib/gtagConversion'
+import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 const ProductDataContext = createContext<Partial<{
@@ -26,6 +28,7 @@ const ProductDataContext = createContext<Partial<{
 }>>({})
 
 const ProductContext = ({ children, product }: { children: React.ReactNode, product: any }) => {
+    const googleAdsConfig = useGoogleAdsConfig()
     const [variation, setVariation] = useState("")
     const [images, setImages] = useState<string[]>(product.images)
     const [isVariation, setIsVariation] = useState(false)
@@ -176,6 +179,7 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
                 body: JSON.stringify({ productId, userId, quantity, variationCode })
             });
             if (res.ok) {
+                trackAddToCart(googleAdsConfig)
                 if (onSuccess) onSuccess();
             } else {
                 if (onError) onError(await res.text());

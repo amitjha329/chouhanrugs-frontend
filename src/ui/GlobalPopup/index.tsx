@@ -7,10 +7,13 @@ import PopUpDataModel from '@/types/PopUpDataModel'
 import { IoMdClose } from 'react-icons/io'
 import addSubscriber from '@/lib/actions/addSubscriber'
 import addCustomSizeEnquiry from '@/lib/actions/addCustomSizeEnquiry'
+import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
+import { trackEmailLead } from '@/lib/gtagConversion'
 
 type ActiveForm = 'none' | 'subscribe' | 'customSize'
 
 const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
+    const googleAdsConfig = useGoogleAdsConfig()
     const [isVisible, setIsVisible] = useState(false)
     const [activeForm, setActiveForm] = useState<ActiveForm>('none')
     
@@ -149,6 +152,7 @@ const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
             const result = await addSubscriber(email, 'popup')
             
             if (result.ack) {
+                trackEmailLead(googleAdsConfig)
                 setSubscriptionMessage(result.result.message)
                 setEmail('')
                 

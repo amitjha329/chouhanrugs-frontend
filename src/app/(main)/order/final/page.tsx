@@ -146,7 +146,7 @@ const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: st
                     ) : <div className="w-full md:min-h-[400px] text-5xl flex justify-center items-center opacity-75">Order not Found</div>
                 }
             </div>
-            <GtagEvent />
+            <GtagEvent orderId={orderData._id} orderValue={Number(orderData.orderValue)} currency={orderData.userCurrency?.currency || 'INR'} />
         </>
     )
 }

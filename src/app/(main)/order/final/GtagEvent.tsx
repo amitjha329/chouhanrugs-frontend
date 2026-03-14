@@ -1,16 +1,30 @@
+import getGoogleAdsConfig from '@/backend/serverActions/getGoogleAdsConfig'
 import React from 'react'
 
-const GtagEvent = () => {
-    return <script>
-        {
+type propTypes = {
+    orderId: string
+    orderValue: number
+    currency: string
+}
+
+const GtagEvent = async ({ orderId, orderValue, currency }: propTypes) => {
+    const config = await getGoogleAdsConfig()
+    if (!config.code || !config.conversionLabels.purchase) return null
+
+    return <script
+        dangerouslySetInnerHTML={{
+            __html: `
+                if (typeof gtag === 'function') {
+                    gtag('event', 'conversion', {
+                        'send_to': '${config.code}/${config.conversionLabels.purchase}',
+                        'value': ${orderValue},
+                        'currency': '${currency}',
+                        'transaction_id': '${orderId}'
+                    });
+                }
             `
-            gtag('event', 'conversion', {
-                'send_to': 'AW-16522702647/dNepCKjohv8ZELfe0cY9',
-                'transaction_id': ''
-            });
-            `
-        }
-    </script>
+        }}
+    />
 }
 
 export default GtagEvent

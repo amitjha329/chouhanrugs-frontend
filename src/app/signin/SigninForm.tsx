@@ -1,6 +1,8 @@
 // @ts-nocheck
 'use client'
 import sendOtp from '@/backend/serverActions/sendOtp'
+import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
+import { trackSignup } from '@/lib/gtagConversion'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import React, { useCallback, useState, KeyboardEvent } from 'react'
@@ -12,6 +14,7 @@ type propTypes = {
 
 const SigninForm = ({ siteTitle }: propTypes) => {
     const searchParams = useSearchParams()
+    const googleAdsConfig = useGoogleAdsConfig()
     const [email, setEmail] = React.useState("")
     const [tkId, setTkid] = React.useState("")
     const [isOTPForm, setIsOTPForm] = useState<boolean>(false)
@@ -72,6 +75,8 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 setError('Invalid OTP. Please check and try again.');
                 setIsLoading(false);
             } else if (result?.ok) {
+                // Track signup conversion
+                trackSignup(googleAdsConfig)
                 // Redirect will be handled by NextAuth
                 window.location.href = window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/');
             } else {
@@ -100,7 +105,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 {
                     !isOTPForm && <>
                         <div className="flex flex-col items-center">
-                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { signIn("google", { redirectTo:  window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/') }) }}>
+                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { trackSignup(googleAdsConfig); signIn("google", { redirectTo:  window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/') }) }}>
                                 <div className="bg-white p-2 rounded-full">
                                     <svg className="w-4" viewBox="0 0 533.5 544.3">
                                         <path

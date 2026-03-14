@@ -8,8 +8,10 @@ import { connection } from 'next/server'
 import FloatingButtonChat from '@/ui/HomePage/FlotingButtonChat'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
+import getGoogleAdsConfig from '@/backend/serverActions/getGoogleAdsConfig'
 import GlobalPopupWrapper from '@/ui/GlobalPopup/GlobalPopupWrapper'
 import PurchaseNotification from '@/ui/PurchaseNotification'
+import GoogleAdsProvider from '@/components/GoogleAdsProvider'
 import { getNewProducts } from '@/backend/serverActions/getNewProducts'
 import Script from 'next/script'
 
@@ -34,7 +36,7 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
     await connection()
-    const [siteData, googleTagData, notifProducts] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getNewProducts({ limit: 15 })])
+    const [siteData, googleTagData, googleAdsConfig, notifProducts] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 })])
     const purchaseProducts = notifProducts.map(p => ({
         name: p.productName,
         url: `/products/${p.productURL}`,
@@ -89,6 +91,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 />
                 <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${googleTagData.code}`}
                     height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe></noscript>
+                {/* Google Ads gtag.js - loaded alongside GTM for conversion tracking */}
+                {googleAdsConfig.gtagId && (
+                    <>
+                        <Script
+                            id="gtag-js"
+                            strategy="afterInteractive"
+                            src={`https://www.googletagmanager.com/gtag/js?id=${googleAdsConfig.gtagId}`}
+                        />
+                        <Script
+                            id="gtag-init"
+                            strategy="afterInteractive"
+                            dangerouslySetInnerHTML={{
+                                __html: `
+                                    window.dataLayer = window.dataLayer || [];
+                                    function gtag(){dataLayer.push(arguments);}
+                                    gtag('js', new Date());
+                                    gtag('config', '${googleAdsConfig.gtagId}');
+                                    ${googleAdsConfig.code ? `gtag('config', '${googleAdsConfig.code}');` : ''}
+                                `
+                            }}
+                        />
+                    </>
+                )}
+                <GoogleAdsProvider config={googleAdsConfig}>
                 <div id="notification-container" className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none" />
                 <NextTopLoader
                     color='#6c4624'
@@ -100,6 +126,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <Suspense fallback={null}>
                     <GlobalPopupWrapper />
                 </Suspense>
+                </GoogleAdsProvider>
             </body>
         </html>
     )
