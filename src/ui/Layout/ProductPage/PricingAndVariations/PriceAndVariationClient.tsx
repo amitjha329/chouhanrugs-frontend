@@ -8,6 +8,8 @@ import SizeDataModel from '@/types/SizeDataModel'
 import { useDataConnectionContext } from '@/utils/Contexts/DataConnectionContext'
 import { useProductContext } from '@/utils/Contexts/ProductContext'
 import onPageNotifications from '@/utils/onPageNotifications'
+import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
+import { trackAddToCartWithDetails } from '@/lib/gtagConversion'
 import clsx from 'clsx'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -36,6 +38,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
     const { wishlistItems, refreshWishList } = useDataConnectionContext()
     const { data: session } = useSession()
     const router = useRouter()
+    const googleAdsConfig = useGoogleAdsConfig()
 
     const addToWishlist: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault()
@@ -263,6 +266,11 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                     const userId = (document.getElementById('session_user') as HTMLInputElement)?.value;
                                     const productId = typeof product._id === 'string' ? product._id : product._id?.toString?.() || '';
                                     if (!userId) {
+                                        trackAddToCartWithDetails(googleAdsConfig, {
+                                            product,
+                                            variationCode: variation || '',
+                                            quantity,
+                                        })
                                         // Save to localStorage for both add to cart and buy now, allowing multiple items
                                         let pendingCart: any[] = JSON.parse(localStorage.getItem('pending_cart') || '[]');
                                         const newItem = {
@@ -320,6 +328,11 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                     const userId = (document.getElementById('session_user') as HTMLInputElement)?.value;
                                     const productId = typeof product._id === 'string' ? product._id : product._id?.toString?.() || '';
                                     if (!userId) {
+                                        trackAddToCartWithDetails(googleAdsConfig, {
+                                            product,
+                                            variationCode: variation || '',
+                                            quantity,
+                                        })
                                         // Save to localStorage for both add to cart and buy now, allowing multiple items
                                         let pendingCart: any[] = JSON.parse(localStorage.getItem('pending_cart') || '[]');
                                         const newItem = {

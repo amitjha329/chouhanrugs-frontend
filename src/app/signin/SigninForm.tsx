@@ -161,7 +161,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                             /> */}
                             <button
                                 className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                                onClick={_ => handleSignInUsingEmail()}
+                                onClick={_ => { handleSignInUsingEmail(); }}
                                 disabled={isLoading}
                             >
                                 <FaSignInAlt className="w-6 h-6 -ml-2" />

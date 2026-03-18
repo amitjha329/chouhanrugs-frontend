@@ -1,6 +1,6 @@
 'use client'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
-import { trackAddToCart } from '@/lib/gtagConversion'
+import { trackAddToCartWithDetails } from '@/lib/gtagConversion'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -179,7 +179,11 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
                 body: JSON.stringify({ productId, userId, quantity, variationCode })
             });
             if (res.ok) {
-                trackAddToCart(googleAdsConfig)
+                trackAddToCartWithDetails(googleAdsConfig, {
+                    product,
+                    variationCode,
+                    quantity,
+                })
                 if (onSuccess) onSuccess();
             } else {
                 if (onError) onError(await res.text());
@@ -197,6 +201,11 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
                 body: JSON.stringify({ productId, userId, quantity, variationCode })
             });
             if (res.ok) {
+                trackAddToCartWithDetails(googleAdsConfig, {
+                    product,
+                    variationCode,
+                    quantity,
+                })
                 if (onSuccess) onSuccess();
             } else {
                 if (onError) onError(await res.text());

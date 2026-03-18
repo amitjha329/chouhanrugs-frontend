@@ -105,7 +105,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             dangerouslySetInnerHTML={{
                                 __html: `
                                     window.dataLayer = window.dataLayer || [];
-                                    function gtag(){dataLayer.push(arguments);}
+                                    window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
                                     gtag('js', new Date());
                                     gtag('config', '${googleAdsConfig.gtagId}');
                                     ${googleAdsConfig.code ? `gtag('config', '${googleAdsConfig.code}');` : ''}

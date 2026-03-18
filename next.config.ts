@@ -66,18 +66,128 @@ const nextConfig: NextConfig = {
     return config
   },
   async headers() {
-    const ContentSecurityPolicy = `
-  default-src 'self';
-  script-src 'self' tiny.cloud *.google-analytics.com *.tiny.cloud stripe.com algolianet.com *.algolianet.com algolia.net *.algolia.net *.stripe.com razorpay.com *.razorpay.com paypal.com *.paypal.com *.googletagmanager.com *.doubleclick.net *.googleadservices.com 'unsafe-inline' 'unsafe-eval';
-  connect-src 'self' tiny.cloud *.googleadservices.com *.google.com *.google-analytics.com *.tiny.cloud stripe.com *.stripe.com razorpay.com algolianet.com algolia.net *.algolia.net *.algolianet.com *.razorpay.com paypal.com *.paypal.com *.googletagmanager.com ipapi.co *.ipapi.co google-analytics.com *.google-analytics.com *.google.com data: gap: ws: 'unsafe-inline' 'unsafe-eval';
-  frame-src 'self' stripe.com *.googletagmanager.com *.google-analytics.com *.stripe.com algolianet.com *.algolianet.com algolia.net *.doubleclick.net *.googletagmanager.com *.algolia.net razorpay.com *.razorpay.com paypal.com *.paypal.com 'unsafe-inline' 'unsafe-eval';
-  child-src 'self' stripe.com *.stripe.com razorpay.com algolianet.com algolia.net *.algolia.net *.algolianet.com *.razorpay.com paypal.com *.paypal.com 'unsafe-inline' 'unsafe-eval';
-  style-src 'self' tiny.cloud *.tiny.cloud stripe.com algolianet.com algolia.net *.algolia.net *.algolianet.com *.stripe.com razorpay.com *.razorpay.com paypal.com *.paypal.com fonts.googleapis.com 'unsafe-inline';
-  font-src * 'self';
-  object-src * 'self' data: blob:;
-  img-src * 'self' *.google-analytics.com *.googletagmanager.com data: blob:;
-  media-src * 'self' *.chouhanrugs.com *.caredone.in data: blob:;
-  `
+    const buildCsp = (directives: Record<string, string[]>) => {
+      return Object.entries(directives)
+        .map(([directive, values]) => `${directive} ${values.join(' ')}`)
+        .join('; ')
+    }
+
+    const cspDirectives: Record<string, string[]> = {
+      'default-src': ["'self'"],
+      'script-src': [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        'tiny.cloud',
+        '*.tiny.cloud',
+        'stripe.com',
+        '*.stripe.com',
+        'algolianet.com',
+        '*.algolianet.com',
+        'algolia.net',
+        '*.algolia.net',
+        'razorpay.com',
+        '*.razorpay.com',
+        'paypal.com',
+        '*.paypal.com',
+        '*.googletagmanager.com',
+        'www.googletagmanager.com',
+        '*.google-analytics.com',
+        'www.google-analytics.com',
+        'ssl.google-analytics.com',
+        '*.doubleclick.net',
+        '*.googleadservices.com',
+        'www.googleadservices.com',
+        'www.google.com',
+        'www.gstatic.com',
+      ],
+      'connect-src': [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        'tiny.cloud',
+        '*.tiny.cloud',
+        'stripe.com',
+        '*.stripe.com',
+        'algolianet.com',
+        '*.algolianet.com',
+        'algolia.net',
+        '*.algolia.net',
+        'razorpay.com',
+        '*.razorpay.com',
+        'paypal.com',
+        '*.paypal.com',
+        '*.googletagmanager.com',
+        '*.google-analytics.com',
+        'www.google-analytics.com',
+        '*.googleadservices.com',
+        'www.googleadservices.com',
+        '*.doubleclick.net',
+        '*.google.com',
+        'ipapi.co',
+        '*.ipapi.co',
+        'data:',
+        'gap:',
+        'ws:',
+      ],
+      'frame-src': [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        'stripe.com',
+        '*.stripe.com',
+        'algolianet.com',
+        '*.algolianet.com',
+        'algolia.net',
+        '*.algolia.net',
+        'razorpay.com',
+        '*.razorpay.com',
+        'paypal.com',
+        '*.paypal.com',
+        '*.googletagmanager.com',
+        '*.google-analytics.com',
+        '*.doubleclick.net',
+        '*.google.com',
+      ],
+      'child-src': [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        'stripe.com',
+        '*.stripe.com',
+        'algolianet.com',
+        '*.algolianet.com',
+        'algolia.net',
+        '*.algolia.net',
+        'razorpay.com',
+        '*.razorpay.com',
+        'paypal.com',
+        '*.paypal.com',
+      ],
+      'style-src': [
+        "'self'",
+        "'unsafe-inline'",
+        'tiny.cloud',
+        '*.tiny.cloud',
+        'stripe.com',
+        '*.stripe.com',
+        'algolianet.com',
+        '*.algolianet.com',
+        'algolia.net',
+        '*.algolia.net',
+        'razorpay.com',
+        '*.razorpay.com',
+        'paypal.com',
+        '*.paypal.com',
+        'fonts.googleapis.com',
+      ],
+      'font-src': ["'self'", '*'],
+      'object-src': ["'none'"],
+      'img-src': ["'self'", '*', '*.google-analytics.com', '*.googletagmanager.com', '*.googleadservices.com', 'data:', 'blob:'],
+      'media-src': ["'self'", '*', '*.chouhanrugs.com', '*.caredone.in', 'data:', 'blob:'],
+    }
+
+    const ContentSecurityPolicy = buildCsp(cspDirectives)
     return [
       {
         source: '/(.*)',

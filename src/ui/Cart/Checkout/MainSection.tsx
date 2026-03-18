@@ -40,7 +40,6 @@ import updateUserAddress from '@/backend/serverActions/updateUserAddress'
 import deleteUserAddress from '@/backend/serverActions/deleteUserAddress'
 import { initiatePayoneerPayment, cancelPayoneerOrder } from '@/backend/serverActions/payoneer'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
-import { trackPurchase } from '@/lib/gtagConversion'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -120,6 +119,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     const calculateProductPrice = useCallback((item: CartDataModel): number => {
         return getItemUnitPrice(item) * item.quantity
     }, [getItemUnitPrice])
+
     const orderTotal = useMemo(() => {
         return Number(cart.reduce((total, item) => {
             const itemPrice = calculateProductPrice(item)
@@ -452,7 +452,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             }
             saveOrderAfterPay(orderData).then(res => {
                 if (res.ack) {
-                    trackPurchase(googleAdsConfig, orderTotal, userCurrency?.currency, res.result.data)
                     onPageNotifications("success", "Order Placed").catch(err => {
                         console.log(err)
                     })
@@ -506,7 +505,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             }
             saveOrderAfterPay(orderData).then(res => {
                 if (res.ack) {
-                    trackPurchase(googleAdsConfig, orderTotal, userCurrency?.currency, res.result.data)
                     onPageNotifications("success", "Order Placed").catch(err => {
                         console.log(res)
                     })
@@ -932,7 +930,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                             }
                                             saveOrderAfterPay(orderData).then(res => {
                                                 if (res.ack) {
-                                                    trackPurchase(googleAdsConfig, orderTotal, userCurrency?.currency, res.result.data)
                                                     onPageNotifications("success", "Order Placed").catch(err => {
                                                         console.log(err)
                                                     })
