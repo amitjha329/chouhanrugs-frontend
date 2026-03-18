@@ -301,8 +301,21 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
 
                 const orderNumber = payoneerOrderResult.result.data
 
-                // Store order number for callback page
+                // Store order number and analytics data for callback page
                 sessionStorage.setItem('payoneerOrderNumber', orderNumber)
+                sessionStorage.setItem('payoneerAnalytics', JSON.stringify({
+                    orderTotal,
+                    currency: userCurrency?.currency || 'USD',
+                    items: cart.map((item) => ({
+                        item_id: item.cartProduct[0]._id?.toString() ?? '',
+                        item_name: item.cartProduct[0].productName,
+                        item_category: item.cartProduct[0].productCategory,
+                        item_brand: item.cartProduct[0].productBrand,
+                        item_variant: item.variationCode ?? '',
+                        price: getItemUnitPrice(item),
+                        quantity: item.quantity,
+                    }))
+                }))
 
                 // Initiate Payoneer payment with the created order number
                 const payoneerResult = await initiatePayoneerPayment({
@@ -334,6 +347,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     console.error('❌ Payoneer service failed, cancelling order:', orderNumber)
                     await cancelPayoneerOrder(orderNumber, payoneerResult.error || 'Payoneer service unavailable')
                     sessionStorage.removeItem('payoneerOrderNumber')
+                    sessionStorage.removeItem('payoneerAnalytics')
                     onPageNotifications("error", payoneerResult.error || "Failed to initiate Payoneer payment. Please try again or use a different payment method.")
                 }
                 break;

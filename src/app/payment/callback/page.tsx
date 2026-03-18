@@ -3,10 +3,13 @@
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
+import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
+import { trackPurchase } from '@/lib/gtagConversion'
 
 function PaymentCallbackContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
+    const googleAdsConfig = useGoogleAdsConfig()
     const [status, setStatus] = useState<'loading' | 'success' | 'failed' | 'cancelled'>('loading')
     const [orderId, setOrderId] = useState<string>('')
     const [message, setMessage] = useState<string>('')
@@ -60,7 +63,26 @@ function PaymentCallbackContent() {
             if (isSuccess) {
                 setStatus('success')
                 setMessage('Your payment has been processed successfully!')
-                
+
+                // Fire purchase conversion (deduplicated per order)
+                const purchaseKey = `chouhanrugs_purchase_tracked_${storedOrderNumber || orderIdParam || ''}`
+                if (!sessionStorage.getItem(purchaseKey)) {
+                    try {
+                        const analyticsRaw = sessionStorage.getItem('payoneerAnalytics')
+                        const analytics = analyticsRaw ? JSON.parse(analyticsRaw) : null
+                        trackPurchase(googleAdsConfig, {
+                            transactionId: storedOrderNumber || orderIdParam || '',
+                            value: analytics?.orderTotal,
+                            currency: analytics?.currency || 'USD',
+                            items: analytics?.items || [],
+                        })
+                        sessionStorage.setItem(purchaseKey, 'true')
+                    } catch (e) {
+                        console.error('Analytics error:', e)
+                    }
+                }
+                sessionStorage.removeItem('payoneerAnalytics')
+
                 if (storedOrderNumber) {
                     // Order already exists, just clean up and redirect
                     sessionStorage.removeItem('payoneerOrderNumber')
@@ -79,10 +101,12 @@ function PaymentCallbackContent() {
                 setStatus('cancelled')
                 setMessage('Payment was cancelled. You can try again.')
                 sessionStorage.removeItem('payoneerOrderNumber')
+                sessionStorage.removeItem('payoneerAnalytics')
             } else if (statusParam === 'failed' || resultCode?.includes('failed')) {
                 setStatus('failed')
                 setMessage('Payment failed. Please try again or use a different payment method.')
                 sessionStorage.removeItem('payoneerOrderNumber')
+                sessionStorage.removeItem('payoneerAnalytics')
             } else {
                 // Unknown status - might be pending
                 setStatus('loading')
