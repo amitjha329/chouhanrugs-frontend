@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { IoIosSend } from 'react-icons/io'
 import addSubscriber from '@/lib/actions/addSubscriber'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
-import { trackEmailLead } from '@/lib/gtagConversion'
+import { trackEmailLeadOnce } from '@/lib/gtagConversion'
 
 const SubscribeFields = () => {
   const googleAdsConfig = useGoogleAdsConfig()
@@ -28,7 +28,7 @@ const SubscribeFields = () => {
       const result = await addSubscriber(email, 'footer')
 
       if (result.ack) {
-        trackEmailLead(googleAdsConfig)
+        trackEmailLeadOnce(googleAdsConfig, { email, source: 'footer' })
         setMessage(result.result.message)
         setIsSuccess(true)
         setEmail('')

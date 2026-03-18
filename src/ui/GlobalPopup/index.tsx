@@ -8,7 +8,7 @@ import { IoMdClose } from 'react-icons/io'
 import addSubscriber from '@/lib/actions/addSubscriber'
 import addCustomSizeEnquiry from '@/lib/actions/addCustomSizeEnquiry'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
-import { trackEmailLead } from '@/lib/gtagConversion'
+import { trackEmailLeadOnce } from '@/lib/gtagConversion'
 
 type ActiveForm = 'none' | 'subscribe' | 'customSize'
 
@@ -152,7 +152,7 @@ const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
             const result = await addSubscriber(email, 'popup')
             
             if (result.ack) {
-                trackEmailLead(googleAdsConfig)
+                trackEmailLeadOnce(googleAdsConfig, { email, source: 'popup' })
                 setSubscriptionMessage(result.result.message)
                 setEmail('')
                 
@@ -248,7 +248,7 @@ const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
                                             ← Back
                                         </button>
                                     )}
-                                    <div className="flex flex-col sm:flex-row gap-3">
+                                    <div className="flex flex-col gap-3">
                                         <input
                                             type="email"
                                             value={email}
@@ -261,7 +261,7 @@ const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
                                         <button
                                             type="submit"
                                             disabled={isSubscribing}
-                                            className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                                            className="w-full px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {isSubscribing ? 'Subscribing...' : 'Subscribe'}
                                         </button>

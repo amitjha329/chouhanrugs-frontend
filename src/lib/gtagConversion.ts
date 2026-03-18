@@ -125,6 +125,28 @@ export function trackEmailLead(config: GoogleAdsConfigDataModel | null) {
     fireConversion(config.code, config.conversionLabels.emailLead)
 }
 
+type EmailLeadPayload = {
+    email?: string
+    source?: 'popup' | 'footer' | 'other'
+}
+
+export function trackEmailLeadOnce(config: GoogleAdsConfigDataModel | null, payload?: EmailLeadPayload) {
+    if (!config) return
+
+    const normalizedEmail = (payload?.email || '').trim().toLowerCase()
+    const source = payload?.source || 'other'
+
+    if (typeof window !== 'undefined' && normalizedEmail) {
+        const dedupeKey = `cr_email_lead:${source}:${normalizedEmail}`
+        if (window.sessionStorage?.getItem(dedupeKey) === '1') return
+        fireConversion(config.code, config.conversionLabels.emailLead)
+        window.sessionStorage?.setItem(dedupeKey, '1')
+        return
+    }
+
+    fireConversion(config.code, config.conversionLabels.emailLead)
+}
+
 export function trackPurchase(
     config: GoogleAdsConfigDataModel | null,
     valueOrPayload?: number | PurchasePayload,
