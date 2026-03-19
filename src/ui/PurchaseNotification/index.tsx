@@ -120,9 +120,9 @@ function generateNotification(products: NotificationProduct[]) {
 type Notification = ReturnType<typeof generateNotification>
 
 const SHOW_DURATION = 5000       // visible for 5s
-const INTERVAL_MIN = 10000       // min 10s between popups
-const INTERVAL_MAX = 15000       // max 15s between popups
-const INITIAL_DELAY = 5000       // first popup after 5s
+const INTERVAL_MIN = 16000       // min 16s between popups
+const INTERVAL_MAX = 22000       // max 22s between popups
+const INITIAL_DELAY = 7000       // first popup after 7s
 
 export default function PurchaseNotification({ products }: { products: NotificationProduct[] }) {
     const [notification, setNotification] = useState<Notification | null>(null)
@@ -177,7 +177,7 @@ export default function PurchaseNotification({ products }: { products: Notificat
 
     return (
         <div
-            className={`fixed bottom-4 left-4 z-[9998] transition-all duration-500 ease-out ${
+            className={`fixed bottom-3 left-3 right-3 z-[9998] transition-all duration-500 ease-out sm:bottom-4 sm:left-4 sm:right-auto ${
                 visible
                     ? "translate-y-0 opacity-100 pointer-events-auto"
                     : "translate-y-8 opacity-0 pointer-events-none"
@@ -185,11 +185,11 @@ export default function PurchaseNotification({ products }: { products: Notificat
             role="status"
             aria-live="polite"
         >
-            <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-4 max-w-xs sm:max-w-sm flex items-start gap-3 relative">
+            <div className="relative flex w-full max-w-[19rem] items-start gap-2.5 rounded-xl border border-gray-200 bg-white p-3 shadow-2xl sm:max-w-sm sm:gap-3 sm:p-4">
                 {/* Dismiss button */}
                 <button
                     onClick={handleDismiss}
-                    className="absolute top-1.5 right-2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                    className="absolute right-1.5 top-1.5 p-1 text-gray-400 transition-colors hover:text-gray-600 sm:right-2"
                     aria-label="Dismiss notification"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
@@ -198,7 +198,7 @@ export default function PurchaseNotification({ products }: { products: Notificat
                 </button>
 
                 {/* Product thumbnail */}
-                <div className="w-14 h-14 rounded-lg bg-amber-50 border border-amber-100 flex-shrink-0 overflow-hidden relative">
+                <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-amber-100 bg-amber-50 sm:h-14 sm:w-14">
                     {notification.product.image ? (
                         <Image
                             src={notification.product.image}
@@ -217,8 +217,8 @@ export default function PurchaseNotification({ products }: { products: Notificat
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0 pr-4">
-                    <p className="text-sm text-gray-800 leading-snug">
+                <div className="min-w-0 flex-1 pr-5 sm:pr-4">
+                    <p className="text-xs leading-snug text-gray-800 sm:text-sm">
                         <span className="font-semibold">{notification.name}</span>
                         {" from "}
                         <span className="text-gray-600">{notification.location}</span>
@@ -226,22 +226,22 @@ export default function PurchaseNotification({ products }: { products: Notificat
                     </p>
                     <Link
                         href={notification.product.url}
-                        className="text-sm font-medium text-primary hover:underline mt-0.5 block"
+                        className="mt-0.5 block text-xs font-medium text-primary hover:underline sm:text-sm"
                     >
                         <span className="line-clamp-1">{notification.product.name}</span>
                     </Link>
-                    <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                    <p className="mt-1 flex items-center gap-1 text-[11px] text-gray-400 sm:text-xs">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
                             <path fillRule="evenodd" d="M1 8a7 7 0 1114 0A7 7 0 011 8zm7.75-4.25a.75.75 0 00-1.5 0V8c0 .414.336.75.75.75h3.25a.75.75 0 000-1.5h-2.5v-3.5z" clipRule="evenodd" />
                         </svg>
                         {notification.timeAgo}
                     </p>
                     {/* Verified badge */}
-                    <div className="flex items-center gap-1 mt-1.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-green-500">
+                    <div className="mt-1.5 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-green-500">
                             <path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
                         </svg>
-                        <span className="text-[10px] text-green-600 font-medium">Verified Purchase</span>
+                        <span className="text-[10px] font-medium text-green-600 sm:text-[11px]">Verified Purchase</span>
                     </div>
                 </div>
             </div>

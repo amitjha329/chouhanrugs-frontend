@@ -6,7 +6,6 @@ import { randomInt } from 'crypto'
 import Image from 'next/image'
 import { notFound, redirect } from 'next/navigation'
 import React from 'react'
-import GtagEvent from './GtagEvent'
 
 const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: string }> }) => {
     const searchParams = await props.searchParams;
@@ -19,21 +18,6 @@ const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: st
     }
     const orderPorductsPromise = orderData.products.map(product => getProductWithId(product.productId))
     const orderedProducts = await Promise.all(orderPorductsPromise)
-    const analyticsItems = orderedProducts
-        .map((product, index) => {
-            if (!product) return null
-
-            return {
-                item_id: String(product._id ?? product.objectID ?? ''),
-                item_name: product.productName,
-                item_category: product.productCategory,
-                item_brand: product.productBrand,
-                item_variant: orderData.products[index].variation ?? undefined,
-                price: Number(orderData.products[index].productPrice),
-                quantity: Number(orderData.products[index].quantity),
-            }
-        })
-        .filter((item): item is NonNullable<typeof item> => item !== null)
 
     return (
         <>
@@ -162,12 +146,6 @@ const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: st
                     ) : <div className="w-full md:min-h-[400px] text-5xl flex justify-center items-center opacity-75">Order not Found</div>
                 }
             </div>
-            <GtagEvent
-                orderId={orderData._id}
-                orderValue={Number(orderData.orderValue)}
-                currency={orderData.userCurrency?.currency || 'INR'}
-                items={analyticsItems}
-            />
         </>
     )
 }

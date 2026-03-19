@@ -44,6 +44,11 @@ const CartLocalStorage = () => {
     };
 
     const handleQuantityChange = (idx: number, delta: number) => {
+        if (delta < 0 && cart[idx]?.quantity <= 1) {
+            handleRemove(idx);
+            return;
+        }
+
         const newCart = cart.map((item, i) => {
             if (i === idx) {
                 const newQty = item.quantity + delta;

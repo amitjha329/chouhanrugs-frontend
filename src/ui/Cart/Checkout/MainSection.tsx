@@ -40,6 +40,7 @@ import updateUserAddress from '@/backend/serverActions/updateUserAddress'
 import deleteUserAddress from '@/backend/serverActions/deleteUserAddress'
 import { initiatePayoneerPayment, cancelPayoneerOrder } from '@/backend/serverActions/payoneer'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
+import { trackPurchase } from '@/lib/gtagConversion'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -466,6 +467,20 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             }
             saveOrderAfterPay(orderData).then(res => {
                 if (res.ack) {
+                    trackPurchase(googleAdsConfig, {
+                        transactionId: res.result.data,
+                        value: orderTotal,
+                        currency: userCurrency?.currency || 'USD',
+                        items: cart.map((item) => ({
+                            item_id: item.cartProduct[0]._id?.toString() ?? '',
+                            item_name: item.cartProduct[0].productName,
+                            item_category: item.cartProduct[0].productCategory,
+                            item_brand: item.cartProduct[0].productBrand,
+                            item_variant: item.variationCode ?? '',
+                            price: getItemUnitPrice(item),
+                            quantity: item.quantity,
+                        })),
+                    })
                     onPageNotifications("success", "Order Placed").catch(err => {
                         console.log(err)
                     })
@@ -519,6 +534,20 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             }
             saveOrderAfterPay(orderData).then(res => {
                 if (res.ack) {
+                    trackPurchase(googleAdsConfig, {
+                        transactionId: res.result.data,
+                        value: orderTotal,
+                        currency: userCurrency?.currency || 'USD',
+                        items: cart.map((item) => ({
+                            item_id: item.cartProduct[0]._id?.toString() ?? '',
+                            item_name: item.cartProduct[0].productName,
+                            item_category: item.cartProduct[0].productCategory,
+                            item_brand: item.cartProduct[0].productBrand,
+                            item_variant: item.variationCode ?? '',
+                            price: getItemUnitPrice(item),
+                            quantity: item.quantity,
+                        })),
+                    })
                     onPageNotifications("success", "Order Placed").catch(err => {
                         console.log(res)
                     })
@@ -944,6 +973,20 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                             }
                                             saveOrderAfterPay(orderData).then(res => {
                                                 if (res.ack) {
+                                                    trackPurchase(googleAdsConfig, {
+                                                        transactionId: res.result.data,
+                                                        value: orderTotal,
+                                                        currency: userCurrency?.currency || 'USD',
+                                                        items: cart.map((item) => ({
+                                                            item_id: item.cartProduct[0]._id?.toString() ?? '',
+                                                            item_name: item.cartProduct[0].productName,
+                                                            item_category: item.cartProduct[0].productCategory,
+                                                            item_brand: item.cartProduct[0].productBrand,
+                                                            item_variant: item.variationCode ?? '',
+                                                            price: getItemUnitPrice(item),
+                                                            quantity: item.quantity,
+                                                        })),
+                                                    })
                                                     onPageNotifications("success", "Order Placed").catch(err => {
                                                         console.log(err)
                                                     })

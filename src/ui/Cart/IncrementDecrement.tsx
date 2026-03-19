@@ -3,17 +3,23 @@ import deleteProductFromCart from '@/backend/serverActions/deleteProductFromCart
 import increaseDeacreaseCartItem from '@/backend/serverActions/increaseDeacreaseCartItem'
 import CartDataModel from '@/types/CartDataModel'
 import onPageNotifications from '@/utils/onPageNotifications'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { HiMinus, HiPlus } from 'react-icons/hi2'
 
 const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
+    const router = useRouter()
     const [quantity, updateQuantity] = useState(item.quantity)
     const [isLoading, setIsLoading] = useState(false)
 
     const removeCartItem = async (id: string) => {
         setIsLoading(true)
         await deleteProductFromCart(id).then((res) => {
+            if (!res?.ack) {
+                throw new Error('Failed to delete cart item')
+            }
             onPageNotifications("success", "Product Deleted")
+            router.refresh()
             window.location.reload()
         }).catch(err => {
             onPageNotifications("error", "Something Went Wrong.")
@@ -26,7 +32,11 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
         if (quantity < 10) {
             setIsLoading(true)
             updateQuantity(quantity + 1)
-            increaseDeacreaseCartItem(item._id, 1).then(() => {
+            increaseDeacreaseCartItem(item._id, 1).then((res) => {
+                if (!res?.ack) {
+                    throw new Error('Failed to increase quantity')
+                }
+                router.refresh()
                 window.location.reload()
             }).catch(() => {
                 updateQuantity(quantity)
@@ -37,20 +47,25 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
         }
     }
 
-    const decrementQuantity = () => {
+    const decrementQuantity = async () => {
         if (isLoading) return
-        if (quantity > 1) {
-            setIsLoading(true)
-            updateQuantity(quantity - 1)
-            increaseDeacreaseCartItem(item._id, -1).then(() => {
-                window.location.reload()
-            }).catch(() => {
-                updateQuantity(quantity)
-                setIsLoading(false)
-            })
-        } else {
-            removeCartItem(item._id)
+        if (quantity <= 1) {
+            await removeCartItem(item._id)
+            return
         }
+
+        setIsLoading(true)
+        updateQuantity(quantity - 1)
+        increaseDeacreaseCartItem(item._id, -1).then((res) => {
+            if (!res?.ack) {
+                throw new Error('Failed to decrease quantity')
+            }
+            router.refresh()
+            window.location.reload()
+        }).catch(() => {
+            updateQuantity(quantity)
+            setIsLoading(false)
+        })
     }
 
     return (

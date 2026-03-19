@@ -181,15 +181,16 @@ const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
             />
             
             {/* Popup Container */}
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 pointer-events-none">
+            <div className="fixed inset-0 z-[9999] overflow-y-auto pointer-events-none">
+                <div className="flex min-h-full items-start justify-center p-3 pt-4 md:items-center md:p-4">
                 <div 
-                    className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden pointer-events-auto transform transition-all duration-300 animate-[scale-in_0.3s_ease-out]"
+                    className="relative my-auto max-h-[calc(100dvh-2rem)] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-2xl pointer-events-auto transform transition-all duration-300 animate-[scale-in_0.3s_ease-out]"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Close Button */}
                     <button
                         onClick={handleClose}
-                        className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-200 hover:scale-110"
+                        className="sticky top-3 ml-auto mr-3 mt-3 block z-20 bg-white/95 hover:bg-white rounded-full p-2 shadow-lg transition-all duration-200 md:absolute md:right-4 md:top-4 md:m-0 hover:scale-110"
                         aria-label="Close popup"
                     >
                         <IoMdClose className="w-6 h-6 text-gray-700" />
@@ -399,6 +400,7 @@ const GlobalPopup = ({ popupData }: { popupData: PopUpDataModel }) => {
                             )}
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
 
