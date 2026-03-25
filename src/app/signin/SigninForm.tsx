@@ -1,9 +1,8 @@
 // @ts-nocheck
 'use client'
-import sendOtp from '@/backend/serverActions/sendOtp'
+import { authClient } from '@/lib/auth-client'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
 import { trackSignup } from '@/lib/gtagConversion'
-import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import React, { useCallback, useState, KeyboardEvent } from 'react'
 import { FaSignInAlt } from 'react-icons/fa'
@@ -16,7 +15,6 @@ const SigninForm = ({ siteTitle }: propTypes) => {
     const searchParams = useSearchParams()
     const googleAdsConfig = useGoogleAdsConfig()
     const [email, setEmail] = React.useState("")
-    const [tkId, setTkid] = React.useState("")
     const [isOTPForm, setIsOTPForm] = useState<boolean>(false)
     const [code, setCode] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,15 +31,17 @@ const SigninForm = ({ siteTitle }: propTypes) => {
         setError('');
 
         try {
-            const result = await sendOtp({ to: email });
+            const { error: otpError } = await authClient.emailOtp.sendVerificationOtp({
+                email,
+                type: 'sign-in',
+            });
 
-            if (!result) {
+            if (otpError) {
                 setError('Failed to send OTP. Please check your email address or try again later.');
                 setIsLoading(false);
                 return;
             }
 
-            setTkid(result);
             setIsOTPForm(true);
             setError('');
         } catch (err) {
@@ -63,21 +63,17 @@ const SigninForm = ({ siteTitle }: propTypes) => {
         setError('');
 
         try {
-            const result = await signIn('credentials', {
+            const { data, error: signInError } = await authClient.signIn.emailOtp({
                 email,
-                tkId,
-                code,
-                redirectTo: window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/'),
-                redirect: false
+                otp: code,
             });
 
-            if (result?.error) {
+            if (signInError) {
                 setError('Invalid OTP. Please check and try again.');
                 setIsLoading(false);
-            } else if (result?.ok) {
+            } else if (data) {
                 // Track signup conversion
                 trackSignup(googleAdsConfig)
-                // Redirect will be handled by NextAuth
                 window.location.href = window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/');
             } else {
                 setError('Sign-in failed. Please try again.');
@@ -88,7 +84,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
             console.error('Error during sign-in:', err);
             setIsLoading(false);
         }
-    }, [code, email, tkId, searchParams, isLoading]);
+    }, [code, email, searchParams, isLoading]);
 
     const onKeyPress = useCallback(
         (e: KeyboardEvent) => {
@@ -105,7 +101,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 {
                     !isOTPForm && <>
                         <div className="flex flex-col items-center">
-                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { trackSignup(googleAdsConfig); signIn("google", { redirectTo:  window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/') }) }}>
+                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { trackSignup(googleAdsConfig); authClient.signIn.social({ provider: "google", callbackURL: window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/') }) }}>
                                 <div className="bg-white p-2 rounded-full">
                                     <svg className="w-4" viewBox="0 0 533.5 544.3">
                                         <path

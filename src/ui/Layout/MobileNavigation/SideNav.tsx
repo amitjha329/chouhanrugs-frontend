@@ -7,11 +7,13 @@ import { FiX, FiShoppingBag, FiInfo, FiHelpCircle, FiHeart } from 'react-icons/f
 import Logo from '../Logo'
 import SignoutButton from './SignoutButton'
 import { FaRegUserCircle, FaSignInAlt } from 'react-icons/fa'
-import { auth } from '@/auth'
+import { getSession } from '@/lib/auth-server'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 
 const SideNav = async () => {
-    const session = await auth()
+    const session = await getSession()
+    const t = await getTranslations('nav')
     return (
         <div className='z-10 fixed left-0 top-0 bg-secondary w-screen h-screen overflow-hidden !text-primary'>
             <div className='w-3/4 mr-auto'>
@@ -37,7 +39,7 @@ const SideNav = async () => {
                             >
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg">
                                     <BiCategoryAlt className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
-                                    <span className="ml-3">All Categories</span>
+                                    <span className="ml-3">{t('allCategories')}</span>
                                 </div>
                             </a>
                         </li>
@@ -57,7 +59,7 @@ const SideNav = async () => {
                             >
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FiShoppingBag className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
-                                    <span className="flex-1 ml-3 whitespace-nowrap">My Orders</span>
+                                    <span className="flex-1 ml-3 whitespace-nowrap">{t('orders')}</span>
                                 </div>
                             </a>
                         </li>
@@ -67,7 +69,7 @@ const SideNav = async () => {
                             >
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FiHeart className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
-                                    <span className="flex-1 ml-3 whitespace-nowrap">My Wishlist</span>
+                                    <span className="flex-1 ml-3 whitespace-nowrap">{t('myWishlist')}</span>
                                 </div>
                             </a>
                         </li>
@@ -77,7 +79,7 @@ const SideNav = async () => {
                             >
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FiInfo className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
-                                    <span className="flex-1 ml-3 whitespace-nowrap">About</span>
+                                    <span className="flex-1 ml-3 whitespace-nowrap">{t('about')}</span>
                                 </div>
                             </a>
                         </li>
@@ -87,7 +89,7 @@ const SideNav = async () => {
                             >
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FiHelpCircle className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
-                                    <span className="flex-1 ml-3 whitespace-nowrap">Contact Us</span>
+                                    <span className="flex-1 ml-3 whitespace-nowrap">{t('contact')}</span>
                                 </div>
                             </a>
                         </li>
@@ -95,7 +97,7 @@ const SideNav = async () => {
                             {
                                 session?.user ? <SignoutButton /> : <Link href="/signin" className='flex items-center p-2 text-base font-bold text-primary rounded-lg dark:text-white bg-gray-100 dark:bg-gray-700'>
                                     <FaSignInAlt className="flex-shrink-0 w-6 h-6 transition duration-75 text-primary dark:text-white" />
-                                    <span className="flex-1 ml-3 whitespace-nowrap">Log In</span>
+                                    <span className="flex-1 ml-3 whitespace-nowrap">{t('logIn')}</span>
                                 </Link>
                             }
                         </li>

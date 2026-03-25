@@ -4,7 +4,7 @@ import saveUserNewAddressForm from "@/backend/serverActions/saveUserNewAddressFo
 import updateUserAddress from "@/backend/serverActions/updateUserAddress"
 import onPageNotifications from "@/utils/onPageNotifications"
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Transition } from "@headlessui/react"
-import { useSession } from "next-auth/react"
+import { useSession } from '@/lib/auth-client'
 import { Fragment, useMemo, useState, FormEventHandler, Dispatch, SetStateAction, useEffect } from "react"
 import { BsCaretDown } from "react-icons/bs"
 import { MdCheckCircleOutline } from "react-icons/md"

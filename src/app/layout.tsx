@@ -12,8 +12,10 @@ import getGoogleAdsConfig from '@/backend/serverActions/getGoogleAdsConfig'
 import GlobalPopupWrapper from '@/ui/GlobalPopup/GlobalPopupWrapper'
 import PurchaseNotification from '@/ui/PurchaseNotification'
 import GoogleAdsProvider from '@/components/GoogleAdsProvider'
+import RecentlyViewedSidebar from '@/ui/RecentlyViewed'
 import { getNewProducts } from '@/backend/serverActions/getNewProducts'
 import Script from 'next/script'
+import { getTranslations } from 'next-intl/server'
 
 // Optimized font loading: Only load weights actually used in the app
 // Removed: 100, 200, 300, 800, 900 (rarely used)
@@ -36,12 +38,28 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
     await connection()
-    const [siteData, googleTagData, googleAdsConfig, notifProducts] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 })])
+    const [siteData, googleTagData, googleAdsConfig, notifProducts, t] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 }), getTranslations('notification')])
     const purchaseProducts = notifProducts.map(p => ({
         name: p.productName,
         url: `/products/${p.productURL}`,
         image: p.images?.[p.productPrimaryImageIndex] ?? p.images?.[0] ?? "",
     }))
+    const MINUTE_OPTIONS = [1, 2, 3, 5, 8, 12, 15, 20, 25, 32, 45]
+    const HOUR_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+    const DAY_OPTIONS = [2, 3, 4, 5, 6]
+    const notificationTranslations = {
+        timeAgoOptions: [
+            t('justNow'),
+            ...MINUTE_OPTIONS.map(n => t('minutesAgo', { count: n })),
+            ...HOUR_OPTIONS.map(n => t('hoursAgo', { count: n })),
+            ...DAY_OPTIONS.map(n => t('daysAgo', { count: n })),
+            t('weeksAgo', { count: 1 })
+        ],
+        from: t('from'),
+        purchased: t('purchased'),
+        dismiss: t('dismiss'),
+        verifiedPurchase: t('verifiedPurchase'),
+    }
     return (
         <html>
             <head>
@@ -121,7 +139,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     zIndex={1600} />
                 {children}
                 <FloatingButtonChat siteData={siteData} />
-                <PurchaseNotification products={purchaseProducts} />
+                <RecentlyViewedSidebar />
+                <PurchaseNotification products={purchaseProducts} translations={notificationTranslations} />
                 {/* GlobalPopupWrapper handles auth page check internally, wrapped in Suspense for DB fetch */}
                 <Suspense fallback={null}>
                     <GlobalPopupWrapper />

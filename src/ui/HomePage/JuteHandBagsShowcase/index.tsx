@@ -4,6 +4,7 @@ import React from "react"
 import { getProductsByCategory } from "@/backend/serverActions/getProductsByCategory"
 import { ProductDataModel } from "@/types/ProductDataModel"
 import heroImage from "./side-banner.webp"
+import { getTranslations } from "next-intl/server"
 
 /* ------------------------------------------------------------------ */
 /*  Mini Product Card (compact for the 50% grid)                      */
@@ -69,7 +70,10 @@ function MiniProductCard({ product }: { product: ProductDataModel }) {
 /*  Main Component                                                    */
 /* ------------------------------------------------------------------ */
 const JuteHandBagsShowcase = async () => {
-    const products = await getProductsByCategory("Bags", 6)
+    const [products, t] = await Promise.all([
+        getProductsByCategory("Bags", 6),
+        getTranslations('juteHandBags')
+    ])
 
     if (products.length === 0) return null
 
@@ -91,12 +95,12 @@ const JuteHandBagsShowcase = async () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                         {/* Text content */}
                         <div className="absolute inset-0 flex flex-col justify-end p-8 lg:p-10">
-                            <p className="text-xs uppercase tracking-[0.25em] text-amber-200 font-medium mb-2">Handcrafted Collection</p>
+                            <p className="text-xs uppercase tracking-[0.25em] text-amber-200 font-medium mb-2">{t('handcraftedCollection')}</p>
                             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
-                                Stylish Jute Hand Bags
+                                {t('stylishJuteHandBags')}
                             </h2>
                             <p className="text-white/80 text-sm sm:text-base max-w-md leading-relaxed">
-                                Premium jute bags crafted with sustainably obtained fiber and traditional techniques by Chouhan Rugs.
+                                {t('showcaseDescription')}
                             </p>
                         </div>
                     </Link>
@@ -105,19 +109,19 @@ const JuteHandBagsShowcase = async () => {
                     <div className="flex flex-col">
                         {/* Top bar — heading + nav buttons */}
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Jute Hand Bags</h3>
+                            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">{t('juteHandBags')}</h3>
                             <div className="flex items-center gap-3">
                                 <Link
                                     href="/jute-hand-bags"
                                     className="text-xs sm:text-sm font-medium text-primary border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition-all duration-300"
                                 >
-                                    Know More
+                                    {t('knowMore')}
                                 </Link>
                                 <Link
                                     href="/products/category/Bags"
                                     className="text-xs sm:text-sm font-medium bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-all duration-300"
                                 >
-                                    Browse Collection
+                                    {t('browseCollection')}
                                 </Link>
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-import { User } from "next-auth"
+import type { User } from '@/lib/auth'
 import CouponDataModel from "./CouponDataModel"
 import UserAddressDataModel from "./UserAddressDataModel"
 import { DHLShipment } from "./DHLShipment"

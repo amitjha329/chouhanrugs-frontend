@@ -9,7 +9,7 @@ import addProductToWishlist from "@/backend/serverActions/addProductToWishlist"
 import deleteProductFromWishlist from "@/backend/serverActions/deleteProductFromWishlist"
 import { useDataConnectionContext } from "@/utils/Contexts/DataConnectionContext"
 import onPageNotifications from "@/utils/onPageNotifications"
-import { useSession } from "next-auth/react"
+import { useSession } from '@/lib/auth-client'
 import { useRouter } from "next/navigation"
 import { FaHeart } from "react-icons/fa"
 import { IoClose, IoChevronBack, IoChevronForward } from "react-icons/io5"

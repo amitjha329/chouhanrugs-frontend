@@ -4,11 +4,11 @@ import Logo from '../Logo'
 import Link from 'next/link'
 import HeaderCartItemMobile from './HeaderCartItemMobile'
 import AlgoliaMobileSearch from './AlgoliaMobileSearch'
-import { auth } from '@/auth'
+import { getSession } from '@/lib/auth-server'
 
 
 const MobileNavigation = async () => {
-    const session = await auth()
+    const session = await getSession()
     return (
         <>
             <header className='sticky top-0 z-50 bg-base-100'>

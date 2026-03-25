@@ -5,7 +5,7 @@ import {
   useStripe,
   useElements
 } from "@stripe/react-stripe-js";
-import { useSession } from "next-auth/react";
+import { useSession } from '@/lib/auth-client';
 
 export default function CheckoutForm({ clientSecret, shippingId }: { clientSecret: string, shippingId: string }) {
   const stripe = useStripe();

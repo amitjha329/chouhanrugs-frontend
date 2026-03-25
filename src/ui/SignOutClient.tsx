@@ -1,5 +1,5 @@
 'use client'
-import { signOut } from 'next-auth/react'
+import { signOut } from '@/lib/auth-client'
 import React from 'react'
 
 const SignOutClient = ({ children }: { children: React.ReactNode }) => {

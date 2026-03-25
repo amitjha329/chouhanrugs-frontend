@@ -5,37 +5,40 @@ import Image from 'next/image'
 import order_Process_side from '../../../../static_assets/order-process.webp'
 import SectionTitle from '@/ui/SectionTitle'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 
-const OrderProcessSection = () => {
+const OrderProcessSection = async () => {
+    const t = await getTranslations('orderProcess')
+    const tHome = await getTranslations('homepage')
     const orderrocess = [
         {
             icon: "ShieldLock.svg",
-            title: "Secure Payments",
-            description: "All your Transactions are secure with scure gateways like Razorpay and Stripe."
+            title: t('securePayments'),
+            description: t('securePaymentsDesc')
         },
         {
             icon: "EasyReturn.svg",
-            title: "Easy Return",
-            description: "All of your orders are eligible for easy return policy giving you complete peace of mind."
+            title: t('easyReturn'),
+            description: t('easyReturnDesc')
         },
         {
             icon: "FreeShipping.svg",
-            title: "Free Shipping",
-            description: "All of our Rugs will reach you wherever you are in the world like US, UK, Australia, etc. as fast as possible and at no extra cost."
+            title: t('freeShipping'),
+            description: t('freeShippingDesc')
         },
         {
             icon: "SafeDelivery.svg",
-            title: "Safe Delivery",
-            description: "Always be sure that your product will reach you with complete safety."
+            title: t('safeDelivery'),
+            description: t('safeDeliveryDesc')
         }
     ]
     return (
         <div className='fluid_container relative ~py-5/14 ~px-5/0'>
-            <div className='~text-lg/3xl max-w-3xl mx-auto font-semibold text-center ~py-5/10'>Considering Rugs for your Kitchen, Living Room, and Bed Room look at our extensive collection of <h2 className='inline'><Link href='/'>Jute Rugs</Link></h2>, <h2 className='inline'><Link href='/'>Kilim Rugs</Link></h2> and <h2 className='inline'><Link href="/" >Cushions Covers</Link></h2></div>
+            <div className='~text-lg/3xl max-w-3xl mx-auto font-semibold text-center ~py-5/10'>{tHome('consideringRugs')} <h2 className='inline'><Link href='/'>{tHome('juteRugs')}</Link></h2>, <h2 className='inline'><Link href='/'>{tHome('kilimRugs')}</Link></h2> and <h2 className='inline'><Link href="/" >{tHome('cushionCovers')}</Link></h2></div>
             <div className='flex flex-col gap-5 md:~max-w-xl/3xl'>
                 {
                     orderrocess.map((order, index) => (
-                        <OrderProcessItem key={order.title} className={clsx({ 'self-end max-md:flex-row-reverse': index % 2 == 1 })} {...order} />
+                        <OrderProcessItem key={index} className={clsx({ 'self-end max-md:flex-row-reverse': index % 2 == 1 })} {...order} />
                     ))
                 }
             </div>

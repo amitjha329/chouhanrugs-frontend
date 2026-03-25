@@ -1,6 +1,7 @@
 'use client'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import React, { useState, useCallback, useMemo, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 
 type TabType = 'description' | 'highlights' | 'care'
 
@@ -11,6 +12,7 @@ interface TabConfig {
 }
 
 const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap }) => {
+    const t = useTranslations('product')
     const [activeDropdown, setActiveDropdown] = useState<TabType | null>(null)
     const [activeTab, setActiveTab] = useState<TabType>('description')
 
@@ -25,7 +27,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
     const tabs = useMemo<TabConfig[]>(() => [
         {
             id: 'description',
-            label: 'Description',
+            label: t('description'),
             content: (
                 <div 
                     className="text-gray-600" 
@@ -35,7 +37,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
         },
         {
             id: 'highlights',
-            label: 'Highlights',
+            label: t('highlights'),
             content: (
                 <ul className="text-gray-600 list-disc ml-4">
                     {product.highlights.map((highlight, index) => (
@@ -48,7 +50,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
         },
         {
             id: 'care',
-            label: 'Care',
+            label: t('care'),
             content: (
                 <ul className="text-gray-600 list-disc ml-4">
                     {product.careInstructions.map((instruction, index) => (

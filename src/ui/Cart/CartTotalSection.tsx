@@ -3,8 +3,10 @@ import { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CartDataModel from '@/types/CartDataModel'
 import GoToCheckoutBtn from './GoToCheckoutBtn'
 import { HiOutlineReceiptPercent, HiOutlineShieldCheck } from 'react-icons/hi2'
+import { getTranslations } from 'next-intl/server'
 
-const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
+const CartTotalSection = async ({ cartItems }: { cartItems: CartDataModel[] }) => {
+    const t = await getTranslations('cart')
     const userCurrency = null
 
     const calculateProductPrice = (item: CartDataModel): number => {
@@ -44,24 +46,24 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
             <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
                 <h2 className="font-semibold text-lg text-base-content flex items-center gap-2">
                     <HiOutlineReceiptPercent className="w-5 h-5 text-primary" />
-                    Order Summary
+                    {t('orderSummary')}
                 </h2>
             </div>
 
             {/* Summary Details */}
             <div className="p-6 space-y-4">
                 <div className="flex justify-between items-center text-base-content/70">
-                    <span>Subtotal ({cartItems.length} items)</span>
+                    <span>{t('subtotalItems', { count: cartItems.length })}</span>
                     <span className="font-medium text-base-content">$ {subTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center text-base-content/70">
-                    <span>Shipping</span>
-                    <span className="text-success font-medium">Calculated at checkout</span>
+                    <span>{t('shipping')}</span>
+                    <span className="text-success font-medium">{t('calculatedAtCheckout')}</span>
                 </div>
                 
                 <div className="border-t border-base-300/50 pt-4 mt-4">
                     <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-base-content">Estimated Total</span>
+                        <span className="text-lg font-semibold text-base-content">{t('estimatedTotal')}</span>
                         <span className="text-xl font-bold text-primary">$ {cartTotal.toFixed(2)}</span>
                     </div>
                 </div>
@@ -71,7 +73,7 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
                 {/* Security Badge */}
                 <div className="flex items-center justify-center gap-2 pt-4 text-xs text-base-content/60">
                     <HiOutlineShieldCheck className="w-4 h-4 text-success" />
-                    <span>Secure checkout with SSL encryption</span>
+                    <span>{t('secureCheckoutSSL')}</span>
                 </div>
             </div>
         </div>

@@ -9,45 +9,48 @@ import { headers } from 'next/headers';
 import getDevice from '@/utils/getDevice'
 import SectionTitle from '@/ui/SectionTitle'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 
 const OurPopularCategories = async () => {
     const header = await headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
+    const t = await getTranslations('homepage')
+    const tCommon = await getTranslations('common')
     const popularCategories = [
         {
-            title: "Popular in Cushion & Pillow",
-            desc: "Explore our wide range of comfortable and stylish cushions and pillows.",
+            title: t('popularCushionPillow'),
+            desc: t('popularCushionPillowDesc'),
             link: "Cushion%20&%20Pillow",
             image: cushion_pop,
             lgspan: 1,
             span: 2
         },
         {
-            title: "Popular in Rugs & Runners",
-            desc: "Discover premium quality rugs and runners to enhance your home decor. Our collection features a variety of styles, colors, and textures to suit every taste and space, ensuring a perfect blend of comfort and elegance.",
+            title: t('popularRugsRunners'),
+            desc: t('popularRugsRunnersDesc'),
             link: "Rugs%20&%20Runners",
             image: rugs_pop,
             lgspan: 2,
             span: 2
         },
         {
-            title: "Popular in Wall Hanging Macrame",
-            desc: "Add a touch of elegance with our handcrafted wall hanging macrame designs.",
+            title: t('popularMacrame'),
+            desc: t('popularMacrameDesc'),
             link: "Wall%20Hanging%20Macrame",
             image: macrame_pop,
             lgspan: 1,
             span: 4
         },
         {
-            title: "Popular in Throw Blankets",
-            desc: "Cozy up with our soft and warm throw blankets, perfect for any season. Choose from a variety of designs, colors, and materials to complement your living space and keep you comfortable year-round.",
+            title: t('popularBlankets'),
+            desc: t('popularBlanketsDesc'),
             link: "Throw%20Blankets",
             image: blankets_pop,
             lgspan: 2,
             span: 2,
         }, {
-            title: "Popular in Bags",
-            desc: "Browse our collection of versatile and trendy bags for every occasion. From casual totes to elegant handbags, find the perfect accessory to match your style and needs.",
+            title: t('popularBags'),
+            desc: t('popularBagsDesc'),
             link: "Bags",
             image: bags_pop,
             lgspan: 2,
@@ -56,7 +59,7 @@ const OurPopularCategories = async () => {
     ]
 
     return (<>
-        <SectionTitle title='Our Popular Categories' className='text-center pt-10 pb-5' />
+        <SectionTitle title={t('ourPopularCategories')} className='text-center pt-10 pb-5' />
         <div className='grid grid-cols-4 gap-5 fluid_container ~py-5/14 ~px-5/0'>
             {
                 popularCategories.map(category => {
@@ -80,7 +83,7 @@ const OurPopularCategories = async () => {
                                 {category.desc}
                             </div>}
                             <Link href={`/products/category/${category.link}`} className={`btn z-20 ${isMobile && "btn-sm"}`}>
-                                View All
+                                {tCommon('viewAll')}
                             </Link>
                         </div>)
                     );

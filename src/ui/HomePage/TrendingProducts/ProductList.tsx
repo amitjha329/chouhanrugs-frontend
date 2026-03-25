@@ -1,10 +1,11 @@
 import { getHotTrendingProducts } from '@/backend/serverActions/getHotTrendingProducts'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import ProductCardItem from '@/ui/Product/ProductCardItem'
+import { serializeForClient } from '@/utils/serializeForClient'
 import React from 'react'
 
 const ProductListHotTrending = async () => {
-    const trendingProducts = await getHotTrendingProducts({ limit: 8 })
+    const trendingProducts = serializeForClient(await getHotTrendingProducts({ limit: 8 }))
 
     return (
         <div className='fluid_conainer grid grid-cols-4 gap-5'>
@@ -18,7 +19,7 @@ const ProductListHotTrending = async () => {
 }
 
 const ProductListHotTrendingMobile = async () => {
-    const trendingProducts = await getHotTrendingProducts({ limit: 8 })
+    const trendingProducts = serializeForClient(await getHotTrendingProducts({ limit: 8 }))
 
     return (
         <div className="carousel carousel-center max-w-full space-x-4 p-4 z-30">

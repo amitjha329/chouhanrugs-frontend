@@ -13,6 +13,14 @@ export type NotificationProduct = {
     image: string
 }
 
+export type NotificationTranslations = {
+    timeAgoOptions: string[]
+    from: string
+    purchased: string
+    dismiss: string
+    verifiedPurchase: string
+}
+
 /* ------------------------------------------------------------------ */
 /*  Static Data                                                       */
 /* ------------------------------------------------------------------ */
@@ -46,50 +54,9 @@ const US_STATES = [
     "Kentucky", "Oregon", "Oklahoma", "Connecticut", "Utah", "Nevada", "Iowa",
 ]
 
-const TIME_AGO_OPTIONS = [
-    "just now",
-    "1 minute ago",
-    "2 minutes ago",
-    "3 minutes ago",
-    "5 minutes ago",
-    "8 minutes ago",
-    "12 minutes ago",
-    "15 minutes ago",
-    "20 minutes ago",
-    "25 minutes ago",
-    "32 minutes ago",
-    "45 minutes ago",
-    "1 hour ago",
-    "2 hours ago",
-    "3 hours ago",
-    "4 hours ago",
-    "5 hours ago",
-    "6 hours ago",
-    "7 hours ago",
-    "8 hours ago",
-    "9 hours ago",
-    "10 hours ago",
-    "11 hours ago",
-    "12 hours ago",
-    "13 hours ago",
-    "14 hours ago",
-    "15 hours ago",
-    "16 hours ago",
-    "17 hours ago",
-    "18 hours ago",
-    "19 hours ago",
-    "20 hours ago",
-    "21 hours ago",
-    "22 hours ago",
-    "23 hours ago",
-    "24 hours ago",
-    "2 days ago",
-    "3 days ago",
-    "4 days ago",
-    "5 days ago",
-    "6 days ago",
-    "1 week ago"
-]
+const MINUTE_OPTIONS = [1, 2, 3, 5, 8, 12, 15, 20, 25, 32, 45]
+const HOUR_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+const DAY_OPTIONS = [2, 3, 4, 5, 6]
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
@@ -98,12 +65,11 @@ function pickRandom<T>(arr: T[]): T {
     return arr[Math.floor(Math.random() * arr.length)]
 }
 
-function generateNotification(products: NotificationProduct[]) {
+function generateNotification(products: NotificationProduct[], timeAgo: string) {
     const firstName = pickRandom(FIRST_NAMES)
     const lastName = pickRandom(LAST_NAMES)
     const state = pickRandom(US_STATES)
     const product = pickRandom(products)
-    const timeAgo = pickRandom(TIME_AGO_OPTIONS)
 
     return {
         id: Date.now(),
@@ -124,7 +90,7 @@ const INTERVAL_MIN = 16000       // min 16s between popups
 const INTERVAL_MAX = 22000       // max 22s between popups
 const INITIAL_DELAY = 7000       // first popup after 7s
 
-export default function PurchaseNotification({ products }: { products: NotificationProduct[] }) {
+export default function PurchaseNotification({ products, translations }: { products: NotificationProduct[], translations: NotificationTranslations }) {
     const [notification, setNotification] = useState<Notification | null>(null)
     const [visible, setVisible] = useState(false)
     const [dismissed, setDismissed] = useState(false)
@@ -132,7 +98,8 @@ export default function PurchaseNotification({ products }: { products: Notificat
 
     const showNotification = useCallback(() => {
         if (dismissed || products.length === 0) return
-        const notif = generateNotification(products)
+        const timeAgo = pickRandom(translations.timeAgoOptions)
+        const notif = generateNotification(products, timeAgo)
         setNotification(notif)
         setVisible(true)
 
@@ -140,7 +107,7 @@ export default function PurchaseNotification({ products }: { products: Notificat
         timerRef.current = setTimeout(() => {
             setVisible(false)
         }, SHOW_DURATION)
-    }, [dismissed, products])
+    }, [dismissed, products, translations.timeAgoOptions])
 
     useEffect(() => {
         // Initial delay before first notification
@@ -190,7 +157,7 @@ export default function PurchaseNotification({ products }: { products: Notificat
                 <button
                     onClick={handleDismiss}
                     className="absolute right-1.5 top-1.5 p-1 text-gray-400 transition-colors hover:text-gray-600 sm:right-2"
-                    aria-label="Dismiss notification"
+                    aria-label={translations.dismiss}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                         <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -220,9 +187,9 @@ export default function PurchaseNotification({ products }: { products: Notificat
                 <div className="min-w-0 flex-1 pr-5 sm:pr-4">
                     <p className="text-xs leading-snug text-gray-800 sm:text-sm">
                         <span className="font-semibold">{notification.name}</span>
-                        {" from "}
+                        {` ${translations.from} `}
                         <span className="text-gray-600">{notification.location}</span>
-                        {" purchased"}
+                        {` ${translations.purchased}`}
                     </p>
                     <Link
                         href={notification.product.url}

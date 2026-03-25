@@ -1,6 +1,7 @@
 // @ts-nocheck
 'use client'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import React, { useState, useMemo, useEffect, Fragment, useCallback, lazy, Suspense } from 'react'
 import { BsPlus } from 'react-icons/bs'
 import clsx from 'clsx'
@@ -9,7 +10,7 @@ import { loadStripe, Stripe } from '@stripe/stripe-js'
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
 import { GrFormClose } from 'react-icons/gr'
 import { Elements } from '@stripe/react-stripe-js'
-import { Session } from 'next-auth'
+import type { Session } from '@/lib/auth'
 import UserAddressFormEnhanced from './UserAddressFormEnhanced'
 import { capturePayment, createOrder } from '@/backend/serverActions/paypal'
 import stringEmptyOrNull, { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
@@ -59,6 +60,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     const [stripePromise, setStripePromise] = useState<Promise<Stripe | null>>()
     const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null)
     const router = useRouter()
+    const t = useTranslations('checkout')
     const { cartCount } = useDataConnectionContext()
     const googleAdsConfig = useGoogleAdsConfig()
     const [cart, setCart] = useState<CartDataModel[]>([])
@@ -147,10 +149,10 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
 
     // Add a function to get the pay button disabled reason
     const getPayDisabledReason = () => {
-        if (cartCount === 0) return "Your cart is empty.";
-        if (!selectedAddress) return "Please select a delivery address.";
-        if (!currentShipping) return "Delivery is not available for the selected address.";
-        if (!paymentMethod || !paymentMethod.partner) return "Please select a payment method.";
+        if (cartCount === 0) return t('emptyCartError');
+        if (!selectedAddress) return t('selectAddressError');
+        if (!currentShipping) return t('deliveryUnavailableError');
+        if (!paymentMethod || !paymentMethod.partner) return t('selectPaymentError');
         return "";
     };
 
@@ -191,7 +193,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         validateCoupon(debouncedCoupon, cartTotal).then(result => {
             setCouponData(result)
             if (result?.couponApplicable) {
-                onPageNotifications("success", "Coupon Applied")
+                onPageNotifications("success", t('couponAppliedNotice'))
                 switch (result.couponData.type) {
                     case 2:
                         setDeductable(result.couponData.value * (userCurrency?.exchangeRates ?? 1))
@@ -202,9 +204,9 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         break;
                 }
             } else {
-                onPageNotifications("error", "Copon Not Apllicable")
+                onPageNotifications("error", t('couponNotApplicable'))
             }
-        }).catch(err => onPageNotifications("error", "Something Went Wrong"))
+        }).catch(err => onPageNotifications("error", t('somethingWentWrong')))
     }, [debouncedCoupon, cartTotal, userCurrency])
 
     // Move launchRazorPayFlow above processPayment to avoid TDZ error
@@ -233,7 +235,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     // Memoize processPayment handler
     const processPayment = useCallback(async () => {
         if (currentShipping == undefined) {
-            onPageNotifications("info", "Select Shipping Address First.").catch(e => console.log(e))
+            onPageNotifications("info", t('selectShippingFirst')).catch(e => console.log(e))
             return
         }
         switch (paymentMethod?.partner) {
@@ -243,8 +245,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         setRazorPayOrder(response.result.data)
                         launchRazorPayFlow(response.result.data)
                     } else {
-                        onPageNotifications("error", "Something Went Wrong on Server.").catch(e => console.log(e))
-                        onPageNotifications("error", "Please Try After Some Time.").catch(e => console.log(e))
+                        onPageNotifications("error", t('serverError')).catch(e => console.log(e))
+                        onPageNotifications("error", t('tryLater')).catch(e => console.log(e))
                     }
                 }) : launchRazorPayFlow(razorPayOrder)
                 break;
@@ -257,6 +259,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     return
                 }
                 onPageNotifications("error", `PayPal Does Not Support ${userCurrency?.currency}`)
+                // Note: PayPal currency error kept dynamic as it includes variable currency code
                 break;
             case "PAYONEER":
                 // Build order data object
@@ -296,7 +299,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 const payoneerOrderResult = await saveOrderAfterPay(payoneerOrderData)
 
                 if (!payoneerOrderResult.ack) {
-                    onPageNotifications("error", "Failed to create order")
+                    onPageNotifications("error", t('somethingWentWrong'))
                     return
                 }
 
@@ -353,7 +356,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 }
                 break;
             default:
-                onPageNotifications("info", "Select Payment Gateway First.").catch(e => console.log(e))
+                onPageNotifications("info", t('selectPaymentError')).catch(e => console.log(e))
                 return
         }
     }, [currentShipping, paymentMethod, razorPayOrder, orderTotal, userCurrency, launchRazorPayFlow])
@@ -362,7 +365,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         validateCoupon(couponCode, cartTotal).then(result => {
             setCouponData(result)
             if (result?.couponApplicable) {
-                onPageNotifications("success", "Coupon Applied")
+                onPageNotifications("success", t('couponAppliedNotice'))
                 switch (result.couponData.type) {
                     case 2:
                         setDeductable(result.couponData.value * (userCurrency?.exchangeRates ?? 1))
@@ -373,9 +376,9 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         break;
                 }
             } else {
-                onPageNotifications("error", "Copon Not Apllicable")
+                onPageNotifications("error", t('couponNotApplicable'))
             }
-        }).catch(err => onPageNotifications("error", "Something Went Wrong"))
+        }).catch(err => onPageNotifications("error", t('somethingWentWrong')))
     }    // Address management handlers
     const handleEditAddress = (address: UserAddressDataModel) => {
         setEditingAddress(address)
@@ -392,14 +395,14 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     const handleDeleteAddress = async (addressId: string) => {
         try {
             if (!session?.user?.id) {
-                onPageNotifications("error", "Please login to delete address")
+                onPageNotifications("error", t('deleteAddressLogin'))
                 return
             }
 
             const result = await deleteUserAddress(addressId, (session.user as { id: string }).id)
             
             if (result.ack) {
-                onPageNotifications("success", "Address deleted successfully")
+                onPageNotifications("success", t('addressDeleted'))
                 // Remove the deleted address from the local state
                 setaddress(prevAddresses => prevAddresses.filter(addr => addr._id !== addressId))
                 // If the deleted address was selected, clear the selection
@@ -407,11 +410,11 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     setSelectedAddress(null)
                 }
             } else {
-                onPageNotifications("error", "Failed to delete address")
+                onPageNotifications("error", t('deleteAddressFailed'))
             }
         } catch (error) {
             console.error('Error deleting address:', error)
-            onPageNotifications("error", "Something went wrong while deleting address")
+            onPageNotifications("error", t('deleteAddressError'))
         }
     }
 
@@ -617,8 +620,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 <div className="container max-w-7xl py-6 sm:py-10 mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Page Header */}
                     <div className="mb-8">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-base-content">Checkout</h1>
-                        <p className="text-base-content/60 mt-1">Complete your order securely</p>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-base-content">{t('title')}</h1>
+                        <p className="text-base-content/60 mt-1">{t('completeOrder')}</p>
                     </div>
 
                     <div className="flex flex-col lg:flex-row gap-8">
@@ -629,7 +632,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                 <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">1</div>
-                                        <h2 className="text-lg font-semibold text-base-content">Delivery Address</h2>
+                                        <h2 className="text-lg font-semibold text-base-content">{t('deliveryAddress')}</h2>
                                     </div>
                                 </div>
                                 <div className="p-6">
@@ -652,7 +655,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                                 onClick={_ => handleAddAddressToggle(true)}
                                             >
                                                 <BsPlus className="w-6 h-6" />
-                                                Add New Address
+                                                {t('addNewAddress')}
                                             </button>
                                         </>
                                     )}
@@ -662,7 +665,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                             onClick={_ => handleAddAddressToggle(true)}
                                         >
                                             <BsPlus className="w-6 h-6" />
-                                            Add New Address
+                                            {t('addNewAddress')}
                                         </button>
                                     )}
                                     {addAddress && (
@@ -680,7 +683,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                 <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">2</div>
-                                        <h2 className="text-lg font-semibold text-base-content">Payment Method</h2>
+                                        <h2 className="text-lg font-semibold text-base-content">{t('paymentMethod')}</h2>
                                     </div>
                                 </div>
                                 <div className="p-6">
@@ -694,9 +697,9 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">3</div>
-                                            <h2 className="text-lg font-semibold text-base-content">Review Items</h2>
+                                            <h2 className="text-lg font-semibold text-base-content">{t('reviewItems')}</h2>
                                         </div>
-                                        <span className="text-sm text-base-content/60">{cart.length} {cart.length === 1 ? 'item' : 'items'}</span>
+                                        <span className="text-sm text-base-content/60">{cart.length} {cart.length === 1 ? t('itemsLabel') : t('itemsLabel')}</span>
                                     </div>
                                 </div>
                                 <div className="p-6 space-y-4">
@@ -716,43 +719,43 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                             <div className="sticky top-[100px]">
                                 <div className="bg-base-100 rounded-2xl shadow-lg border border-base-300/50 overflow-hidden">
                                     <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-5">
-                                        <h2 className="text-xl font-bold text-primary-content">Order Summary</h2>
+                                        <h2 className="text-xl font-bold text-primary-content">{t('orderSummary')}</h2>
                                     </div>
                                     <div className="p-6 space-y-5">
                                         {/* Items Count */}
                                         <div className="flex justify-between items-center text-base-content">
-                                            <span className="text-base-content/70">Items ({cart.length})</span>
+                                            <span className="text-base-content/70">{t('itemsLabel')} ({cart.length})</span>
                                             <span className="font-medium">{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
                                         </div>
 
                                         {/* Shipping */}
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-base-content/70 uppercase tracking-wide">Shipping</label>
+                                            <label className="text-sm font-medium text-base-content/70 uppercase tracking-wide">{t('shippingLabel')}</label>
                                             <div className="bg-base-200/50 rounded-lg px-4 py-3 text-sm">
                                                 {!selectedAddress ? (
-                                                    <span className="text-base-content/50 italic">Select address first</span>
+                                                    <span className="text-base-content/50 italic">{t('selectAddressFirst')}</span>
                                                 ) : currentShipping ? (
                                                     <div className="flex justify-between items-center">
-                                                        <span>Standard Delivery</span>
+                                                        <span>{t('standardDelivery')}</span>
                                                         <span className="font-medium">
                                                             {Number(currentShipping.shippingCharges.split(' ')[1]) > 0 
                                                                 ? currentShipping.shippingCharges 
-                                                                : <span className="text-success">Free</span>}
+                                                                : <span className="text-success">{t('free')}</span>}
                                                         </span>
                                                     </div>
                                                 ) : (
-                                                    <span className="text-error text-xs">Delivery not available for this location</span>
+                                                    <span className="text-error text-xs">{t('deliveryNotAvailable')}</span>
                                                 )}
                                             </div>
                                         </div>
 
                                         {/* Promo Code */}
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-base-content/70 uppercase tracking-wide">Promo Code</label>
+                                            <label className="text-sm font-medium text-base-content/70 uppercase tracking-wide">{t('promoCode')}</label>
                                             <div className="flex gap-2">
                                                 <input
                                                     type="text"
-                                                    placeholder="Enter code"
+                                                    placeholder={t('enterCode')}
                                                     className={clsx(
                                                         "input input-bordered flex-1 bg-base-200/50 focus:bg-base-100",
                                                         couponData?.couponApplicable && "border-success",
@@ -765,7 +768,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                                     className="btn btn-primary px-6"
                                                     onClick={handleCouponApply}
                                                 >
-                                                    Apply
+                                                    {t('apply')}
                                                 </button>
                                             </div>
                                             {couponData?.couponApplicable && (
@@ -782,22 +785,22 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                         {/* Price Breakdown */}
                                         <div className="space-y-3 text-sm">
                                             <div className="flex justify-between text-base-content/70">
-                                                <span>Subtotal</span>
+                                                <span>{t('subtotalLabel')}</span>
                                                 <span>{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
                                             </div>
                                             <div className="flex justify-between text-base-content/70">
-                                                <span>Delivery</span>
-                                                <span>{currentShipping && Number(currentShipping.shippingCharges.split(' ')[1]) > 0 ? currentShipping.shippingCharges : "Free"}</span>
+                                                <span>{t('deliveryLabel')}</span>
+                                                <span>{currentShipping && Number(currentShipping.shippingCharges.split(' ')[1]) > 0 ? currentShipping.shippingCharges : t('free')}</span>
                                             </div>
                                             {currentTax.taxRate > 0 && (
                                                 <div className="flex justify-between text-base-content/70">
-                                                    <span>Tax ({currentTax.taxRate}%)</span>
+                                                    <span>{t('taxLabel')} ({currentTax.taxRate}%)</span>
                                                     <span>{userCurrency?.currencySymbol} {(cartTotal * (currentTax.taxRate / 100)).toFixed(2)}</span>
                                                 </div>
                                             )}
                                             {couponData?.couponApplicable && (
                                                 <div className="flex justify-between text-success">
-                                                    <span>Discount</span>
+                                                    <span>{t('discountLabel')}</span>
                                                     <span>- {userCurrency?.currencySymbol} {deductable.toFixed(2)}</span>
                                                 </div>
                                             )}
@@ -808,7 +811,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
 
                                         {/* Total */}
                                         <div className="flex justify-between items-center">
-                                            <span className="text-lg font-bold text-base-content">Total</span>
+                                            <span className="text-lg font-bold text-base-content">{t('totalLabel')}</span>
                                             <span className="text-2xl font-bold text-primary">{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
                                         </div>
 
@@ -821,7 +824,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                             )} 
                                             disabled={isPayDisabled}
                                         >
-                                            {isPayDisabled ? "Complete All Steps" : `Pay ${userCurrency?.currencySymbol} ${orderTotal.toFixed(2)}`}
+                                            {isPayDisabled ? t('completeAllSteps') : `Pay ${userCurrency?.currencySymbol} ${orderTotal.toFixed(2)}`}
                                         </button>
                                         {isPayDisabled && (
                                             <p className="text-xs text-center text-error mt-2">{getPayDisabledReason()}</p>
@@ -830,7 +833,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                         {/* Security Badge */}
                                         <div className="flex items-center justify-center gap-2 text-xs text-base-content/50 mt-4">
                                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>
-                                            <span>Secure SSL Encrypted Payment</span>
+                                            <span>{t('secureSSL')}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -841,30 +844,30 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         <div className="lg:hidden">
                             <div className="bg-base-100 rounded-2xl shadow-lg border border-base-300/50 overflow-hidden">
                                 <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-4">
-                                    <h2 className="text-lg font-bold text-primary-content">Order Summary</h2>
+                                    <h2 className="text-lg font-bold text-primary-content">{t('orderSummary')}</h2>
                                 </div>
                                 <div className="p-5 space-y-4">
                                     {/* Items Count */}
                                     <div className="flex justify-between items-center text-sm">
-                                        <span className="text-base-content/70">Items ({cart.length})</span>
+                                        <span className="text-base-content/70">{t('itemsLabel')} ({cart.length})</span>
                                         <span className="font-medium">{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
                                     </div>
 
                                     {/* Shipping Info */}
                                     <div className="bg-base-200/50 rounded-lg px-4 py-3 text-sm">
                                         {!selectedAddress ? (
-                                            <span className="text-base-content/50 italic">Select address first</span>
+                                            <span className="text-base-content/50 italic">{t('selectAddressFirst')}</span>
                                         ) : currentShipping ? (
                                             <div className="flex justify-between items-center">
-                                                <span>Shipping</span>
+                                                <span>{t('shippingLabel')}</span>
                                                 <span className="font-medium">
                                                     {Number(currentShipping.shippingCharges.split(' ')[1]) > 0 
                                                         ? currentShipping.shippingCharges 
-                                                        : <span className="text-success">Free</span>}
+                                                        : <span className="text-success">{t('free')}</span>}
                                                 </span>
                                             </div>
                                         ) : (
-                                            <span className="text-error text-xs">Delivery not available</span>
+                                            <span className="text-error text-xs">{t('deliveryNotAvailable')}</span>
                                         )}
                                     </div>
 
@@ -872,7 +875,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     <div className="flex gap-2">
                                         <input
                                             type="text"
-                                            placeholder="Promo code"
+                                            placeholder={t('enterCode')}
                                             className={clsx(
                                                 "input input-bordered input-sm flex-1 bg-base-200/50",
                                                 couponData?.couponApplicable && "border-success",
@@ -881,27 +884,27 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                             value={couponCode}
                                             onChange={e => setCouponCode(e.target.value)}
                                         />
-                                        <button className="btn btn-primary btn-sm" onClick={handleCouponApply}>Apply</button>
+                                        <button className="btn btn-primary btn-sm" onClick={handleCouponApply}>{t('apply')}</button>
                                     </div>
 
                                     <div className="border-t border-base-300 pt-3 space-y-2 text-sm">
                                         <div className="flex justify-between text-base-content/70">
-                                            <span>Subtotal</span>
+                                            <span>{t('subtotalLabel')}</span>
                                             <span>{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
                                         </div>
                                         <div className="flex justify-between text-base-content/70">
-                                            <span>Delivery</span>
-                                            <span>{currentShipping && Number(currentShipping.shippingCharges.split(' ')[1]) > 0 ? currentShipping.shippingCharges : "Free"}</span>
+                                            <span>{t('deliveryLabel')}</span>
+                                            <span>{currentShipping && Number(currentShipping.shippingCharges.split(' ')[1]) > 0 ? currentShipping.shippingCharges : t('free')}</span>
                                         </div>
                                         {currentTax.taxRate > 0 && (
                                             <div className="flex justify-between text-base-content/70">
-                                                <span>Tax</span>
+                                                <span>{t('taxLabel')}</span>
                                                 <span>{userCurrency?.currencySymbol} {(cartTotal * (currentTax.taxRate / 100)).toFixed(2)}</span>
                                             </div>
                                         )}
                                         {couponData?.couponApplicable && (
                                             <div className="flex justify-between text-success">
-                                                <span>Discount</span>
+                                                <span>{t('discountLabel')}</span>
                                                 <span>- {userCurrency?.currencySymbol} {deductable.toFixed(2)}</span>
                                             </div>
                                         )}
@@ -910,7 +913,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     {/* Total & Pay */}
                                     <div className="border-t border-base-300 pt-4">
                                         <div className="flex justify-between items-center mb-4">
-                                            <span className="font-bold text-base-content">Total</span>
+                                            <span className="font-bold text-base-content">{t('totalLabel')}</span>
                                             <span className="text-xl font-bold text-primary">{userCurrency?.currencySymbol} {orderTotal.toFixed(2)}</span>
                                         </div>
                                         <button 
@@ -918,7 +921,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                             className={clsx("btn btn-primary w-full", isPayDisabled && "btn-disabled")} 
                                             disabled={isPayDisabled}
                                         >
-                                            {isPayDisabled ? "Complete All Steps" : "Pay Now"}
+                                            {isPayDisabled ? t('completeAllSteps') : t('payNow')}
                                         </button>
                                         {isPayDisabled && (
                                             <p className="text-xs text-center text-error mt-2">{getPayDisabledReason()}</p>
@@ -933,7 +936,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             <dialog id="paypalModal" className="modal">
                 <div className="modal-box">
                     {orderTotal > 0 && selectedAddress?._id &&
-                        <Suspense fallback={<div>Loading PayPal...</div>}>
+                        <Suspense fallback={<div>{t('loadingPayPal')}</div>}>
                             <LazyPayPalButtons
                                 style={{ color: "blue" }}
                                 createOrder={() => createOrder(`${orderTotal.toFixed(2)}`, userCurrency?.currency ?? "USD")}
@@ -1030,7 +1033,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                 <DialogPanel className="w-full max-w-5xl transform overflow-hidden rounded-2xl bg-base-100 p-7 text-left align-middle shadow-xl transition-all">
                                     <GrFormClose className="absolute top-3 right-3 h-7 w-7 text-gray-500" onClick={_ => { setShowStripe(false) }} />
                                     {stripeClientSecret && paymentMethod?.partner == "STRIPE" && stripePromise != null &&
-                                        <Suspense fallback={<div>Loading Stripe...</div>}>
+                                        <Suspense fallback={<div>{t('loadingStripe')}</div>}>
                                             <Elements options={{
                                                 clientSecret: stripeClientSecret ?? "",
                                                 appearance: {

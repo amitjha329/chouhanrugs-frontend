@@ -45,11 +45,24 @@ export async function revalidateSiteData() {
 }
 
 /**
+ * Revalidate translation caches
+ * Call this when translations are updated in the database
+ * @param locale - Optional: revalidate only a specific locale
+ */
+export async function revalidateTranslations(locale?: string) {
+    revalidateTag('translations', 'max')
+    if (locale) {
+        revalidateTag(`translations-${locale}`, 'max')
+    }
+}
+
+/**
  * Revalidate all caches
  * Use sparingly - only when major changes are made
  */
 export async function revalidateAll() {
     await revalidateProducts()
     await revalidateSiteData()
+    await revalidateTranslations()
     revalidateTag('analytics', 'max')
 }

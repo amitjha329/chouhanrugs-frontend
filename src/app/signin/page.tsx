@@ -6,12 +6,12 @@ import banner from "./banner.webp"
 import banner_mobile from "./banner-mobile.webp"
 import getSiteData from "@/backend/serverActions/getSiteData";
 import SigninForm from "./SigninForm";
-import { auth } from "@/auth";
+import { getSession } from '@/lib/auth-server';
 import Link from "next/link";
 
 const SignIn = async () => {
     await connection()
-    const session = await auth()
+    const session = await getSession()
     if (session?.user != null) {
         redirect('/')
     }

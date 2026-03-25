@@ -5,9 +5,11 @@ import { IoIosSend } from 'react-icons/io'
 import addSubscriber from '@/lib/actions/addSubscriber'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
 import { trackEmailLeadOnce } from '@/lib/gtagConversion'
+import { useTranslations } from 'next-intl'
 
 const SubscribeFields = () => {
   const googleAdsConfig = useGoogleAdsConfig()
+  const t = useTranslations('subscribe')
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState('')
@@ -16,7 +18,7 @@ const SubscribeFields = () => {
   const handleSubmit = async () => {
 
     if (!email.trim()) {
-      setMessage('Please enter your email')
+      setMessage(t('enterEmail'))
       setIsSuccess(false)
       return
     }
@@ -37,7 +39,7 @@ const SubscribeFields = () => {
         setIsSuccess(false)
       }
     } catch (error) {
-      setMessage('Something went wrong. Please try again.')
+      setMessage(t('genericError'))
       setIsSuccess(false)
     } finally {
       setIsSubmitting(false)
@@ -53,7 +55,7 @@ const SubscribeFields = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="input input-secondary bg-opacity-30 input-lg bg-base-200 join-item border-none w-full placeholder-secondary !outline-none placeholder:~text-xs/base"
-            placeholder="Enter Your Email Address"
+            placeholder={t('placeholder')}
             disabled={isSubmitting}
             required
           />

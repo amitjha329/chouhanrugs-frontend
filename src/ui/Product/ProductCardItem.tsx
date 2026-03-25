@@ -6,6 +6,7 @@ import React from 'react'
 import WishListButton from './WishListButton'
 import ProductsCardStyle from './WishlistButton.module.scss'
 import { blurPlaceholders, productImageSizes, imageQuality } from '@/utils/imageOptimization'
+import { useTranslations } from 'next-intl'
 
 interface CompoProps extends ProductDataModelWithColorMap {
     className?: string,
@@ -15,10 +16,11 @@ interface CompoProps extends ProductDataModelWithColorMap {
 }
 
 /**
- * Server Component for product cards - optimized for SEO
+ * Product card component - optimized for SEO
  * Uses Next.js Image with blur placeholder for optimal loading without client-side state
  */
 const ProductCardItem = (props: CompoProps) => {
+    const t = useTranslations('product')
     const productVariations = props.variations ?? []
     
     // Load first 4 images eagerly, rest lazy
@@ -76,7 +78,7 @@ const ProductCardItem = (props: CompoProps) => {
                         quality={imageQuality.standard}
                     />
                     <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{props.productDiscountPercentage}</div>
-                    {props.sponsered && <div className='rounded-full text-primary py-1 px-2 text-xs bg-white absolute max-md:bottom-2 md:top-2 left-1/2 -translate-x-1/2'>Sponsored</div>}
+                    {props.sponsered && <div className='rounded-full text-primary py-1 px-2 text-xs bg-white absolute max-md:bottom-2 md:top-2 left-1/2 -translate-x-1/2'>{t('sponsored')}</div>}
                     {props.colorMap && props.colorMap.length > 0 && <div className='absolute bottom-2 left-2'>
                         <div className="avatar-group -space-x-3 rtl:space-x-reverse">
                             {

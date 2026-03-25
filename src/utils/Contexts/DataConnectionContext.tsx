@@ -3,8 +3,7 @@ import React, { ReactNode, createContext, useContext, useEffect, useMemo, useSta
 import getUserAllWishlist from '@/backend/serverActions/getUserAllWishlist'
 import getUserCartItemCount from '@/backend/serverActions/getUserCartItemCount'
 import DataContextDataModel from '@/types/DataContextDataModel'
-import { Session } from 'next-auth'
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/lib/auth-client'
 
 /**
  * This Method Initializes the Socket Connection to the Server and accepts domain name for websocket connection.
@@ -28,7 +27,8 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
     const [cartCount, setCartCount] = useState<number>()
     const [mainSocket, setMainSocket] = useState<WebSocket>()
     const [wishlistItems, setWishlistitems] = useState<string[]>([])
-    const { data: session } = useSession()
+    const { data: sessionData } = useSession()
+    const session = sessionData
 
     // Helper to get local cart count
     const getLocalCartCount = () => {
@@ -45,14 +45,14 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
     }
 
     const refreshWishList = () => {
-        getUserAllWishlist((session?.user as { id: string })?.id, false).then(result => {
+        getUserAllWishlist(session?.user?.id ?? '', false).then(result => {
             setWishlistitems(result?.itemIds ?? [])
         }).catch(err => console.log(err))
     }
 
     const refreshCartItems = () => {
         if (session?.user) {
-            getUserCartItemCount((session?.user as { id: string }).id).then(result => {
+            getUserCartItemCount(session.user.id).then(result => {
                 setCartCount(result.cartItemCount)
             }).catch(err => console.log(err))
         } else {
@@ -63,7 +63,7 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
     useEffect(() => {
         // On mount or session change, update cart count from server or localStorage
         if (session?.user) {
-            getUserCartItemCount((session?.user as { id: string }).id).then(result => {
+            getUserCartItemCount(session.user.id).then(result => {
                 setCartCount(result.cartItemCount)
             }).catch(err => console.log(err))
         } else {
@@ -72,7 +72,7 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
         (!mainSocket || mainSocket.readyState !== WebSocket.OPEN) && webSocketInitializer(window.location.host).then((result) => {
             setMainSocket(result)
         }).catch(err => console.log(err))
-        session && getUserAllWishlist((session?.user as { id: string }).id, false).then(result => {
+        session && getUserAllWishlist(session.user?.id, false).then(result => {
             setWishlistitems(result?.itemIds ?? [])
         }).catch(err => console.log(err))
     }, [session])
@@ -83,8 +83,8 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
 
             mainSocket.send(JSON.stringify({
                 meta: "join_room",
-                roomID: (session.user as { id: string }).id,
-                clientID: (session.user as { id: string }).id,
+                roomID: session.user?.id,
+                clientID: session.user?.id,
                 message: ""
             }))
             mainSocket.onmessage = (event) => {

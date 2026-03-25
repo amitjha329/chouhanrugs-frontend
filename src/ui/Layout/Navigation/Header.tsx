@@ -1,25 +1,27 @@
 import Image from 'next/image'
 import React from 'react'
 import Logo from '../Logo'
-import { auth } from '@/auth'
+import { getSession } from '@/lib/auth-server'
 import Link from 'next/link'
 import UserMenu from './UserMenu'
 import HeaderCartItem from './HeaderCartItem'
+import { getTranslations } from 'next-intl/server'
 
 const Header = async () => {
-    const session = await auth()
+    const session = await getSession()
+    const t = await getTranslations('nav')
     return (
         <header className='flex items-center justify-between px-10 py-5 bg-base-100'>
             <div className='flex gap-10'>
-                <Link href="/track-order"><HeaderItem icon='/vector/TrackOrder.svg' text='Track Order' /></Link>
+                <Link href="/track-order"><HeaderItem icon='/vector/TrackOrder.svg' text={t('trackOrder')} /></Link>
                 {/* <CurrencySelector currency={currency}><HeaderItem icon='/vector/Currency.svg' text={JSON.parse(cookie.get('selectedCurrency')?.value ?? '{}').currency ?? 'INR'} /></CurrencySelector> */}
-                <HeaderItem icon='/vector/Search.svg' text='Search' id='search_button' />
+                <HeaderItem icon='/vector/Search.svg' text={t('search')} id='search_button' />
             </div>
             <Logo logoClass='text-accent' taglineClass='~text-xs/sm' className='text-center z-50 relative' />
             <div className='flex gap-10'>
-                <Link href="/user/wishlist"><HeaderItem icon='/vector/Heart.svg' text='Wishlist' /></Link>
-                {session?.user == null ? <Link href="/signin"><HeaderItem icon='/vector/UserIcon.svg' text={'Login'} /></Link> : <UserMenu><HeaderItem icon='/vector/UserIcon.svg' text={session?.user?.name?.split(' ')[0] ?? ""} /></UserMenu>}
-                <Link href="/cart"><HeaderCartItem icon='/vector/Cart.svg' text='Cart' /></Link>
+                <Link href="/user/wishlist"><HeaderItem icon='/vector/Heart.svg' text={t('wishlist')} /></Link>
+                {session?.user == null ? <Link href="/signin"><HeaderItem icon='/vector/UserIcon.svg' text={t('login')} /></Link> : <UserMenu><HeaderItem icon='/vector/UserIcon.svg' text={session?.user?.name?.split(' ')[0] ?? ""} /></UserMenu>}
+                <Link href="/cart"><HeaderCartItem icon='/vector/Cart.svg' text={t('cart')} /></Link>
             </div>
         </header>
     )

@@ -1,7 +1,7 @@
 'use server'
 
 import { connection } from 'next/server'
-import { auth } from "@/auth";
+import { getSession } from '@/lib/auth-server';
 import clientPromise from "@/lib/clientPromise";
 import { ObjectId } from "mongodb";
 
@@ -10,7 +10,7 @@ export default async function deleteProductFromCart(id: string) {
     const client = await clientPromise
     const db = client.db(process.env.MONGODB_DB)
     const collectionUserProfile = db.collection("users")
-    const session = await auth()
+    const session = await getSession()
     try {
         const cartAdditionAck = await db.collection("carts").findOneAndDelete({
             _id: ObjectId.createFromHexString(id)

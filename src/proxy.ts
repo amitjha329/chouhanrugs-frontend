@@ -1,41 +1,59 @@
-import NextAuth from "next-auth"
-import authConfig from "./auth.config"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { getSessionCookie } from "better-auth/cookies"
+import createMiddleware from "next-intl/middleware"
+import { routing } from "@/i18n/routing"
 
-const { auth } = NextAuth(authConfig)
+/**
+ * Composed proxy: Auth guard → next-intl locale routing.
+ *
+ * Uses `getSessionCookie()` from better-auth/cookies for a fast optimistic
+ * check. Full session validation happens in each page/route.
+ *
+ * Next.js 16 uses the `proxy` named export instead of `middleware`.
+ */
 
-// Protected routes that require authentication
+const intlMiddleware = createMiddleware(routing)
+
+// Protected routes that require authentication (without locale prefix)
 const protectedRoutes = ['/user', '/order']
 
-// Proxy to add pathname header for all requests
-function addPathnameHeader(response: NextResponse, pathname: string) {
-    response.headers.set('x-pathname', pathname)
-    return response
-}
+// Regex to match and strip locale prefix from pathname
+const localePattern = new RegExp(
+    `^/(${routing.locales.join('|')})(/|$)`
+)
 
-// Auth proxy wrapper - checks authentication for protected routes
-const authProxy = auth((req) => {
-    const { auth: session, nextUrl } = req
-    const isProtectedRoute = protectedRoutes.some(route => nextUrl.pathname.startsWith(route))
-    
-    // Redirect to signin if accessing protected route without authentication
-    if (isProtectedRoute && !session) {
-        const signinUrl = new URL('/signin', req.url)
-        signinUrl.searchParams.set('cb', nextUrl.pathname)
-        return NextResponse.redirect(signinUrl)
+export async function proxy(req: NextRequest) {
+    const pathname = req.nextUrl.pathname
+
+    // Strip locale prefix to check against protected route list
+    const match = pathname.match(localePattern)
+    const pathWithoutLocale = match
+        ? pathname.replace(localePattern, '/')
+        : pathname
+
+    // ── Auth guard ──────────────────────────────────────────────────────
+    const isProtected = protectedRoutes.some((r) =>
+        pathWithoutLocale.startsWith(r)
+    )
+    if (isProtected) {
+        const sessionCookie = getSessionCookie(req)
+        if (!sessionCookie) {
+            const locale = match?.[1]
+            const prefix =
+                locale && locale !== routing.defaultLocale ? `/${locale}` : ''
+            const signinUrl = new URL(`${prefix}/signin`, req.url)
+            signinUrl.searchParams.set('cb', pathname)
+            return NextResponse.redirect(signinUrl)
+        }
     }
-    
-    // Add pathname to headers for use in layout
-    const response = NextResponse.next()
-    return addPathnameHeader(response, nextUrl.pathname)
-})
 
-// Export the auth proxy as the default proxy handler
-export default authProxy
+    // ── Locale routing (next-intl middleware) ───────────────────────────
+    return intlMiddleware(req)
+}
 
 export const config = {
     matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|public).*)',
-    ]
+        '/((?!_next/static|_next/image|favicon.ico|api|.*\\..*).*)',
+    ],
 }

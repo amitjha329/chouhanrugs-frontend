@@ -7,7 +7,6 @@ import DataConnectionContextProvider from "@/utils/Contexts/DataConnectionContex
 import ProductContext from "@/utils/Contexts/ProductContext"
 import { PayPalScriptProvider } from "@paypal/react-paypal-js"
 import { liteClient as algoliasearch } from "algoliasearch/lite";
-import { Session } from "next-auth";
 import { InstantSearch } from "react-instantsearch-core";
 
 

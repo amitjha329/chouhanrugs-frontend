@@ -1,12 +1,14 @@
 "use client"
 import { useRouter } from 'next/navigation'
 import React from 'react'
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/lib/auth-client'
 import { HiOutlineLockClosed } from 'react-icons/hi2'
+import { useTranslations } from 'next-intl'
 
 const GoToCheckoutBtn = ({ isDisabled }: { isDisabled: boolean }) => {
     const router = useRouter()
     const { data: session } = useSession();
+    const t = useTranslations('cart')
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -20,7 +22,7 @@ const GoToCheckoutBtn = ({ isDisabled }: { isDisabled: boolean }) => {
             disabled={isDisabled}
         >
             <HiOutlineLockClosed className="w-5 h-5" />
-            Proceed to Checkout
+            {t('proceedToCheckout')}
         </button>
     )
 }
