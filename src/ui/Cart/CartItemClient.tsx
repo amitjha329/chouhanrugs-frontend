@@ -8,8 +8,15 @@ import CartDataModel from '@/types/CartDataModel'
 import IncrementDecrement from './IncrementDecrement'
 import { DeleteFromCartLg, DeleteFromCartSm } from './DeleteFromCart'
 import Currency from '@/types/Currency'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { useLocale } from 'next-intl'
+import { type Locale } from '@/i18n/routing'
 
 const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurrency: Currency }) => {
+    const locale = useLocale() as Locale
+    const product = item.cartProduct[0]
+    const name = product ? resolveLocalizedString(product.productName, locale) : ''
+    const url = product ? resolveLocalizedString(product.productURL, locale) : ''
 
     const calculateProductPrice = (): number => {
         var priceInitial = 0
@@ -41,7 +48,7 @@ const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurre
                 <div className="group flex flex-col sm:flex-row gap-4 p-4 bg-base-100 rounded-xl border border-base-300/50 hover:border-primary/30 hover:shadow-md transition-all duration-200">
                     {/* Product Image */}
                     <a 
-                        href={`/products/${item.cartProduct[0].productURL}`} 
+                        href={`/products/${url}`} 
                         className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-base-200 rounded-lg overflow-hidden"
                     >
                         <Image
@@ -50,7 +57,7 @@ const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurre
                             quality={75}
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                             src={item.cartProduct[0].images[item.cartProduct[0].productPrimaryImageIndex]}
-                            alt={item.cartProduct[0].productName || ''}
+                            alt={name}
                         />
                     </a>
 
@@ -58,10 +65,10 @@ const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurre
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
                         <div>
                             <a 
-                                href={`/products/${item.cartProduct[0].productURL}`} 
+                                href={`/products/${url}`} 
                                 className="font-semibold text-base-content hover:text-primary transition-colors line-clamp-2"
                             >
-                                {item.cartProduct[0].productName}
+                                {name}
                             </a>
                             <p className="text-sm text-base-content/60 mt-1">
                                 Brand: {item.cartProduct[0].productBrand}

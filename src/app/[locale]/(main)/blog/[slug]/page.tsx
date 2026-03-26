@@ -5,22 +5,28 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 type Props = {
-    params: Promise<{ slug: string }>;
+    params: Promise<{ slug: string, locale: string }>;
 };
 export async function generateMetadata(props: Props): Promise<Metadata> {
     const params = await props.params;
+    const locale = params.locale as Locale
     const data = await getBlogPostWithSlug(params.slug)
     const dataAdditional = await getSiteData()
     if (data == undefined) return notFound()
+    const title = resolveLocalizedString(data.title, locale)
+    const description = resolveLocalizedString(data.description, locale)
+    const keywords = resolveLocalizedString(data.keywords, locale)
     return {
-        title: data.title,
-        description: data.description,
-        keywords: data.keywords,
+        title,
+        description,
+        keywords,
         openGraph: {
-            title: data.title,
-            description: data.description,
+            title,
+            description,
             type: "article",
             publishedTime: new Date(data.posted).toISOString(),
             modifiedTime: new Date(data.updated).toISOString(),
@@ -30,9 +36,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
             images: data.featuredImage,
         },
         twitter: {
-            title: data.title,
+            title,
             card: "summary_large_image",
-            description: data.description,
+            description,
             images: data.featuredImage,
         },
         authors: {
@@ -43,26 +49,29 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     }
 }
 
-const BlogPostPage = async (props: { params: Promise<{ slug: string }> }) => {
+const BlogPostPage = async (props: { params: Promise<{ slug: string, locale: string }> }) => {
     const params = await props.params;
+    const locale = params.locale as Locale
     const [blogData, siteData] = await Promise.all([getBlogPostWithSlug(params.slug), getSiteData()])
     if (blogData == undefined) return notFound()
+    const title = resolveLocalizedString(blogData.title, locale)
+    const content = resolveLocalizedString(blogData.content, locale)
     return (
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={generateBlogPostJsonLd(blogData, siteData)}
+                dangerouslySetInnerHTML={generateBlogPostJsonLd(blogData, siteData, locale)}
                 key="blog-jsonld"
             ></script>
             <main className="pb-16 lg:pb-24 pt-8 lg:pt-16 bg-white dark:bg-gray-900">
                 {/* <div className='overflow-hidden relative h-80'>
-                <Image className='top-0 !w-full !h-auto' src={blogData.featuredImage} alt={blogData.title} fill />
+                <Image className='top-0 !w-full !h-auto' src={blogData.featuredImage} alt={title} fill />
             </div> */}
                 <div className="flex justify-between px-4 mx-auto max-w-screen-xl">
                     <article className="mx-auto w-full max-w-2xl">
                         <header className="mb-4 lg:mb-6 relative">
                             <h1 className="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white z-10">
-                                {blogData.title}
+                                {title}
                             </h1>
                             <address className="flex items-center mb-6 not-italic">
                                 <div className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
@@ -96,13 +105,13 @@ const BlogPostPage = async (props: { params: Promise<{ slug: string }> }) => {
                             <Image 
                                 src={blogData.featuredImage} 
                                 fill 
-                                alt={blogData.title} 
+                                alt={title} 
                                 className='!relative !w-full !h-auto' 
                                 sizes="(max-width: 768px) 100vw, 672px"
                                 loading="eager"
                             />
                         </header>
-                        <div dangerouslySetInnerHTML={{ __html: blogData.content }}></div>
+                        <div dangerouslySetInnerHTML={{ __html: content }}></div>
                     </article>
                 </div>
             </main>

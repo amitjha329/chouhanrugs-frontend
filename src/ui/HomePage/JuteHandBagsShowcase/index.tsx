@@ -4,12 +4,16 @@ import React from "react"
 import { getProductsByCategory } from "@/backend/serverActions/getProductsByCategory"
 import { ProductDataModel } from "@/types/ProductDataModel"
 import heroImage from "./side-banner.webp"
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
+import { resolveLocalizedString } from "@/lib/resolveLocalized"
+import { type Locale } from "@/i18n/routing"
 
 /* ------------------------------------------------------------------ */
 /*  Mini Product Card (compact for the 50% grid)                      */
 /* ------------------------------------------------------------------ */
-function MiniProductCard({ product }: { product: ProductDataModel }) {
+function MiniProductCard({ product, locale }: { product: ProductDataModel; locale: Locale }) {
+    const name = resolveLocalizedString(product.productName, locale)
+    const url = resolveLocalizedString(product.productURL, locale)
     const variations = product.variations ?? []
     let sellingPrice: number
     let msrpPrice: number
@@ -32,13 +36,13 @@ function MiniProductCard({ product }: { product: ProductDataModel }) {
     const primaryImage = product.images?.[product.productPrimaryImageIndex] ?? product.images?.[0]
 
     return (
-        <Link href={`/products/${product.productURL}`} prefetch={false} className="h-full">
+        <Link href={`/products/${url}`} prefetch={false} className="h-full">
             <div className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:-translate-y-1 h-full flex flex-col">
                 <div className="relative aspect-square overflow-hidden bg-gray-50 flex-shrink-0">
                     {primaryImage && (
                         <Image
                             src={primaryImage}
-                            alt={product.productName}
+                            alt={name}
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                             sizes="(max-width: 768px) 40vw, 15vw"
@@ -52,7 +56,7 @@ function MiniProductCard({ product }: { product: ProductDataModel }) {
                 </div>
                 <div className="p-3 flex flex-col flex-grow">
                     <h3 className="text-xs sm:text-sm font-medium text-gray-800 min-h-[2rem] line-clamp-2 group-hover:text-primary transition-colors duration-200 mb-1">
-                        {product.productName}
+                        {name}
                     </h3>
                     <div className="flex items-center gap-1.5 mt-auto">
                         <span className="text-primary font-bold text-sm">${sellingPrice.toFixed(2)}</span>
@@ -70,10 +74,12 @@ function MiniProductCard({ product }: { product: ProductDataModel }) {
 /*  Main Component                                                    */
 /* ------------------------------------------------------------------ */
 const JuteHandBagsShowcase = async () => {
-    const [products, t] = await Promise.all([
+    const [products, t, loc] = await Promise.all([
         getProductsByCategory("Bags", 6),
-        getTranslations('juteHandBags')
+        getTranslations('juteHandBags'),
+        getLocale()
     ])
+    const locale = loc as Locale
 
     if (products.length === 0) return null
 
@@ -129,7 +135,7 @@ const JuteHandBagsShowcase = async () => {
                         {/* Product grid — 3 per row */}
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-grow">
                             {products.map((product) => (
-                                <MiniProductCard key={(product._id ?? product.objectID).toString()} product={product} />
+                                <MiniProductCard key={(product._id ?? product.objectID).toString()} product={product} locale={locale} />
                             ))}
                         </div>
                     </div>

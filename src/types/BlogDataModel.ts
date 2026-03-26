@@ -1,13 +1,15 @@
+import { LocalizedField } from "@/lib/resolveLocalized"
+
 type BlogDataModel = {
-    content: string
-    description: string
+    content: LocalizedField<string>
+    description: LocalizedField<string>
     featuredImage: string
     _id: string
-    keywords: string
+    keywords: LocalizedField<string>
     posted: number
     updated: number
-    title: string
-    slug: string
+    title: LocalizedField<string>
+    slug: LocalizedField<string>
     author: {
         name: string
         username: string

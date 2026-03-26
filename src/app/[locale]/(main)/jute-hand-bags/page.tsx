@@ -20,20 +20,24 @@ import getSiteData from "@/backend/serverActions/getSiteData"
 import getPageData from "@/backend/serverActions/getPageData"
 import { getProductsByCategory } from "@/backend/serverActions/getProductsByCategory"
 import { ProductDataModel } from "@/types/ProductDataModel"
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 /* ------------------------------------------------------------------ */
 /*  Metadata                                                          */
 /* ------------------------------------------------------------------ */
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale: loc } = await props.params
+    const locale = loc as Locale
     const dataAdditional = await getSiteData()
     const pageMeta = await getPageData("hand-bags")
-    const title = pageMeta?.pageTitle ?? "Premium Jute Bags | Handmade Jute Hand Bags \u2013 Chouhan Rugs"
+    const title = resolveLocalizedString(pageMeta?.pageTitle, locale) || "Premium Jute Bags | Handmade Jute Hand Bags \u2013 Chouhan Rugs"
     const description =
-        pageMeta?.pageDescription ??
+        resolveLocalizedString(pageMeta?.pageDescription, locale) ||
         "Shop handmade jute hand bags crafted in Jaipur. Eco-friendly, stylish jute handbags available in USA & UK. Premium quality by Chouhan Rugs."
     const keywords =
-        pageMeta?.pageKeywords ??
+        resolveLocalizedString(pageMeta?.pageKeywords, locale) ||
         "jute hand bags, premium jute bags, handmade jute bags, stylish jute handbags, jute hand bags in usa, jute hand bags in uk, jute hand bags seller in usa"
     return {
         title,
@@ -316,7 +320,9 @@ function ArrowRightIcon({ className = "w-5 h-5" }: { className?: string }) {
 /* ------------------------------------------------------------------ */
 /*  Product Card                                                      */
 /* ------------------------------------------------------------------ */
-function ProductCard({ product, index }: { product: ProductDataModel; index: number }) {
+function ProductCard({ product, index, locale }: { product: ProductDataModel; index: number; locale: Locale }) {
+    const name = resolveLocalizedString(product.productName, locale)
+    const url = resolveLocalizedString(product.productURL, locale)
     // Calculate selling price (after discount)
     const variations = product.variations ?? []
     let sellingPrice: number
@@ -339,7 +345,7 @@ function ProductCard({ product, index }: { product: ProductDataModel; index: num
 
     const hasDiscount = msrpPrice > sellingPrice
     const primaryImage = product.images?.[product.productPrimaryImageIndex] ?? product.images?.[0]
-    const productLink = `/products/${product.productURL}`
+    const productLink = `/products/${url}`
     const tag = product.tags?.[0] ?? null
 
     return (
@@ -353,7 +359,7 @@ function ProductCard({ product, index }: { product: ProductDataModel; index: num
                     {primaryImage && (
                         <Image
                             src={primaryImage}
-                            alt={product.productName}
+                            alt={name}
                             fill
                             className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -400,7 +406,7 @@ function ProductCard({ product, index }: { product: ProductDataModel; index: num
                         </div>
                     )}
                     <h3 className="font-semibold text-gray-900 text-sm lg:text-base leading-snug min-h-[2.5rem] line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-2">
-                        {product.productName}
+                        {name}
                     </h3>
                     <div className="flex items-center justify-between mt-auto">
                         <div className="flex items-center gap-2">
@@ -426,10 +432,12 @@ function ProductCard({ product, index }: { product: ProductDataModel; index: num
 /*  Page Component                                                    */
 /* ------------------------------------------------------------------ */
 const JuteHandBagsPage = async () => {
-    const [products, t] = await Promise.all([
+    const [products, t, loc] = await Promise.all([
         getProductsByCategory("Bags", 8),
-        getTranslations('juteHandBagsPage')
+        getTranslations('juteHandBagsPage'),
+        getLocale()
     ])
+    const locale = loc as Locale
     return (
         <>
             {/* ====================================================== */}
@@ -641,7 +649,7 @@ const JuteHandBagsPage = async () => {
                     {/* Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                         {products.map((product, i) => (
-                            <ProductCard key={(product._id ?? product.objectID).toString()} product={product} index={i} />
+                            <ProductCard key={(product._id ?? product.objectID).toString()} product={product} index={i} locale={locale} />
                         ))}
                     </div>
 

@@ -15,7 +15,9 @@ import GoogleAdsProvider from '@/components/GoogleAdsProvider'
 import RecentlyViewedSidebar from '@/ui/RecentlyViewed'
 import { getNewProducts } from '@/backend/serverActions/getNewProducts'
 import Script from 'next/script'
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 // Optimized font loading: Only load weights actually used in the app
 // Removed: 100, 200, 300, 800, 900 (rarely used)
@@ -38,10 +40,11 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
     await connection()
-    const [siteData, googleTagData, googleAdsConfig, notifProducts, t] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 }), getTranslations('notification')])
+    const [siteData, googleTagData, googleAdsConfig, notifProducts, t, loc] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 }), getTranslations('notification'), getLocale()])
+    const locale = loc as Locale
     const purchaseProducts = notifProducts.map(p => ({
-        name: p.productName,
-        url: `/products/${p.productURL}`,
+        name: resolveLocalizedString(p.productName, locale),
+        url: `/products/${resolveLocalizedString(p.productURL, locale)}`,
         image: p.images?.[p.productPrimaryImageIndex] ?? p.images?.[0] ?? "",
     }))
     const MINUTE_OPTIONS = [1, 2, 3, 5, 8, 12, 15, 20, 25, 32, 45]

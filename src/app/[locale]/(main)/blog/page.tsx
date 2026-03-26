@@ -4,6 +4,8 @@ import React from 'react'
 import { Metadata } from 'next'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getBlogPostsList from '@/backend/serverActions/getBlogPostsList'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 export async function generateMetadata(): Promise<Metadata> {
     const dataAdditional = await getSiteData()
@@ -32,7 +34,9 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 }
 
-const BlogListPage = async () => {
+const BlogListPage = async (props: { params: Promise<{ locale: string }> }) => {
+    const { locale: loc } = await props.params
+    const locale = loc as Locale
     const blogList = await getBlogPostsList()
     return (
         <section className="bg-white">
@@ -44,13 +48,16 @@ const BlogListPage = async () => {
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2">
                     {
                         Array.isArray(blogList) && blogList.length > 0 && blogList.map(blogItem => {
+                            const title = resolveLocalizedString(blogItem.title, locale)
+                            const slug = resolveLocalizedString(blogItem.slug, locale)
+                            const description = resolveLocalizedString(blogItem.description, locale)
                             return (
-                                <Link href={`/blog/${blogItem.slug}`} key={blogItem._id} >
+                                <Link href={`/blog/${slug}`} key={blogItem._id} >
                                     <div className="bg-white rounded-lg border border-gray-200 shadow-md card card-body">
                                         <figure className="px-3 pt-3 overflow-hidden aspect-square relative rounded-xl">
                                             <Image 
                                                 src={blogItem.featuredImage} 
-                                                alt={blogItem.title} 
+                                                alt={title} 
                                                 fill 
                                                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                                 loading="lazy"
@@ -64,16 +71,12 @@ const BlogListPage = async () => {
                                                 </span>
                                                 <span className="text-sm">{new Date(blogItem.updated).toDateString()}</span>
                                             </div>
-                                            <h2 className="card-title cursor-pointer line-clamp-2"><Link href={`/blog/${blogItem.slug}`}>{blogItem.title}</Link></h2>
-                                            <p className="mb-5 font-light text-current text-clip line-clamp-4">{blogItem.description}</p>
+                                            <h2 className="card-title cursor-pointer line-clamp-2"><Link href={`/blog/${slug}`}>{title}</Link></h2>
+                                            <p className="mb-5 font-light text-current text-clip line-clamp-4">{description}</p>
                                             <div className="flex justify-between items-center">
                                                 <div className="flex items-center space-x-4">
-                                                    {/* <img className="w-7 h-7 rounded-full" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png" alt="Jese Leos avatar" />
-                                                    <span className="font-medium dark:text-white">
-                                                        Jese Leos
-                                                    </span> */}
                                                 </div>
-                                                <Link href={`/blog/${blogItem.slug}`} className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline cursor-pointer">
+                                                <Link href={`/blog/${slug}`} className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline cursor-pointer">
                                                     Read more
                                                     <svg className="ml-2 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                                                 </Link>

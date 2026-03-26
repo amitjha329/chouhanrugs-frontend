@@ -8,28 +8,34 @@ import { cookies } from 'next/headers'
 import Currency from '@/types/Currency'
 import WishlistProductDeleteButton from './WishlistProductDeleteButton'
 import { HiOutlineHeart, HiOutlineExclamationTriangle } from 'react-icons/hi2'
+import { getLocale } from 'next-intl/server'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 const WishlistProductList = async ({ productList, itemIds }: { productList: (ProductDataModel | null)[], itemIds: string[] }) => {
     const session = await getSession()
     const cookie = await cookies()
     const userCurrency = JSON.parse(cookie.get("userCurrency")?.value ?? "{}") as Currency
+    const locale = await getLocale() as Locale
     return (
         <div className="space-y-3">
             {
-                productList.length > 0 ? productList.map((product, index) => (
-                    product ? (
+                productList.length > 0 ? productList.map((product, index) => {
+                    const name = product ? resolveLocalizedString(product.productName, locale) : ''
+                    const url = product ? resolveLocalizedString(product.productURL, locale) : ''
+                    return product ? (
                         <div
                             key={product._id?.toString()}
                             className="group flex flex-col sm:flex-row gap-4 p-4 bg-base-100 rounded-xl border border-base-300/50 hover:border-primary/30 hover:shadow-md transition-all duration-200"
                         >
                             <Link
-                                href={`/products/${product.productURL}`}
+                                href={`/products/${url}`}
                                 className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 bg-base-200 rounded-lg overflow-hidden"
                                 prefetch={false}
                             >
                                 <Image
                                     src={product.images[product.productPrimaryImageIndex]}
-                                    alt={product.productName}
+                                    alt={name}
                                     height={96}
                                     width={96}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -38,11 +44,11 @@ const WishlistProductList = async ({ productList, itemIds }: { productList: (Pro
                             <div className="flex-1 min-w-0 flex flex-col justify-between">
                                 <div>
                                     <Link
-                                        href={`/products/${product.productURL}`}
+                                        href={`/products/${url}`}
                                         className="font-semibold text-base-content hover:text-primary transition-colors line-clamp-2"
                                         prefetch={false}
                                     >
-                                        {product.productName}
+                                        {name}
                                     </Link>
                                     <p className="text-sm text-base-content/60 mt-1">
                                         Brand: {product.productBrand}
@@ -78,7 +84,7 @@ const WishlistProductList = async ({ productList, itemIds }: { productList: (Pro
                             <WishlistProductDeleteButton productId={itemIds[index]} userId={session?.user?.id ?? ""} />
                         </div>
                     )
-                )) : (
+                }) : (
                     <div className="flex flex-col items-center justify-center py-16 text-center">
                         <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                             <HiOutlineHeart className="w-10 h-10 text-primary" />

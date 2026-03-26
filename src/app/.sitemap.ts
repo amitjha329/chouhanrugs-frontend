@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllProducts, getAllBlogPosts, getActiveCategories } from '@/lib/catalog';
 import { locales, type Locale } from '@/i18n/routing';
+import { resolveLocalizedString } from '@/lib/resolveLocalized';
 
 /**
  * Next.js Metadata-API sitemap.
@@ -73,7 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Product pages
     const productPages: MetadataRoute.Sitemap = products.map((p) =>
         entry(
-            `/products/${encodeURIComponent(p.productURL)}`,
+            `/products/${encodeURIComponent(resolveLocalizedString(p.productURL, DEFAULT_LOCALE))}`,
             new Date(p.updatedOn),
             { changeFrequency: 'weekly', priority: 0.7 },
         ),
@@ -82,7 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Blog post pages
     const blogPages: MetadataRoute.Sitemap = blogs.map((b) =>
         entry(
-            `/blog/${encodeURIComponent(b.slug)}`,
+            `/blog/${encodeURIComponent(resolveLocalizedString(b.slug, DEFAULT_LOCALE))}`,
             new Date(b.updated),
             { changeFrequency: 'monthly', priority: 0.6 },
         ),

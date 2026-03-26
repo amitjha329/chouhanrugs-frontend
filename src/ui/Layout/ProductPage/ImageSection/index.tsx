@@ -14,6 +14,9 @@ import { useRouter } from "next/navigation"
 import { FaHeart } from "react-icons/fa"
 import { IoClose, IoChevronBack, IoChevronForward } from "react-icons/io5"
 import { blurPlaceholders, imageQuality, productImageSizes } from "@/utils/imageOptimization"
+import { useLocale } from 'next-intl'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 /**
  * Optimized thumbnail component with lazy loading and blur placeholder
@@ -340,6 +343,9 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
         images
     } = useProductContext() || {}
     
+    const locale = useLocale() as Locale
+    const productName = resolveLocalizedString(product?.productName, locale) || 'Product'
+    
     const sectionRef = useRef<HTMLElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const selectedImage = images?.[selectedImageIndex ?? 0] ?? images?.[0] ?? ""
@@ -483,7 +489,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                 
                 <Image
                     src={selectedImage}
-                    alt={product?.productName ?? 'Product image'}
+                    alt={productName}
                     data-main-image
                     className={clsx(
                         "!relative object-cover h-full w-full transition-opacity duration-300",
@@ -541,7 +547,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                             key={image}
                             image={image}
                             index={index}
-                            productName={product?.productName ?? 'Product'}
+                            productName={productName}
                             isSelected={index === (selectedImageIndex ?? 0)}
                             onHover={handleThumbnailHover ?? (() => {})}
                         />
@@ -554,7 +560,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                 <MobileGallery
                     images={images}
                     initialIndex={selectedImageIndex ?? 0}
-                    productName={product?.productName ?? 'Product'}
+                    productName={productName}
                     onClose={() => setIsMobileGalleryOpen(false)}
                 />,
                 portalContainer

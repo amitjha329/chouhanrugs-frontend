@@ -2,6 +2,9 @@
 'use client'
 import React from 'react'
 import Currency from '@/types/Currency'
+import { useLocale } from 'next-intl'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 const GuestCartItemClient = ({ item, userCurrency, onQuantityChange, onRemove }: {
     item: any,
@@ -9,6 +12,9 @@ const GuestCartItemClient = ({ item, userCurrency, onQuantityChange, onRemove }:
     onQuantityChange: (delta: number) => void,
     onRemove: () => void
 }) => {
+    const locale = useLocale() as Locale
+    const pName = resolveLocalizedString(item.cartProduct[0]?.productName, locale) || 'Product'
+    const pUrl = resolveLocalizedString(item.cartProduct[0]?.productURL, locale)
     // Helper to get variation details
     const getVariation = () => {
         if (!item.variationCode || item.variationCode === 'customSize') return null
@@ -19,18 +25,18 @@ const GuestCartItemClient = ({ item, userCurrency, onQuantityChange, onRemove }:
         <div className="flex flex-col sm:flex-row w-full gap-3 sm:gap-6 items-stretch bg-base-100 rounded-xl shadow-sm p-3 sm:p-6 border border-base-300">
             {/* Product Image & Name Row */}
             <div className="flex flex-row items-start gap-3 w-full sm:w-2/5">
-                <a href={`/products/${item.cartProduct[0].productURL}`} className="flex-shrink-0 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden aspect-square min-h-[140px] max-h-[140px] w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40">
+                <a href={`/products/${pUrl}`} className="flex-shrink-0 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden aspect-square min-h-[140px] max-h-[140px] w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40">
                     <img
                         height={140}
                         width={140}
                         className="object-contain w-full h-full"
                         src={item.cartProduct[0].images?.[item.cartProduct[0].productPrimaryImageIndex] || '/vector/Cart.svg'}
-                        alt={item.cartProduct[0].productName || 'Product'}
+                        alt={pName}
                     />
                 </a>
                 <div className="flex flex-col flex-1 justify-center">
-                    <a href={`/products/${item.cartProduct[0].productURL}`} className="font-medium text-xs text-gray-800 hover:underline line-clamp-2 md:line-clamp-3 lg:line-clamp-none" style={{display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', WebkitLineClamp: 3}}>
-                        {item.cartProduct[0].productName}
+                    <a href={`/products/${pUrl}`} className="font-medium text-xs text-gray-800 hover:underline line-clamp-2 md:line-clamp-3 lg:line-clamp-none" style={{display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', WebkitLineClamp: 3}}>
+                        {pName}
                     </a>
                     <span className="opacity-80 text-xs sm:text-sm truncate">Brand: {item.cartProduct[0].productBrand}</span>
                 </div>

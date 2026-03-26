@@ -6,6 +6,9 @@ import { randomInt } from 'crypto'
 import Image from 'next/image'
 import { notFound, redirect } from 'next/navigation'
 import React from 'react'
+import { getLocale } from 'next-intl/server'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: string }> }) => {
     const searchParams = await props.searchParams;
@@ -18,6 +21,7 @@ const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: st
     }
     const orderPorductsPromise = orderData.products.map(product => getProductWithId(product.productId))
     const orderedProducts = await Promise.all(orderPorductsPromise)
+    const locale = await getLocale() as Locale
 
     return (
         <>
@@ -37,7 +41,7 @@ const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: st
                                             orderedProducts.length > 0 ? orderedProducts.map((product, index) => product ? <div key={product._id?.toString()} className="mt-4 md:mt-6 flex  flex-col md:flex-row justify-start items-start md:items-center md:space-x-6 xl:space-x-8 w-full">
                                                 <div className="pb-4 md:pb-8 w-full relative flex flex-row items-center">
                                                     <Image src={product.images[product.productPrimaryImageIndex]} alt="dress" height={100} width={100} />
-                                                    <h3 className="text-lg ml-3 leading-6 text-gray-800">{product.productName}</h3>
+                                                    <h3 className="text-lg ml-3 leading-6 text-gray-800">{resolveLocalizedString(product.productName, locale)}</h3>
                                                 </div>
                                                 <div className="md:flex-row flex-col flex justify-between items-start w-full  pb-8 space-y-4 md:space-y-0">
                                                     <div className="flex justify-between space-x-8 items-start w-full">

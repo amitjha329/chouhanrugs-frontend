@@ -4,6 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import WishListButton from './WishListButton'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { useLocale } from 'next-intl'
+import { type Locale } from '@/i18n/routing'
 
 interface itemProps extends ProductDataModelWithColorMap {
   className?: string
@@ -13,6 +16,9 @@ interface itemProps extends ProductDataModelWithColorMap {
 const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEzNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+"
 
 const NewProductCard = (product: itemProps) => {
+  const locale = useLocale() as Locale
+  const name = resolveLocalizedString(product.productName, locale)
+  const url = resolveLocalizedString(product.productURL, locale)
   const productVariations = product.variations ?? []
 
   // Calculate least selling price (after discount) among all variations and the main product
@@ -52,10 +58,10 @@ const NewProductCard = (product: itemProps) => {
   return (
     <div className={clsx('card items-center justify-around z-30 bg-base-100 card-body p-4 relative', product.className)}>
       {/* <WishListButton productDetails={product} /> */}
-      <Link href={'/products/' + product.productURL} className="" prefetch={false}>
+      <Link href={'/products/' + url} className="" prefetch={false}>
         <Image 
           src={product.images[product.productPrimaryImageIndex]} 
-          alt={product.productName} 
+          alt={name} 
           width={200} 
           height={135} 
           className='!w-[200px] !h-[135px]' 
@@ -65,7 +71,7 @@ const NewProductCard = (product: itemProps) => {
           sizes="200px"
         />
         <div className='text-clip line-clamp-2 text-xs max-w-40 text-center'>
-          {product.productName}
+          {name}
         </div>        <div className='flex gap-2 text-xs'>
           <span className='text-primary'>$ {leastSellingPrice}</span>
           <span className='line-through text-gray-500'>$ {leastMSRP}</span>

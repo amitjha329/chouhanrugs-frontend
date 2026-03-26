@@ -10,7 +10,9 @@ import ColorDataModel from '@/types/ColorDataModel'
 import SizeDataModel from '@/types/SizeDataModel'
 import PriceAndVariationClient from './PriceAndVariationClient'
 import getSiteData from '@/backend/serverActions/getSiteData'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 interface returnProps extends ProductDataModel {
     colorData: ColorDataModel[],
@@ -20,13 +22,16 @@ interface returnProps extends ProductDataModel {
 const PriceAndVariation = async ({ product }: { product: returnProps }) => {
     const siteData = await getSiteData()
     const t = await getTranslations('product')
+    const locale = await getLocale() as Locale
+    const name = resolveLocalizedString(product.productName, locale)
+    const shortDesc = resolveLocalizedString(product.productDescriptionShort, locale)
     return (
         <div className='basis-1/2'>
             <div className="p-6 max-w-xl mx-auto">
                 <div className="mb-4">
                     <button className="border border-gray-500 text-gray-500 px-3 py-1 rounded-md ~text-sm/base">{t('byBrand')}</button>
                 </div>
-                <h1 className="~text-lg/2xl font-bold mb-2">{product.productName}</h1>
+                <h1 className="~text-lg/2xl font-bold mb-2">{name}</h1>
                 <div className="flex items-center mb-4 text-gray-500 text-sm">
                     <div className="rating rating-sm pointer-events-none">
                         <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
@@ -45,7 +50,7 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
                 </div>
                 <PriceAndVariationClient product={product} siteData={siteData} />
                 <div className="flex items-center mb-4 text-brown-700 ~text-xs/base">
-                    {product.productDescriptionShort}
+                    {shortDesc}
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-center ~text-xs/base">
                     <div className='flex items-center justify-start gap-3'>

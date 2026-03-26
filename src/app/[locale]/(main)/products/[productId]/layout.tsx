@@ -6,15 +6,19 @@ import generateProductBreadCrumbs from '@/utils/generateProductBreadCrumbs'
 import generateProductJsonLd from '@/utils/generateProductJsonLd'
 import { notFound } from 'next/navigation'
 import React from 'react'
+import { type Locale } from '@/i18n/routing'
 
 const ProductLayout = async (
-    props: { params: Promise<{ productId: string }>, children: React.ReactNode }
+    props: { params: Promise<{ productId: string, locale: string }>, children: React.ReactNode }
 ) => {
     const params = await props.params;
 
     const {
-        productId
+        productId,
+        locale: loc
     } = params;
+
+    const locale = loc as Locale
 
     const {
         children
@@ -28,11 +32,11 @@ const ProductLayout = async (
                 productObj && <>
                     <script
                         type="application/ld+json"
-                        dangerouslySetInnerHTML={generateProductJsonLd(productObj)}
+                        dangerouslySetInnerHTML={generateProductJsonLd(productObj, locale)}
                         key="product-jsonld"></script>
                     <script
                         type="application/ld+json"
-                        dangerouslySetInnerHTML={generateProductBreadCrumbs(productObj, siteData)}
+                        dangerouslySetInnerHTML={generateProductBreadCrumbs(productObj, siteData, locale)}
                         key="product-breadcrumbs"></script>
                 </>
             }

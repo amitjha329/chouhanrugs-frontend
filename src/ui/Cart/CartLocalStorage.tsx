@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import CartTotalSection from './CartTotalSection';
 import { Variation } from '@/types/ProductDataModel';
+import { useLocale } from 'next-intl';
+import { resolveLocalizedString } from '@/lib/resolveLocalized';
+import { type Locale } from '@/i18n/routing';
 
 // Helper to calculate price (simplified, as we don't have all backend logic)
 function calculateProductPrice(item: any) {
@@ -24,6 +27,7 @@ function calculateProductPrice(item: any) {
 
 const CartLocalStorage = () => {
     const [cart, setCart] = useState<any[]>([]);
+    const locale = useLocale() as Locale;
 
     // Helper to sync cart state with localStorage
     const syncCart = (newCart: any[]) => {
@@ -97,12 +101,14 @@ const CartLocalStorage = () => {
                     {cart && cart.length > 0 ? (
                         <>
                             {/* Desktop Table Rows */}
-                            {mappedCart.map((item, idx) => (
-                                item.cartProduct[0] ? (
+                            {mappedCart.map((item, idx) => {
+                                const pName = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productName, locale) : ''
+                                const pUrl = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productURL, locale) : ''
+                                return item.cartProduct[0] ? (
                                     <div key={idx} className="hidden sm:flex items-center justify-between hover:bg-gray-100 mb-2 w-full">
                                         {/* Product Details */}
                                         <div className="flex min-w-0 w-64">
-                                            <a href={`/products/${item.cartProduct[0].productURL}`} className="flex items-center min-w-0">
+                                            <a href={`/products/${pUrl}`} className="flex items-center min-w-0">
                                                 <div className="w-fit">
                                                     <img
                                                         height={140}
@@ -113,7 +119,7 @@ const CartLocalStorage = () => {
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-start ml-4 flex-grow min-w-0">
-                                                    <span className="font-medium text-xs max-w-[250px] truncate">{item.cartProduct[0].productName}</span>
+                                                    <span className="font-medium text-xs max-w-[250px] truncate">{pName}</span>
                                                     <span className="opacity-80 max-sm:text-sm truncate">Brand: {item.cartProduct[0].productBrand}</span>
                                                     <div className='flex gap-2 flex-wrap'>
                                                         {item.variationCode && <>
@@ -201,13 +207,15 @@ const CartLocalStorage = () => {
                                         <div className="flex items-center justify-center w-16"></div>
                                     </div>
                                 )
-                            ))}
+                            })}
                             {/* Mobile Card Rows */}
-                            {mappedCart.map((item, idx) => (
-                                item.cartProduct[0] ? (
+                            {mappedCart.map((item, idx) => {
+                                const pName = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productName, locale) : ''
+                                const pUrl = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productURL, locale) : ''
+                                return item.cartProduct[0] ? (
                                     <div key={idx} className="flex flex-col sm:hidden bg-base-100 rounded-lg shadow mb-4 p-4 border border-base-300">
                                         <div className="flex items-center mb-2">
-                                            <a href={`/products/${item.cartProduct[0].productURL}`} className="flex items-center">
+                                            <a href={`/products/${pUrl}`} className="flex items-center">
                                                 <div className="w-fit">
                                                     <img
                                                         height={140}
@@ -218,7 +226,7 @@ const CartLocalStorage = () => {
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-start ml-3 flex-grow">
-                                                    <span className="font-medium text-xs max-w-[180px] truncate">{item.cartProduct[0].productName}</span>
+                                                    <span className="font-medium text-xs max-w-[180px] truncate">{pName}</span>
                                                     <span className="opacity-80 text-sm">Brand: {item.cartProduct[0].productBrand}</span>
                                                     <div className='flex gap-2 flex-wrap mt-1'>
                                                         {item.variationCode && <>
@@ -302,7 +310,7 @@ const CartLocalStorage = () => {
                                         </div>
                                     </div>
                                 )
-                            ))}
+                            })}
                         </>
                     ) : (
                         <div className="flex flex-col items-center justify-center w-full h-64 sm:h-80 bg-base-100 rounded-lg shadow-inner my-8 px-4 sm:px-0">

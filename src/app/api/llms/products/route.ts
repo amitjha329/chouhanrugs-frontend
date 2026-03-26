@@ -1,4 +1,6 @@
 import getProductListForLLMS from "@/backend/serverActions/getProductList";
+import { resolveLocalizedString } from "@/lib/resolveLocalized";
+import { type Locale } from "@/i18n/routing";
 
 // export const runtime = 'edge';
 
@@ -96,8 +98,9 @@ export async function GET(request: Request): Promise<Response> {
     ];
 
     for (const p of products) {
-        const shortDesc = stripHtml(p.productDescriptionShort ?? '');
-        const longDesc = stripHtml(p.productDescriptionLong ?? '');
+        const locale: Locale = 'en-IN'
+        const shortDesc = stripHtml(resolveLocalizedString(p.productDescriptionShort, locale));
+        const longDesc = stripHtml(resolveLocalizedString(p.productDescriptionLong, locale));
         const description = longDesc || shortDesc || 'No description available.';
         const price =
             p.productSellingPrice != null
@@ -109,9 +112,9 @@ export async function GET(request: Request): Promise<Response> {
                 : '';
 
         lines.push(
-            `## ${p.productName}`,
+            `## ${resolveLocalizedString(p.productName, locale)}`,
             '',
-            `- URL: /products/${encodeURIComponent(p.productURL)}`,
+            `- URL: /products/${encodeURIComponent(resolveLocalizedString(p.productURL, locale))}`,
             `- Category: ${p.productCategory ?? 'Uncategorized'}`,
             `- Price: ${price}${msrp}`,
             `- Color: ${p.productBaseColor ?? '—'}`,

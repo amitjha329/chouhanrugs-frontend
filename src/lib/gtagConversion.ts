@@ -1,5 +1,7 @@
 import GoogleAdsConfigDataModel from '@/types/GoogleAdsConfigDataModel'
 import { ProductDataModel } from '@/types/ProductDataModel'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 declare global {
     interface Window {
@@ -74,10 +76,10 @@ function getVariationUnitPrice(product: ProductDataModel, variationCode?: string
     return Number((price - (price * discount) / 100).toFixed(2))
 }
 
-function buildAddToCartItem(product: ProductDataModel, variationCode?: string, quantity = 1): AnalyticsItem {
+function buildAddToCartItem(product: ProductDataModel, variationCode?: string, quantity = 1, locale: Locale = 'en-IN'): AnalyticsItem {
     return {
         item_id: String(product._id ?? product.objectID ?? ''),
-        item_name: product.productName,
+        item_name: resolveLocalizedString(product.productName, locale),
         item_category: product.productCategory,
         item_brand: product.productBrand,
         item_variant: variationCode,

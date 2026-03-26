@@ -10,13 +10,17 @@ import image_5 from "./images/round-rugs.webp"
 import image_6 from "./images/rugs-seller.webp"
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getPageData from '@/backend/serverActions/getPageData'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale: loc } = await props.params
+    const locale = loc as Locale
     const dataAdditional = await getSiteData()
     const pageMeta = await getPageData("jute-rugs")
-    const title = pageMeta?.pageTitle ?? ""
-    const description = pageMeta?.pageDescription ?? ""
-    const keywords = pageMeta?.pageKeywords ?? ""
+    const title = resolveLocalizedString(pageMeta?.pageTitle, locale) || ""
+    const description = resolveLocalizedString(pageMeta?.pageDescription, locale) || ""
+    const keywords = resolveLocalizedString(pageMeta?.pageKeywords, locale) || ""
     return {
         title,
         description,

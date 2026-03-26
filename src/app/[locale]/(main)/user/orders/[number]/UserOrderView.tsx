@@ -8,6 +8,8 @@ import UserAddressDataModel from '@/types/UserAddressDataModel'
 import DownloadInvoiceButton from '../DownloadInvoiceButton'
 import OrderTrackingProgressbar from '../OrderTrackingProgressbar'
 import { HiOutlineCube, HiOutlineTruck, HiOutlineCheckCircle, HiOutlineXCircle, HiOutlineArrowPath, HiOutlineClock, HiOutlineArrowLeft, HiOutlineDocumentText, HiOutlineShoppingBag, HiOutlineMapPin, HiOutlineReceiptPercent, HiOutlineExclamationTriangle } from 'react-icons/hi2'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 // Status configuration for different order states
 const statusConfig = {
@@ -53,7 +55,7 @@ const statusConfig = {
     }
 }
 
-const UserOrderView = ({ orderItem, productsList, shippingAddress }: { orderItem: OrderDataModel, productsList: (ProductDataModelWithColorMap | null)[], shippingAddress: UserAddressDataModel }) => {
+const UserOrderView = ({ orderItem, productsList, shippingAddress, locale }: { orderItem: OrderDataModel, productsList: (ProductDataModelWithColorMap | null)[], shippingAddress: UserAddressDataModel, locale: Locale }) => {
     const status = orderItem.orderStatus as keyof typeof statusConfig
     const config = statusConfig[status] || statusConfig.pending
     const StatusIcon = config.icon
@@ -157,7 +159,7 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress }: { orderItem
                                     sizes="(max-width: 640px) 80px, 96px" 
                                     quality={60} 
                                     src={product.images[product.productPrimaryImageIndex]} 
-                                    alt={product.productName} 
+                                    alt={resolveLocalizedString(product.productName, locale)} 
                                     fill 
                                 />
                             </div>
@@ -165,7 +167,7 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress }: { orderItem
                             {/* Product Details */}
                             <div className="flex-1 min-w-0">
                                 <h3 className="font-semibold text-base-content group-hover:text-primary transition-colors line-clamp-2 mb-2">
-                                    {product.productName}
+                                    {resolveLocalizedString(product.productName, locale)}
                                 </h3>
                                 
                                 {/* Variation Badges */}

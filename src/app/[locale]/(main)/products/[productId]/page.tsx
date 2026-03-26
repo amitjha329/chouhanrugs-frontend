@@ -13,18 +13,23 @@ import InformationTabs from '@/ui/Layout/ProductPage/InformationTabs'
 import { ProductDataModel } from '@/types/ProductDataModel'
 import { serializeForClient } from '@/utils/serializeForClient'
 import TrackProductView from '@/ui/RecentlyViewed/TrackProductView'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
-export async function generateMetadata(props: { params: Promise<{ productId: string }> }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ productId: string, locale: string }> }): Promise<Metadata> {
     const params = await props.params;
     const data = await getProductWithSlug(params.productId)
     if (data == undefined) return {}
+    const locale = params.locale as Locale
+    const name = resolveLocalizedString(data.productName, locale)
+    const desc = resolveLocalizedString(data.productDescriptionShort, locale)
     const dataAdditional = await getSiteData()
     return {
-        title: data.productName,
-        description: data.productDescriptionShort,
+        title: name,
+        description: desc,
         openGraph: {
-            title: data.productName,
-            description: data.productDescriptionShort,
+            title: name,
+            description: desc,
             type: "website",
             siteName: "Chouhan Rugs",
             phoneNumbers: dataAdditional.contact_details.phone,
@@ -34,8 +39,8 @@ export async function generateMetadata(props: { params: Promise<{ productId: str
             })
         },
         twitter: {
-            title: data.productName,
-            description: data.productDescriptionShort,
+            title: name,
+            description: desc,
             card: "summary",
             images: dataAdditional.logoSrc,
         },
@@ -150,12 +155,14 @@ async function RelatedProductsSection({ product, isMobile }: { product: ProductD
  * - Optimized image loading with blur placeholders
  * - Responsive design with device detection
  */
-const ProductPage = async (props: { params: Promise<{ productId: string }> }) => {
+const ProductPage = async (props: { params: Promise<{ productId: string, locale: string }> }) => {
     const params = await props.params;
 
     const {
         productId
     } = params;
+
+    const locale = params.locale as Locale
 
     // Fetch product data - this will be part of the static shell
     const data = await getProductWithSlug(productId)
@@ -169,8 +176,8 @@ const ProductPage = async (props: { params: Promise<{ productId: string }> }) =>
     
     // Build compact product data for recently viewed tracking
     const trackData = {
-        slug: data.productURL,
-        name: data.productName,
+        slug: resolveLocalizedString(data.productURL, locale),
+        name: resolveLocalizedString(data.productName, locale),
         image: data.images?.[data.productPrimaryImageIndex] ?? data.images?.[0] ?? '',
         price: Number(data.productSellingPrice),
         msrp: Number(data.productMSRP),

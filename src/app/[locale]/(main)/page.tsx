@@ -17,6 +17,8 @@ import { serializeForClient } from '@/utils/serializeForClient'
 import getDevice from '@/utils/getDevice'
 import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
 import LazySection from '@/ui/LazySection'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 import {
   HeroSkeleton,
   ProductGridSkeleton,
@@ -35,15 +37,20 @@ const ShopBySize = dynamic(() => import('@/ui/HomePage/ShopBySize'), { ssr: true
 const DynamicTestimonials = dynamic(() => import('@/ui/Testimonials'), { loading: () => <div className="min-h-[200px] flex items-center justify-center">Loading testimonials...</div> })
 const DynamicAboveFooterSEOContet = dynamic(() => import('@/ui/HomePage/AboveFooterSEOContet'))
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: loc } = await props.params
+  const locale = loc as Locale
   const [data, dataAdditional, bingVerification, googleVerification] = await Promise.all([getPageData("home"), getSiteData(), getAnalyticsData("BING"), getAnalyticsData("GOOGLE_VER")])
+  const title = resolveLocalizedString(data.pageTitle, locale)
+  const description = resolveLocalizedString(data.pageDescription, locale)
+  const keywords = resolveLocalizedString(data.pageKeywords, locale)
   return {
-    title: data.pageTitle,
-    description: data.pageDescription,
-    keywords: data.pageKeywords,
+    title,
+    description,
+    keywords,
     openGraph: {
-      title: data.pageTitle,
-      description: data.pageDescription,
+      title,
+      description,
       type: "website",
       siteName: "Chouhan Rugs",
       phoneNumbers: dataAdditional.contact_details.phone,
@@ -51,9 +58,9 @@ export async function generateMetadata(): Promise<Metadata> {
       images: dataAdditional.logoSrc
     },
     twitter: {
-      title: data.pageTitle,
+      title,
       card: "summary",
-      description: data.pageDescription,
+      description,
       images: dataAdditional.logoSrc,
     },
     verification: {

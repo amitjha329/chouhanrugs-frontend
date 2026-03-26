@@ -1,7 +1,9 @@
 'use client'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import React, { useState, useCallback, useMemo, useRef } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { resolveLocalizedString, resolveLocalized } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 type TabType = 'description' | 'highlights' | 'care'
 
@@ -13,6 +15,10 @@ interface TabConfig {
 
 const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap }) => {
     const t = useTranslations('product')
+    const locale = useLocale() as Locale
+    const longDesc = resolveLocalizedString(product.productDescriptionLong, locale)
+    const highlightsList = resolveLocalized<string[]>(product.highlights, locale) ?? []
+    const careList = resolveLocalized<string[]>(product.careInstructions, locale) ?? []
     const [activeDropdown, setActiveDropdown] = useState<TabType | null>(null)
     const [activeTab, setActiveTab] = useState<TabType>('description')
 
@@ -31,7 +37,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
             content: (
                 <div 
                     className="text-gray-600" 
-                    dangerouslySetInnerHTML={{ __html: product.productDescriptionLong }}
+                    dangerouslySetInnerHTML={{ __html: longDesc }}
                 />
             )
         },
@@ -40,7 +46,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
             label: t('highlights'),
             content: (
                 <ul className="text-gray-600 list-disc ml-4">
-                    {product.highlights.map((highlight, index) => (
+                    {highlightsList.map((highlight, index) => (
                         <li key={`highlight-${index}`} className="list-item leading-6">
                             {highlight}
                         </li>
@@ -53,7 +59,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
             label: t('care'),
             content: (
                 <ul className="text-gray-600 list-disc ml-4">
-                    {product.careInstructions.map((instruction, index) => (
+                    {careList.map((instruction, index) => (
                         <li key={`care-${index}`} className="list-item leading-6">
                             {instruction}
                         </li>
@@ -61,7 +67,7 @@ const InformationTabs = ({ product }: { product: ProductDataModelWithColorMap })
                 </ul>
             )
         }
-    ], [product.productDescriptionLong, product.highlights, product.careInstructions])
+    ], [longDesc, highlightsList, careList])
 
     // Toggle dropdown handler (mobile)
     const handleDropdownToggle = useCallback((tabId: TabType) => {

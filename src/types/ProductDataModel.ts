@@ -1,14 +1,15 @@
 import { ObjectId } from "mongodb";
 import ColorDataModel from "./ColorDataModel";
+import { LocalizedField } from "@/lib/resolveLocalized";
 
 export interface ProductDataModel {
     _id?: string | ObjectId;
     objectID:string;
     variations: Variation[];
-    highlights: string[];
-    careInstructions: string[];
-    productName: string;
-    productURL: string;
+    highlights: LocalizedField<string[]>;
+    careInstructions: LocalizedField<string[]>;
+    productName: LocalizedField<string>;
+    productURL: LocalizedField<string>;
     productBrand: string;
     productBaseColor: string;
     productCategory: string;
@@ -18,9 +19,9 @@ export interface ProductDataModel {
     productDiscountPercentage: string;
     productSellingPrice: number;
     productPriceSqFt: number;
-    productDescriptionShort: string;
-    productDescriptionLong: string;
-    productShippingInfo: string;
+    productDescriptionShort: LocalizedField<string>;
+    productDescriptionLong: LocalizedField<string>;
+    productShippingInfo: LocalizedField<string>;
     productPrimaryImageIndex: number;
     productCustomizable: boolean;
     productReturns: boolean;

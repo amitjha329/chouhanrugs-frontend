@@ -5,6 +5,7 @@ import { extractColorsAndSizes } from "./extractColorsSizesFromVariation";
 import ColorDataModel from "@/types/ColorDataModel";
 import SizeDataModel from "@/types/SizeDataModel";
 import { unstable_cache } from "next/cache";
+import { locales } from '@/i18n/routing';
 
 interface ProductWithSizeandColorData extends ProductDataModel{
     colorData:ColorDataModel[],
@@ -16,7 +17,10 @@ async function getProductWithSlugInternal(slug: string): Promise< ProductWithSiz
         const client = await clientPromise;
         const db = client.db();
         const product = await db.collection("products").findOne({
-            productURL: slug
+            $or: [
+                { productURL: slug },
+                ...locales.map(loc => ({ [`productURL.${loc}`]: slug }))
+            ]
         });
         if (product === null) {
             throw new Error("Product not found");

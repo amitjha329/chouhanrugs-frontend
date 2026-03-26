@@ -1,7 +1,10 @@
 import { ProductDataModel } from "../types/ProductDataModel";
 import SiteDataModel from "../types/SiteDataModel";
+import { resolveLocalizedString } from "@/lib/resolveLocalized";
+import { type Locale } from "@/i18n/routing";
 
-export default function generateProductBreadCrumbs(productData: ProductDataModel, siteData: SiteDataModel) {
+export default function generateProductBreadCrumbs(productData: ProductDataModel, siteData: SiteDataModel, locale: Locale = 'en-IN') {
+  const name = resolveLocalizedString(productData.productName, locale).replace(/"/g, '\\"')
   return {
     __html: `{
           "@context": "https://schema.org/",
@@ -24,7 +27,7 @@ export default function generateProductBreadCrumbs(productData: ProductDataModel
           },{
             "@type": "ListItem",
             "position": 4,
-            "name": "${productData.productName}"
+            "name": "${name}"
           }]
         }
         `};

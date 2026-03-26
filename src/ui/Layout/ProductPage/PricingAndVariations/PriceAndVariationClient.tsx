@@ -16,6 +16,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { MouseEventHandler, useState } from 'react'
 import { FaHeart } from 'react-icons/fa'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { useLocale } from 'next-intl'
+import { type Locale } from '@/i18n/routing'
 
 interface VariationExtraDataModel extends ProductDataModel {
     colorData: ColorDataModel[],
@@ -23,6 +26,8 @@ interface VariationExtraDataModel extends ProductDataModel {
 }
 
 const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtraDataModel, siteData: SiteDataModel }) => {
+    const locale = useLocale() as Locale
+    const productURL = resolveLocalizedString(product.productURL, locale)
     const {
         variation,
         selectedColor,
@@ -399,7 +404,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                 className={`w-full flex-1 rounded-full border-2 border-accent text-accent font-bold py-3 px-4 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide text-center ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 aria-label="Request bulk order"
                                 target='_blank'
-                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20bulk%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${product.productURL ? encodeURIComponent(product.productURL) : ''}`}
+                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20bulk%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${productURL ? encodeURIComponent(productURL) : ''}`}
                             >
                                 Bulk Order
                             </Link>
@@ -408,7 +413,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                 className={`w-full flex-1 rounded-full border-2 border-accent text-accent font-bold py-3 px-4 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide text-center ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 aria-label="Request custom order"
                                 target='_blank'
-                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20custom%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${product.productURL ? encodeURIComponent(product.productURL) : ''}`}
+                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20custom%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${productURL ? encodeURIComponent(productURL) : ''}`}
                             >
                                 Custom Order
                             </Link>

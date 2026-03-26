@@ -1,6 +1,10 @@
 import { ProductDataModel } from "../types/ProductDataModel";
+import { resolveLocalizedString } from "@/lib/resolveLocalized";
+import { type Locale } from "@/i18n/routing";
 
-export default function generateProductJsonLd(productData: ProductDataModel) {
+export default function generateProductJsonLd(productData: ProductDataModel, locale: Locale = 'en-IN') {
+  const name = resolveLocalizedString(productData.productName, locale).replace(/"/g, '\\"')
+  const desc = resolveLocalizedString(productData.productDescriptionShort, locale).replace(/"/g, '\\"')
   // "aggregateRating": {
   //       "@type": "AggregateRating",
   //       "ratingValue": "${productData.productReviews.average}",
@@ -10,9 +14,9 @@ export default function generateProductJsonLd(productData: ProductDataModel) {
     __html: `{
       "@context": "https://schema.org/",
       "@type": "Product",
-      "name": "${productData.productName}",
+      "name": "${name}",
       "image": "${productData.images[0]}",
-      "description": "${productData.productDescriptionShort}",
+      "description": "${desc}",
       "sku": "${productData.addedOn}",
       "mpn": "${productData.addedOn}",
       "brand": {

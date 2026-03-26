@@ -6,7 +6,9 @@ import React from 'react'
 import WishListButton from './WishListButton'
 import ProductsCardStyle from './WishlistButton.module.scss'
 import { blurPlaceholders, productImageSizes, imageQuality } from '@/utils/imageOptimization'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 interface CompoProps extends ProductDataModelWithColorMap {
     className?: string,
@@ -21,6 +23,9 @@ interface CompoProps extends ProductDataModelWithColorMap {
  */
 const ProductCardItem = (props: CompoProps) => {
     const t = useTranslations('product')
+    const locale = useLocale() as Locale
+    const name = resolveLocalizedString(props.productName, locale)
+    const url = resolveLocalizedString(props.productURL, locale)
     const productVariations = props.variations ?? []
     
     // Load first 4 images eagerly, rest lazy
@@ -63,11 +68,11 @@ const ProductCardItem = (props: CompoProps) => {
     return (
         <div className={clsx('bg-white rounded-xl overflow-hidden w-full text-center relative mr-3', props.className, ProductsCardStyle.product_card)}>
             <WishListButton productDetails={props} />
-            <Link href={'/products/' + props.productURL} className="" prefetch={false}>
+            <Link href={'/products/' + url} className="" prefetch={false}>
                 <div className="relative rounded-2xl overflow-hidden">
                     <Image 
                         src={props.images[props.productPrimaryImageIndex]} 
-                        alt={props.productName} 
+                        alt={name} 
                         className="!w-full !relative !~h-52/60 object-cover"
                         width={400} 
                         height={320}
@@ -98,7 +103,7 @@ const ProductCardItem = (props: CompoProps) => {
                 </div>
                 <div className="p-4">
                     <div className="font-light text-gray-500 text-center max-md:text-xs">{props.productCategory}</div>
-                    <div className="text-xs font-medium text-gray-800 mt-1 line-clamp-2">{props.productName}</div>
+                    <div className="text-xs font-medium text-gray-800 mt-1 line-clamp-2">{name}</div>
                     <div className="flex items-center mt-2 justify-center max-md:text-sm">
                         <div className="text-primary">$ {leastSellingPrice}</div>
                         <div className="text-gray-500 line-through ml-2 max-md:text-xs">$ {leastMSRP}</div>

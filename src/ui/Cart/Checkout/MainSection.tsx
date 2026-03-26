@@ -42,6 +42,9 @@ import deleteUserAddress from '@/backend/serverActions/deleteUserAddress'
 import { initiatePayoneerPayment, cancelPayoneerOrder } from '@/backend/serverActions/payoneer'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
 import { trackPurchase } from '@/lib/gtagConversion'
+import { useLocale } from 'next-intl'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -58,6 +61,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     userCurrency: Currency
 }) => {
     const [stripePromise, setStripePromise] = useState<Promise<Stripe | null>>()
+    const locale = useLocale() as Locale
     const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null)
     const router = useRouter()
     const t = useTranslations('checkout')
@@ -312,7 +316,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     currency: userCurrency?.currency || 'USD',
                     items: cart.map((item) => ({
                         item_id: item.cartProduct[0]._id?.toString() ?? '',
-                        item_name: item.cartProduct[0].productName,
+                        item_name: resolveLocalizedString(item.cartProduct[0].productName, locale),
                         item_category: item.cartProduct[0].productCategory,
                         item_brand: item.cartProduct[0].productBrand,
                         item_variant: item.variationCode ?? '',
@@ -476,7 +480,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         currency: userCurrency?.currency || 'USD',
                         items: cart.map((item) => ({
                             item_id: item.cartProduct[0]._id?.toString() ?? '',
-                            item_name: item.cartProduct[0].productName,
+                            item_name: resolveLocalizedString(item.cartProduct[0].productName, locale),
                             item_category: item.cartProduct[0].productCategory,
                             item_brand: item.cartProduct[0].productBrand,
                             item_variant: item.variationCode ?? '',
@@ -543,7 +547,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         currency: userCurrency?.currency || 'USD',
                         items: cart.map((item) => ({
                             item_id: item.cartProduct[0]._id?.toString() ?? '',
-                            item_name: item.cartProduct[0].productName,
+                            item_name: resolveLocalizedString(item.cartProduct[0].productName, locale),
                             item_category: item.cartProduct[0].productCategory,
                             item_brand: item.cartProduct[0].productBrand,
                             item_variant: item.variationCode ?? '',
@@ -982,7 +986,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                                         currency: userCurrency?.currency || 'USD',
                                                         items: cart.map((item) => ({
                                                             item_id: item.cartProduct[0]._id?.toString() ?? '',
-                                                            item_name: item.cartProduct[0].productName,
+                                                            item_name: resolveLocalizedString(item.cartProduct[0].productName, locale),
                                                             item_category: item.cartProduct[0].productCategory,
                                                             item_brand: item.cartProduct[0].productBrand,
                                                             item_variant: item.variationCode ?? '',

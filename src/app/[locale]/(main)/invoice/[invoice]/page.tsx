@@ -4,6 +4,9 @@ import { OrderProduct } from '@/types/OrderDataModel'
 import { ProductDataModel } from '@/types/ProductDataModel'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getOrderDetails from '@/backend/serverActions/getOrderDetails'
+import { getLocale } from 'next-intl/server'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 // Use the stored order price (purchase price) instead of recalculating from live product data
 const calculateProductPrice = (orderProduct: OrderProduct): number => {
@@ -13,6 +16,7 @@ const calculateProductPrice = (orderProduct: OrderProduct): number => {
 export default async function Invoice({ params }: Readonly<{ params: Promise<{ invoice: string }> }>) {
     const siteData = await getSiteData()
     const parameters = await params
+    const locale = await getLocale() as Locale
     const orderData = await getOrderDetails(parameters.invoice)
     let deductable = 0
     let subTotal = 0
@@ -142,7 +146,7 @@ export default async function Invoice({ params }: Readonly<{ params: Promise<{ i
                                             return (
                                                 <tr key={product.productId} className="hover:bg-gray-50 transition-colors print:hover:bg-white">
                                                     <td className="py-4 px-6 border-r border-gray-200 print:py-2 print:px-3 print:border-r print:border-black">
-                                                        <div className="font-semibold text-gray-900 print:text-xs print:text-black">{productDetails?.productName}</div>
+                                                        <div className="font-semibold text-gray-900 print:text-xs print:text-black">{resolveLocalizedString(productDetails?.productName, locale)}</div>
                                                         {product.variation && product.variation != "customSize" && (
                                                             <div className="mt-1 text-sm text-gray-800 flex flex-wrap gap-2 print:text-[10px] print:gap-1 print:text-black">
                                                                 {variation?.variationSize && (
