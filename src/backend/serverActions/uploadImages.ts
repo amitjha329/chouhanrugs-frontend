@@ -2,12 +2,13 @@
 import ImageUploadResponse from "@/types/ImageUploadResponse";
 import { ensureDir, writeFile } from "fs-extra";
 import sharp from "sharp";
+import { getConfig } from '@/lib/services/ConfigService';
 
 const uploadImages = async (data: FormData): Promise<Array<ImageUploadResponse>> => {
     const id = data.get("id")?.toString()
     const type = data.get("type")?.toString()
     const imgBlobArray = data.has('image') ? data.getAll('image') as File[] : []
-    const host = process.env.NODE_ENV == "production" ? process.env.NEXTCDN : ""
+    const host = process.env.NODE_ENV == "production" ? await getConfig('NEXTCDN') : ""
     const responseArray: Array<ImageUploadResponse> = []
     for (const imgBlob of imgBlobArray) {
         const dataFileName = imgBlob?.name.split('.')

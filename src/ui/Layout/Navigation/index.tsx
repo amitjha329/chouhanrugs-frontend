@@ -6,6 +6,7 @@ import Header from './Header'
 import AlgoliaSearch from './AlgoliaSearch'
 // import SearchComp from './SearchComp'
 import { FaSearch } from 'react-icons/fa'
+import { getConfigBulk } from '@/lib/services/ConfigService'
 
 // Skeleton for header while auth loads
 function HeaderSkeleton() {
@@ -36,7 +37,8 @@ function CategoryMenuSkeleton() {
     )
 }
 
-const Navigation = () => {
+const Navigation = async () => {
+    const algolia = await getConfigBulk(['ALGOLIA_APPID', 'ALGOLIA_KEY_CLIENT', 'ALGOLIA_INDEX', 'ALGOLIA_QUERY_INDEX'])
     return (
         <>
             <PageLinks />
@@ -49,10 +51,10 @@ const Navigation = () => {
                     {/* AlgoliaSearch uses Math.random() internally, needs Suspense */}
                     <Suspense fallback={<div className="w-full h-12 bg-gray-100 rounded animate-pulse" />}>
                         <AlgoliaSearch 
-                            appId={process.env.NEXT_PUBLIC_ALGOLIA_APPID ?? ""}
-                            apiKey={process.env.NEXT_PUBLIC_ALGOLIA_KEY_CLIENT ?? ""}
-                            indexName={process.env.NEXT_PUBLIC_ALGOLIA_INDEX ?? ""}
-                            querySuggestionsIndex={process.env.NEXT_PUBLIC_ALGOLIA_QUERY_INDEX ?? ""}
+                            appId={algolia.ALGOLIA_APPID}
+                            apiKey={algolia.ALGOLIA_KEY_CLIENT}
+                            indexName={algolia.ALGOLIA_INDEX}
+                            querySuggestionsIndex={algolia.ALGOLIA_QUERY_INDEX}
                         />
                     </Suspense>
                 </div>

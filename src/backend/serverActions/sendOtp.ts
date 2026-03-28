@@ -3,6 +3,7 @@ import { createTransport } from "nodemailer"
 import html from "../../../templates/otp_email";
 import clientPromise from "@/lib/clientPromise";
 import { createHash } from 'crypto';
+import { getConfigBulk } from '@/lib/services/ConfigService';
 
 export default async function sendOtp(params: {
     to: string;
@@ -18,23 +19,25 @@ export default async function sendOtp(params: {
         
         const token = Math.floor(100000 + Math.random() * 900000);
         
+        const smtp = await getConfigBulk(['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'SMTP_FROM']);
+
         // Check if SMTP is configured
-        if (!process.env.EMAIL_SERVER_HOST || !process.env.EMAIL_SERVER_USER || !process.env.EMAIL_SERVER_PASSWORD) {
-            console.error('Email server not configured. Please check environment variables.');
+        if (!smtp.SMTP_HOST || !smtp.SMTP_USER || !smtp.SMTP_PASS) {
+            console.error('Email server not configured. Please check SMTP config in admin panel.');
             return false;
         }
         
         const transport = createTransport({
-            host: process.env.EMAIL_SERVER_HOST,
-            port: Number(process.env.EMAIL_SERVER_PORT),
-            secure: Number(process.env.EMAIL_SERVER_PORT ?? 0) == 465,
+            host: smtp.SMTP_HOST,
+            port: Number(smtp.SMTP_PORT),
+            secure: Number(smtp.SMTP_PORT ?? 0) == 465,
             auth: {
-                user: process.env.EMAIL_SERVER_USER,
-                pass: process.env.EMAIL_SERVER_PASSWORD,
+                user: smtp.SMTP_USER,
+                pass: smtp.SMTP_PASS,
             },
             tls: {
                 ciphers: 'SSLv3',
-                rejectUnauthorized: false // Add this to handle self-signed certificates
+                rejectUnauthorized: false
             }
         });
         
@@ -50,8 +53,8 @@ export default async function sendOtp(params: {
         
         const result = await transport.sendMail({
             to: to,
-            from: `Chouhan Rugs <${process.env.EMAIL_SERVER_USER}>`,
-            replyTo: process.env.EMAIL_SERVER_USER,
+            from: `Chouhan Rugs <${smtp.SMTP_FROM || smtp.SMTP_USER}>`,
+            replyTo: smtp.SMTP_FROM || smtp.SMTP_USER,
             subject: `OTP for Chouhan Rugs Email Signin`,
             html: html({
                 OTP: token.toString(),

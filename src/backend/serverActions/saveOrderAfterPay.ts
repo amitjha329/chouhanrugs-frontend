@@ -10,6 +10,7 @@ import ORDER_STAUTS from "@/lib/order_status"
 import OrderDataModel from "@/types/OrderDataModel"
 import SiteDataModel from "@/types/SiteDataModel"
 import orderId from "@/utils/orderIdGenerator"
+import { getConfigBulk } from '@/lib/services/ConfigService'
 
 export default async function saveOrderAfterPay(orderDataParam: OrderDataModel) {
     await connection()
@@ -24,13 +25,14 @@ export default async function saveOrderAfterPay(orderDataParam: OrderDataModel) 
     const siteInfo = await siteDataPoint.findOne({ data_type: "siteData" }) as unknown as SiteDataModel
     const { _id, orderPlacedOn, orderStatus, ...orderData } = orderDataParam
     const user = await db.collection("users").findOne({ _id: new ObjectId(orderData.userId) })
+    const smtp = await getConfigBulk(['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'SMTP_FROM'])
     const mailer = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT ?? 0),
-        secure: Number(process.env.SMTP_PORT ?? 0) == 465, // use TLS
+        host: smtp.SMTP_HOST,
+        port: Number(smtp.SMTP_PORT ?? 0),
+        secure: Number(smtp.SMTP_PORT ?? 0) == 465, // use TLS
         auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
+            user: smtp.SMTP_USER,
+            pass: smtp.SMTP_PASS,
         }
     })
     mailer.use('compile', hbs({
@@ -86,7 +88,7 @@ export default async function saveOrderAfterPay(orderDataParam: OrderDataModel) 
             $set: { newOrder: true }
         }, { upsert: true })
         const mailOptions = {
-            from: `"${siteInfo.title}" ${process.env.SMTP_USER}`,
+            from: `"${siteInfo.title}" ${smtp.SMTP_FROM || smtp.SMTP_USER}`,
             to: user?.email,
             subject: 'Order Confirmation',
             template: 'order_confirmation',

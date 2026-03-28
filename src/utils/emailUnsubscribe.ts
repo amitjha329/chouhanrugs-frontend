@@ -46,8 +46,9 @@
  */
 
 import crypto from 'crypto'
+import { getConfig } from '@/lib/services/ConfigService'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://chouhanrugs.com'
+const DEFAULT_BASE_URL = 'https://chouhanrugs.com'
 
 /**
  * Generate a secure token for the unsubscribe link
@@ -68,10 +69,10 @@ export function generateUnsubscribeToken(email: string): string {
  * @param baseUrl - Optional custom base URL (defaults to NEXT_PUBLIC_SITE_URL)
  * @returns Full unsubscribe URL with email and token parameters
  */
-export function createUnsubscribeLink(email: string, baseUrl?: string): string {
+export async function createUnsubscribeLink(email: string, baseUrl?: string): Promise<string> {
     const token = generateUnsubscribeToken(email)
     const encodedEmail = encodeURIComponent(email.toLowerCase().trim())
-    const base = baseUrl || BASE_URL
+    const base = baseUrl || await getConfig('FRONTEND_URL', DEFAULT_BASE_URL)
     return `${base}/unsubscribe?email=${encodedEmail}&token=${token}`
 }
 

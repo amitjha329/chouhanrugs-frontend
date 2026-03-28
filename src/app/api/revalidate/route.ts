@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidateTag } from 'next/cache'
+import { getConfig } from '@/lib/services/ConfigService'
 
 /**
  * API route for on-demand cache revalidation.
@@ -14,7 +15,8 @@ export async function POST(request: NextRequest) {
         const { tags, secret } = body as { tags?: string[]; secret?: string }
 
         // Validate secret to prevent unauthorized revalidation
-        if (secret !== process.env.REVALIDATION_SECRET) {
+        const revalidationSecret = await getConfig('REVALIDATION_SECRET')
+        if (secret !== revalidationSecret) {
             return NextResponse.json({ error: 'Invalid secret' }, { status: 401 })
         }
 

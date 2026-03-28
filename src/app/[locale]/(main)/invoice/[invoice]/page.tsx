@@ -7,6 +7,7 @@ import getOrderDetails from '@/backend/serverActions/getOrderDetails'
 import { getLocale } from 'next-intl/server'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import { getConfig } from '@/lib/services/ConfigService'
 
 // Use the stored order price (purchase price) instead of recalculating from live product data
 const calculateProductPrice = (orderProduct: OrderProduct): number => {
@@ -197,7 +198,7 @@ export default async function Invoice({ params }: Readonly<{ params: Promise<{ i
                             {/* QR Code Section */}
                             <div className="flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300 print:bg-white print:border print:border-black print:p-4">
                                 <img
-                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(process.env.NEXTAUTH_URL + "/invoice/" + parameters.invoice)}`}
+                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(await getConfig('BACKEND_URL') + "/invoice/" + parameters.invoice)}`}
                                     alt="Invoice QR Code"
                                     height={150}
                                     width={150}

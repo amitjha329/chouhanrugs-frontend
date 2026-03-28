@@ -6,6 +6,7 @@ import PaymentGatewayDataModel from "@/types/PaymentGatewayDataModel"
 import converter from "@/utils/mongoObjectConversionUtility"
 import { getCountriesByName } from "@yusifaliyevpro/countries"
 import { ObjectId } from "mongodb"
+import { getConfig } from '@/lib/services/ConfigService'
 
 /**
  * Get Payoneer configuration from database
@@ -179,7 +180,7 @@ export async function initiatePayoneerPayment(orderData: {
             apiTokenFirst4: apiToken?.substring(0, 4) || 'missing',
             authHeaderLength: authHeader.length,
             baseUrl: `${baseUrl}/api/lists`,
-            environment: process.env.NEXT_PUBLIC_PAYONEER_ENV
+            environment: await getConfig('PAYONEER_ENV')
         })
 
         const response = await fetch(`${baseUrl}/api/lists`, {
@@ -205,7 +206,7 @@ export async function initiatePayoneerPayment(orderData: {
             if (response.status === 401) {
                 return {
                     success: false,
-                    error: `Authentication failed. Please verify:\n1. key_id (${division}) is your Merchant Code\n2. key_secret is correct API Token\n3. Credentials match the environment (${process.env.NEXT_PUBLIC_PAYONEER_ENV})`
+                    error: `Authentication failed. Please verify:\n1. key_id (${division}) is your Merchant Code\n2. key_secret is correct API Token\n3. Credentials match the environment (${await getConfig('PAYONEER_ENV')})`
                 }
             }
 

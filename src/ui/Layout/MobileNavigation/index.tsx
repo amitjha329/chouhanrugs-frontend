@@ -5,10 +5,12 @@ import Link from 'next/link'
 import HeaderCartItemMobile from './HeaderCartItemMobile'
 import AlgoliaMobileSearch from './AlgoliaMobileSearch'
 import { getSession } from '@/lib/auth-server'
+import { getConfigBulk } from '@/lib/services/ConfigService'
 
 
 const MobileNavigation = async () => {
     const session = await getSession()
+    const algolia = await getConfigBulk(['ALGOLIA_APPID', 'ALGOLIA_KEY_CLIENT', 'ALGOLIA_INDEX', 'ALGOLIA_QUERY_INDEX'])
     return (
         <>
             <header className='sticky top-0 z-50 bg-base-100'>
@@ -32,10 +34,10 @@ const MobileNavigation = async () => {
                     </div>
                 </div>                <div className='pb-4 pt-5 px-3'>
                     <AlgoliaMobileSearch
-                        appId={process.env.NEXT_PUBLIC_ALGOLIA_APPID ?? ""}
-                        apiKey={process.env.NEXT_PUBLIC_ALGOLIA_KEY_CLIENT ?? ""}
-                        indexName={process.env.NEXT_PUBLIC_ALGOLIA_INDEX ?? ""}
-                        querySuggestionsIndex={process.env.NEXT_PUBLIC_ALGOLIA_QUERY_INDEX ?? ""}
+                        appId={algolia.ALGOLIA_APPID}
+                        apiKey={algolia.ALGOLIA_KEY_CLIENT}
+                        indexName={algolia.ALGOLIA_INDEX}
+                        querySuggestionsIndex={algolia.ALGOLIA_QUERY_INDEX}
                     />
                 </div>
                 {/* Fallback form for when JavaScript is disabled */}

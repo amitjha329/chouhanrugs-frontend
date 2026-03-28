@@ -5,6 +5,7 @@ import { nextCookies } from 'better-auth/next-js'
 import { MongoClient } from 'mongodb'
 import { createTransport } from 'nodemailer'
 import html from '../../templates/otp_email'
+import { getConfigBulk } from '@/lib/services/ConfigService'
 
 const client = new MongoClient(process.env.MONGODB!)
 const db = client.db(process.env.MONGODB_DB)
@@ -62,13 +63,15 @@ export const auth = betterAuth({
             async sendVerificationOTP({ email, otp, type }) {
                 if (type !== 'sign-in') return
 
+                const smtp = await getConfigBulk(['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'SMTP_FROM'])
+
                 const transport = createTransport({
-                    host: process.env.EMAIL_SERVER_HOST,
-                    port: Number(process.env.EMAIL_SERVER_PORT),
-                    secure: Number(process.env.EMAIL_SERVER_PORT ?? 0) === 465,
+                    host: smtp.SMTP_HOST,
+                    port: Number(smtp.SMTP_PORT),
+                    secure: Number(smtp.SMTP_PORT ?? 0) === 465,
                     auth: {
-                        user: process.env.EMAIL_SERVER_USER,
-                        pass: process.env.EMAIL_SERVER_PASSWORD,
+                        user: smtp.SMTP_USER,
+                        pass: smtp.SMTP_PASS,
                     },
                     tls: {
                         ciphers: 'SSLv3',
@@ -78,8 +81,8 @@ export const auth = betterAuth({
 
                 await transport.sendMail({
                     to: email,
-                    from: `Chouhan Rugs <${process.env.EMAIL_SERVER_USER}>`,
-                    replyTo: process.env.EMAIL_SERVER_USER,
+                    from: `Chouhan Rugs <${smtp.SMTP_FROM || smtp.SMTP_USER}>`,
+                    replyTo: smtp.SMTP_FROM || smtp.SMTP_USER,
                     subject: 'OTP for Chouhan Rugs Email Signin',
                     html: html({ OTP: otp, SITE: 'Chouhan Rugs' }),
                     text: `OTP for Chouhan Rugs Email Signin is: ${otp}`,
