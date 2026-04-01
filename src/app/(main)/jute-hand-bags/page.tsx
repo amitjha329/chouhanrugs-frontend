@@ -354,7 +354,7 @@ function ProductCard({ product, index }: { product: ProductDataModel; index: num
                             src={primaryImage}
                             alt={product.productName}
                             fill
-                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                            className="object-fill transition-transform duration-700 ease-out group-hover:scale-110"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                         />
                     )}

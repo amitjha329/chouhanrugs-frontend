@@ -66,7 +66,7 @@ const ProductCardItem = (props: CompoProps) => {
                     <Image 
                         src={props.images[props.productPrimaryImageIndex]} 
                         alt={props.productName} 
-                        className="!w-full !relative !~h-52/60 object-cover"
+                        className="!w-full !relative !~h-52/60 object-fill"
                         width={400} 
                         height={320}
                         placeholder="blur"

@@ -58,7 +58,7 @@ const NewProductCard = (product: itemProps) => {
           alt={product.productName} 
           width={200} 
           height={135} 
-          className='!w-[200px] !h-[135px]' 
+          className='!w-[200px] !h-[135px] object-fill' 
           loading="lazy"
           placeholder="blur"
           blurDataURL={blurDataURL}

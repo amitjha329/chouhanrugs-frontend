@@ -39,7 +39,7 @@ function MiniProductCard({ product }: { product: ProductDataModel }) {
                             src={primaryImage}
                             alt={product.productName}
                             fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="object-fill transition-transform duration-500 group-hover:scale-105"
                             sizes="(max-width: 768px) 40vw, 15vw"
                         />
                     )}
