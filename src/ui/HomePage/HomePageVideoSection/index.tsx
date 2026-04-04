@@ -23,7 +23,7 @@ const HomePageVideoSection = async () => {
         <section className="relative w-full overflow-hidden bg-black">
             {/* Video */}
             <video
-                className="w-full max-h-[85vh] object-cover"
+                className="w-full max-h-[50vh] sm:max-h-[70vh] lg:max-h-[85vh] object-cover"
                 src={videoUrl}
                 poster={posterImage || undefined}
                 autoPlay={autoplay}

@@ -125,11 +125,11 @@ const DynamicProductShowcase = async () => {
                     {/* Right 50% — Products + Buttons */}
                     <div className="flex flex-col">
                         {/* Top bar — heading + nav buttons */}
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
                                 {productGridHeading ?? sectionHeading}
                             </h3>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 flex-wrap">
                                 {knowMoreHref && (
                                     <Link
                                         href={knowMoreHref}
