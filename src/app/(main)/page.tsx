@@ -22,6 +22,7 @@ import {
   SectionTitleSkeleton,
   CategorySkeleton
 } from './loading'
+import RightImageSideContent from '@/ui/HomePage/RightImageSideContent'
 
 // Lazy load below-the-fold sections to reduce initial DOM size
 const ShopByRoom = dynamic(() => import('@/ui/HomePage/ShopByRoom'), { ssr: true })
@@ -30,6 +31,8 @@ const TrendingProducts = dynamic(() => import('@/ui/HomePage/TrendingProducts'),
 const OurPopularCategories = dynamic(() => import('@/ui/HomePage/OurPopularCategories'), { ssr: true })
 const ShopBySize = dynamic(() => import('@/ui/HomePage/ShopBySize'), { ssr: true })
 const JuteHandBagsShowcase = dynamic(() => import('@/ui/HomePage/JuteHandBagsShowcase'), { ssr: true })
+const DynamicProductShowcase = dynamic(() => import('@/ui/HomePage/DynamicProductShowcase'), { ssr: true })
+const HomePageVideoSection = dynamic(() => import('@/ui/HomePage/HomePageVideoSection'), { ssr: true })
 
 const DynamicTestimonials = dynamic(() => import('@/ui/Testimonials'), { loading: () => <div className="min-h-[200px] flex items-center justify-center">Loading testimonials...</div> })
 const DynamicAboveFooterSEOContet = dynamic(() => import('@/ui/HomePage/AboveFooterSEOContet'))
@@ -108,15 +111,30 @@ const HomePage = async () => {
       <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
         <NewProductsSection />
       </Suspense>
-      
+
       {/* Featured Products */}
       <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
         <FeaturedProducts />
       </Suspense>
 
+      {/* This Product Showcase Banner Section */}
+      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <RightImageSideContent />
+      </Suspense>
+
       {/* Jute Hand Bags Showcase — 50/50 split */}
       <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
         <JuteHandBagsShowcase />
+      </Suspense>
+
+      {/* Dynamic Product Showcase — category & content from backend */}
+      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <DynamicProductShowcase />
+      </Suspense>
+
+      {/* Full-Width Video Section — video from backend */}
+      <Suspense fallback={<div className="min-h-[300px] bg-black animate-pulse" />}>
+        <HomePageVideoSection />
       </Suspense>
       
       {/* Order Process - Static content, no Suspense needed */}

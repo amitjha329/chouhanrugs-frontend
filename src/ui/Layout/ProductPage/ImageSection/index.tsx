@@ -469,7 +469,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
             <div
                 ref={containerRef}
                 className={clsx(
-                    "rounded-2xl relative md:h-[500px] max-md:aspect-square max-md:w-full max-md:h-auto overflow-hidden bg-gray-50 transition-shadow duration-300",
+                    "rounded-2xl relative aspect-[4/5] w-full overflow-hidden bg-gray-50 transition-shadow duration-300",
                     isZooming && "shadow-lg"
                 )}
                 onMouseMove={handleMouseMove}
@@ -486,7 +486,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                     alt={product?.productName ?? 'Product image'}
                     data-main-image
                     className={clsx(
-                        "!relative object-cover h-full w-full transition-opacity duration-300",
+                        "!relative object-fill h-full w-full transition-opacity duration-300",
                         mainImageLoaded ? "opacity-100" : "opacity-0"
                     )}
                     loading="eager"

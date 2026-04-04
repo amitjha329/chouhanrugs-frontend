@@ -52,7 +52,7 @@ function ProductContentSkeleton() {
         <div className="flex max-md:flex-col gap-10 ~px-5/0 animate-pulse">
             {/* Image skeleton */}
             <div className="md:basis-1/2 overflow-hidden">
-                <div className="rounded-3xl mb-4 md:h-[500px] aspect-square bg-gradient-to-br from-gray-100 to-gray-200" />
+                <div className="rounded-3xl mb-4 aspect-[4/5] w-full bg-gradient-to-br from-gray-100 to-gray-200" />
                 <div className="flex gap-3 py-3 pl-2">
                     {[...Array(4)].map((_, i) => (
                         <div key={i} className="w-20 h-20 rounded-lg bg-gray-200" />

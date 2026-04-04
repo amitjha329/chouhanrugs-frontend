@@ -24,38 +24,41 @@ const ProductCardItem = (props: CompoProps) => {
     // Load first 4 images eagerly, rest lazy
     const shouldLoadEager = (props.index ?? 0) < 4
 
-    // Calculate least selling price (after discount) among all variations and the main product
-    let leastSellingPrice: string;
-    if (productVariations.length > 0) {
-        leastSellingPrice = Number(
-            productVariations.reduce((min, variation) => {
-                const price = Number(variation.variationPrice ?? '0');
-                const discount = Number(variation.variationDiscount ?? '0');
-                const sellingPrice = price - (discount / 100) * price;
-                if (isNaN(sellingPrice) || sellingPrice < 0) {
-                    return min;
-                }
-                return Math.min(min, sellingPrice);
-            }, Number.POSITIVE_INFINITY)
-        ).toFixed(2);
+    // Use pre-computed priceRange from Algolia if available, else compute from variations/base price
+    const priceRange = (props as any).priceRange as { min: number; max: number } | undefined
+    const msrpRange = (props as any).msrpRange as { min: number; max: number } | undefined
+
+    let sellingPriceDisplay: string
+    let msrpDisplay: string
+
+    if (priceRange && priceRange.min > 0) {
+        sellingPriceDisplay = `$ ${priceRange.min.toFixed(2)}`
+    } else if (productVariations.length > 0) {
+        const prices = productVariations.map(v => {
+            const price = Number(v.variationPrice ?? '0')
+            const discount = Number(v.variationDiscount ?? '0')
+            return price - (discount / 100) * price
+        }).filter(p => !isNaN(p) && p > 0)
+        if (prices.length > 0) {
+            sellingPriceDisplay = `$ ${Math.min(...prices).toFixed(2)}`
+        } else {
+            sellingPriceDisplay = `$ ${Number(props.productSellingPrice).toFixed(2)}`
+        }
     } else {
-        leastSellingPrice = Number(props.productSellingPrice).toFixed(2);
+        sellingPriceDisplay = `$ ${Number(props.productSellingPrice).toFixed(2)}`
     }
 
-    // Calculate least MSRP among all variations and the main product
-    let leastMSRP: string;
-    if (productVariations.length > 0) {
-        leastMSRP = Number(
-            productVariations.reduce((min, variation) => {
-                const msrp = Number(variation.variationPrice ?? '0');
-                if (isNaN(msrp) || msrp < 0) {
-                    return min;
-                }
-                return Math.min(min, msrp);
-            }, Number.POSITIVE_INFINITY)
-        ).toFixed(2);
+    if (msrpRange && msrpRange.min > 0) {
+        msrpDisplay = `$ ${msrpRange.min.toFixed(2)}`
+    } else if (productVariations.length > 0) {
+        const msrps = productVariations.map(v => Number(v.variationPrice ?? '0')).filter(p => !isNaN(p) && p > 0)
+        if (msrps.length > 0) {
+            msrpDisplay = `$ ${Math.min(...msrps).toFixed(2)}`
+        } else {
+            msrpDisplay = `$ ${Number(props.productMSRP).toFixed(2)}`
+        }
     } else {
-        leastMSRP = Number(props.productMSRP).toFixed(2);
+        msrpDisplay = `$ ${Number(props.productMSRP).toFixed(2)}`
     }
 
     return (
@@ -66,9 +69,9 @@ const ProductCardItem = (props: CompoProps) => {
                     <Image 
                         src={props.images[props.productPrimaryImageIndex]} 
                         alt={props.productName} 
-                        className="!w-full !relative !~h-52/60 object-fill"
-                        width={400} 
-                        height={320}
+                        className="!w-full !relative aspect-[4/5] object-fill"
+                        width={400}
+                        height={500}
                         placeholder="blur"
                         blurDataURL={blurPlaceholders.warmNeutral}
                         loading={shouldLoadEager ? "eager" : "lazy"}
@@ -97,9 +100,9 @@ const ProductCardItem = (props: CompoProps) => {
                 <div className="p-4">
                     <div className="font-light text-gray-500 text-center max-md:text-xs">{props.productCategory}</div>
                     <div className="text-xs font-medium text-gray-800 mt-1 line-clamp-2">{props.productName}</div>
-                    <div className="flex items-center mt-2 justify-center max-md:text-sm">
-                        <div className="text-primary">$ {leastSellingPrice}</div>
-                        <div className="text-gray-500 line-through ml-2 max-md:text-xs">$ {leastMSRP}</div>
+                    <div className="flex items-center mt-2 justify-center max-md:text-sm flex-wrap gap-x-2">
+                        <div className="text-primary">{sellingPriceDisplay}</div>
+                        <div className="text-gray-500 line-through max-md:text-xs">{msrpDisplay}</div>
                     </div>
                 </div>
             </Link>

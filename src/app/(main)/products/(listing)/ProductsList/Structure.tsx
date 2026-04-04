@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import SideBarSectionLayout from './Filter/SideBarSectionLayout'
 import RangeSlider from './Filter/RangeSlider'
 import { FaAngleDown } from 'react-icons/fa'
-import { ClearRefinements, CurrentRefinements, RefinementList, ToggleRefinement } from 'react-instantsearch'
+import { ClearRefinements, CurrentRefinements, HierarchicalMenu, RefinementList, ToggleRefinement } from 'react-instantsearch'
 import FilterBottomSheet from './Filter/Mobile/FilterBottomSheet'
 import Currency from '@/types/Currency'
 
@@ -56,13 +56,26 @@ const StructureListing = ({ children, userCurrency }: {
                     }} />
                     <SideBarSectionLayout title="Categories">
                         {/* <CheckBoxSelector dataArray={categories} checkHandler={handleCatCheck} selectedItem={selectedCats} /> */}
-                        <RefinementList attribute="productCategory" showMoreLimit={100} limit={5} showMore classNames={{
-                            checkbox: "checkbox",
-                            label: "label cursor-pointer",
-                            labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
-                            count: "color-[grey]"
-                        }} />
+                        <HierarchicalMenu
+                            attributes={[
+                                'hierarchicalCategories.lvl0',
+                                'hierarchicalCategories.lvl1',
+                                'hierarchicalCategories.lvl2',
+                                'hierarchicalCategories.lvl3',
+                            ]}
+                            showMore
+                            showMoreLimit={100}
+                            limit={5}
+                            classNames={{
+                                list: 'ml-0',
+                                childList: 'ml-4',
+                                label: 'label cursor-pointer',
+                                count: 'color-[grey]',
+                                showMore: 'border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent',
+                                link: 'flex items-center gap-2 py-1',
+                                selectedItem: 'font-bold text-primary',
+                            }}
+                        />
                     </SideBarSectionLayout>
                     <SideBarSectionLayout title="Price">
                         <RangeSlider userCurrency={userCurrency} />

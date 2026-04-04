@@ -15,38 +15,41 @@ const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9I
 const NewProductCard = (product: itemProps) => {
   const productVariations = product.variations ?? []
 
-  // Calculate least selling price (after discount) among all variations and the main product
-  let leastSellingPrice: string;
-  if (productVariations.length > 0) {
-    leastSellingPrice = Number(
-      productVariations.reduce((min, variation) => {
-        const price = Number(variation.variationPrice ?? '0');
-        const discount = Number(variation.variationDiscount ?? '0');
-        const sellingPrice = price - (discount / 100) * price;
-        if (isNaN(sellingPrice) || sellingPrice < 0) {
-          return min;
-        }
-        return Math.min(min, sellingPrice);
-      }, Number.POSITIVE_INFINITY)
-    ).toFixed(2);
+  // Use pre-computed priceRange from Algolia if available, else compute from variations/base price
+  const priceRange = (product as any).priceRange as { min: number; max: number } | undefined
+  const msrpRange = (product as any).msrpRange as { min: number; max: number } | undefined
+
+  let sellingPriceDisplay: string
+  let msrpDisplay: string
+
+  if (priceRange && priceRange.min > 0) {
+    sellingPriceDisplay = `$ ${priceRange.min.toFixed(2)}`
+  } else if (productVariations.length > 0) {
+    const prices = productVariations.map(v => {
+      const price = Number(v.variationPrice ?? '0')
+      const discount = Number(v.variationDiscount ?? '0')
+      return price - (discount / 100) * price
+    }).filter(p => !isNaN(p) && p > 0)
+    if (prices.length > 0) {
+      sellingPriceDisplay = `$ ${Math.min(...prices).toFixed(2)}`
+    } else {
+      sellingPriceDisplay = `$ ${Number(product.productSellingPrice).toFixed(2)}`
+    }
   } else {
-    leastSellingPrice = Number(product.productSellingPrice).toFixed(2);
+    sellingPriceDisplay = `$ ${Number(product.productSellingPrice).toFixed(2)}`
   }
 
-  // Calculate least MSRP among all variations and the main product
-  let leastMSRP: string;
-  if (productVariations.length > 0) {
-    leastMSRP = Number(
-      productVariations.reduce((min, variation) => {
-        const msrp = Number(variation.variationPrice ?? '0');
-        if (isNaN(msrp) || msrp < 0) {
-          return min;
-        }
-        return Math.min(min, msrp);
-      }, Number.POSITIVE_INFINITY)
-    ).toFixed(2);
+  if (msrpRange && msrpRange.min > 0) {
+    msrpDisplay = `$ ${msrpRange.min.toFixed(2)}`
+  } else if (productVariations.length > 0) {
+    const msrps = productVariations.map(v => Number(v.variationPrice ?? '0')).filter(p => !isNaN(p) && p > 0)
+    if (msrps.length > 0) {
+      msrpDisplay = `$ ${Math.min(...msrps).toFixed(2)}`
+    } else {
+      msrpDisplay = `$ ${Number(product.productMSRP).toFixed(2)}`
+    }
   } else {
-    leastMSRP = Number(product.productMSRP).toFixed(2);
+    msrpDisplay = `$ ${Number(product.productMSRP).toFixed(2)}`
   }
 
   return (
@@ -66,9 +69,9 @@ const NewProductCard = (product: itemProps) => {
         />
         <div className='text-clip line-clamp-2 text-xs max-w-40 text-center'>
           {product.productName}
-        </div>        <div className='flex gap-2 text-xs'>
-          <span className='text-primary'>$ {leastSellingPrice}</span>
-          <span className='line-through text-gray-500'>$ {leastMSRP}</span>
+        </div>        <div className='flex gap-2 text-xs flex-wrap'>
+          <span className='text-primary'>{sellingPriceDisplay}</span>
+          <span className='line-through text-gray-500'>{msrpDisplay}</span>
         </div>
         {/* Simple star display instead of interactive rating - reduces DOM elements */}
         <div className="flex text-orange-400 text-xs" aria-label="4 out of 5 stars">

@@ -29,7 +29,7 @@ const ProductList = ({ searchQuery, searchParams, categoryParam, predefinedProdu
             {
                 searchQuery && <div className='w-full text-start font-semibold text-lg'>Showing Results for &quot;{searchQuery}&quot;</div>
             }
-            <div className='grid grid-cols-2 lg:grid-cols-3 gap-10'>
+            <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10'>
                 {/* {
                     predefinedProducts.map(product => {
                         return (

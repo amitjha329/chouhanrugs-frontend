@@ -8,7 +8,7 @@ import RangeSlider from '../RangeSlider'
 import SizeSelector from '../SizeSelector'
 import ColorSelector from '../ColorSelector'
 import FilterAccordion from '../FilterAccordion'
-import { ClearRefinements, RefinementList, ToggleRefinement } from 'react-instantsearch'
+import { ClearRefinements, HierarchicalMenu, RefinementList, ToggleRefinement } from 'react-instantsearch'
 import Currency from '@/types/Currency'
 
 const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }: {
@@ -35,13 +35,26 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                 </div>
                 <div className="p-3 flex flex-col justify-start flex-grow overflow-y-auto">
                     <Container showAsAccordion accordionLable='Categories'>
-                        <RefinementList attribute="productCategory" showMoreLimit={100} limit={5} showMore classNames={{
-                            checkbox: "checkbox",
-                            label: "label cursor-pointer",
-                            labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary",
-                            count: "color-[grey]"
-                        }} />
+                        <HierarchicalMenu
+                            attributes={[
+                                'hierarchicalCategories.lvl0',
+                                'hierarchicalCategories.lvl1',
+                                'hierarchicalCategories.lvl2',
+                                'hierarchicalCategories.lvl3',
+                            ]}
+                            showMore
+                            showMoreLimit={100}
+                            limit={5}
+                            classNames={{
+                                list: 'ml-0',
+                                childList: 'ml-4',
+                                label: 'label cursor-pointer',
+                                count: 'color-[grey]',
+                                showMore: 'border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary',
+                                link: 'flex items-center gap-2 py-1',
+                                selectedItem: 'font-bold text-primary',
+                            }}
+                        />
                     </Container>
                     <Container showAsAccordion accordionLable='Price'>
                         <RangeSlider userCurrency={userCurrency} />
