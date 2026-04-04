@@ -86,6 +86,9 @@ const DynamicProductShowcase = async () => {
         browseHref,
     } = showcaseData
 
+    // Section was saved but required fields are empty — treat as removed
+    if (!heroImage || !category || !sectionHeading) return null
+
     const products = await getProductsByCategory(category, limit ?? 6)
 
     if (products.length === 0) return null
