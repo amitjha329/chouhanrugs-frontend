@@ -1,19 +1,19 @@
 import React from 'react'
-import image_bg from '../../../../static_assets/1370e2249338920089a9a7217d235002.webp'
 import Link from 'next/link'
 import { getHomePageBannerSection } from '@/backend/serverActions/getHomePageBannerSection'
 
 const RightImageSideContent = async () => {
   const data = await getHomePageBannerSection()
 
-  const backgroundImage = data?.backgroundImage ?? image_bg.src
-  const heading = data?.heading ?? ''
-  const tagLine = data?.tagLine ?? ''
-  const buttonText = data?.buttonText ?? 'Shop Now'
-  const buttonLink = data?.buttonLink ?? '/products'
+  if (!data || !data.backgroundImage || !data.heading) return null
 
-    if(heading.length === 0 || backgroundImage.length === 0) return <></>
-    else return (
+  const backgroundImage = data.backgroundImage
+  const heading = data.heading
+  const tagLine = data.tagLine ?? ''
+  const buttonText = data.buttonText ?? 'Shop Now'
+  const buttonLink = data.buttonLink ?? '/products'
+
+  return (
     <div
       className="~h-[30rem]/[40rem] relative bg-fixed bg-cover overflow-hidden"
       style={{ backgroundImage: `url(${backgroundImage})` }}
