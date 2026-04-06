@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react'
 import { autocomplete } from '@algolia/autocomplete-js'
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions'
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches'
-import { algoliasearch } from 'algoliasearch'
+import { liteClient as algoliasearch } from 'algoliasearch/lite'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
@@ -21,10 +21,12 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
   querySuggestionsIndex
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const searchClient = algoliasearch(appId, apiKey)
+  // Stable ref so the client is created once per mount, not on every render
+  const searchClientRef = useRef(algoliasearch(appId, apiKey))
 
   useEffect(() => {
     if (!containerRef.current) return
+    const searchClient = searchClientRef.current
 
     // Recent searches plugin
     const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
@@ -78,14 +80,14 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
             getItems({ query }: { query: string }) {
               if (!query) return []
 
-              return searchClient.searchSingleIndex({
-                indexName,
-                searchParams: {
+              return searchClient.search({
+                requests: [{
+                  indexName,
                   query,
                   hitsPerPage: 4,
                   attributesToRetrieve: ['objectID', 'productName', 'productSellingPrice', 'images', 'productURL']
-                }
-              }).then(({ hits }) => hits)
+                }]
+              }).then(({ results }) => (results[0] as any).hits as any[])
             },
             templates: {
               item({ item, html }) {

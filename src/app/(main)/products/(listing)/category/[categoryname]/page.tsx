@@ -37,12 +37,19 @@ export async function generateMetadata(props: { params: Promise<{ categoryname: 
 
 const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: string }> }) => {
     const {categoryname} = await props.params;
-    console.log("Category Name:", decodeURIComponent(categoryname))
-    const promotedProducts = await getProductPromoted(decodeURIComponent(categoryname))
-    console.log(promotedProducts)
+    const decodedName = decodeURIComponent(categoryname)
+    const [category, promotedProducts] = await Promise.all([
+        getCategoriesWithName(decodedName),
+        getProductPromoted(decodedName),
+    ])
+
+    // Build the full Algolia hierarchical path, e.g. "Bags > Tote Bags"
+    // The parent field is stored as "Bags>" or "Bags>Tote Bags>" (">"-delimited ancestor chain)
+    const ancestors = category.parent ? category.parent.split('>').filter(Boolean) : []
+    const hierarchyPath = [...ancestors, category.name].join(' > ')
+
     return (
-        <ProductList categoryParam={categoryname} predefinedProducts={promotedProducts} />
-        // <div></div>
+        <ProductList categoryParam={categoryname} hierarchyPath={hierarchyPath} predefinedProducts={promotedProducts} />
     )
 }
 
