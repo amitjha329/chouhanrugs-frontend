@@ -8,6 +8,19 @@ import { ClearRefinements, CurrentRefinements, HierarchicalMenu, RefinementList,
 import FilterBottomSheet from './Filter/Mobile/FilterBottomSheet'
 import Currency from '@/types/Currency'
 
+const REFINEMENT_LABELS: Record<string, string> = {
+    'hierarchicalCategories.lvl0': 'Category',
+    'hierarchicalCategories.lvl1': 'Category',
+    'hierarchicalCategories.lvl2': 'Category',
+    'hierarchicalCategories.lvl3': 'Category',
+    'variations.variationColor': 'Color',
+    'variations.variationSize': 'Size',
+    'productBrand': 'Brand',
+    'productShape.name': 'Shape',
+    'productPattern.name': 'Pattern',
+    'productCustomizable': 'Customizable',
+}
+
 const StructureListing = ({ children, userCurrency }: {
     children: React.ReactNode,
     userCurrency: Currency
@@ -22,7 +35,14 @@ const StructureListing = ({ children, userCurrency }: {
     return (
         <>
             <div className="flex md:hidden justify-between border">
-                <CurrentRefinements classNames={{
+                <CurrentRefinements
+                    transformItems={(items) =>
+                        items.map((item) => ({
+                            ...item,
+                            label: REFINEMENT_LABELS[item.attribute] ?? item.label,
+                        }))
+                    }
+                    classNames={{
                     item: "text-primary rounded-full bg-secondary px-3 py-1 mr-1 min-w-max text-xs",
                     list: "flex p-4",
                     root: "overflow-x-scroll no-scrollbar",
@@ -74,6 +94,7 @@ const StructureListing = ({ children, userCurrency }: {
                                 showMore: 'border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent',
                                 link: 'flex items-center gap-2 py-1',
                                 selectedItem: 'font-bold text-primary',
+                                parentItem: 'font-normal',
                             }}
                         />
                     </SideBarSectionLayout>

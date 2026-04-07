@@ -128,22 +128,22 @@ const DynamicProductShowcase = async () => {
                     {/* Right 50% — Products + Buttons */}
                     <div className="flex flex-col">
                         {/* Top bar — heading + nav buttons */}
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+                        <div className="flex gap-3 flex-row items-center justify-between mb-6">
                             <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
                                 {productGridHeading ?? sectionHeading}
                             </h3>
-                            <div className="flex items-center gap-3 flex-wrap">
+                            <div className="flex items-center gap-3">
                                 {knowMoreHref && (
                                     <Link
                                         href={knowMoreHref}
-                                        className="text-xs sm:text-sm font-medium text-primary border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition-all duration-300"
+                                        className="~text-xs/sm font-medium text-primary border border-primary ~px-2/4 ~py-1/2 rounded-full hover:bg-primary hover:text-white transition-all duration-300"
                                     >
                                         Know More
                                     </Link>
                                 )}
                                 <Link
                                     href={browseHref ?? `/products/category/${category}`}
-                                    className="text-xs sm:text-sm font-medium bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-all duration-300"
+                                    className="~text-xs/sm font-medium bg-primary text-white ~px-2/4 ~py-1/2 rounded-full hover:bg-primary/90 transition-all duration-300"
                                 >
                                     Browse Collection
                                 </Link>

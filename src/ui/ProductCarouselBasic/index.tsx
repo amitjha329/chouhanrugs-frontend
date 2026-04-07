@@ -15,11 +15,12 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
     isMobile: boolean 
 }) {
     // Responsive visible count
-    const visibleCount = isMobile ? 2 : 4;
+    const visibleCount = isMobile ? 2 : 5;
     const total = products.length;
     const [startIndex, setStartIndex] = useState(0);
     const maxStartIndex = total > visibleCount ? total - visibleCount : 0;
     const sliderRef = useRef<HTMLDivElement>(null);
+    const touchStartX = useRef<number | null>(null);
 
     // Reset startIndex if visibleCount or total changes
     useEffect(() => {
@@ -31,6 +32,19 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
     };
     const goToNext = () => {
         setStartIndex((prev) => Math.min(prev + visibleCount, maxStartIndex));
+    };
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartX.current = e.touches[0].clientX;
+    };
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (touchStartX.current === null) return;
+        const delta = touchStartX.current - e.changedTouches[0].clientX;
+        if (Math.abs(delta) > 50) {
+            if (delta > 0) goToNext();
+            else goToPrev();
+        }
+        touchStartX.current = null;
     };
 
     // Calculate slider width and transform
@@ -54,7 +68,11 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                             {'❮'}
                         </div>
                     </button>
-                    <div className="overflow-hidden w-full">
+                    <div
+                        className="overflow-hidden w-full"
+                        onTouchStart={isMobile ? handleTouchStart : undefined}
+                        onTouchEnd={isMobile ? handleTouchEnd : undefined}
+                    >
                         <div
                             id="slider-track"
                             ref={sliderRef}

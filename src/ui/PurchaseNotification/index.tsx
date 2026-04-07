@@ -119,9 +119,9 @@ function generateNotification(products: NotificationProduct[]) {
 /* ------------------------------------------------------------------ */
 type Notification = ReturnType<typeof generateNotification>
 
-const SHOW_DURATION = 5000       // visible for 5s
-const INTERVAL_MIN = 16000       // min 16s between popups
-const INTERVAL_MAX = 22000       // max 22s between popups
+const SHOW_DURATION = 3000       // visible for 3s
+const INTERVAL_MIN = 180000       // min 180s between popups
+const INTERVAL_MAX = 360000       // max 360s between popups
 const INITIAL_DELAY = 7000       // first popup after 7s
 
 export default function PurchaseNotification({ products }: { products: NotificationProduct[] }) {
@@ -185,7 +185,7 @@ export default function PurchaseNotification({ products }: { products: Notificat
             role="status"
             aria-live="polite"
         >
-            <div className="relative flex w-full max-w-[19rem] items-start gap-2.5 rounded-xl border border-gray-200 bg-white p-3 shadow-2xl sm:max-w-sm sm:gap-3 sm:p-4">
+            <div className="relative flex w-full max-w-[15rem] items-start gap-2.5 rounded-xl border border-gray-200 bg-white p-3 shadow-2xl sm:max-w-sm sm:gap-3 sm:p-4">
                 {/* Dismiss button */}
                 <button
                     onClick={handleDismiss}
@@ -198,7 +198,7 @@ export default function PurchaseNotification({ products }: { products: Notificat
                 </button>
 
                 {/* Product thumbnail */}
-                <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-amber-100 bg-amber-50 sm:h-14 sm:w-14">
+                <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-amber-100 bg-amber-50 sm:h-14 sm:w-14 max-md:hidden">
                     {notification.product.image ? (
                         <Image
                             src={notification.product.image}
@@ -222,7 +222,7 @@ export default function PurchaseNotification({ products }: { products: Notificat
                         <span className="font-semibold">{notification.name}</span>
                         {" from "}
                         <span className="text-gray-600">{notification.location}</span>
-                        {" purchased"}
+                        <span className="max-md:hidden">{" purchased"}</span>
                     </p>
                     <Link
                         href={notification.product.url}

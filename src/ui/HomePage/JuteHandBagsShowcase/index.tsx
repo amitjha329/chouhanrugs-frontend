@@ -109,13 +109,13 @@ const JuteHandBagsShowcase = async () => {
                             <div className="flex items-center gap-3">
                                 <Link
                                     href="/jute-hand-bags"
-                                    className="text-xs sm:text-sm font-medium text-primary border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition-all duration-300"
+                                    className="~text-xs/sm font-medium text-primary border border-primary ~px-2/4 ~py-1/2 rounded-full hover:bg-primary hover:text-white transition-all duration-300"
                                 >
                                     Know More
                                 </Link>
                                 <Link
                                     href="/products/category/Bags"
-                                    className="text-xs sm:text-sm font-medium bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-all duration-300"
+                                    className="~text-xs/sm font-medium bg-primary text-white ~px-2/4 ~py-1/2 rounded-full hover:bg-primary/90 transition-all duration-300"
                                 >
                                     Browse Collection
                                 </Link>

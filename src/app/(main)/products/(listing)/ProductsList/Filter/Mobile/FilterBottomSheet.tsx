@@ -19,7 +19,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
     return (
         <Transition
             //@ts-ignore
-            className={`fixed z-[99] top-0 left-0 bottom-0 right-0 overflow-hidden`}
+            className={`fixed z-[10000] top-0 left-0 bottom-0 right-0 overflow-hidden`}
             enter="transition-transform duration-300"
             enterFrom="translate-y-full"
             enterTo="translate-y-0"
@@ -53,6 +53,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                                 showMore: 'border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary',
                                 link: 'flex items-center gap-2 py-1',
                                 selectedItem: 'font-bold text-primary',
+                                parentItem: 'font-normal',
                             }}
                         />
                     </Container>
@@ -126,7 +127,7 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                     <CheckBoxSelector dataArray={allShapes} selectedItem={selectedShapes} checkHandler={handleShapeCheck} showAsAccordion accordionTitle='Shapes' />
                     <CheckBoxSelector dataArray={allPatterns} selectedItem={selectedPatterns} checkHandler={handlePatternCheck} showAsAccordion accordionTitle='Patterns' /> */}
                 </div>
-                <div className="flex p-3 border-t join join-horizontal gap-4">
+                <div className="flex p-3 mb-16 border-t join join-horizontal gap-4">
                     <ClearRefinements aria-labelledby='Clear' aria-label='Clear' about='Clear' title='Clear' classNames={{
                         button: "join-item btn btn-outline grow",
                         disabledButton: "disabled:btn-outline"

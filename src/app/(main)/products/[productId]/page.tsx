@@ -12,6 +12,8 @@ import getRelatedProducts from '@/backend/serverActions/getRelatedProduct'
 import InformationTabs from '@/ui/Layout/ProductPage/InformationTabs'
 import { ProductDataModel } from '@/types/ProductDataModel'
 
+import RecentlyViewedTracker from '@/components/RecentlyViewedTracker'
+
 export async function generateMetadata(props: { params: Promise<{ productId: string }> }): Promise<Metadata> {
     const params = await props.params;
     const data = await getProductWithSlug(params.productId)
@@ -167,6 +169,13 @@ const ProductPage = async (props: { params: Promise<{ productId: string }> }) =>
     
     return (
         <div className='fluid_container'>
+            <RecentlyViewedTracker product={{
+                id: data._id?.toString() ?? productId,
+                name: data.productName,
+                url: `/products/${data.productURL ?? productId}`,
+                image: data.images?.[0] ?? '',
+                price: data.productSellingPrice?.toString() ?? '',
+            }} />
             {/* Main product content - loads with the page */}
             <div className='flex max-md:flex-col gap-10 ~px-5/0'>
                 <ImageSection mobile={isMobile} className='md:basis-1/2 overflow-hidden' />

@@ -6,6 +6,7 @@ import NextTopLoader from 'nextjs-toploader'
 import { Metadata, Viewport } from 'next'
 import { connection } from 'next/server'
 import FloatingButtonChat from '@/ui/HomePage/FlotingButtonChat'
+import MobileBottomNav from '@/ui/Layout/MobileNavigation/MobileBottomNav'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
 import getGoogleAdsConfig from '@/backend/serverActions/getGoogleAdsConfig'
@@ -120,7 +121,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     color='#6c4624'
                     zIndex={1600} />
                 {children}
-                <FloatingButtonChat siteData={siteData} />
+                {/* Floating chat: hidden on mobile, replaced by bottom nav */}
+                <div className="hidden md:block">
+                    <FloatingButtonChat siteData={siteData} />
+                </div>
+                <MobileBottomNav
+                    whatsapp={siteData.contact_details.whatsapp}
+                    email={siteData.contact_details.email}
+                />
                 <PurchaseNotification products={purchaseProducts} />
                 {/* GlobalPopupWrapper handles auth page check internally, wrapped in Suspense for DB fetch */}
                 <Suspense fallback={null}>
