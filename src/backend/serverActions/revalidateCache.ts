@@ -42,6 +42,10 @@ export async function revalidateSiteData() {
     revalidateTag('pages', 'max')
     revalidateTag('sliders', 'max')
     revalidateTag('footer-content', 'max')
+    revalidateTag('testimonials', 'max')
+    revalidateTag('popup-data', 'max')
+    revalidateTag('categories', 'max')
+    revalidateTag('blogs', 'max')
 }
 
 /**
