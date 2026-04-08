@@ -39,7 +39,7 @@ const ThumbnailImage = memo(function ThumbnailImage({
             data-carousel-item
             data-item-url={image}
             className={clsx(
-                "cursor-pointer carousel-item overflow-hidden rounded-lg w-20 h-20 border-primary border transition-all duration-200",
+                "cursor-pointer flex-shrink-0 overflow-hidden rounded-lg w-20 h-20 border-primary border transition-all duration-200",
                 { 'ring-2 ring-primary shadow ring-offset-1': isSelected },
                 { 'opacity-0': !isLoaded }
             )}
@@ -52,7 +52,7 @@ const ThumbnailImage = memo(function ThumbnailImage({
                 height={100}
                 width={100}
                 className={clsx(
-                    "!relative object-cover transition-opacity duration-300",
+                    "!relative object-cover transition-opacity duration-300 !h-[100px] !w-[100px]",
                     isLoaded ? "opacity-100" : "opacity-0"
                 )}
                 quality={imageQuality.thumbnail}
@@ -547,7 +547,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                     </button>
                 )}
 
-                <div className="carousel w-full gap-3 p-2" id="thumbnail-carousel">
+                <div className="flex w-full gap-3 p-2 overflow-x-auto overflow-y-visible" id="thumbnail-carousel">
                     {!imagesInitialized ? (
                         <ThumbnailSkeleton />
                     ) : (
