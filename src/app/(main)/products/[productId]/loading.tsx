@@ -3,16 +3,17 @@ import React from 'react'
 // Skeleton for the product image gallery
 function ImageSectionSkeleton() {
     return (
-        <div className="md:basis-1/2 overflow-hidden">
+        <div className="md:basis-1/2 overflow-hidden relative pt-4 md:pt-6">
             {/* Main image skeleton */}
-            <div className="rounded-3xl mb-4 bg-gray-200 animate-pulse md:h-[500px] aspect-square w-full" />
-            
+            <div className="rounded-2xl aspect-[4/5] w-full bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse" />
+
             {/* Thumbnail carousel skeleton */}
-            <div className="flex gap-3 py-3 pl-2 overflow-hidden">
+            <div className="flex gap-3 p-2">
                 {[...Array(5)].map((_, i) => (
-                    <div 
-                        key={i} 
+                    <div
+                        key={i}
                         className="w-20 h-20 rounded-lg bg-gray-200 animate-pulse flex-shrink-0"
+                        style={{ animationDelay: `${i * 100}ms` }}
                     />
                 ))}
             </div>
@@ -23,60 +24,77 @@ function ImageSectionSkeleton() {
 // Skeleton for product details section
 function ProductDetailsSkeleton() {
     return (
-        <div className="md:basis-1/2 space-y-6">
-            {/* Breadcrumb skeleton */}
-            <div className="flex gap-2">
-                {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-4 bg-gray-200 rounded animate-pulse w-16" />
-                ))}
-            </div>
-            
-            {/* Product title */}
-            <div className="h-8 bg-gray-200 rounded animate-pulse w-3/4" />
-            
-            {/* Price section */}
-            <div className="space-y-2">
-                <div className="h-10 bg-gray-200 rounded animate-pulse w-32" />
-                <div className="h-4 bg-gray-200 rounded animate-pulse w-48" />
-            </div>
-            
-            {/* Color options */}
-            <div className="space-y-3">
-                <div className="h-5 bg-gray-200 rounded animate-pulse w-24" />
-                <div className="flex gap-2">
-                    {[...Array(4)].map((_, i) => (
-                        <div key={i} className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
-                    ))}
-                </div>
-            </div>
-            
-            {/* Size options */}
-            <div className="space-y-3">
-                <div className="h-5 bg-gray-200 rounded animate-pulse w-20" />
-                <div className="flex gap-2 flex-wrap">
-                    {[...Array(5)].map((_, i) => (
-                        <div key={i} className="h-10 w-24 rounded-lg bg-gray-200 animate-pulse" />
-                    ))}
-                </div>
-            </div>
-            
-            {/* Quantity and buttons */}
-            <div className="flex gap-4 items-center">
-                <div className="h-12 w-32 rounded-lg bg-gray-200 animate-pulse" />
-                <div className="h-12 flex-1 rounded-lg bg-gray-200 animate-pulse" />
-            </div>
-            
-            {/* Add to wishlist button */}
-            <div className="h-12 w-full rounded-lg bg-gray-200 animate-pulse" />
-            
-            {/* Product features */}
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                {[...Array(4)].map((_, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
-                        <div className="h-4 bg-gray-200 rounded animate-pulse w-20" />
+        <div className="basis-1/2">
+            <div className="p-6 max-w-xl mx-auto space-y-4">
+                {/* Brand badge */}
+                <div className="h-8 w-32 rounded-md bg-gray-200 animate-pulse" />
+
+                {/* Product title */}
+                <div className="h-7 bg-gray-200 rounded animate-pulse w-3/4" />
+
+                {/* Star rating + reviews */}
+                <div className="flex items-center gap-2">
+                    <div className="flex gap-1">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+                        ))}
                     </div>
-                ))}
+                    <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+                </div>
+
+                {/* Price row: selling price + MSRP + discount */}
+                <div className="flex items-center gap-3">
+                    <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-5 w-16 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-7 w-20 bg-green-100 rounded animate-pulse" />
+                </div>
+
+                {/* Color & Size dropdowns */}
+                <div className="flex flex-row gap-3">
+                    <div className="basis-1/2 md:basis-1/3 flex-1 space-y-1">
+                        <div className="h-4 w-12 bg-gray-200 rounded animate-pulse" />
+                        <div className="h-12 w-full rounded-xl bg-gray-200 animate-pulse" />
+                    </div>
+                    <div className="basis-1/2 md:basis-1/3 flex-1 space-y-1">
+                        <div className="h-4 w-10 bg-gray-200 rounded animate-pulse" />
+                        <div className="h-12 w-full rounded-xl bg-gray-200 animate-pulse" />
+                    </div>
+                </div>
+
+                {/* Quantity */}
+                <div className="space-y-1">
+                    <div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-12 w-full max-w-40 rounded-xl bg-gray-200 animate-pulse" />
+                </div>
+
+                {/* Action buttons: Buy Now + Add to Cart */}
+                <div className="flex flex-col gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="h-12 flex-1 rounded-full bg-gray-200 animate-pulse" />
+                        <div className="h-12 flex-1 rounded-full bg-gray-200 animate-pulse" />
+                    </div>
+                    {/* Bulk + Custom Order */}
+                    <div className="flex flex-row gap-3">
+                        <div className="h-12 flex-1 rounded-full bg-gray-200 animate-pulse" />
+                        <div className="h-12 flex-1 rounded-full bg-gray-200 animate-pulse" />
+                    </div>
+                </div>
+
+                {/* Short description */}
+                <div className="space-y-2">
+                    <div className="h-4 bg-gray-200 rounded animate-pulse w-full" />
+                    <div className="h-4 bg-gray-200 rounded animate-pulse w-5/6" />
+                </div>
+
+                {/* Features grid 2x2 */}
+                <div className="grid grid-cols-2 gap-4">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded bg-gray-200 animate-pulse flex-shrink-0" />
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-24" />
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )
@@ -85,37 +103,46 @@ function ProductDetailsSkeleton() {
 // Skeleton for information tabs
 function InformationTabsSkeleton() {
     return (
-        <div className="mt-10 space-y-6">
-            {/* Tab headers */}
-            <div className="flex gap-4 border-b">
+        <>
+            {/* Mobile: Accordion skeleton */}
+            <div className="w-full max-w-2xl mx-auto md:hidden px-5 space-y-2">
                 {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-10 w-28 bg-gray-200 rounded-t animate-pulse" />
+                    <div key={i} className="h-12 bg-gray-200 rounded-2xl animate-pulse" />
                 ))}
             </div>
-            
-            {/* Tab content */}
-            <div className="space-y-4 py-4">
-                <div className="h-5 bg-gray-200 rounded animate-pulse w-full" />
-                <div className="h-5 bg-gray-200 rounded animate-pulse w-5/6" />
-                <div className="h-5 bg-gray-200 rounded animate-pulse w-4/5" />
-                <div className="h-5 bg-gray-200 rounded animate-pulse w-full" />
-                <div className="h-5 bg-gray-200 rounded animate-pulse w-3/4" />
+
+            {/* Desktop: Side tabs skeleton */}
+            <div className="hidden md:flex mx-auto flex-row ~py-10/20">
+                <div className="flex flex-col">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="h-10 w-28 bg-gray-200 animate-pulse" />
+                    ))}
+                </div>
+                <div className="w-full min-h-40 bg-gray-200 animate-pulse ~p-10/16">
+                    <div className="space-y-3">
+                        <div className="h-4 bg-gray-300 rounded animate-pulse w-full" />
+                        <div className="h-4 bg-gray-300 rounded animate-pulse w-5/6" />
+                        <div className="h-4 bg-gray-300 rounded animate-pulse w-4/5" />
+                        <div className="h-4 bg-gray-300 rounded animate-pulse w-full" />
+                        <div className="h-4 bg-gray-300 rounded animate-pulse w-3/4" />
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 
 // Skeleton for related products carousel
 function RelatedProductsSkeleton() {
     return (
-        <div className="py-10 space-y-6">
+        <div className="fluid_container mx-auto ~py-10/20 ~px-5/0">
             {/* Section title */}
-            <div className="h-8 bg-gray-200 rounded animate-pulse w-48 mx-auto" />
-            
+            <div className="h-8 bg-gray-200 rounded animate-pulse w-48 mx-auto ~mb-10/16" />
+
             {/* Product cards */}
             <div className="flex gap-4 overflow-hidden">
-                {[...Array(4)].map((_, i) => (
-                    <div key={i} className="flex-shrink-0 w-[calc(25%-12px)] min-w-[200px]">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex-shrink-0 w-[calc(20%-13px)] min-w-[160px]">
                         <div className="space-y-3">
                             <div className="aspect-square bg-gray-200 rounded-xl animate-pulse" />
                             <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />

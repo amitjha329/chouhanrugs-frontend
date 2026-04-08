@@ -53,33 +53,66 @@ function ProductContentSkeleton() {
     return (
         <div className="flex max-md:flex-col gap-10 ~px-5/0 animate-pulse">
             {/* Image skeleton */}
-            <div className="md:basis-1/2 overflow-hidden">
-                <div className="rounded-3xl mb-4 aspect-[4/5] w-full bg-gradient-to-br from-gray-100 to-gray-200" />
-                <div className="flex gap-3 py-3 pl-2">
-                    {[...Array(4)].map((_, i) => (
-                        <div key={i} className="w-20 h-20 rounded-lg bg-gray-200" />
+            <div className="md:basis-1/2 overflow-hidden relative pt-4 md:pt-6">
+                <div className="rounded-2xl aspect-[4/5] w-full bg-gradient-to-br from-gray-100 to-gray-200" />
+                <div className="flex gap-3 p-2">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="w-20 h-20 rounded-lg bg-gray-200 flex-shrink-0" />
                     ))}
                 </div>
             </div>
             {/* Pricing skeleton */}
-            <div className="md:basis-1/2 space-y-4">
-                <div className="h-8 bg-gray-200 rounded w-3/4" />
-                <div className="h-6 bg-gray-200 rounded w-1/4" />
-                <div className="h-4 bg-gray-200 rounded w-full" />
-                <div className="h-4 bg-gray-200 rounded w-5/6" />
-                <div className="flex gap-2 mt-6">
-                    {[...Array(4)].map((_, i) => (
-                        <div key={i} className="w-10 h-10 rounded-full bg-gray-200" />
-                    ))}
-                </div>
-                <div className="flex gap-2 mt-4">
-                    {[...Array(3)].map((_, i) => (
-                        <div key={i} className="w-20 h-8 rounded bg-gray-200" />
-                    ))}
-                </div>
-                <div className="flex gap-4 mt-8">
-                    <div className="h-12 bg-gray-200 rounded w-32" />
-                    <div className="h-12 bg-primary/20 rounded w-32" />
+            <div className="basis-1/2">
+                <div className="p-6 max-w-xl mx-auto space-y-4">
+                    <div className="h-8 w-32 rounded-md bg-gray-200" />
+                    <div className="h-7 bg-gray-200 rounded w-3/4" />
+                    <div className="flex items-center gap-2">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="w-4 h-4 bg-gray-200 rounded" />
+                        ))}
+                        <div className="h-4 w-20 bg-gray-200 rounded" />
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="h-8 w-24 bg-gray-200 rounded" />
+                        <div className="h-5 w-16 bg-gray-200 rounded" />
+                        <div className="h-7 w-20 bg-green-100 rounded" />
+                    </div>
+                    <div className="flex flex-row gap-3">
+                        <div className="basis-1/2 md:basis-1/3 flex-1 space-y-1">
+                            <div className="h-4 w-12 bg-gray-200 rounded" />
+                            <div className="h-12 w-full rounded-xl bg-gray-200" />
+                        </div>
+                        <div className="basis-1/2 md:basis-1/3 flex-1 space-y-1">
+                            <div className="h-4 w-10 bg-gray-200 rounded" />
+                            <div className="h-12 w-full rounded-xl bg-gray-200" />
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <div className="h-4 w-16 bg-gray-200 rounded" />
+                        <div className="h-12 w-full max-w-40 rounded-xl bg-gray-200" />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <div className="h-12 flex-1 rounded-full bg-gray-200" />
+                            <div className="h-12 flex-1 rounded-full bg-gray-200" />
+                        </div>
+                        <div className="flex flex-row gap-3">
+                            <div className="h-12 flex-1 rounded-full bg-gray-200" />
+                            <div className="h-12 flex-1 rounded-full bg-gray-200" />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-full" />
+                        <div className="h-4 bg-gray-200 rounded w-5/6" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded bg-gray-200 flex-shrink-0" />
+                                <div className="h-4 bg-gray-200 rounded w-24" />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,10 +126,10 @@ function ProductContentSkeleton() {
 function RelatedProductsSkeleton() {
     return (
         <div className="fluid_container mx-auto ~py-10/20 ~px-5/0">
-            <div className="h-8 bg-gray-200 rounded animate-pulse w-48 mx-auto mb-10" />
+            <div className="h-8 bg-gray-200 rounded animate-pulse w-48 mx-auto ~mb-10/16" />
             <div className="flex gap-4 overflow-hidden">
-                {[...Array(4)].map((_, i) => (
-                    <div key={i} className="flex-shrink-0 w-[calc(25%-12px)] min-w-[200px]">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex-shrink-0 w-[calc(20%-13px)] min-w-[160px]">
                         <div className="space-y-3">
                             <div className="aspect-square bg-gray-200 rounded-xl animate-pulse" />
                             <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
@@ -115,20 +148,32 @@ function RelatedProductsSkeleton() {
  */
 function InformationTabsSkeleton() {
     return (
-        <div className="mt-10 animate-pulse">
-            <div className="flex gap-4 border-b pb-2 mb-6">
+        <>
+            {/* Mobile: Accordion skeleton */}
+            <div className="w-full max-w-2xl mx-auto md:hidden px-5 space-y-2 animate-pulse">
                 {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-10 w-28 bg-gray-200 rounded" />
+                    <div key={i} className="h-12 bg-gray-200 rounded-2xl" />
                 ))}
             </div>
-            <div className="space-y-3">
-                <div className="h-4 bg-gray-200 rounded w-full" />
-                <div className="h-4 bg-gray-200 rounded w-5/6" />
-                <div className="h-4 bg-gray-200 rounded w-4/5" />
-                <div className="h-4 bg-gray-200 rounded w-full" />
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
+
+            {/* Desktop: Side tabs skeleton */}
+            <div className="hidden md:flex mx-auto flex-row ~py-10/20 animate-pulse">
+                <div className="flex flex-col">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="h-10 w-28 bg-gray-200" />
+                    ))}
+                </div>
+                <div className="w-full min-h-40 bg-gray-200 ~p-10/16">
+                    <div className="space-y-3">
+                        <div className="h-4 bg-gray-300 rounded w-full" />
+                        <div className="h-4 bg-gray-300 rounded w-5/6" />
+                        <div className="h-4 bg-gray-300 rounded w-4/5" />
+                        <div className="h-4 bg-gray-300 rounded w-full" />
+                        <div className="h-4 bg-gray-300 rounded w-3/4" />
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 

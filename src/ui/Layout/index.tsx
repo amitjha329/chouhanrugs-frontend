@@ -1,5 +1,6 @@
 import React, { ReactNode, Suspense } from 'react'
 import DeviceAwareContent from './DeviceAwareContent'
+import ScrollToTop from '@/components/ScrollToTop'
 
 // Skeleton for the layout while device detection is happening
 const LayoutSkeleton = ({ children }: { children: ReactNode }) => (
@@ -14,6 +15,7 @@ const LayoutSkeleton = ({ children }: { children: ReactNode }) => (
 const MainLayout = ({ children }: { children: ReactNode }) => {
     return (
         <main className='relative h-screen w-screen overflow-y-scroll overflow-x-clip' id='main-container'>
+            <ScrollToTop />
             <Suspense fallback={<LayoutSkeleton>{children}</LayoutSkeleton>}>
                 <DeviceAwareContent>
                     {children}

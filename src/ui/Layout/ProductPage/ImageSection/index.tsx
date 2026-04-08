@@ -532,20 +532,50 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
             )}
             
             {/* Thumbnails with optimized loading */}
-            <div className="carousel w-full gap-3 py-3 pl-2" id="thumbnail-carousel">
-                {!imagesInitialized ? (
-                    <ThumbnailSkeleton />
-                ) : (
-                    images?.map((image, index) => (
-                        <ThumbnailImage
-                            key={image}
-                            image={image}
-                            index={index}
-                            productName={product?.productName ?? 'Product'}
-                            isSelected={index === (selectedImageIndex ?? 0)}
-                            onHover={handleThumbnailHover ?? (() => {})}
-                        />
-                    ))
+            <div className="relative group">
+                {/* Left Arrow - desktop only */}
+                {!mobile && images && images.length > 4 && (
+                    <button
+                        onClick={() => {
+                            const el = document.getElementById('thumbnail-carousel')
+                            if (el) el.scrollBy({ left: -200, behavior: 'smooth' })
+                        }}
+                        className="hidden md:flex absolute -left-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 hover:bg-gray-50 transition-all opacity-0 group-hover:opacity-100"
+                        aria-label="Scroll thumbnails left"
+                    >
+                        <IoChevronBack className="w-4 h-4 text-gray-600" />
+                    </button>
+                )}
+
+                <div className="carousel w-full gap-3 p-2" id="thumbnail-carousel">
+                    {!imagesInitialized ? (
+                        <ThumbnailSkeleton />
+                    ) : (
+                        images?.map((image, index) => (
+                            <ThumbnailImage
+                                key={image}
+                                image={image}
+                                index={index}
+                                productName={product?.productName ?? 'Product'}
+                                isSelected={index === (selectedImageIndex ?? 0)}
+                                onHover={handleThumbnailHover ?? (() => {})}
+                            />
+                        ))
+                    )}
+                </div>
+
+                {/* Right Arrow - desktop only */}
+                {!mobile && images && images.length > 4 && (
+                    <button
+                        onClick={() => {
+                            const el = document.getElementById('thumbnail-carousel')
+                            if (el) el.scrollBy({ left: 200, behavior: 'smooth' })
+                        }}
+                        className="hidden md:flex absolute -right-1 top-1/2 -translate-y-1/2 z-10 items-center justify-center w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 hover:bg-gray-50 transition-all opacity-0 group-hover:opacity-100"
+                        aria-label="Scroll thumbnails right"
+                    >
+                        <IoChevronForward className="w-4 h-4 text-gray-600" />
+                    </button>
                 )}
             </div>
             
