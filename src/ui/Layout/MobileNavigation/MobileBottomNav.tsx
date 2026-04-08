@@ -1,13 +1,15 @@
 'use client'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import { FaWhatsapp, FaEnvelope } from 'react-icons/fa'
-import { FaClockRotateLeft } from 'react-icons/fa6'
+import { MdSupportAgent } from 'react-icons/md'
 import { HiOutlineUser } from 'react-icons/hi2'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
 import { trackWhatsAppLead } from '@/lib/gtagConversion'
 
 const MobileBottomNav = ({ whatsapp, email }: { whatsapp: string; email: string }) => {
     const googleAdsConfig = useGoogleAdsConfig()
+    const { data: session } = useSession()
 
     return (
         <>
@@ -36,21 +38,35 @@ const MobileBottomNav = ({ whatsapp, email }: { whatsapp: string; email: string 
                     </Link>
                 </li>
                 <li>
-                    <Link
-                        href="/signin"
-                        className="flex flex-col items-center gap-0.5 text-base-content"
-                    >
-                        <HiOutlineUser size={20} />
-                        <span className="text-[10px]">Login</span>
-                    </Link>
+                    {session?.user ? (
+                        <Link
+                            href="/user/profile"
+                            className="flex flex-col items-center gap-0.5 text-base-content"
+                        >
+                            {session.user.image ? (
+                                <img src={session.user.image} alt="" className="w-5 h-5 rounded-full object-cover" />
+                            ) : (
+                                <HiOutlineUser size={20} />
+                            )}
+                            <span className="text-[10px]">Profile</span>
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/signin"
+                            className="flex flex-col items-center gap-0.5 text-base-content"
+                        >
+                            <HiOutlineUser size={20} />
+                            <span className="text-[10px]">Login</span>
+                        </Link>
+                    )}
                 </li>
                 <li>
                     <Link
-                        href="/recently-viewed"
+                        href="/contact-us"
                         className="flex flex-col items-center gap-0.5 text-base-content"
                     >
-                        <FaClockRotateLeft size={18} />
-                        <span className="text-[10px]">Recent</span>
+                        <MdSupportAgent size={20} />
+                        <span className="text-[10px]">Support</span>
                     </Link>
                 </li>
             </ul>
