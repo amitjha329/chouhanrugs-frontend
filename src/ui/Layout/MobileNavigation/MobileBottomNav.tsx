@@ -1,15 +1,13 @@
 'use client'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
 import { FaWhatsapp, FaEnvelope } from 'react-icons/fa'
 import { MdSupportAgent } from 'react-icons/md'
 import { HiOutlineUser } from 'react-icons/hi2'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
 import { trackWhatsAppLead } from '@/lib/gtagConversion'
 
-const MobileBottomNav = ({ whatsapp, email }: { whatsapp: string; email: string }) => {
+const MobileBottomNav = ({ whatsapp, email, user }: { whatsapp: string; email: string; user?: { name?: string | null; image?: string | null } | null }) => {
     const googleAdsConfig = useGoogleAdsConfig()
-    const { data: session } = useSession()
 
     return (
         <>
@@ -38,13 +36,13 @@ const MobileBottomNav = ({ whatsapp, email }: { whatsapp: string; email: string 
                     </Link>
                 </li>
                 <li>
-                    {session?.user ? (
+                    {user ? (
                         <Link
                             href="/user/profile"
                             className="flex flex-col items-center gap-0.5 text-base-content"
                         >
-                            {session.user.image ? (
-                                <img src={session.user.image} alt="" className="w-5 h-5 rounded-full object-cover" />
+                            {user.image ? (
+                                <img src={user.image} alt="" className="w-5 h-5 rounded-full object-cover" />
                             ) : (
                                 <HiOutlineUser size={20} />
                             )}

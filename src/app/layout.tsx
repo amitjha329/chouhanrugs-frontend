@@ -15,6 +15,7 @@ import PurchaseNotification from '@/ui/PurchaseNotification'
 import GoogleAdsProvider from '@/components/GoogleAdsProvider'
 import { getNewProducts } from '@/backend/serverActions/getNewProducts'
 import Script from 'next/script'
+import { auth } from '@/auth'
 
 // Optimized font loading: Only load weights actually used in the app
 // Removed: 100, 200, 300, 800, 900 (rarely used)
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
     await connection()
-    const [siteData, googleTagData, googleAdsConfig, notifProducts] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 })])
+    const [siteData, googleTagData, googleAdsConfig, notifProducts, session] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 }), auth()])
     const purchaseProducts = notifProducts.map(p => ({
         name: p.productName,
         url: `/products/${p.productURL}`,
@@ -128,6 +129,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <MobileBottomNav
                     whatsapp={siteData.contact_details.whatsapp}
                     email={siteData.contact_details.email}
+                    user={session?.user ? { name: session.user.name, image: session.user.image } : null}
                 />
                 <PurchaseNotification products={purchaseProducts} />
                 {/* GlobalPopupWrapper handles auth page check internally, wrapped in Suspense for DB fetch */}
