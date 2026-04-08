@@ -22,9 +22,10 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'No tags provided' }, { status: 400 })
         }
 
-        // Revalidate each tag (Next.js 16+ requires cacheLife profile as 2nd arg)
+        // Revalidate each tag with immediate expiration
+        // { expire: 0 } forces immediate cache invalidation instead of stale-while-revalidate
         for (const tag of tags) {
-            revalidateTag(tag, 'max')
+            revalidateTag(tag, { expire: 0 })
         }
 
         return NextResponse.json({ revalidated: true, tags }, { status: 200 })
