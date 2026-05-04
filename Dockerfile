@@ -60,32 +60,32 @@ ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy the built application
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/next.config.ts ./next.config.ts
+# 1. Create the .next directory and set initial permissions
+RUN mkdir -p .next && chown nextjs:nodejs .next
 
-COPY start.sh ./start.sh
+# 2. Use --chown when copying files from the builder
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./next.config.ts
+COPY --from=builder --chown=nextjs:nodejs /app/start.sh ./start.sh
 
 # Make start script executable
 RUN chmod +x ./start.sh
 
-# Set the correct permission for prerender cache
-RUN mkdir -p .next && chown nextjs:nodejs .next
+# 3. Ensure the cache directory specifically is writable
+RUN mkdir -p .next/cache/images && chown -R nextjs:nodejs .next
 
-# Change to nextjs user
 USER nextjs
 
 EXPOSE 3001
-
 ENV PORT=3001
 ENV HOSTNAME="0.0.0.0"
-
 
 # Runtime environment variables
 ENV MONGODB="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mongodb.net/ecom?retryWrites=true&w=majority"
