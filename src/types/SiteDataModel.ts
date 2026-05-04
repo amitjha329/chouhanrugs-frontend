@@ -7,7 +7,15 @@ type SiteDataModel = {
     url:string;
     isTitle: boolean;
     profiles:string[]
+    marketplaceLinks?: MarketplaceLink[];
     contact_details: ContactDetails;
+}
+
+export type MarketplaceLink = {
+    platform: "etsy" | "amazon" | "faire" | "custom";
+    label: string;
+    url: string;
+    enabled: boolean;
 }
 
 export type ContactDetails = {
