@@ -10,7 +10,7 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY package.json pnpm-lock.yaml* ./
 RUN \
-  if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --child-concurrency 2 --frozen-lockfile; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
@@ -90,7 +90,7 @@ ENV HOSTNAME="0.0.0.0"
 # Runtime environment variables
 ENV MONGOURI="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mongodb.net/ecom?retryWrites=true&w=majority"
 ENV DB="ecom"
-ENV AUTH_URL="https://chouhanrugs.com"
+ENV AUTH_URL="https://chouhan.yashjha.dev"
 ENV NEXTAUTH_SECRET="{O^:,b!\"$8qBET_vk%;IP$Tl3`ut3!'"
 ENV GOOGLE_CLIENT_ID="1004242814906-pqq7eoi3932lu1304g5jo9b8jcpkg4r8.apps.googleusercontent.com"
 ENV GOOGLE_CLIENT_SECRET="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"
