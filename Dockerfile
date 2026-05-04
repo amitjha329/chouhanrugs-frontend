@@ -27,8 +27,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 
 # Build arguments for environment variables
-ARG MONGOURI="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mongodb.net/ecom?retryWrites=true&w=majority"
-ARG DB="ecom"
+ARG MONGODB="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mongodb.net/ecom?retryWrites=true&w=majority"
+ARG MONGODB_DB="ecom"
 ARG AUTH_URL="https://chouhan.yashjha.dev"
 ARG NEXTAUTH_SECRET="{O^:,b!\"$8qBET_vk%;IP$Tl3`ut3!'"
 ARG GOOGLE_CLIENT_ID="1004242814906-pqq7eoi3932lu1304g5jo9b8jcpkg4r8.apps.googleusercontent.com"
@@ -37,8 +37,8 @@ ARG CONFIG_ENCRYPTION_KEY="0ad0f37af22acfa5cd6466e58e0ff70597eac90ff542c3adeb2a6
 ARG BETTER_AUTH_SECRET="37cde01351a74e3840fc7155de4807416cad8bfaa832131ea6457e7e76d5f140"
 
 # Set environment variables for build
-ENV MONGOURI=$MONGOURI \
-  DB=$DB \
+ENV MONGODB=$MONGODB \
+  MONGODB_DB=$MONGODB_DB \
   AUTH_URL=$AUTH_URL \
   NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
   GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
@@ -88,8 +88,8 @@ ENV HOSTNAME="0.0.0.0"
 
 
 # Runtime environment variables
-ENV MONGOURI="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mongodb.net/ecom?retryWrites=true&w=majority"
-ENV DB="ecom"
+ENV MONGODB="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mongodb.net/ecom?retryWrites=true&w=majority"
+ENV MONGODB_DB="ecom"
 ENV AUTH_URL="https://chouhan.yashjha.dev"
 ENV NEXTAUTH_SECRET="{O^:,b!\"$8qBET_vk%;IP$Tl3`ut3!'"
 ENV GOOGLE_CLIENT_ID="1004242814906-pqq7eoi3932lu1304g5jo9b8jcpkg4r8.apps.googleusercontent.com"
