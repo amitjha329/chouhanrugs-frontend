@@ -6,6 +6,10 @@ import Link from 'next/link'
 import React from 'react'
 import { FaChevronDown } from 'react-icons/fa6'
 
+function categoryHref(category: CategoriesDataModel) {
+    return `/products/category/${encodeURIComponent(category.slug ?? category.name)}`
+}
+
 interface MenuItemProp {
     label: string
     href?: string
@@ -21,7 +25,7 @@ const CategoryMenu = async () => {
                     return category.active && category.popular && <CategoryMenuItem
                         key={category._id}
                         label={category.name}
-                        href={'/products/category/' + category.name}
+                        href={categoryHref(category)}
                         submenu={categories.filter(i => i.parent == category.name)} />
                 })
             }
@@ -41,7 +45,7 @@ const CategoryMenuItem = ({ label, submenu, href }: MenuItemProp) => {
                     <ul className="list-none m-0 p-0 font-light">
                         {submenu?.map(item => (
                             <li key={item._id}>
-                                <Link href={'/products/category/' + item.name} className="block px-4 py-2 text-gray-900 rounded-md hover:bg-primary/10 hover:text-primary transition-colors duration-200">
+                                <Link href={categoryHref(item)} className="block px-4 py-2 text-gray-900 rounded-md hover:bg-primary/10 hover:text-primary transition-colors duration-200">
                                     {item.name}
                                 </Link>
                             </li>

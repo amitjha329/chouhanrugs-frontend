@@ -73,7 +73,7 @@ const AboutJuteRugsPage = () => {
                             Chouhan Rugs <Link href="/pillow-and-cushion-covers"><h2 className='inline'>jute pillows and cushion covers</h2></Link> are emerging as quick go-to solution for eco-conscious people in an era when sustainability and design have collided. Jute is &quot;golden fiber&quot; also known for its resilience and texture, as well as its environmentally favorable qualities.
                         </div>
                         <div className="mt-10 flex items-center justify-center gap-x-6">
-                            <Link href="/products/category/Cushion%20&%20Pillow" className="text-sm border hover:border-primary border-gray-400 font-semibold leading-6 text-gray-900 p-5">
+                            <Link href="/products/category/cushion-pillow" className="text-sm border hover:border-primary border-gray-400 font-semibold leading-6 text-gray-900 p-5">
                                 Shop Now <span aria-hidden="true">→</span>
                             </Link>
                         </div>
@@ -249,10 +249,10 @@ const AboutJuteRugsPage = () => {
 
                         <dl className="mt-16 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:gap-x-8">
                             <div className="border-t border-gray-200 pt-4">
-                                <Link href="/products/category/Cushion%20&%20Pillow"><dt className="font-medium text-gray-900">Best jute pillows</dt></Link>
+                                <Link href="/products/category/cushion-pillow"><dt className="font-medium text-gray-900">Best jute pillows</dt></Link>
                             </div>
                             <div className="border-t border-gray-200 pt-4">
-                                <Link href="/products/category/Cushion%20&%20Pillow"><dt className="font-medium text-gray-900">Premium Jute Cushion Covers</dt></Link>
+                                <Link href="/products/category/cushion-pillow"><dt className="font-medium text-gray-900">Premium Jute Cushion Covers</dt></Link>
                             </div>
                         </dl>
                     </div>

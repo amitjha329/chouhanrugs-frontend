@@ -1,11 +1,12 @@
 import Image from 'next/image'
 import React from 'react'
 import Logo from '../Logo'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import HeaderCartItemMobile from './HeaderCartItemMobile'
 import AlgoliaMobileSearch from './AlgoliaMobileSearch'
 import { getSession } from '@/lib/auth-server'
 import { getConfigBulk } from '@/lib/services/ConfigService'
+import LocaleSwitcher from '@/components/LocaleSwitcher'
 
 
 const MobileNavigation = async () => {
@@ -31,6 +32,7 @@ const MobileNavigation = async () => {
                             </Link>
                         )}
                         <Link href="/cart"><HeaderCartItemMobile /></Link>
+                        <LocaleSwitcher />
                     </div>
                 </div>                <div className='pb-4 pt-5 px-3'>
                     <AlgoliaMobileSearch

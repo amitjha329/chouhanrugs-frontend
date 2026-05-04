@@ -20,7 +20,7 @@ const OurPopularCategories = async () => {
         {
             title: t('popularCushionPillow'),
             desc: t('popularCushionPillowDesc'),
-            link: "Cushion%20&%20Pillow",
+            link: "cushion-pillow",
             image: cushion_pop,
             lgspan: 1,
             span: 2
@@ -28,7 +28,7 @@ const OurPopularCategories = async () => {
         {
             title: t('popularRugsRunners'),
             desc: t('popularRugsRunnersDesc'),
-            link: "Rugs%20&%20Runners",
+            link: "rugs-runners",
             image: rugs_pop,
             lgspan: 2,
             span: 2
@@ -36,7 +36,7 @@ const OurPopularCategories = async () => {
         {
             title: t('popularMacrame'),
             desc: t('popularMacrameDesc'),
-            link: "Wall%20Hanging%20Macrame",
+            link: "wall-hanging-macrame",
             image: macrame_pop,
             lgspan: 1,
             span: 4
@@ -44,14 +44,14 @@ const OurPopularCategories = async () => {
         {
             title: t('popularBlankets'),
             desc: t('popularBlanketsDesc'),
-            link: "Throw%20Blankets",
+            link: "throw-blankets",
             image: blankets_pop,
             lgspan: 2,
             span: 2,
         }, {
             title: t('popularBags'),
             desc: t('popularBagsDesc'),
-            link: "Bags",
+            link: "bags",
             image: bags_pop,
             lgspan: 2,
             span: 2,

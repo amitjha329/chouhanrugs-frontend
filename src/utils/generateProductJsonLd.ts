@@ -2,7 +2,7 @@ import { ProductDataModel } from "../types/ProductDataModel";
 import { resolveLocalizedString } from "@/lib/resolveLocalized";
 import { type Locale } from "@/i18n/routing";
 
-export default function generateProductJsonLd(productData: ProductDataModel, locale: Locale = 'en-IN') {
+export default function generateProductJsonLd(productData: ProductDataModel, locale: Locale = 'en-US') {
   const name = resolveLocalizedString(productData.productName, locale).replace(/"/g, '\\"')
   const desc = resolveLocalizedString(productData.productDescriptionShort, locale).replace(/"/g, '\\"')
   // "aggregateRating": {

@@ -42,6 +42,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
     await connection()
     const [siteData, googleTagData, googleAdsConfig, notifProducts, t, loc] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 }), getTranslations('notification'), getLocale()])
     const locale = loc as Locale
+    const dir = locale === 'ar' ? 'rtl' : 'ltr'
     const purchaseProducts = notifProducts.map(p => ({
         name: resolveLocalizedString(p.productName, locale),
         url: `/products/${resolveLocalizedString(p.productURL, locale)}`,
@@ -64,7 +65,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
         verifiedPurchase: t('verifiedPurchase'),
     }
     return (
-        <html>
+        <html lang={locale} dir={dir}>
             <head>
                 {/* Preconnect to critical third-party origins for faster resource loading */}
                 <link rel="preconnect" href="https://cdn.chouhanrugs.com" />

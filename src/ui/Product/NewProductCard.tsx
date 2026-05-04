@@ -1,7 +1,7 @@
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import clsx from 'clsx'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import React from 'react'
 import WishListButton from './WishListButton'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'

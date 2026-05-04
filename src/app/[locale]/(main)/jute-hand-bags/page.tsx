@@ -464,7 +464,7 @@ const JuteHandBagsPage = async () => {
                         {t('heroSubtitle')}
                     </p>
                     <h1 className="animate-fade-in-up text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-8">
-                        {t('stylish')} <a href="/products/category/Bags">{t('juteHandBags')}</a> <br className="hidden sm:block" />
+                        {t('stylish')} <a href="/products/category/bags">{t('juteHandBags')}</a> <br className="hidden sm:block" />
                         <span className="text-amber-100 font-light italic animate-fade-in-up-delay-2">{t('wovenWithPurpose')}</span>
                     </h1>
                     <p className="animate-fade-in-up-delay-2 mx-auto max-w-2xl text-lg md:text-xl leading-relaxed text-white/80 mb-12">
@@ -472,7 +472,7 @@ const JuteHandBagsPage = async () => {
                     </p>
                     <div className="animate-fade-in-up-delay-3 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link
-                            href="/products/category/Bags"
+                            href="/products/category/bags"
                             className="group inline-flex items-center gap-2 bg-white text-gray-900 font-semibold px-8 py-4 rounded-full hover:bg-primary hover:text-white transition-all duration-300 text-sm uppercase tracking-wider hover:shadow-lg hover:shadow-primary/25 hover:scale-105"
                         >
                             {t('shopCollection')}
@@ -534,7 +534,7 @@ const JuteHandBagsPage = async () => {
                         {categories.map((cat, i) => (
                             <Link
                                 key={i}
-                                href="/products/category/Bags"
+                                href="/products/category/bags"
                                 className="group relative aspect-[3/4] rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500"
                             >
                                 <Image
@@ -642,7 +642,7 @@ const JuteHandBagsPage = async () => {
                             <Link href="/jute-hand-bags" className="hover:text-primary transition-colors duration-300">{t('handmadeJuteBags')}</Link>
                         </h2>
                         <p className="text-lg leading-relaxed text-gray-600">
-                            These bags also are favored as Handmade Tote Bags for Women, supplying a undying enchantment with eco-conscious craftsmanship. For customers in search of sophistication with sustainability, our variety additionally includes Designer tote bags that mirror subtle style at the same time as staying environmentally firendly. Many of our top rate collections are styled to healthy the look and feel of <Link href="/products/category/Bags" className="text-primary underline">stylish and luxurious tote bags</Link>, at the same time as retaining the authenticity of handcrafted techniques. Every product reflects our commitment to quality, functionality, and green values. We have wide range of collection in our inventory, which includes best hand bags for women, office hand bags for women, and ladies hand bags for all occasions, each designed to be a sustainable and stylish addition to your wardrobe.
+                            These bags also are favored as Handmade Tote Bags for Women, supplying a undying enchantment with eco-conscious craftsmanship. For customers in search of sophistication with sustainability, our variety additionally includes Designer tote bags that mirror subtle style at the same time as staying environmentally firendly. Many of our top rate collections are styled to healthy the look and feel of <Link href="/products/category/bags" className="text-primary underline">stylish and luxurious tote bags</Link>, at the same time as retaining the authenticity of handcrafted techniques. Every product reflects our commitment to quality, functionality, and green values. We have wide range of collection in our inventory, which includes best hand bags for women, office hand bags for women, and ladies hand bags for all occasions, each designed to be a sustainable and stylish addition to your wardrobe.
                         </p>
                     </div>
 
@@ -656,7 +656,7 @@ const JuteHandBagsPage = async () => {
                     {/* CTA */}
                     <div className="mt-16 text-center">
                         <Link
-                            href="/products/category/Bags"
+                            href="/products/category/bags"
                             className="group inline-flex items-center gap-2 bg-primary text-primary-content font-semibold px-10 py-4 rounded-full hover:bg-primary/90 transition-all duration-300 text-sm uppercase tracking-wider hover:shadow-lg hover:shadow-primary/25 hover:scale-105"
                         >
                             {t('viewAllJuteBags')}
@@ -852,10 +852,10 @@ const JuteHandBagsPage = async () => {
 
                             <div className="prose prose-lg prose-gray max-w-none space-y-5 text-gray-600 leading-relaxed">
                                 <p>
-                                    At Chouhan Rugs, we are proud to be one of the most sought-after destinations for <Link href="/products/category/Bags"><strong>jute hand bags in USA</strong></Link> and <Link href="/products/category/Bags"><strong>jute hand bags in UK</strong></Link>. Our collection of <strong>handmade jute bags</strong> is born at the crossroads of centuries-old Indian craftsmanship and modern, fashion-forward design — resulting in accessories that are as sustainable as they are beautiful.
+                                    At Chouhan Rugs, we are proud to be one of the most sought-after destinations for <Link href="/products/category/bags"><strong>jute hand bags in USA</strong></Link> and <Link href="/products/category/bags"><strong>jute hand bags in UK</strong></Link>. Our collection of <strong>handmade jute bags</strong> is born at the crossroads of centuries-old Indian craftsmanship and modern, fashion-forward design — resulting in accessories that are as sustainable as they are beautiful.
                                 </p>
                                 <p>
-                                    Every piece in our catalogue qualifies as a <Link href="/products/category/Bags"><strong>stylish jute handbag</strong></Link> that pairs equally well with a weekend brunch outfit or a busy weekday commute. From totes and shoulder bags to clutches and crossbodies, our range ensures there&apos;s a perfect jute companion for every occasion: be it a farmer&apos;s market run, a beach day, or a corporate event.
+                                    Every piece in our catalogue qualifies as a <Link href="/products/category/bags"><strong>stylish jute handbag</strong></Link> that pairs equally well with a weekend brunch outfit or a busy weekday commute. From totes and shoulder bags to clutches and crossbodies, our range ensures there&apos;s a perfect jute companion for every occasion: be it a farmer&apos;s market run, a beach day, or a corporate event.
                                 </p>
                                 <p>
                                     What sets us apart as a premier <strong>Jute Hand Bags Seller in USA</strong> is our direct relationship with the artisans who weave each bag in Jaipur, Rajasthan. By cutting out middlemen, we deliver <strong>premium jute bags</strong> at prices that respect both the maker and the buyer. Our customers in the United States, United Kingdom, Europe, and Australia trust us for consistent quality, eco-conscious packaging, and a seamless shopping experience.
@@ -867,7 +867,7 @@ const JuteHandBagsPage = async () => {
 
                             <div className="pt-4">
                                 <Link
-                                    href="/products/category/Bags"
+                                    href="/products/category/bags"
                                     className="group inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 text-base"
                                 >
                                     {t('exploreFullCollection')}
@@ -1059,7 +1059,7 @@ const JuteHandBagsPage = async () => {
                         {t('ctaDescription')}
                     </p>
                     <Link
-                        href="/products/category/Bags"
+                        href="/products/category/bags"
                         className="group inline-flex items-center gap-2 bg-white text-primary font-semibold px-10 py-4 rounded-full hover:bg-base-200 transition-all duration-300 text-sm uppercase tracking-wider hover:shadow-xl hover:scale-105"
                     >
                         {t('shopJuteHandBags')}

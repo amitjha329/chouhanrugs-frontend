@@ -73,7 +73,7 @@ const AboutJuteRugsPage = () => {
                             We are Chouhan rugs a <Link href="/jute-rugs"><h2 className='inline font-semibold'>Hand Made Jute Rugs Store</h2></Link> known for our best quality jute rugs in this we will be sharing with you everything you need to know about the manufacturing of jute rugs. As a jute rug manufacturing company, we are excited to share with you the intricate process of creating our beautiful and sustainable rugs.
                         </div>
                         <div className="mt-10 flex items-center justify-center gap-x-6">
-                            <Link href="/products/category/Rugs%20&%20Runners" className="text-sm border hover:border-primary border-gray-400 font-semibold leading-6 text-gray-900 p-5">
+                            <Link href="/products/category/rugs-runners" className="text-sm border hover:border-primary border-gray-400 font-semibold leading-6 text-gray-900 p-5">
                                 Shop Now <span aria-hidden="true">→</span>
                             </Link>
                         </div>
@@ -246,24 +246,24 @@ const AboutJuteRugsPage = () => {
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our Products</h2>
                         <div className="mt-4 text-gray-500">
-                            We are proud of our reputation as one of the leading manufacturer of <Link href="/products/category/Rugs%20&%20Runners">premium quality jute rugs</Link>, jute baskets, <Link href="/products/category/Bags">jute bags</Link> and much more, we look forward to continuing to serve our customers with the same level of excellence and commitment that has made us successful as the best seller of <h3 className='inline font-semibold'>Printed jute Rugs online</h3>.
+                            We are proud of our reputation as one of the leading manufacturer of <Link href="/products/category/rugs-runners">premium quality jute rugs</Link>, jute baskets, <Link href="/products/category/bags">jute bags</Link> and much more, we look forward to continuing to serve our customers with the same level of excellence and commitment that has made us successful as the best seller of <h3 className='inline font-semibold'>Printed jute Rugs online</h3>.
                         </div>
 
                         <dl className="mt-16 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:gap-x-8">
                             <div className="border-t border-gray-200 pt-4">
-                                <Link href="/products/category/Bags"><dt className="font-medium text-gray-900">Jute Bags and Handbags</dt></Link>
+                                <Link href="/products/category/bags"><dt className="font-medium text-gray-900">Jute Bags and Handbags</dt></Link>
                                 <dd className="mt-2 text-sm text-gray-500">Jute Handbags are eco-friendly as well as stylish to carry.</dd>
                             </div>
                             <div className="border-t border-gray-200 pt-4">
-                                <Link href="/products/category/Cushion%20&%20Pillow"><dt className="font-medium text-gray-900">Jute Cushions and Pillows Covers</dt></Link>
+                                <Link href="/products/category/cushion-pillow"><dt className="font-medium text-gray-900">Jute Cushions and Pillows Covers</dt></Link>
                                 <dd className="mt-2 text-sm text-gray-500">Feel the connection to nature with Jute Cushion and Pillow Cover lineup.</dd>
                             </div>
                             <div className="border-t border-gray-200 pt-4">
-                                <Link href="/products/category/Throw%20Blankets"><dt className="font-medium text-gray-900">Jute Home Furnishing & Blankets</dt></Link>
+                                <Link href="/products/category/throw-blankets"><dt className="font-medium text-gray-900">Jute Home Furnishing & Blankets</dt></Link>
                                 <dd className="mt-2 text-sm text-gray-500">Soft and vibrant Blankets with lots of variation for you to choose from.</dd>
                             </div>
                             <div className="border-t border-gray-200 pt-4">
-                                <Link href="/products/category/Rugs%20&%20Runners"><dt className="font-medium text-gray-900">Jute Runners and Rug</dt></Link>
+                                <Link href="/products/category/rugs-runners"><dt className="font-medium text-gray-900">Jute Runners and Rug</dt></Link>
                                 <dd className="mt-2 text-sm text-gray-500">Give your home a classic look with Rugs & Runners of every size and shape.</dd>
                             </div>
                         </dl>

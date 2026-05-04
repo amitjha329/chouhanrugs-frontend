@@ -1,0 +1,81 @@
+services:
+  chouhan-frontend-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chouhan-frontend-app
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env.docker
+    # You can still override specific variables if needed
+    # environment:
+    #   - NODE_ENV=production
+    # Mount volume for persistent data if needed
+    # volumes:
+    #   - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pm2", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # If you need to connect to a database, uncomment and configure:
+    # depends_on:
+    #   - mongodb
+    #   - postgres
+    networks:
+      - chouhan-network
+
+  # Uncomment and configure if you need MongoDB
+  # mongodb:
+  #   image: mongo:7
+  #   container_name: chouhan-frontend-mongo
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin
+  #     MONGO_INITDB_ROOT_PASSWORD: password
+  #     MONGO_INITDB_DATABASE: cms
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #     - ./mongo-init:/docker-entrypoint-initdb.d
+  #   restart: unless-stopped
+  #   networks:
+  #     - cms-network
+
+  # Uncomment and configure if you need PostgreSQL
+  # postgres:
+  #   image: postgres:15
+  #   container_name: chouhan-frontend-postgres
+  #   environment:
+  #     POSTGRES_DB: cms
+  #     POSTGRES_USER: cms_user
+  #     POSTGRES_PASSWORD: cms_password
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - cms-network
+
+  # Uncomment if you want to add Redis for caching
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: chouhan-frontend-redis
+  #   ports:
+  #     - "6379:6379"
+  #   restart: unless-stopped
+  #   networks:
+  #     - cms-network
+
+networks:
+  chouhan-network:
+    driver: bridge
+
+# Uncomment if you're using database volumes
+# volumes:
+#   mongodb_data:
+#   postgres_data:

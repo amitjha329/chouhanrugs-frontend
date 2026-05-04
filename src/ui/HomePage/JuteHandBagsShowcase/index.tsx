@@ -124,7 +124,7 @@ const JuteHandBagsShowcase = async () => {
                                     {t('knowMore')}
                                 </Link>
                                 <Link
-                                    href="/products/category/Bags"
+                                    href="/products/category/bags"
                                     className="text-xs sm:text-sm font-medium bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-all duration-300"
                                 >
                                     {t('browseCollection')}

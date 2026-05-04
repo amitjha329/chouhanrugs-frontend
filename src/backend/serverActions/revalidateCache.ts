@@ -1,6 +1,27 @@
 'use server'
 
 import { revalidateTag, revalidatePath } from 'next/cache'
+import { routing } from '@/i18n/routing'
+
+const storefrontLocales = routing.locales
+
+function localizedPath(path: string, locale: string) {
+    if (locale === routing.defaultLocale) return path
+    return path === '/' ? `/${locale}` : `/${locale}${path}`
+}
+
+function revalidateLocalizedPath(path: string) {
+    for (const locale of storefrontLocales) {
+        revalidatePath(localizedPath(path, locale))
+    }
+}
+
+function revalidateSitemaps() {
+    revalidatePath('/sitemap.xml')
+    revalidatePath('/product-sitemap.xml')
+    revalidatePath('/post-sitemap.xml')
+    revalidatePath('/page-sitemap.xml')
+}
 
 /**
  * Revalidate cache by tag
@@ -31,6 +52,9 @@ export async function revalidateProducts() {
     revalidateTag('hot-trending-products', 'max')
     revalidateTag('top-selling-products', 'max')
     revalidateTag('related-products', 'max')
+    revalidateLocalizedPath('/')
+    revalidateLocalizedPath('/products')
+    revalidateSitemaps()
 }
 
 /**
@@ -42,6 +66,12 @@ export async function revalidateSiteData() {
     revalidateTag('pages', 'max')
     revalidateTag('sliders', 'max')
     revalidateTag('footer-content', 'max')
+    revalidateLocalizedPath('/')
+    revalidateLocalizedPath('/about-us')
+    revalidateLocalizedPath('/contact-us')
+    revalidateLocalizedPath('/policies')
+    revalidateLocalizedPath('/terms')
+    revalidateSitemaps()
 }
 
 /**
@@ -53,6 +83,37 @@ export async function revalidateTranslations(locale?: string) {
     revalidateTag('translations', 'max')
     if (locale) {
         revalidateTag(`translations-${locale}`, 'max')
+        revalidatePath(localizedPath('/', locale))
+    } else {
+        revalidateLocalizedPath('/')
+    }
+}
+
+export async function revalidateStorefrontTags(tags: string[]) {
+    for (const tag of tags) {
+        revalidateTag(tag, 'max')
+    }
+
+    if (tags.some(tag => ['products', 'new-products', 'featured-products', 'hot-trending-products', 'top-selling-products', 'related-products', 'categories'].includes(tag))) {
+        await revalidateProducts()
+    }
+
+    if (tags.some(tag => ['pages', 'site-data', 'sliders', 'footer-content', 'home-banner-section', 'home-product-showcase', 'home-video-section', 'page-additional-home'].includes(tag))) {
+        await revalidateSiteData()
+    }
+
+    if (tags.includes('blogs')) {
+        revalidateTag('blogs', 'max')
+        revalidateLocalizedPath('/blog')
+        revalidateSitemaps()
+    }
+
+    if (tags.includes('sitemap')) {
+        revalidateSitemaps()
+    }
+
+    if (tags.some(tag => tag === 'translations' || tag.startsWith('translations-'))) {
+        await revalidateTranslations()
     }
 }
 

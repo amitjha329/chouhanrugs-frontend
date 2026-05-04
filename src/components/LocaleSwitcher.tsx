@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { switchLocaleAction } from '@/lib/actions/switch-locale';
+import { routing } from '@/i18n/routing';
 
 /**
  * Locale switcher – `'use client'` is required only for `usePathname`.
@@ -13,10 +14,10 @@ import { switchLocaleAction } from '@/lib/actions/switch-locale';
  */
 
 const LOCALE_LABELS: Record<string, string> = {
-    'en-IN': 'English (India)',
     'en-US': 'English (US)',
-    'hi-IN': 'हिन्दी (भारत)',
+    'en-IN': 'English (India)',
     'en-GB': 'English (UK)',
+    'hi-IN': 'हिन्दी (भारत)',
     'ar': 'العربية',
 } as const;
 
@@ -29,7 +30,7 @@ export default function LocaleSwitcher() {
     const currentLocale =
         segments[0] && localeKeys.includes(segments[0])
             ? segments[0]
-            : 'en-IN'; // default when prefix is absent
+            : routing.defaultLocale; // default when prefix is absent
 
     return (
         <form action={switchLocaleAction}>
@@ -42,7 +43,7 @@ export default function LocaleSwitcher() {
                     // requestSubmit() honours the form's `action` (Server Action)
                     e.currentTarget.form?.requestSubmit();
                 }}
-                className="select select-bordered select-sm"
+                className="card bg-white pl-2 pr-8 text-xs rtl:pl-8 py-1 rtl:pr-2 border border-gray-300"
             >
                 {localeKeys.map((key) => (
                     <option key={key} value={key}>

@@ -10,7 +10,7 @@ const CategoriesInHero = async () => {
       {
         categories.map((category) => {
           return (
-            <Link href={'/products/category/' + category.name} className='space-y-2 ~min-h-32/40 flex flex-col items-center justify-start' key={category._id}>
+            <Link href={`/products/category/${encodeURIComponent(category.slug ?? category.name)}`} className='space-y-2 ~min-h-32/40 flex flex-col items-center justify-start' key={category._id}>
               <div className='~w-16/24 ~h-20/28 overflow-hidden rounded-xl border-white border-2 relative mx-auto'>
                 <Image 
                   src={category.imgSrc} 

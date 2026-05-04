@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { revalidateTag } from 'next/cache'
 import { getConfig } from '@/lib/services/ConfigService'
+import { revalidateStorefrontTags } from '@/backend/serverActions/revalidateCache'
 
 /**
  * API route for on-demand cache revalidation.
@@ -24,10 +24,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'No tags provided' }, { status: 400 })
         }
 
-        // Revalidate each tag (Next.js 16+ requires cacheLife profile as 2nd arg)
-        for (const tag of tags) {
-            revalidateTag(tag, 'max')
-        }
+        await revalidateStorefrontTags(tags)
 
         return NextResponse.json({ revalidated: true, tags }, { status: 200 })
     } catch (error) {

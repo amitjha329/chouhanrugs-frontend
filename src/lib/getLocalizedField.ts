@@ -6,7 +6,7 @@ import { routing, type Locale } from '@/i18n/routing';
  * Fallback chain:
  * 1. Exact locale match (e.g. 'hi-IN')
  * 2. Language-family match (e.g. any key starting with 'hi')
- * 3. Default locale ('en-IN')
+ * 3. Default locale ('en-US')
  * 4. First available value
  *
  * Backward compatible: if the field is a plain string, returns it as-is.

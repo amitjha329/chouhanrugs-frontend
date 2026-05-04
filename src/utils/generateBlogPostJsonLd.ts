@@ -3,7 +3,7 @@ import SiteDataModel from "../types/SiteDataModel";
 import { resolveLocalizedString } from "@/lib/resolveLocalized";
 import { type Locale } from "@/i18n/routing";
 
-export default function generateBlogPostJsonLd(data: BlogDataModel, siteData: SiteDataModel, locale: Locale = 'en-IN') {
+export default function generateBlogPostJsonLd(data: BlogDataModel, siteData: SiteDataModel, locale: Locale = 'en-US') {
   const title = resolveLocalizedString(data.title, locale)
   return {
     __html: `{

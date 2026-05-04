@@ -33,7 +33,7 @@ const NewProductsSection = async () => {
         <div className='col-span-2 card card-body flex-row items-center justify-around z-30 bg-base-100 ~sm/md:~mx-5/0'>
           <div className={clsx('flex flex-col max-w-fit ~gap-4/7', { "items-center": !isMobile })}>
             <span className='~text-lg/xl font-semibold'>{t('rugsRunners')}</span>
-            <Link href={'/products/category/Rugs%20&%20Runners'} className='btn btn-sm btn-secondary'>{tCommon('viewAll')}</Link>
+            <Link href={'/products/category/rugs-runners'} className='btn btn-sm btn-secondary'>{tCommon('viewAll')}</Link>
           </div>
           <Image src={rugs_runners} alt='Rugs and Runners' className='drop-shadow-2xl h-auto ~sm/2xl:~w-32/40' loading="lazy" />
         </div>

@@ -8,7 +8,7 @@ import Logo from '../Logo'
 import SignoutButton from './SignoutButton'
 import { FaRegUserCircle, FaSignInAlt } from 'react-icons/fa'
 import { getSession } from '@/lib/auth-server'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { getTranslations } from 'next-intl/server'
 
 const SideNav = async () => {
@@ -24,24 +24,20 @@ const SideNav = async () => {
                     </div>
                     <ul className="space-y-2 h-full overflow-y-scroll no-scrollbar">
                         {(session?.user?.name || session?.user?.email) && <li className="border-b-[0.5px] border-gray-200">
-                            <a
-                                href="/user/profile"
-                            >
+                            <Link href="/user/profile">
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FaRegUserCircle className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="ml-3 font-bold">{session?.user?.name ?? session?.user?.email}</span>
                                 </div>
-                            </a>
+                            </Link>
                         </li>}
                         <li className="border-b-[0.5px] border-gray-200">
-                            <a
-                                href="/products/category"
-                            >
+                            <Link href="/products/category">
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg">
                                     <BiCategoryAlt className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="ml-3">{t('allCategories')}</span>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                         {/* <li>
                             <a
@@ -54,44 +50,36 @@ const SideNav = async () => {
                             </a>
                         </li> */}
                         <li>
-                            <a
-                                href="/user/orders"
-                            >
+                            <Link href="/user/orders">
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FiShoppingBag className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="flex-1 ml-3 whitespace-nowrap">{t('orders')}</span>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a
-                                href="/user/wishlist"
-                            >
+                            <Link href="/user/wishlist">
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FiHeart className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="flex-1 ml-3 whitespace-nowrap">{t('myWishlist')}</span>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                         <li className="border-t-[0.5px] border-gray-200">
-                            <a
-                                href="/about-us"
-                            >
+                            <Link href="/about-us">
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FiInfo className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="flex-1 ml-3 whitespace-nowrap">{t('about')}</span>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a
-                                href="/contact-us"
-                            >
+                            <Link href="/contact-us">
                                 <div className="flex items-center p-2 text-base font-normal text-primary rounded-lg ">
                                     <FiHelpCircle className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 " />
                                     <span className="flex-1 ml-3 whitespace-nowrap">{t('contact')}</span>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                         <li className="border-t-[0.5px] border-gray-200">
                             {

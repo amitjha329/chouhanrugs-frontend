@@ -3,7 +3,7 @@ import SiteDataModel from "../types/SiteDataModel";
 import { resolveLocalizedString } from "@/lib/resolveLocalized";
 import { type Locale } from "@/i18n/routing";
 
-export default function generateProductBreadCrumbs(productData: ProductDataModel, siteData: SiteDataModel, locale: Locale = 'en-IN') {
+export default function generateProductBreadCrumbs(productData: ProductDataModel, siteData: SiteDataModel, locale: Locale = 'en-US') {
   const name = resolveLocalizedString(productData.productName, locale).replace(/"/g, '\\"')
   return {
     __html: `{

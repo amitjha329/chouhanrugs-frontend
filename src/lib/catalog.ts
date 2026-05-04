@@ -11,6 +11,7 @@ import 'server-only';
 import clientPromise from '@/lib/clientPromise';
 import type { ProductDataModel } from '@/types/ProductDataModel';
 import type BlogDataModel from '@/types/BlogDataModel';
+import { locales } from '@/i18n/routing';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -39,7 +40,12 @@ export async function getProductBySlug(
     const database = await db();
     const doc = await database
         .collection('products')
-        .findOne({ productURL: slug });
+        .findOne({
+            $or: [
+                { productURL: slug },
+                ...locales.map(locale => ({ [`productURL.${locale}`]: slug })),
+            ],
+        });
     return doc as unknown as ProductDataModel | null;
 }
 
@@ -69,14 +75,11 @@ export async function getActiveCategories(): Promise<CategorySlim[]> {
     const docs = await database
         .collection('categories')
         .find({ active: true })
-        .project({ name: 1, _id: 0 })
+        .project({ name: 1, slug: 1, _id: 0 })
         .toArray();
 
     return docs.map((d) => ({
-        slug: d.name
-            .toLowerCase()
-            .replace(/[\s&]+/g, '-')
-            .replace(/[^a-z0-9-]/g, ''),
+        slug: String(d.slug ?? d.name),
         name: String(d.name),
     }));
 }

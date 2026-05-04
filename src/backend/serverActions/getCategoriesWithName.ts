@@ -8,7 +8,12 @@ import converter from "@/utils/mongoObjectConversionUtility";
 export default async function getCategoriesWithName(name: string): Promise<CategoriesDataModel> {
     await connection()
     try {
-        const data = await (await clientPromise).db(process.env.MONGODB_DB).collection("categories").findOne({ name })
+        const data = await (await clientPromise).db(process.env.MONGODB_DB).collection("categories").findOne({
+            $or: [
+                { slug: name },
+                { name },
+            ],
+        })
         if (data != null)
             return converter.fromWithNoFieldChange<CategoriesDataModel>(data)
         else

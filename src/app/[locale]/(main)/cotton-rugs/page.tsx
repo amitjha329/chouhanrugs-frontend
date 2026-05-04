@@ -73,7 +73,7 @@ const AboutJuteRugsPage = () => {
                             The process of <Link href="/cotton-rugs"><h2 className='inline'>hand crafting cotton rugs</h2></Link> at Chouhan Rugs begins with the careful selection of high-quality cotton fibers. Chouhan Rugs takes immense pride in using only the finest cotton, renowned for its softness, durability, and natural charm. As an environmentally conscious choice, cotton aligns with the values of customers who prioritize sustainability. To ensure the cotton meets the strictest standards for quality and purity, it is meticulously sourced. By procuring top-tier cotton directly from the mills, Chouhan Rugs guarantees the highest level of quality.
                         </div>
                         <div className="mt-10 flex items-center justify-center gap-x-6">
-                            <Link href="/products/category/Cotton%20Rugs" className="text-sm border hover:border-primary border-gray-400 font-semibold leading-6 text-gray-900 p-5">
+                            <Link href="/products/category/cotton-rugs" className="text-sm border hover:border-primary border-gray-400 font-semibold leading-6 text-gray-900 p-5">
                                 Shop Now <span aria-hidden="true">→</span>
                             </Link>
                         </div>
@@ -248,13 +248,13 @@ const AboutJuteRugsPage = () => {
                                 <Link href="/cotton-rugs"><dt className="font-medium text-gray-900">hand made cotton Rugs seller</dt></Link>
                             </div>
                             <div className="border-t border-gray-200 pt-4">
-                                <Link href="/products/category/Cotton%20Rugs"><dt className="font-medium text-gray-900">handmade Round cotton rugs</dt></Link>
+                                <Link href="/products/category/cotton-rugs"><dt className="font-medium text-gray-900">handmade Round cotton rugs</dt></Link>
                             </div>
                             <div className="border-t border-gray-200 pt-4">
                                 <Link href="/cotton-rugs"><dt className="font-medium text-gray-900">branded cotton rugs</dt></Link>
                             </div>
                             <div className="border-t border-gray-200 pt-4">
-                                <Link href="/products/category/Cotton%20Rugs"><dt className="font-medium text-gray-900">Jaipur cotton Rugs</dt></Link>
+                                <Link href="/products/category/cotton-rugs"><dt className="font-medium text-gray-900">Jaipur cotton Rugs</dt></Link>
                             </div>
                         </dl>
                     </div>

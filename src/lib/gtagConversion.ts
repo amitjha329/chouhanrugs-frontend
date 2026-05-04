@@ -76,7 +76,7 @@ function getVariationUnitPrice(product: ProductDataModel, variationCode?: string
     return Number((price - (price * discount) / 100).toFixed(2))
 }
 
-function buildAddToCartItem(product: ProductDataModel, variationCode?: string, quantity = 1, locale: Locale = 'en-IN'): AnalyticsItem {
+function buildAddToCartItem(product: ProductDataModel, variationCode?: string, quantity = 1, locale: Locale = 'en-US'): AnalyticsItem {
     return {
         item_id: String(product._id ?? product.objectID ?? ''),
         item_name: resolveLocalizedString(product.productName, locale),

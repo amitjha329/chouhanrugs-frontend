@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { locales, type Locale } from '@/i18n/routing';
+import { locales, routing, type Locale } from '@/i18n/routing';
 
 /**
  * Server Action: switch the active locale.
@@ -36,8 +36,8 @@ export async function switchLocaleAction(formData: FormData): Promise<void> {
         segments.shift(); // remove old locale prefix
     }
 
-    // Default locale ('en-IN') uses no prefix per `localePrefix: 'as-needed'`
-    const prefix = locale === 'en-IN' ? '' : `/${locale}`;
+    // Default locale uses no prefix per `localePrefix: 'as-needed'`
+    const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
     const target = `${prefix}/${segments.join('/')}` || '/';
 
     redirect(target);

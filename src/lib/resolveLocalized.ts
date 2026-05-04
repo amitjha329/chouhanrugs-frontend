@@ -8,9 +8,7 @@
  * Fallback chain: requested locale → default locale → first available → raw value.
  */
 
-import { locales, type Locale } from '@/i18n/routing';
-
-const DEFAULT_LOCALE: Locale = 'en-IN';
+import { routing, locales, type Locale } from '@/i18n/routing';
 
 /**
  * A field that can be either a plain value (old format) or a locale-keyed
@@ -38,7 +36,7 @@ export function resolveLocalized<T = string>(
 
     if (isLocaleKeyed<T>(field)) {
         return (field as Partial<Record<Locale, T>>)[locale]
-            ?? (field as Partial<Record<Locale, T>>)[DEFAULT_LOCALE]
+            ?? (field as Partial<Record<Locale, T>>)[routing.defaultLocale]
             ?? (Object.values(field)[0] as T | undefined);
     }
 
