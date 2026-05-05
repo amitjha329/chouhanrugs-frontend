@@ -1,4 +1,6 @@
 import getDynamicPageBySlug from "@/backend/serverActions/getDynamicPageBySlug";
+import { type Locale } from "@/i18n/routing";
+import { resolveLocalizedString } from "@/lib/resolveLocalized";
 import DynamicPageRenderer from "@/ui/DynamicPages/DynamicPageRenderer";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -26,11 +28,12 @@ const RESERVED_ROUTE_PREFIXES = new Set([
 const isReservedRoute = (slug: string[]) => RESERVED_ROUTE_PREFIXES.has(slug[0] ?? "");
 
 export async function generateMetadata(props: DynamicPageProps): Promise<Metadata> {
-    const { slug } = await props.params;
+    const { slug, locale: loc } = await props.params;
     if (isReservedRoute(slug)) {
         return {};
     }
 
+    const locale = loc as Locale;
     const page = await getDynamicPageBySlug(slug.join("/"));
 
     if (!page) {
@@ -38,11 +41,11 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
     }
 
     const rootProps = page.data?.root?.props as Record<string, unknown> | undefined;
-    const title = String(rootProps?.metatitle ?? rootProps?.title ?? "");
-    const description = String(rootProps?.description ?? "");
+    const title = String(rootProps?.metatitle ?? rootProps?.title ?? "") || resolveLocalizedString(page.pageTitle, locale);
+    const description = String(rootProps?.description ?? "") || resolveLocalizedString(page.pageDescription, locale);
     const keywords = Array.isArray(rootProps?.keywords)
         ? rootProps.keywords.map((item: { keyword?: string }) => item.keyword).filter(Boolean).join(", ")
-        : "";
+        : resolveLocalizedString(page.pageKeywords, locale);
     const robotsIndex = rootProps?.robotsIndex !== false;
     const robotsFollow = rootProps?.robotsFollow !== false;
     const canonical = String(rootProps?.canonicalOverride ?? "") || `/${page.slug ?? page.page}`;

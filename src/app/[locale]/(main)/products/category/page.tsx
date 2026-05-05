@@ -1,39 +1,21 @@
 import getCategoriesList from '@/backend/serverActions/getCategoriesList'
-import getSiteData from '@/backend/serverActions/getSiteData'
+import { type Locale } from '@/i18n/routing'
+import { getStaticPageMetadata } from '@/lib/pageMetadata'
 import { Metadata } from 'next'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-export async function generateMetadata(): Promise<Metadata> {
-    const dataAdditional = await getSiteData()
-    const title = "Categories | Chouhan Rugs"
-    const description = "Browse all the categories and find the product that you love."
-    const keywords = ""
-    return {
-        title,
-        description,
-        keywords,
-        openGraph: {
-            title,
-            description,
-            type: "website",
-            siteName: "Chouhan Rugs",
-            phoneNumbers: dataAdditional.contact_details.phone,
-            emails: dataAdditional.contact_details.email,
-            images: dataAdditional.logoSrc
-        },
-        twitter: {
-            title,
-            card: "summary",
-            description,
-            images: dataAdditional.logoSrc,
-        },
-        alternates: {
-            canonical: `${dataAdditional.url}products/category`
-        }
-    }
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale: loc } = await props.params
+    return getStaticPageMetadata({
+        pageKey: "categories",
+        locale: loc as Locale,
+        path: "products/category",
+        fallbackTitle: "Categories | Chouhan Rugs",
+        fallbackDescription: "Browse all Chouhan Rugs categories and find the product you love.",
+    })
 }
 
 const MobileCategoryListPage = async () => {

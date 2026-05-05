@@ -69,8 +69,12 @@ export async function revalidateSiteData() {
     revalidateLocalizedPath('/')
     revalidateLocalizedPath('/about-us')
     revalidateLocalizedPath('/contact-us')
+    revalidateLocalizedPath('/blog')
     revalidateLocalizedPath('/policies')
+    revalidateLocalizedPath('/products')
+    revalidateLocalizedPath('/products/category')
     revalidateLocalizedPath('/terms')
+    revalidateLocalizedPath('/track-order')
     revalidateSitemaps()
 }
 

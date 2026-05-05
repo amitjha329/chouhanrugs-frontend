@@ -1,6 +1,20 @@
 import React from 'react'
 import TrackOrderForm from './TrackOrderForm'
 import { getTranslations } from 'next-intl/server'
+import { type Locale } from '@/i18n/routing'
+import { getStaticPageMetadata } from '@/lib/pageMetadata'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale: loc } = await props.params
+    return getStaticPageMetadata({
+        pageKey: "track-order",
+        locale: loc as Locale,
+        path: "track-order",
+        fallbackTitle: "Track Your Order | Chouhan Rugs",
+        fallbackDescription: "Track your Chouhan Rugs order status using your order details.",
+    })
+}
 
 const TrackOrderPage = async () => {
     const t = await getTranslations('trackOrder')

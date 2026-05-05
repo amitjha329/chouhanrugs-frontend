@@ -5,6 +5,20 @@ import { FaFacebook, FaInstagram, FaLinkedin, FaPinterest, FaTwitter, FaYoutube 
 import ContactUsSideVector from './ContactUsSideVector'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
+import { type Locale } from '@/i18n/routing'
+import { getStaticPageMetadata } from '@/lib/pageMetadata'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale: loc } = await props.params
+    return getStaticPageMetadata({
+        pageKey: "contact us",
+        locale: loc as Locale,
+        path: "contact-us",
+        fallbackTitle: "Contact Chouhan Rugs | Handmade Rug Supplier",
+        fallbackDescription: "Contact Chouhan Rugs for handmade rugs, custom orders, wholesale enquiries, and customer support.",
+    })
+}
 
 const ContactUsPage = async () => {
     const siteInfo = await getSiteData()

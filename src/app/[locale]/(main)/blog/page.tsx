@@ -2,36 +2,20 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { Metadata } from 'next'
-import getSiteData from '@/backend/serverActions/getSiteData'
 import getBlogPostsList from '@/backend/serverActions/getBlogPostsList'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import { getStaticPageMetadata } from '@/lib/pageMetadata'
 
-export async function generateMetadata(): Promise<Metadata> {
-    const dataAdditional = await getSiteData()
-    return {
-        title: "Blogs",
-        description: "Read The Latest BLogs and News About Chouhan Rugs",
-        keywords: "",
-        openGraph: {
-            title: "Blogs",
-            description: "Read The Latest BLogs and News About Chouhan Rugs",
-            type: "website",
-            siteName: dataAdditional.title,
-            phoneNumbers: dataAdditional.contact_details.phone,
-            emails: dataAdditional.contact_details.email,
-            images: dataAdditional.logoSrc
-        },
-        twitter: {
-            title: "Blogs",
-            description: "Read The Latest BLogs and News About Chouhan Rugs",
-            card: "summary",
-            images: dataAdditional.logoSrc,
-        },
-        alternates: {
-            canonical: `${dataAdditional.url}blog`
-        }
-    }
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale: loc } = await props.params
+    return getStaticPageMetadata({
+        pageKey: "blog",
+        locale: loc as Locale,
+        path: "blog",
+        fallbackTitle: "Blogs | Chouhan Rugs",
+        fallbackDescription: "Read the latest blogs and news about Chouhan Rugs.",
+    })
 }
 
 const BlogListPage = async (props: { params: Promise<{ locale: string }> }) => {

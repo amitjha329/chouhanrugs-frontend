@@ -1,4 +1,18 @@
 import getPoliciesData from "@/backend/serverActions/getPoliciesData";
+import { type Locale } from "@/i18n/routing";
+import { getStaticPageMetadata } from "@/lib/pageMetadata";
+import type { Metadata } from "next";
+
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale: loc } = await props.params;
+    return getStaticPageMetadata({
+        pageKey: "policies",
+        locale: loc as Locale,
+        path: "policies",
+        fallbackTitle: "Policies | Chouhan Rugs",
+        fallbackDescription: "Read Chouhan Rugs policies for orders, shipping, returns, and customer support.",
+    });
+}
 
 const Policies = async () => {
     const policiesData = await getPoliciesData()

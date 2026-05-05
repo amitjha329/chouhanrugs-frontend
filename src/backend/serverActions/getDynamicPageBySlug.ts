@@ -4,6 +4,11 @@ import PageMetaDataModel from "@/types/PageMetaDataModel";
 
 async function fetchDynamicPageBySlug(slug: string): Promise<PageMetaDataModel | null> {
     const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
+    const slugVariants = Array.from(new Set([
+        cleanSlug,
+        `/${cleanSlug}`,
+    ]));
+
     const data = await (await clientPromise)
         .db(process.env.MONGODB_DB)
         .collection("pages")
@@ -11,8 +16,9 @@ async function fetchDynamicPageBySlug(slug: string): Promise<PageMetaDataModel |
             isDynamic: true,
             draft: { $ne: true },
             $or: [
-                { page: cleanSlug },
-                { slug: cleanSlug },
+                { page: { $in: slugVariants } },
+                { slug: { $in: slugVariants } },
+                { "data.root.props.slug": { $in: slugVariants } },
             ],
         });
 

@@ -1,36 +1,19 @@
-import getSiteData from '@/backend/serverActions/getSiteData'
+import { type Locale } from '@/i18n/routing'
+import { getStaticPageMetadata } from '@/lib/pageMetadata'
 import { Metadata } from 'next'
 import React from 'react'
 import ProductList from './ProductsList'
 
-export async function generateMetadata(): Promise<Metadata> {
-    const dataAdditional = await getSiteData()
-    const title = "Products | Chouhan Rugs"
-    const description = "Browse all the categories and products, find the product that you love."
-    const keywords = "jute rugs, jute hand bags, jute basket, cotton rugs, thrown blanket, wall hanging macrame"
-    return {
-        title,
-        description,
-        keywords,
-        openGraph: {
-            title,
-            description,
-            type: "website",
-            siteName: "Chouhan Rugs",
-            phoneNumbers: dataAdditional.contact_details.phone,
-            emails: dataAdditional.contact_details.email,
-            images: dataAdditional.logoSrc
-        },
-        twitter: {
-            title,
-            card: "summary",
-            description,
-            images: dataAdditional.logoSrc,
-        },
-        alternates: {
-            canonical: `${dataAdditional.url}products/`
-        }
-    }
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale: loc } = await props.params
+    return getStaticPageMetadata({
+        pageKey: "products",
+        locale: loc as Locale,
+        path: "products",
+        fallbackTitle: "Products | Chouhan Rugs",
+        fallbackDescription: "Browse all categories and products from Chouhan Rugs.",
+        fallbackKeywords: "jute rugs, jute hand bags, jute basket, cotton rugs, throw blanket, wall hanging macrame",
+    })
 }
 
 const ProductsListPage = async (props: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
