@@ -41,11 +41,12 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
     }
 
     const rootProps = page.data?.root?.props as Record<string, unknown> | undefined;
-    const title = String(rootProps?.metatitle ?? rootProps?.title ?? "") || resolveLocalizedString(page.pageTitle, locale);
-    const description = String(rootProps?.description ?? "") || resolveLocalizedString(page.pageDescription, locale);
-    const keywords = Array.isArray(rootProps?.keywords)
+    const title = String(rootProps?.metatitle || rootProps?.title || "") || resolveLocalizedString(page.pageTitle, locale);
+    const description = String(rootProps?.description || "") || resolveLocalizedString(page.pageDescription, locale);
+    const rootKeywords = Array.isArray(rootProps?.keywords)
         ? rootProps.keywords.map((item: { keyword?: string }) => item.keyword).filter(Boolean).join(", ")
         : resolveLocalizedString(page.pageKeywords, locale);
+    const keywords = rootKeywords || resolveLocalizedString(page.pageKeywords, locale);
     const robotsIndex = rootProps?.robotsIndex !== false;
     const robotsFollow = rootProps?.robotsFollow !== false;
     const canonical = String(rootProps?.canonicalOverride ?? "") || `/${page.slug ?? page.page}`;

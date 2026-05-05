@@ -9,16 +9,22 @@ async function fetchDynamicPageBySlug(slug: string): Promise<PageMetaDataModel |
         `/${cleanSlug}`,
     ]));
 
+    const slugMatch = {
+        $or: [
+            { page: { $in: slugVariants } },
+            { slug: { $in: slugVariants } },
+            { "data.root.props.slug": { $in: slugVariants } },
+        ],
+    };
+
     const data = await (await clientPromise)
         .db(process.env.MONGODB_DB)
         .collection("pages")
         .findOne({
-            isDynamic: true,
             draft: { $ne: true },
             $or: [
-                { page: { $in: slugVariants } },
-                { slug: { $in: slugVariants } },
-                { "data.root.props.slug": { $in: slugVariants } },
+                { isDynamic: true, ...slugMatch },
+                { data: { $exists: true }, ...slugMatch },
             ],
         });
 
