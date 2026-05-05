@@ -1,6 +1,6 @@
 import { getActiveCategories, getAllBlogPosts, getAllProducts } from '@/lib/catalog';
 import { resolveLocalizedString } from '@/lib/resolveLocalized';
-import { locales, routing, type Locale } from '@/i18n/routing';
+import { locales, localizePathname, routing, type Locale } from '@/i18n/routing';
 
 const BASE_URL = process.env.AUTH_URL ?? 'https://chouhanrugs.com';
 
@@ -17,8 +17,7 @@ function escapeXml(value: string) {
 
 function withLocale(path: string, locale: Locale) {
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    if (locale === routing.defaultLocale) return cleanPath;
-    return cleanPath === '/' ? `/${locale}` : `/${locale}${cleanPath}`;
+    return localizePathname(cleanPath, locale);
 }
 
 function absolute(path: string, locale: Locale) {

@@ -1,13 +1,12 @@
 'use server'
 
 import { revalidateTag, revalidatePath } from 'next/cache'
-import { routing } from '@/i18n/routing'
+import { localizePathname, routing, type Locale } from '@/i18n/routing'
 
 const storefrontLocales = routing.locales
 
 function localizedPath(path: string, locale: string) {
-    if (locale === routing.defaultLocale) return path
-    return path === '/' ? `/${locale}` : `/${locale}${path}`
+    return localizePathname(path, locale as Locale)
 }
 
 function revalidateLocalizedPath(path: string) {

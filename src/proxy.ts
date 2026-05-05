@@ -2,7 +2,13 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { getSessionCookie } from "better-auth/cookies"
 import createMiddleware from "next-intl/middleware"
-import { routing } from "@/i18n/routing"
+import {
+    getLocaleFromPathname,
+    getLocalePrefix,
+    localizePathname,
+    routing,
+    stripLocaleFromPathname,
+} from "@/i18n/routing"
 
 /**
  * Composed proxy: Auth guard → next-intl locale routing.
@@ -18,19 +24,23 @@ const intlMiddleware = createMiddleware(routing)
 // Protected routes that require authentication (without locale prefix)
 const protectedRoutes = ['/user', '/order']
 
-// Regex to match and strip locale prefix from pathname
-const localePattern = new RegExp(
-    `^/(${routing.locales.join('|')})(/|$)`
-)
-
 export async function proxy(req: NextRequest) {
     const pathname = req.nextUrl.pathname
+    const detectedLocale = getLocaleFromPathname(pathname)
+
+    // Canonicalize locale prefixes so locale URLs are case-insensitive
+    // and always emitted in the configured format (e.g. /en/us, /en/in).
+    if (detectedLocale) {
+        const canonicalPathname = localizePathname(stripLocaleFromPathname(pathname), detectedLocale)
+        if (canonicalPathname !== pathname) {
+            const redirectUrl = req.nextUrl.clone()
+            redirectUrl.pathname = canonicalPathname
+            return NextResponse.redirect(redirectUrl)
+        }
+    }
 
     // Strip locale prefix to check against protected route list
-    const match = pathname.match(localePattern)
-    const pathWithoutLocale = match
-        ? pathname.replace(localePattern, '/')
-        : pathname
+    const pathWithoutLocale = stripLocaleFromPathname(pathname)
 
     // ── Auth guard ──────────────────────────────────────────────────────
     const isProtected = protectedRoutes.some((r) =>
@@ -39,9 +49,8 @@ export async function proxy(req: NextRequest) {
     if (isProtected) {
         const sessionCookie = getSessionCookie(req)
         if (!sessionCookie) {
-            const locale = match?.[1]
-            const prefix =
-                locale && locale !== routing.defaultLocale ? `/${locale}` : ''
+            const locale = detectedLocale ?? routing.defaultLocale
+            const prefix = getLocalePrefix(locale)
             const signinUrl = new URL(`${prefix}/signin`, req.url)
             signinUrl.searchParams.set('cb', pathname)
             return NextResponse.redirect(signinUrl)

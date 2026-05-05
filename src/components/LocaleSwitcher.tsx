@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { switchLocaleAction } from '@/lib/actions/switch-locale';
-import { routing } from '@/i18n/routing';
+import { getLocaleFromPathname, routing } from '@/i18n/routing';
 
 /**
  * Locale switcher – `'use client'` is required only for `usePathname`.
@@ -24,13 +24,13 @@ const LOCALE_LABELS: Record<string, string> = {
 export default function LocaleSwitcher() {
     const pathname = usePathname();
 
-    // Derive the current locale from the URL (first segment, if it's a known locale)
-    const segments = pathname.split('/').filter(Boolean);
+    // Derive the current locale from the URL (custom locale prefixes supported).
     const localeKeys = Object.keys(LOCALE_LABELS);
+    const resolvedLocale = getLocaleFromPathname(pathname);
     const currentLocale =
-        segments[0] && localeKeys.includes(segments[0])
-            ? segments[0]
-            : routing.defaultLocale; // default when prefix is absent
+        resolvedLocale && localeKeys.includes(resolvedLocale)
+            ? resolvedLocale
+            : routing.defaultLocale;
 
     return (
         <form action={switchLocaleAction}>

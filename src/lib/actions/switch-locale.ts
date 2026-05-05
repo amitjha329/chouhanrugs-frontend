@@ -2,7 +2,12 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { locales, routing, type Locale } from '@/i18n/routing';
+import {
+    locales,
+    localizePathname,
+    stripLocaleFromPathname,
+    type Locale,
+} from '@/i18n/routing';
 
 /**
  * Server Action: switch the active locale.
@@ -15,7 +20,7 @@ import { locales, routing, type Locale } from '@/i18n/routing';
  */
 export async function switchLocaleAction(formData: FormData): Promise<void> {
     const locale = formData.get('locale') as Locale;
-    const pathname = formData.get('pathname') as string;
+    const pathname = (formData.get('pathname') as string) || '/';
 
     if (!locales.includes(locale)) {
         throw new Error(`Invalid locale: ${locale}`);
@@ -29,16 +34,8 @@ export async function switchLocaleAction(formData: FormData): Promise<void> {
         sameSite: 'lax',
     });
 
-    // Build the target URL: strip any existing locale prefix, prepend the new one
-    const segments = pathname.split('/').filter(Boolean);
-    const localeSet: ReadonlySet<string> = new Set(locales);
-    if (segments[0] && localeSet.has(segments[0])) {
-        segments.shift(); // remove old locale prefix
-    }
-
-    // Default locale uses no prefix per `localePrefix: 'as-needed'`
-    const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
-    const target = `${prefix}/${segments.join('/')}` || '/';
+    // Build the target URL using canonical locale prefixes.
+    const target = localizePathname(stripLocaleFromPathname(pathname), locale);
 
     redirect(target);
 }

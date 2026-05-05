@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getAllProducts, getAllBlogPosts, getActiveCategories } from '@/lib/catalog';
-import { locales, type Locale } from '@/i18n/routing';
+import { locales, localizePathname, routing, type Locale } from '@/i18n/routing';
 import { resolveLocalizedString } from '@/lib/resolveLocalized';
 
 /**
@@ -14,22 +14,20 @@ import { resolveLocalizedString } from '@/lib/resolveLocalized';
  */
 
 const BASE_URL = process.env.AUTH_URL ?? 'https://chouhanrugs.com';
-const DEFAULT_LOCALE: Locale = 'en-IN';
+const DEFAULT_LOCALE: Locale = routing.defaultLocale;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 /**
  * Build an `alternates.languages` map for a given path.
- * The default locale uses no prefix (`localePrefix: 'as-needed'`).
+ * Locale URLs follow the canonical custom prefixes from i18n routing.
  */
 function buildAlternates(path: string): Record<string, string> {
     const map: Record<string, string> = {};
     for (const locale of locales) {
-        const prefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`;
-        map[locale] = `${BASE_URL}${prefix}${path}`;
+        map[locale] = `${BASE_URL}${localizePathname(path, locale)}`;
     }
-    // x-default points to the unprefixed (default locale) URL
-    map['x-default'] = `${BASE_URL}${path}`;
+    map['x-default'] = `${BASE_URL}${localizePathname(path, DEFAULT_LOCALE)}`;
     return map;
 }
 
