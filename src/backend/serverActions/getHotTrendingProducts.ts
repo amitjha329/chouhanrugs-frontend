@@ -1,9 +1,15 @@
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import clientPromise from "@/lib/clientPromise";
 import { ProductDataModelWithColorMap } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 async function fetchHotTrendingProducts(limit: number): Promise<ProductDataModelWithColorMap[]> {
+    "use cache";
+
+    cacheLife("seconds");
+    cacheTag("products");
+    cacheTag("hot-trending-products");
+
     try {
         const client = await clientPromise;
         const db = client.db();
@@ -62,12 +68,5 @@ async function fetchHotTrendingProducts(limit: number): Promise<ProductDataModel
 }
 
 export const getHotTrendingProducts = ({ limit }: { limit: number }): Promise<ProductDataModelWithColorMap[]> => {
-    return unstable_cache(
-        () => fetchHotTrendingProducts(limit),
-        [`hot-trending-products-${limit}`],
-        {
-            revalidate: 300, // 5 minutes
-            tags: ['products', 'hot-trending-products']
-        }
-    )();
+    return fetchHotTrendingProducts(limit);
 }

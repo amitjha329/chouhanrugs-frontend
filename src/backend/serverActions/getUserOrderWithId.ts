@@ -1,5 +1,4 @@
 'use server'
-import { connection } from 'next/server'
 import clientPromise from "@/lib/clientPromise";
 import OrderDataModel from "@/types/OrderDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
@@ -16,7 +15,6 @@ interface returnType extends OrderDataModel {
 }
 
 export default async function getUserOrderWithId(id: string): Promise<returnType | undefined> {
-    await connection()
     try {
         const mongoClient = await clientPromise
         const db = mongoClient.db(process.env.MONGODB_DB)

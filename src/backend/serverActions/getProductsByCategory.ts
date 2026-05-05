@@ -1,9 +1,15 @@
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import clientPromise from "@/lib/clientPromise";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 async function fetchProductsByCategory(category: string, limit: number): Promise<ProductDataModel[]> {
+    "use cache";
+
+    cacheLife("seconds");
+    cacheTag("products");
+    cacheTag(`category-${category}`);
+
     try {
         const client = await clientPromise;
         const db = client.db();
@@ -19,12 +25,5 @@ async function fetchProductsByCategory(category: string, limit: number): Promise
 }
 
 export const getProductsByCategory = (category: string, limit: number): Promise<ProductDataModel[]> => {
-    return unstable_cache(
-        () => fetchProductsByCategory(category, limit),
-        [`products-by-category-${category}-${limit}`],
-        {
-            revalidate: 300,
-            tags: ['products', `category-${category}`]
-        }
-    )();
+    return fetchProductsByCategory(category, limit);
 }

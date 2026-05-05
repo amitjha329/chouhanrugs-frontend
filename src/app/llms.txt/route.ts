@@ -1,5 +1,3 @@
-export const runtime = 'edge';
-
 /**
  * GET /llms.txt
  *
@@ -9,9 +7,8 @@ export const runtime = 'edge';
  * Native-Check: Uses the native `Response` constructor (Web API) and
  * template literals. No Markdown renderer or template engine added.
  *
- * NOTE: Edge Runtime is set per the architectural constraint. Site metadata
- * is fetched via `fetch()` from the same origin to stay edge-compatible
- * (the MongoDB driver requires Node.js APIs not available on the edge).
+ * Site metadata is fetched via `fetch()` from the same origin to keep this
+ * route decoupled from direct MongoDB access.
  */
 export async function GET(request: Request): Promise<Response> {
     const origin = new URL(request.url).origin;

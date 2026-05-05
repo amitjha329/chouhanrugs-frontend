@@ -4,7 +4,6 @@ import { Poppins } from 'next/font/google'
 import clsx from 'clsx'
 import NextTopLoader from 'nextjs-toploader'
 import { Metadata, Viewport } from 'next'
-import { connection } from 'next/server'
 import FloatingButtonChat from '@/ui/HomePage/FlotingButtonChat'
 import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
@@ -15,9 +14,10 @@ import GoogleAdsProvider from '@/components/GoogleAdsProvider'
 import RecentlyViewedSidebar from '@/ui/RecentlyViewed'
 import { getNewProducts } from '@/backend/serverActions/getNewProducts'
 import Script from 'next/script'
-import { getLocale, getTranslations } from 'next-intl/server'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
-import { type Locale } from '@/i18n/routing'
+import { routing, type Locale } from '@/i18n/routing'
+import { getTranslations as getStorefrontTranslations } from '@/backend/serverActions/getTranslations'
+import { cacheLife, cacheTag } from 'next/cache'
 
 // Optimized font loading: Only load weights actually used in the app
 // Removed: 100, 200, 300, 800, 900 (rarely used)
@@ -38,10 +38,22 @@ export const metadata: Metadata = {
 
 }
 
-const RootLayout = async ({ children }: { children: ReactNode }) => {
-    await connection()
-    const [siteData, googleTagData, googleAdsConfig, notifProducts, t, loc] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 }), getTranslations('notification'), getLocale()])
-    const locale = loc as Locale
+const RootEnhancements = async ({ children }: { children: ReactNode }) => {
+    "use cache"
+
+    cacheLife("seconds")
+    cacheTag("root-enhancements")
+
+    const locale = routing.defaultLocale as Locale
+    const [siteData, googleTagData, googleAdsConfig, notifProducts, messages] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 }), getStorefrontTranslations(locale)])
+    const notificationMessages = (messages.notification ?? {}) as Record<string, string | ((values?: Record<string, unknown>) => string)>
+    const t = (key: string, values?: Record<string, unknown>) => {
+        const value = notificationMessages[key]
+        if (typeof value === 'function') return value(values)
+        if (typeof value !== 'string') return key
+        if (!values) return value
+        return Object.entries(values).reduce((text, [name, replacement]) => text.replace(`{${name}}`, String(replacement)), value)
+    }
     const dir = locale === 'ar' ? 'rtl' : 'ltr'
     const purchaseProducts = notifProducts.map(p => ({
         name: resolveLocalizedString(p.productName, locale),
@@ -65,39 +77,26 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
         verifiedPurchase: t('verifiedPurchase'),
     }
     return (
-        <html lang={locale} dir={dir}>
-            <head>
-                {/* Preconnect to critical third-party origins for faster resource loading */}
-                <link rel="preconnect" href="https://cdn.chouhanrugs.com" />
-                <link rel="preconnect" href="https://www.googletagmanager.com" />
-                <link rel="preconnect" href="https://www.google-analytics.com" />
-                <link rel="preconnect" href="https://www.googleadservices.com" />
-                <link rel="dns-prefetch" href="https://cdn.chouhanrugs.com" />
-                <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-                <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-                <link rel="dns-prefetch" href="https://www.googleadservices.com" />
-                
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{
-                        __html: JSON.stringify({
-                            '@context': 'https://schema.org',
-                            '@type': 'Organization',
-                            name: 'Chouhan Rugs',
-                            url: siteData?.url,
-                            logo: siteData?.logoSrc,
-                            contactPoint: [{
-                                '@type': 'ContactPoint',
-                                telephone: siteData?.contact_details?.phone,
-                                contactType: 'customer service',
-                                email: siteData?.contact_details?.email
-                            }]
-                        })
-                    }}
-                    key="org-jsonld"
-                />
-            </head>
-            <body className={clsx(poppins.className, poppins.variable)}>
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        '@context': 'https://schema.org',
+                        '@type': 'Organization',
+                        name: 'Chouhan Rugs',
+                        url: siteData?.url,
+                        logo: siteData?.logoSrc,
+                        contactPoint: [{
+                            '@type': 'ContactPoint',
+                            telephone: siteData?.contact_details?.phone,
+                            contactType: 'customer service',
+                            email: siteData?.contact_details?.email
+                        }]
+                    })
+                }}
+                key="org-jsonld"
+            />
                 {/* GTM uses lazyOnload to minimize main thread blocking during page load */}
                 <Script
                     id="gtm-script"
@@ -145,11 +144,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <FloatingButtonChat siteData={siteData} />
                 <RecentlyViewedSidebar />
                 <PurchaseNotification products={purchaseProducts} translations={notificationTranslations} />
-                {/* GlobalPopupWrapper handles auth page check internally, wrapped in Suspense for DB fetch */}
+                </GoogleAdsProvider>
+        </>
+    )
+}
+
+const RootLayout = ({ children }: { children: ReactNode }) => {
+    return (
+        <html lang={routing.defaultLocale} dir="ltr">
+            <head>
+                {/* Preconnect to critical third-party origins for faster resource loading */}
+                <link rel="preconnect" href="https://cdn.chouhanrugs.com" />
+                <link rel="preconnect" href="https://www.googletagmanager.com" />
+                <link rel="preconnect" href="https://www.google-analytics.com" />
+                <link rel="preconnect" href="https://www.googleadservices.com" />
+                <link rel="dns-prefetch" href="https://cdn.chouhanrugs.com" />
+                <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+                <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+                <link rel="dns-prefetch" href="https://www.googleadservices.com" />
+            </head>
+            <body className={clsx(poppins.className, poppins.variable)}>
+                <Suspense fallback={null}>
+                    <RootEnhancements>{children}</RootEnhancements>
+                </Suspense>
+                {/* GlobalPopupWrapper checks request headers, so it must stay outside the cached shell. */}
                 <Suspense fallback={null}>
                     <GlobalPopupWrapper />
                 </Suspense>
-                </GoogleAdsProvider>
             </body>
         </html>
     )

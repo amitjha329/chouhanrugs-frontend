@@ -12,12 +12,14 @@ import Script from 'next/script'
 import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 import getUserCartitems from '@/backend/serverActions/getUserCartitems'
 import dynamic from 'next/dynamic'
+import { connection } from 'next/server'
 
 const GuestMainSection = dynamic(() => import('@/ui/Cart/Checkout/GuestMainSection'))
 
 const CheckoutPage = async (
     props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 ) => {
+    await connection()
     const searchParams = await props.searchParams;
     const [siteInfo, payOpts, stripeKey, session, shippingList, paypalData, currencyList] = await Promise.all([getSiteData(), getAvailablePaymentOptions(), getStripePublicKey(), getSession(), getShippingList(), getPaymentGatewayData("PAYPAL"), getCurrencyList()])
     // const cookie = await cookies()

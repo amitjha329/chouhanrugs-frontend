@@ -1,23 +1,15 @@
-'use server';
-
-import { connection } from 'next/server'
-import { getSession } from '@/lib/auth-server';
+import { cacheLife, cacheTag } from 'next/cache'
 import clientPromise from "@/lib/clientPromise";
 import CategoriesDataModel from "@/types/CategoriesDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 export default async function getCategoriesList(): Promise<CategoriesDataModel[]> {
-    await connection()
-    const session = await getSession();
-    const { user } = session ?? {}
-    let filter: object
-    if ((user as { roles: string[] })?.roles?.includes("admin")) {
-        filter = {}
-    } else {
-        filter = {
-            active: true
-        }
-    }
+    "use cache"
+
+    cacheLife("seconds")
+    cacheTag("categories")
+
+    const filter = { active: true }
     try {
         const data = await (await clientPromise).db(process.env.MONGODB_DB).collection("categories").find(filter).toArray()
         const parsedData: Array<CategoriesDataModel> = []

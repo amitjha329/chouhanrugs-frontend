@@ -1,12 +1,14 @@
-'use server'
-
-import { connection } from 'next/server'
+import { cacheLife, cacheTag } from 'next/cache'
 import clientPromise from "@/lib/clientPromise"
 import BlogDataModel from "@/types/BlogDataModel"
 import converter from "@/utils/mongoObjectConversionUtility"
 
 export default async function getBlogPostsList(): Promise<BlogDataModel[]> {
-    await connection()
+    "use cache"
+
+    cacheLife("seconds")
+    cacheTag("blogs")
+
     const mongoClient = await clientPromise
     const collectionPartnerIds = mongoClient.db(process.env.MONGODB_DB).collection("blogs")
     try {

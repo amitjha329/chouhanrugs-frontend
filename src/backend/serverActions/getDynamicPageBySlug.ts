@@ -1,9 +1,15 @@
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import clientPromise from "@/lib/clientPromise";
 import PageMetaDataModel from "@/types/PageMetaDataModel";
 
 async function fetchDynamicPageBySlug(slug: string): Promise<PageMetaDataModel | null> {
+    "use cache";
+
     const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
+    cacheLife("seconds");
+    cacheTag("pages");
+    cacheTag(`page-${cleanSlug}`);
+
     const slugVariants = Array.from(new Set([
         cleanSlug,
         `/${cleanSlug}`,
@@ -33,15 +39,7 @@ async function fetchDynamicPageBySlug(slug: string): Promise<PageMetaDataModel |
 
 const getDynamicPageBySlug = (slug: string): Promise<PageMetaDataModel | null> => {
     const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
-
-    return unstable_cache(
-        () => fetchDynamicPageBySlug(cleanSlug),
-        [`dynamic-page-${cleanSlug}`],
-        {
-            revalidate: 3600,
-            tags: ["pages", `page-${cleanSlug}`],
-        },
-    )();
+    return fetchDynamicPageBySlug(cleanSlug);
 };
 
 export default getDynamicPageBySlug;

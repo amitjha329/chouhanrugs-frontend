@@ -3,11 +3,13 @@
 // import Link from 'next/link'
 // import getUserBulkPurchaseRequests from '@/lib/actions/getUserBulkPurchaseRequests'
 import { notFound } from 'next/navigation'
+import { connection } from 'next/server'
 // import Link from 'next/link'
 import React from 'react'
 // import { BsSendFill } from 'react-icons/bs'
 
 const BulkOrderListPage = async () => {
+  await connection()
   // const session = await auth()
   // const BulkOrders = await getUserBulkPurchaseRequests((session?.user as { id: string }).id)
   // const BulkOrders = []

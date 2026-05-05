@@ -1,9 +1,15 @@
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import clientPromise from "@/lib/clientPromise";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 async function fetchNewProducts(limit: number): Promise<ProductDataModel[]> {
+    "use cache";
+
+    cacheLife("seconds");
+    cacheTag("products");
+    cacheTag("new-products");
+
     try {
         const client = await clientPromise;
         const db = client.db();
@@ -19,12 +25,5 @@ async function fetchNewProducts(limit: number): Promise<ProductDataModel[]> {
 }
 
 export const getNewProducts = ({ limit }: { limit: number }): Promise<ProductDataModel[]> => {
-    return unstable_cache(
-        () => fetchNewProducts(limit),
-        [`new-products-${limit}`],
-        {
-            revalidate: 300, // 5 minutes
-            tags: ['products', 'new-products']
-        }
-    )();
+    return fetchNewProducts(limit);
 }

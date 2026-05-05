@@ -4,7 +4,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 import { extractColorsAndSizes } from "./extractColorsSizesFromVariation";
 import ColorDataModel from "@/types/ColorDataModel";
 import SizeDataModel from "@/types/SizeDataModel";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { locales } from '@/i18n/routing';
 
 interface ProductWithSizeandColorData extends ProductDataModel{
@@ -13,6 +13,11 @@ interface ProductWithSizeandColorData extends ProductDataModel{
 }
 
 async function getProductWithSlugInternal(slug: string): Promise< ProductWithSizeandColorData| undefined> {
+    "use cache";
+
+    cacheLife("seconds");
+    cacheTag("products");
+
     try {
         const client = await clientPromise;
         const db = client.db();
@@ -46,8 +51,4 @@ async function getProductWithSlugInternal(slug: string): Promise< ProductWithSiz
     }
 }
 
-export const getProductWithSlug = unstable_cache(
-    getProductWithSlugInternal,
-    ["product-with-slug"],
-    { revalidate: 3600, tags: ["products"] } // Cache for 1 hour
-);
+export const getProductWithSlug = getProductWithSlugInternal;

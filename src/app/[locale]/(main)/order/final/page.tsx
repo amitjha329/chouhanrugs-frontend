@@ -9,8 +9,10 @@ import React from 'react'
 import { getLocale } from 'next-intl/server'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import { connection } from 'next/server'
 
 const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: string }> }) => {
+    await connection()
     const searchParams = await props.searchParams;
     const orderData = await getUserOrderWithId(searchParams.order)
     if (orderData == undefined) return notFound()

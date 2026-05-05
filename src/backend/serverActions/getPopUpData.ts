@@ -1,8 +1,14 @@
 import clientPromise from "@/lib/clientPromise";
 import PopUpDataModel from "@/types/PopUpDataModel";
-import { cache } from "react";
+import { cacheLife, cacheTag } from "next/cache";
 
-const getPopUpData = cache(async (): Promise<PopUpDataModel | null> => {
+const getPopUpData = async (): Promise<PopUpDataModel | null> => {
+    "use cache";
+
+    cacheLife("seconds");
+    cacheTag("site-data");
+    cacheTag("popup-data");
+
     try {
         const client = await clientPromise;
         const db = client.db(process.env.MONGODB_DB);
@@ -20,6 +26,6 @@ const getPopUpData = cache(async (): Promise<PopUpDataModel | null> => {
         console.error("Error fetching popup data:", error);
         return null;
     }
-});
+};
 
 export default getPopUpData;

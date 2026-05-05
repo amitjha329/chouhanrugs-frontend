@@ -1,12 +1,15 @@
-'use server';
-
-import { connection } from 'next/server'
+import { cacheLife, cacheTag } from 'next/cache'
 import clientPromise from "@/lib/clientPromise";
 import CategoriesDataModel from "@/types/CategoriesDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 export default async function getCategoriesWithName(name: string): Promise<CategoriesDataModel> {
-    await connection()
+    "use cache"
+
+    cacheLife("seconds")
+    cacheTag("categories")
+    cacheTag(`category-${name}`)
+
     try {
         const data = await (await clientPromise).db(process.env.MONGODB_DB).collection("categories").findOne({
             $or: [

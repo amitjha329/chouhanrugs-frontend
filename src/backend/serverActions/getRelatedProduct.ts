@@ -1,9 +1,15 @@
 import clientPromise from "@/lib/clientPromise";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 async function getRelatedProductsInternal(categoryId: string, excludeProductId: string): Promise<ProductDataModel[]> {
+    "use cache";
+
+    cacheLife("seconds");
+    cacheTag("products");
+    cacheTag("related-products");
+
     try {
         const client = await clientPromise;
         const db = client.db();
@@ -26,14 +32,8 @@ async function getRelatedProductsInternal(categoryId: string, excludeProductId: 
     }
 }
 
-const getCachedRelatedProducts = unstable_cache(
-    getRelatedProductsInternal,
-    ["related-products"],
-    { revalidate: 1800, tags: ["products", "related-products"] } // Cache for 30 minutes
-);
-
 export default async function getRelatedProducts(currentProduct: ProductDataModel): Promise<ProductDataModel[]> {
-    return getCachedRelatedProducts(
+    return getRelatedProductsInternal(
         currentProduct.productCategory?.toString() ?? "",
         currentProduct._id?.toString() ?? ""
     );

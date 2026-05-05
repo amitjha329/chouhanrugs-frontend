@@ -3,8 +3,10 @@ import getUserAllWishlist from '@/backend/serverActions/getUserAllWishlist'
 import React from 'react'
 import WishlistProductList from './WishlistProductList'
 import { HiOutlineHeart } from 'react-icons/hi2'
+import { connection } from 'next/server'
 
 const WishListPage = async () => {
+    await connection()
     const session = await getSession()
     const wishList = await getUserAllWishlist((session?.user as { id: string }).id, true)
     return (

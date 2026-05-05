@@ -1,13 +1,16 @@
-'use server'
-
-import { connection } from 'next/server'
+import { cacheLife, cacheTag } from 'next/cache'
 import clientPromise from "@/lib/clientPromise"
 import BlogDataModel from "@/types/BlogDataModel"
 import converter from "@/utils/mongoObjectConversionUtility"
 import { locales } from '@/i18n/routing'
 
 export default async function getBlogPostWithSlug(slug: string): Promise<BlogDataModel> {
-    await connection()
+    "use cache"
+
+    cacheLife("seconds")
+    cacheTag("blogs")
+    cacheTag(`blog-${slug}`)
+
     const mongoClient = await clientPromise
     const collectionPartnerIds = mongoClient.db(process.env.MONGODB_DB).collection("blogs")
     try {
