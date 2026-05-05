@@ -9,6 +9,7 @@ import { blurPlaceholders, productImageSizes, imageQuality } from '@/utils/image
 import { useTranslations, useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import slugify from 'slugify'
 
 interface CompoProps extends ProductDataModelWithColorMap {
     className?: string,
@@ -68,7 +69,10 @@ const ProductCardItem = (props: CompoProps) => {
     return (
         <div className={clsx('bg-white rounded-xl overflow-hidden w-full text-center relative mr-3', props.className, ProductsCardStyle.product_card)}>
             <WishListButton productDetails={props} />
-            <Link href={'/products/' + url} className="" prefetch={false}>
+            <Link href={'/products/' + slugify(typeof url === "string" ? url : url["en-US"],{
+                    lower: true,
+                    strict: true
+            })} className="" prefetch={false}>
                 <div className="relative rounded-2xl overflow-hidden">
                     <Image 
                         src={props.images[props.productPrimaryImageIndex]} 
