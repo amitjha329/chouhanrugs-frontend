@@ -64,12 +64,13 @@ export function getRecentlyViewed(): RecentlyViewedProduct[] {
             localStorage.removeItem(STORAGE_KEY)
             return []
         }
-        const valid = parsed.map(normalizeEntry).filter((p): p is RecentlyViewedProduct => p !== null)
-        // Persist cleaned list back if any entries were dropped
-        if (valid.length !== parsed.length) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(valid))
+        const normalized = parsed.map(normalizeEntry)
+        // Strict fallback: if any item is malformed, clear everything to avoid runtime crashes.
+        if (normalized.some(item => item === null)) {
+            localStorage.removeItem(STORAGE_KEY)
+            return []
         }
-        return valid
+        return normalized as RecentlyViewedProduct[]
     } catch {
         try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
         return []

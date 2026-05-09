@@ -1,10 +1,28 @@
 'use client'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, Component, ErrorInfo, ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HiClock, HiXMark, HiTrash } from 'react-icons/hi2'
 import { getRecentlyViewed, clearRecentlyViewed, RecentlyViewedProduct } from '@/lib/recentlyViewed'
 import { blurPlaceholders, imageQuality } from '@/utils/imageOptimization'
+
+class RecentlyViewedErrorBoundary extends Component<{ children: ReactNode }, { crashed: boolean }> {
+    state = { crashed: false }
+
+    static getDerivedStateFromError() {
+        return { crashed: true }
+    }
+
+    componentDidCatch(_error: Error, _info: ErrorInfo) {
+        // Wipe stale localStorage data so the crash can't repeat on next render
+        try { clearRecentlyViewed() } catch { /* ignore */ }
+    }
+
+    render() {
+        if (this.state.crashed) return null
+        return this.props.children
+    }
+}
 
 const RecentlyViewedSidebar = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -183,4 +201,10 @@ const RecentlyViewedSidebar = () => {
     )
 }
 
-export default RecentlyViewedSidebar
+const RecentlyViewedSidebarWithBoundary = () => (
+    <RecentlyViewedErrorBoundary>
+        <RecentlyViewedSidebar />
+    </RecentlyViewedErrorBoundary>
+)
+
+export default RecentlyViewedSidebarWithBoundary
