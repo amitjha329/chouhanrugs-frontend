@@ -12,7 +12,12 @@ const RecentlyViewedSidebar = () => {
 
     // Refresh the list every time the sidebar opens
     const refreshProducts = useCallback(() => {
-        setProducts(getRecentlyViewed())
+        try {
+            setProducts(getRecentlyViewed())
+        } catch {
+            clearRecentlyViewed()
+            setProducts([])
+        }
     }, [])
 
     useEffect(() => {
@@ -121,7 +126,10 @@ const RecentlyViewedSidebar = () => {
                         </div>
                     ) : (
                         <ul className="divide-y divide-base-200">
-                            {products.map((product) => (
+                            {products.map((product) => {
+                                const price = Number(product.price) || 0
+                                const msrp = Number(product.msrp) || 0
+                                return (
                                 <li key={product.slug}>
                                     <Link
                                         href={`/products/${product.slug}`}
@@ -151,11 +159,11 @@ const RecentlyViewedSidebar = () => {
                                             <div className="flex items-center justify-between mt-1">
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-sm font-semibold text-primary">
-                                                        ${product.price.toFixed(2)}
+                                                        ${price.toFixed(2)}
                                                     </span>
-                                                    {product.msrp > product.price && (
+                                                    {msrp > price && (
                                                         <span className="text-xs text-base-content/40 line-through">
-                                                            ${product.msrp.toFixed(2)}
+                                                            ${msrp.toFixed(2)}
                                                         </span>
                                                     )}
                                                 </div>
@@ -166,7 +174,7 @@ const RecentlyViewedSidebar = () => {
                                         </div>
                                     </Link>
                                 </li>
-                            ))}
+                            )})}
                         </ul>
                     )}
                 </div>
