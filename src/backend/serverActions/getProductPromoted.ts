@@ -12,7 +12,8 @@ export default async function getProductPromoted(category: string): Promise<Prod
             {
                 $match: {
                     productCategory: category,
-                    tags: { $in: ["Ads"] }
+                    tags: { $in: ["Ads"] },
+                    productActive: true
                 },
             } // Get 10 random products
         ]).toArray();

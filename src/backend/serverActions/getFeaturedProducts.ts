@@ -14,7 +14,7 @@ async function fetchFeaturedProducts(limit: number): Promise<ProductDataModelWit
         const client = await clientPromise;
         const db = client.db();
         const products = await db.collection("products").aggregate([
-            { $match: { tags: { $in: ["Featured"] } } },
+            { $match: { tags: { $in: ["Featured"] }, productActive: true } },
             { $sample: { size: limit } },
             {
                 $group: {

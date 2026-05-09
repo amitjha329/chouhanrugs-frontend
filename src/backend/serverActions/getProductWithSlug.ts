@@ -25,7 +25,8 @@ async function getProductWithSlugInternal(slug: string): Promise< ProductWithSiz
             $or: [
                 { productURL: slug },
                 ...locales.map(loc => ({ [`productURL.${loc}`]: slug }))
-            ]
+            ],
+            productActive: true
         });
         if (product === null) {
             throw new Error("Product not found");

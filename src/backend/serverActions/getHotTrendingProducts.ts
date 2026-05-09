@@ -14,7 +14,7 @@ async function fetchHotTrendingProducts(limit: number): Promise<ProductDataModel
         const client = await clientPromise;
         const db = client.db();
         const products = await db.collection("products").aggregate([
-            { $match: { tags: { $in: ["Hot", "Top Selling"] } } },
+            { $match: { tags: { $in: ["Hot", "Top Selling"] }, productActive: true } },
             { $sample: { size: limit } },
             {
                 $group: {

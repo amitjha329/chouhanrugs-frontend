@@ -20,6 +20,7 @@ async function getRelatedProductsInternal(categoryId: string, excludeProductId: 
                 $match: {
                     productCategory: categoryId,
                     _id: { $ne: excludeProductId },
+                    productActive: true
                 },
             },
             { $sample: { size: 10 } }, // Get 10 random products

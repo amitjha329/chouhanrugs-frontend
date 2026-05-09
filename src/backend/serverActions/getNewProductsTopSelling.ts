@@ -13,7 +13,7 @@ async function fetchNewProductsTopSelling(limit: number): Promise<ProductDataMod
     try {
         const client = await clientPromise;
         const db = client.db();
-        const products = await db.collection("products").find({ tags: { $in: ["Top Selling"] } }, { limit, sort: [["_id", -1]] }).toArray();
+        const products = await db.collection("products").find({ tags: { $in: ["Top Selling"] }, productActive: true }, { limit, sort: [["_id", -1]] }).toArray();
         return products.map(p => converter.fromWithNoFieldChange<ProductDataModel>(p));
     } catch (error) {
         console.error("Error fetching top selling products:", error);
