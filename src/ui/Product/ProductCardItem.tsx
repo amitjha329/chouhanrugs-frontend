@@ -34,7 +34,9 @@ const ProductCardItem = (props: CompoProps) => {
 
     // Calculate least selling price (after discount) among all variations and the main product
     let leastSellingPrice: string;
-    if (productVariations.length > 0) {
+    if (props.priceRange) {
+        leastSellingPrice = Number(props.priceRange.min).toFixed(2);
+    } else if (productVariations.length > 0) {
         leastSellingPrice = Number(
             productVariations.reduce((min, variation) => {
                 const price = Number(variation.variationPrice ?? '0');
@@ -52,7 +54,9 @@ const ProductCardItem = (props: CompoProps) => {
 
     // Calculate least MSRP among all variations and the main product
     let leastMSRP: string;
-    if (productVariations.length > 0) {
+    if (props.msrpRange) {
+        leastMSRP = Number(props.msrpRange.min).toFixed(2);
+    } else if (productVariations.length > 0) {
         leastMSRP = Number(
             productVariations.reduce((min, variation) => {
                 const msrp = Number(variation.variationPrice ?? '0');
@@ -69,7 +73,7 @@ const ProductCardItem = (props: CompoProps) => {
     return (
         <div className={clsx('bg-white rounded-xl overflow-hidden w-full text-center relative mr-3', props.className, ProductsCardStyle.product_card)}>
             <WishListButton productDetails={props} />
-            <Link href={'/products/' + slugify(typeof url === "string" ? url : url["en-US"],{
+            <Link href={'/products/' + slugify(url,{
                     lower: true,
                     strict: true
             })} className="" prefetch={false}>
@@ -77,9 +81,9 @@ const ProductCardItem = (props: CompoProps) => {
                     <Image 
                         src={props.images[props.productPrimaryImageIndex]} 
                         alt={name} 
-                        className="!w-full !relative !~h-52/60 object-cover"
+                        className="!w-full !relative aspect-[4/5] object-fill"
                         width={400} 
-                        height={320}
+                        height={500}
                         placeholder="blur"
                         blurDataURL={blurPlaceholders.warmNeutral}
                         loading={shouldLoadEager ? "eager" : "lazy"}
@@ -108,9 +112,9 @@ const ProductCardItem = (props: CompoProps) => {
                 <div className="p-4">
                     <div className="font-light text-gray-500 text-center max-md:text-xs">{props.productCategory}</div>
                     <div className="text-xs font-medium text-gray-800 mt-1 line-clamp-2">{name}</div>
-                    <div className="flex items-center mt-2 justify-center max-md:text-sm">
+                    <div className="flex items-center mt-2 justify-center flex-wrap gap-x-2 gap-y-1 max-md:text-sm">
                         <div className="text-primary">$ {leastSellingPrice}</div>
-                        <div className="text-gray-500 line-through ml-2 max-md:text-xs">$ {leastMSRP}</div>
+                        <div className="text-gray-500 line-through max-md:text-xs">$ {leastMSRP}</div>
                     </div>
                 </div>
             </Link>

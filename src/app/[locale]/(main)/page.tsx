@@ -31,6 +31,9 @@ const ShopByRoom = dynamic(() => import('@/ui/HomePage/ShopByRoom'), { ssr: true
 const ShopByColor = dynamic(() => import('@/ui/HomePage/ShopByColor'), { ssr: true })
 const TrendingProducts = dynamic(() => import('@/ui/HomePage/TrendingProducts'), { ssr: true })
 const JuteHandBagsShowcase = dynamic(() => import('@/ui/HomePage/JuteHandBagsShowcase'), { ssr: true })
+const RightImageSideContent = dynamic(() => import('@/ui/HomePage/RightImageSideContent'), { ssr: true })
+const DynamicProductShowcase = dynamic(() => import('@/ui/HomePage/DynamicProductShowcase'), { ssr: true })
+const HomePageVideoSection = dynamic(() => import('@/ui/HomePage/HomePageVideoSection'), { ssr: true })
 const OurPopularCategories = dynamic(() => import('@/ui/HomePage/OurPopularCategories'), { ssr: true })
 const ShopBySize = dynamic(() => import('@/ui/HomePage/ShopBySize'), { ssr: true })
 
@@ -121,6 +124,11 @@ const HomePage = async () => {
       <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
         <FeaturedProducts />
       </Suspense>
+
+      {/* Right-image banner - DB-backed optional section */}
+      <Suspense fallback={<div className="min-h-[400px] animate-pulse bg-gray-100" />}>
+        <RightImageSideContent />
+      </Suspense>
       
       {/* Order Process - Static content, no Suspense needed */}
       <OrderProcessSection />
@@ -143,6 +151,20 @@ const HomePage = async () => {
       <LazySection minHeight="500px">
         <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
           <JuteHandBagsShowcase />
+        </Suspense>
+      </LazySection>
+
+      {/* Dynamic product showcase - DB-backed optional section */}
+      <LazySection minHeight="500px">
+        <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+          <DynamicProductShowcase />
+        </Suspense>
+      </LazySection>
+
+      {/* Home video banner - DB-backed optional section */}
+      <LazySection minHeight="400px">
+        <Suspense fallback={<div className="min-h-[400px] animate-pulse bg-gray-100" />}>
+          <HomePageVideoSection />
         </Suspense>
       </LazySection>
       

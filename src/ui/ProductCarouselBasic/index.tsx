@@ -3,7 +3,7 @@ import { ProductDataModelWithColorMap } from "@/types/ProductDataModel"
 import ProductCardItem from "../Product/ProductCardItem"
 import SectionTitle from "../SectionTitle"
 import clsx from "clsx";
-import { useState, useEffect, useRef, memo } from "react";
+import { useState, useEffect, useRef, memo, type TouchEvent } from "react";
 
 const ProductCarouselBasic = memo(function ProductCarouselBasic({ 
     products, 
@@ -15,11 +15,12 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
     isMobile: boolean 
 }) {
     // Responsive visible count
-    const visibleCount = isMobile ? 2 : 4;
+    const visibleCount = isMobile ? 2 : 5;
     const total = products.length;
     const [startIndex, setStartIndex] = useState(0);
     const maxStartIndex = total > visibleCount ? total - visibleCount : 0;
     const sliderRef = useRef<HTMLDivElement>(null);
+    const touchStartX = useRef<number | null>(null);
 
     // Reset startIndex if visibleCount or total changes
     useEffect(() => {
@@ -31,6 +32,24 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
     };
     const goToNext = () => {
         setStartIndex((prev) => Math.min(prev + visibleCount, maxStartIndex));
+    };
+
+    const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+        if (!isMobile) return;
+        touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+        if (!isMobile || touchStartX.current === null) return;
+        const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+        touchStartX.current = null;
+
+        if (Math.abs(deltaX) < 40) return;
+        if (deltaX < 0) {
+            goToNext();
+        } else {
+            goToPrev();
+        }
     };
 
     // Calculate slider width and transform
@@ -60,6 +79,8 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                             ref={sliderRef}
                             className="flex transition-transform duration-300 ease-in-out"
                             style={{ width: sliderWidth, transform: sliderTransform }}
+                            onTouchStart={handleTouchStart}
+                            onTouchEnd={handleTouchEnd}
                         >
                             {products.map((product, index) => (
                                 <div

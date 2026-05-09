@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react'
 import { autocomplete } from '@algolia/autocomplete-js'
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions'
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches'
-import { algoliasearch } from 'algoliasearch'
+import { liteClient as algoliasearch } from 'algoliasearch/lite'
 import { useRouter } from 'next/navigation'
 import '@algolia/autocomplete-theme-classic'
 
@@ -21,10 +21,11 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
     querySuggestionsIndex
 }) => {
     const containerRef = useRef<HTMLDivElement>(null)
-    const searchClient = algoliasearch(appId, apiKey)
+    const searchClientRef = useRef(algoliasearch(appId, apiKey))
 
     useEffect(() => {
         if (!containerRef.current) return
+        const searchClient = searchClientRef.current
 
         // Recent searches plugin
         const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
@@ -78,14 +79,14 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
                         getItems({ query }: { query: string }) {
                             if (!query) return []
 
-                            return searchClient.searchSingleIndex({
-                                indexName,
-                                searchParams: {
+                            return searchClient.search({
+                                requests: [{
+                                    indexName,
                                     query,
                                     hitsPerPage: 6,
                                     attributesToRetrieve: ['objectID', 'productName', 'productSellingPrice', 'images', 'productURL']
-                                }
-                            }).then(({ hits }) => hits)
+                                }]
+                            }).then(({ results }) => (results[0] as any).hits as any[])
                         },
                         templates: {
                             item({ item, html }) {

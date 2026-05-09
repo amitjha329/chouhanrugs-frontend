@@ -7,6 +7,7 @@ import WishListButton from './WishListButton'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { useLocale } from 'next-intl'
 import { type Locale } from '@/i18n/routing'
+import slugify from 'slugify'
 
 interface itemProps extends ProductDataModelWithColorMap {
   className?: string
@@ -23,7 +24,9 @@ const NewProductCard = (product: itemProps) => {
 
   // Calculate least selling price (after discount) among all variations and the main product
   let leastSellingPrice: string;
-  if (productVariations.length > 0) {
+  if (product.priceRange) {
+    leastSellingPrice = Number(product.priceRange.min).toFixed(2);
+  } else if (productVariations.length > 0) {
     leastSellingPrice = Number(
       productVariations.reduce((min, variation) => {
         const price = Number(variation.variationPrice ?? '0');
@@ -41,7 +44,9 @@ const NewProductCard = (product: itemProps) => {
 
   // Calculate least MSRP among all variations and the main product
   let leastMSRP: string;
-  if (productVariations.length > 0) {
+  if (product.msrpRange) {
+    leastMSRP = Number(product.msrpRange.min).toFixed(2);
+  } else if (productVariations.length > 0) {
     leastMSRP = Number(
       productVariations.reduce((min, variation) => {
         const msrp = Number(variation.variationPrice ?? '0');
@@ -58,13 +63,13 @@ const NewProductCard = (product: itemProps) => {
   return (
     <div className={clsx('card items-center justify-around z-30 bg-base-100 card-body p-4 relative', product.className)}>
       {/* <WishListButton productDetails={product} /> */}
-      <Link href={'/products/' + url} className="" prefetch={false}>
+      <Link href={'/products/' + slugify(url, { lower: true, strict: true })} className="" prefetch={false}>
         <Image 
           src={product.images[product.productPrimaryImageIndex]} 
           alt={name} 
           width={200} 
-          height={135} 
-          className='!w-[200px] !h-[135px]' 
+          height={250} 
+          className='!w-[200px] aspect-[4/5] object-fill' 
           loading="lazy"
           placeholder="blur"
           blurDataURL={blurDataURL}
@@ -72,7 +77,7 @@ const NewProductCard = (product: itemProps) => {
         />
         <div className='text-clip line-clamp-2 text-xs max-w-40 text-center'>
           {name}
-        </div>        <div className='flex gap-2 text-xs'>
+        </div>        <div className='flex flex-wrap justify-center gap-x-2 gap-y-1 text-xs'>
           <span className='text-primary'>$ {leastSellingPrice}</span>
           <span className='line-through text-gray-500'>$ {leastMSRP}</span>
         </div>

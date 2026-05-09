@@ -38,6 +38,14 @@ export interface ProductDataModel {
 
 export interface ProductDataModelWithColorMap extends ProductDataModel {
     colorMap?: ColorDataModel[]
+    priceRange?: {
+        min: number
+        max: number
+    }
+    msrpRange?: {
+        min: number
+        max: number
+    }
 }
 
 export type ProductReviews = {
