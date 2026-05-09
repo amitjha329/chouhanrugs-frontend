@@ -1,4 +1,4 @@
-import clientPromise from "@/lib/clientPromise";
+import { getStorefrontDb } from "@/lib/mongodb";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 import { extractColorsAndSizes } from "./extractColorsSizesFromVariation";
@@ -19,8 +19,7 @@ async function getProductWithSlugInternal(slug: string): Promise< ProductWithSiz
     cacheTag("products");
 
     try {
-        const client = await clientPromise;
-        const db = client.db();
+        const db = await getStorefrontDb();
         const product = await db.collection("products").findOne({
             $or: [
                 { productURL: slug },
@@ -29,7 +28,7 @@ async function getProductWithSlugInternal(slug: string): Promise< ProductWithSiz
             productActive: true
         });
         if (product === null) {
-            throw new Error("Product not found");
+            return undefined;
         }
         const products = converter.fromWithNoFieldChange<ProductDataModel>(product);
         const { colors, sizes } = extractColorsAndSizes(products)
@@ -48,7 +47,8 @@ async function getProductWithSlugInternal(slug: string): Promise< ProductWithSiz
         const [colorData, sizeData] = await Promise.all(colrSizePromise)
         return {...products, colorData:colorData.map(item=>converter.fromWithNoFieldChange<ColorDataModel>(item)) , sizeData:sizeData.map(item=>converter.fromWithNoFieldChange<SizeDataModel>(item))}
     } catch (error) {
-        return undefined;
+        console.error(`Error fetching product with slug "${slug}":`, error);
+        throw error;
     }
 }
 

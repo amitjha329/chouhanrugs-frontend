@@ -5,12 +5,14 @@ import getSiteData from '@/backend/serverActions/getSiteData'
 import generateProductBreadCrumbs from '@/utils/generateProductBreadCrumbs'
 import generateProductJsonLd from '@/utils/generateProductJsonLd'
 import { notFound } from 'next/navigation'
+import { connection } from 'next/server'
 import React from 'react'
 import { type Locale } from '@/i18n/routing'
 
 const ProductLayout = async (
     props: { params: Promise<{ productId: string, locale: string }>, children: React.ReactNode }
 ) => {
+    await connection()
     const params = await props.params;
 
     const {

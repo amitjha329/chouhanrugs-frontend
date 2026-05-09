@@ -5,6 +5,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ImageSection from '@/ui/Layout/ProductPage/ImageSection'
 import { headers } from 'next/headers'
+import { connection } from 'next/server'
 import getDevice from '@/utils/getDevice'
 import PriceAndVariation from '@/ui/Layout/ProductPage/PricingAndVariations'
 import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
@@ -17,6 +18,7 @@ import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
 
 export async function generateMetadata(props: { params: Promise<{ productId: string, locale: string }> }): Promise<Metadata> {
+    await connection()
     const params = await props.params;
     const data = await getProductWithSlug(params.productId)
     if (data == undefined) return {}
@@ -156,6 +158,7 @@ async function RelatedProductsSection({ product, isMobile }: { product: ProductD
  * - Responsive design with device detection
  */
 const ProductPage = async (props: { params: Promise<{ productId: string, locale: string }> }) => {
+    await connection()
     const params = await props.params;
 
     const {

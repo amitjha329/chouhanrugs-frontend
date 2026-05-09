@@ -1,5 +1,5 @@
 import { cacheLife, cacheTag } from "next/cache";
-import clientPromise from "@/lib/clientPromise";
+import { getStorefrontDb } from "@/lib/mongodb";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
@@ -11,8 +11,7 @@ async function fetchNewProductsTopSelling(limit: number): Promise<ProductDataMod
     cacheTag("top-selling-products");
 
     try {
-        const client = await clientPromise;
-        const db = client.db();
+        const db = await getStorefrontDb();
         const products = await db.collection("products").find({ tags: { $in: ["Top Selling"] }, productActive: true }, { limit, sort: [["_id", -1]] }).toArray();
         return products.map(p => converter.fromWithNoFieldChange<ProductDataModel>(p));
     } catch (error) {

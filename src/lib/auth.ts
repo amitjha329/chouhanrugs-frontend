@@ -11,11 +11,14 @@ const client = new MongoClient(process.env.MONGODB!)
 const db = client.db(process.env.MONGODB_DB)
 
 export const auth = betterAuth({
+    // Better Auth reads these during module initialization, so they remain
+    // bootstrap env values rather than request-time DB-backed config.
     baseURL: process.env.AUTH_URL,
     secret: process.env.NEXTAUTH_SECRET,
     database: mongodbAdapter(db),
     socialProviders: {
         google: {
+            // OAuth provider setup is also initialization-time Better Auth config.
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             prompt: 'consent',

@@ -7,10 +7,18 @@ import { PayPalOrderCapture } from '@/types/PayPalOrderCapture';
 import fetch, { Response } from 'node-fetch';
 import { getConfig } from '@/lib/services/ConfigService';
 
+async function getPayPalApiBase(): Promise<string> {
+    const base = await getConfig('PayPal_API')
+    if (!base) {
+        throw new Error('PayPal API base URL is not configured')
+    }
+    return base
+}
+
 // call the create order method
 export async function createOrder(value: string, currency_code: string) {
     await connection()
-    const base = await getConfig('PayPal_API')
+    const base = await getPayPalApiBase()
     const accessToken = await generateAccessToken();
     const url = `${base}/v2/checkout/orders`;
     const response = await fetch(url, {
@@ -38,7 +46,7 @@ export async function createOrder(value: string, currency_code: string) {
 // capture payment for an order
 export async function capturePayment(orderId: string) {
     await connection()
-    const base = await getConfig('PayPal_API')
+    const base = await getPayPalApiBase()
     const accessToken = await generateAccessToken();
     const url = `${base}/v2/checkout/orders/${orderId}/capture`;
     const response = await fetch(url, {
@@ -54,7 +62,7 @@ export async function capturePayment(orderId: string) {
 // generate access token
 export async function generateAccessToken(): Promise<string> {
     await connection()
-    const base = await getConfig('PayPal_API')
+    const base = await getPayPalApiBase()
     const db = await clientPromise
     const collection = db.db(process.env.MONGODB_DB).collection("paymentGateway")
     const paypalData = await collection.findOne({ partner: "PAYPAL" })
@@ -73,7 +81,7 @@ export async function generateAccessToken(): Promise<string> {
 // generate client token
 export async function generateClientToken(): Promise<string> {
     await connection()
-    const base = await getConfig('PayPal_API')
+    const base = await getPayPalApiBase()
     const accessToken = await generateAccessToken();
     const response = await fetch(`${base}/v1/identity/generate-token`, {
         method: 'post',

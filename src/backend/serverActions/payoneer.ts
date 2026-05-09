@@ -87,10 +87,19 @@ export async function initiatePayoneerPayment(orderData: {
 
         const division = config.key_id // Division/Store Code
         const apiToken = config.key_secret // API Token
+        const payoneerEnv = await getConfig('PAYONEER_ENV')
+
+        if (!payoneerEnv) {
+            return {
+                success: false,
+                error: "Payoneer environment is not configured"
+            }
+        }
 
         // Determine API endpoint based on environment
-        const baseUrl = 'https://api.live.oscato.com'
-        // const baseUrl = 'https://api.sandbox.oscato.com'
+        const baseUrl = payoneerEnv.toLowerCase() === 'sandbox'
+            ? 'https://api.sandbox.oscato.com'
+            : 'https://api.live.oscato.com'
 
         // IMPORTANT: The division field in the payload should be your Store/Division Code
         // The key_id for authentication should be your Merchant Code (API Username)
@@ -180,7 +189,7 @@ export async function initiatePayoneerPayment(orderData: {
             apiTokenFirst4: apiToken?.substring(0, 4) || 'missing',
             authHeaderLength: authHeader.length,
             baseUrl: `${baseUrl}/api/lists`,
-            environment: await getConfig('PAYONEER_ENV')
+            environment: payoneerEnv
         })
 
         const response = await fetch(`${baseUrl}/api/lists`, {
@@ -206,7 +215,7 @@ export async function initiatePayoneerPayment(orderData: {
             if (response.status === 401) {
                 return {
                     success: false,
-                    error: `Authentication failed. Please verify:\n1. key_id (${division}) is your Merchant Code\n2. key_secret is correct API Token\n3. Credentials match the environment (${await getConfig('PAYONEER_ENV')})`
+                    error: `Authentication failed. Please verify:\n1. key_id (${division}) is your Merchant Code\n2. key_secret is correct API Token\n3. Credentials match the environment (${payoneerEnv})`
                 }
             }
 

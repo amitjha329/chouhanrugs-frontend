@@ -73,7 +73,7 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
 export default async function DynamicPage(props: DynamicPageProps) {
     const { slug } = await props.params;
     if (isReservedRoute(slug)) {
-        notFound();
+        return null;
     }
 
     const page = await getDynamicPageBySlug(slug.join("/"));

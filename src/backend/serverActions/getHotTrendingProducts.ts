@@ -1,5 +1,5 @@
 import { cacheLife, cacheTag } from "next/cache";
-import clientPromise from "@/lib/clientPromise";
+import { getStorefrontDb } from "@/lib/mongodb";
 import { ProductDataModelWithColorMap } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
@@ -11,8 +11,7 @@ async function fetchHotTrendingProducts(limit: number): Promise<ProductDataModel
     cacheTag("hot-trending-products");
 
     try {
-        const client = await clientPromise;
-        const db = client.db();
+        const db = await getStorefrontDb();
         const products = await db.collection("products").aggregate([
             { $match: { tags: { $in: ["Hot", "Top Selling"] }, productActive: true } },
             { $sample: { size: limit } },

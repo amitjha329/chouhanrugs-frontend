@@ -16,6 +16,11 @@ export async function POST(request: NextRequest) {
 
         // Validate secret to prevent unauthorized revalidation
         const revalidationSecret = await getConfig('REVALIDATION_SECRET')
+        if (!revalidationSecret) {
+            console.error('Revalidation error: REVALIDATION_SECRET is not configured')
+            return NextResponse.json({ error: 'Revalidation is not configured' }, { status: 500 })
+        }
+
         if (secret !== revalidationSecret) {
             return NextResponse.json({ error: 'Invalid secret' }, { status: 401 })
         }

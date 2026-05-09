@@ -1,11 +1,10 @@
-import clientPromise from "@/lib/clientPromise";
+import { getStorefrontDb } from "@/lib/mongodb";
 import SizeDataModel from "@/types/SizeDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 export async function getSizesList(): Promise<SizeDataModel[]> {
     try {
-        const client = await clientPromise;
-        const db = client.db();
+        const db = await getStorefrontDb();
         const colors = await db.collection("sizes").find({}).toArray();
 
         return colors.map(c=>converter.fromWithNoFieldChange<SizeDataModel>(c));
