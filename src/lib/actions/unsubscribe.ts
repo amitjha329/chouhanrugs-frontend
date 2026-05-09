@@ -1,7 +1,7 @@
 'use server'
 
 import clientPromise from "@/lib/clientPromise"
-import { generateUnsubscribeToken, verifyUnsubscribeToken } from "@/utils/emailUnsubscribe"
+import { verifyUnsubscribeToken } from "@/utils/emailUnsubscribe"
 
 // Unsubscribe a user from mailing list
 export default async function unsubscribe(
@@ -22,7 +22,7 @@ export default async function unsubscribe(
         }
 
         // Verify the token to prevent unauthorized unsubscribes
-        if (!verifyUnsubscribeToken(email, token)) {
+        if (!await verifyUnsubscribeToken(email, token)) {
             return {
                 ack: false,
                 result: {

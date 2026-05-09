@@ -62,7 +62,7 @@ export default function CheckoutForm({ clientSecret, shippingId }: { clientSecre
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: `${process.env.NODE_ENV == "development" ? "http://localhost:3000" : "https://chouhanrugs.com"}/cart/checkout?shippingId=${shippingId}`,
+        return_url: `${window.location.origin}/cart/checkout?shippingId=${shippingId}`,
       },
     });
 

@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
+import { getConfig } from '@/lib/services/ConfigService'
 
-export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.AUTH_URL ?? 'https://chouhanrugs.com';
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const baseUrl = await getConfig('FRONTEND_URL', 'https://chouhanrugs.com')
   return {
     rules: {
       userAgent: '*',

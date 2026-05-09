@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getConfig } from '@/lib/services/ConfigService'
+import { getConfig, invalidateConfigCache } from '@/lib/services/ConfigService'
 import { revalidateStorefrontTags } from '@/backend/serverActions/revalidateCache'
 
 /**
@@ -22,6 +22,10 @@ export async function POST(request: NextRequest) {
 
         if (!tags || !Array.isArray(tags) || tags.length === 0) {
             return NextResponse.json({ error: 'No tags provided' }, { status: 400 })
+        }
+
+        if (tags.includes('app-config')) {
+            invalidateConfigCache()
         }
 
         await revalidateStorefrontTags(tags)

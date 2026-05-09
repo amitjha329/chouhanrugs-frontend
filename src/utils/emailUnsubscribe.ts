@@ -54,8 +54,8 @@ const DEFAULT_BASE_URL = 'https://chouhanrugs.com'
  * Generate a secure token for the unsubscribe link
  * This ensures only valid links can unsubscribe users
  */
-export function generateUnsubscribeToken(email: string): string {
-    const secret = process.env.NEXTAUTH_SECRET || 'fallback-secret-key'
+export async function generateUnsubscribeToken(email: string): Promise<string> {
+    const secret = await getConfig('NEXTAUTH_SECRET', 'fallback-secret-key')
     const normalizedEmail = email.toLowerCase().trim()
     const data = `${normalizedEmail}-${secret}`
     return crypto.createHash('sha256').update(data).digest('hex').substring(0, 32)
@@ -70,7 +70,7 @@ export function generateUnsubscribeToken(email: string): string {
  * @returns Full unsubscribe URL with email and token parameters
  */
 export async function createUnsubscribeLink(email: string, baseUrl?: string): Promise<string> {
-    const token = generateUnsubscribeToken(email)
+    const token = await generateUnsubscribeToken(email)
     const encodedEmail = encodeURIComponent(email.toLowerCase().trim())
     const base = baseUrl || await getConfig('FRONTEND_URL', DEFAULT_BASE_URL)
     return `${base}/unsubscribe?email=${encodedEmail}&token=${token}`
@@ -80,8 +80,8 @@ export async function createUnsubscribeLink(email: string, baseUrl?: string): Pr
  * Verify an unsubscribe token is valid for the given email
  * Used by the unsubscribe page/action to validate requests
  */
-export function verifyUnsubscribeToken(email: string, token: string): boolean {
-    const expectedToken = generateUnsubscribeToken(email)
+export async function verifyUnsubscribeToken(email: string, token: string): Promise<boolean> {
+    const expectedToken = await generateUnsubscribeToken(email)
     return token === expectedToken
 }
 

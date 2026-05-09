@@ -1,8 +1,7 @@
 import { getActiveCategories, getAllBlogPosts, getAllProducts } from '@/lib/catalog';
+import { getConfig } from '@/lib/services/ConfigService';
 import { resolveLocalizedString } from '@/lib/resolveLocalized';
 import { locales, localizePathname, routing, type Locale } from '@/i18n/routing';
-
-const BASE_URL = process.env.AUTH_URL ?? 'https://chouhanrugs.com';
 
 type LocalizedPathBuilder = (locale: Locale) => string;
 
@@ -20,28 +19,29 @@ function withLocale(path: string, locale: Locale) {
     return localizePathname(cleanPath, locale);
 }
 
-function absolute(path: string, locale: Locale) {
-    return `${BASE_URL}${withLocale(path, locale)}`;
+function absolute(baseUrl: string, path: string, locale: Locale) {
+    return `${baseUrl}${withLocale(path, locale)}`;
 }
 
-function localizedUrl(pathForLocale: LocalizedPathBuilder, lastModified?: Date) {
+function localizedUrl(baseUrl: string, pathForLocale: LocalizedPathBuilder, lastModified?: Date) {
     const defaultPath = pathForLocale(routing.defaultLocale);
     const alternates = locales
         .map(locale => {
-            const href = absolute(pathForLocale(locale), locale);
+            const href = absolute(baseUrl, pathForLocale(locale), locale);
             return `<xhtml:link rel="alternate" hreflang="${locale}" href="${escapeXml(href)}" />`;
         })
         .join('');
 
     return `<url>
-        <loc>${escapeXml(absolute(defaultPath, routing.defaultLocale))}</loc>
+        <loc>${escapeXml(absolute(baseUrl, defaultPath, routing.defaultLocale))}</loc>
         ${lastModified ? `<lastmod>${lastModified.toISOString()}</lastmod>` : ''}
         ${alternates}
-        <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(absolute(defaultPath, routing.defaultLocale))}" />
+        <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(absolute(baseUrl, defaultPath, routing.defaultLocale))}" />
     </url>`;
 }
 
 export async function GET() {
+    const baseUrl = await getConfig('FRONTEND_URL', 'https://chouhanrugs.com');
     const [products, blogs, categories] = await Promise.all([
         getAllProducts(),
         getAllBlogPosts(),
@@ -61,14 +61,15 @@ export async function GET() {
         '/cotton-rugs',
         '/jute-hand-bags',
         '/pillow-and-cushion-covers',
-    ].map(path => localizedUrl(() => path));
+    ].map(path => localizedUrl(baseUrl, () => path));
 
     const categoryPages = categories.map(category =>
-        localizedUrl(() => `/products/category/${encodeURIComponent(category.slug)}`),
+        localizedUrl(baseUrl, () => `/products/category/${encodeURIComponent(category.slug)}`),
     );
 
     const productPages = products.map(product =>
         localizedUrl(
+            baseUrl,
             locale => `/products/${encodeURIComponent(resolveLocalizedString(product.productURL, locale))}`,
             new Date(product.updatedOn),
         ),
@@ -76,6 +77,7 @@ export async function GET() {
 
     const blogPages = blogs.map(blog =>
         localizedUrl(
+            baseUrl,
             locale => `/blog/${encodeURIComponent(resolveLocalizedString(blog.slug, locale))}`,
             new Date(blog.updated),
         ),
