@@ -28,15 +28,51 @@ export interface RecentlyViewedProduct {
 }
 
 /**
- * Get all recently viewed products from localStorage
+ * Validates and normalizes a single entry from localStorage.
+ * Returns null if the entry is unrecoverable.
+ */
+function normalizeEntry(p: any): RecentlyViewedProduct | null {
+    if (!p || typeof p !== 'object') return null
+    if (typeof p.slug !== 'string' || !p.slug) return null
+    const price = Number(p.price)
+    const msrp = Number(p.msrp)
+    if (!isFinite(price) || !isFinite(msrp)) return null
+    return {
+        slug: p.slug,
+        name: typeof p.name === 'string' ? p.name : '',
+        image: typeof p.image === 'string' ? p.image : '',
+        price,
+        msrp,
+        discount: typeof p.discount === 'string' ? p.discount : '',
+        category: typeof p.category === 'string' ? p.category : '',
+        viewedAt: typeof p.viewedAt === 'number' ? p.viewedAt : Date.now(),
+    }
+}
+
+/**
+ * Get all recently viewed products from localStorage.
+ * Invalid or corrupt entries are silently dropped.
+ * If the stored data is completely unparseable, the key is cleared.
  */
 export function getRecentlyViewed(): RecentlyViewedProduct[] {
     if (typeof window === 'undefined') return []
     try {
         const raw = localStorage.getItem(STORAGE_KEY)
         if (!raw) return []
-        return JSON.parse(raw) as RecentlyViewedProduct[]
+        const parsed = JSON.parse(raw)
+        if (!Array.isArray(parsed)) {
+            localStorage.removeItem(STORAGE_KEY)
+            return []
+        }
+        const normalized = parsed.map(normalizeEntry)
+        // Strict fallback: if any item is malformed, clear everything to avoid runtime crashes.
+        if (normalized.some(item => item === null)) {
+            localStorage.removeItem(STORAGE_KEY)
+            return []
+        }
+        return normalized as RecentlyViewedProduct[]
     } catch {
+        try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
         return []
     }
 }
@@ -52,9 +88,9 @@ export function addRecentlyViewed(product: Omit<RecentlyViewedProduct, 'viewedAt
         const existing = getRecentlyViewed()
         // Remove duplicate if exists
         const filtered = existing.filter(p => p.slug !== product.slug)
-        // Prepend the new product
+        // Prepend the new product, always coerce price/msrp to numbers
         const updated: RecentlyViewedProduct[] = [
-            { ...product, viewedAt: Date.now() },
+            { ...product, price: Number(product.price) || 0, msrp: Number(product.msrp) || 0, viewedAt: Date.now() },
             ...filtered,
         ].slice(0, MAX_ITEMS)
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))

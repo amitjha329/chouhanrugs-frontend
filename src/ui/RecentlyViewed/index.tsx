@@ -1,10 +1,28 @@
 'use client'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, Component, ErrorInfo, ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HiClock, HiXMark, HiTrash } from 'react-icons/hi2'
 import { getRecentlyViewed, clearRecentlyViewed, RecentlyViewedProduct } from '@/lib/recentlyViewed'
 import { blurPlaceholders, imageQuality } from '@/utils/imageOptimization'
+
+class RecentlyViewedErrorBoundary extends Component<{ children: ReactNode }, { crashed: boolean }> {
+    state = { crashed: false }
+
+    static getDerivedStateFromError() {
+        return { crashed: true }
+    }
+
+    componentDidCatch(_error: Error, _info: ErrorInfo) {
+        // Wipe stale localStorage data so the crash can't repeat on next render
+        try { clearRecentlyViewed() } catch { /* ignore */ }
+    }
+
+    render() {
+        if (this.state.crashed) return null
+        return this.props.children
+    }
+}
 
 const RecentlyViewedSidebar = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -12,7 +30,12 @@ const RecentlyViewedSidebar = () => {
 
     // Refresh the list every time the sidebar opens
     const refreshProducts = useCallback(() => {
-        setProducts(getRecentlyViewed())
+        try {
+            setProducts(getRecentlyViewed())
+        } catch {
+            clearRecentlyViewed()
+            setProducts([])
+        }
     }, [])
 
     useEffect(() => {
@@ -121,7 +144,10 @@ const RecentlyViewedSidebar = () => {
                         </div>
                     ) : (
                         <ul className="divide-y divide-base-200">
-                            {products.map((product) => (
+                            {products.map((product) => {
+                                const price = Number(product.price) || 0
+                                const msrp = Number(product.msrp) || 0
+                                return (
                                 <li key={product.slug}>
                                     <Link
                                         href={`/products/${product.slug}`}
@@ -151,11 +177,11 @@ const RecentlyViewedSidebar = () => {
                                             <div className="flex items-center justify-between mt-1">
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-sm font-semibold text-primary">
-                                                        ${product.price.toFixed(2)}
+                                                        ${price.toFixed(2)}
                                                     </span>
-                                                    {product.msrp > product.price && (
+                                                    {msrp > price && (
                                                         <span className="text-xs text-base-content/40 line-through">
-                                                            ${product.msrp.toFixed(2)}
+                                                            ${msrp.toFixed(2)}
                                                         </span>
                                                     )}
                                                 </div>
@@ -166,7 +192,7 @@ const RecentlyViewedSidebar = () => {
                                         </div>
                                     </Link>
                                 </li>
-                            ))}
+                            )})}
                         </ul>
                     )}
                 </div>
@@ -175,4 +201,10 @@ const RecentlyViewedSidebar = () => {
     )
 }
 
-export default RecentlyViewedSidebar
+const RecentlyViewedSidebarWithBoundary = () => (
+    <RecentlyViewedErrorBoundary>
+        <RecentlyViewedSidebar />
+    </RecentlyViewedErrorBoundary>
+)
+
+export default RecentlyViewedSidebarWithBoundary
