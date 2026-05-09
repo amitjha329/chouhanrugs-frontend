@@ -5,7 +5,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
-  allowedDevOrigins:['192.168.1.9'],
+  allowedDevOrigins:['192.168.1.9','chouhanrugs.com','www.chouhanrugs.com'],
   experimental: {
     webpackMemoryOptimizations: true
   },
