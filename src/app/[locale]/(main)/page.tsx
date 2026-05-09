@@ -25,6 +25,7 @@ import {
   SectionTitleSkeleton,
   CategorySkeleton
 } from './loading'
+import { getLocale } from "next-intl/server";
 
 // Lazy load below-the-fold sections to reduce initial DOM size
 const ShopByRoom = dynamic(() => import('@/ui/HomePage/ShopByRoom'), { ssr: true })
@@ -93,9 +94,10 @@ async function HeroWithSlider({ sliderId, isMobile }: { sliderId: number, isMobi
 // Wrapper component for footer SEO content
 async function FooterSEOContent() {
   const footerContent = await getPageFooterContent("home")
+  const locale = await getLocale() as Locale
   return (
     <div className="container mx-auto pb-5 text-xs">
-      <DynamicAboveFooterSEOContet data={footerContent} />
+      <DynamicAboveFooterSEOContet data={footerContent} locale={locale} />
     </div>
   )
 }
