@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server"
 import { getSessionCookie } from "better-auth/cookies"
 import createMiddleware from "next-intl/middleware"
 import {
+    type Locale,
     getLocaleFromPathname,
     getLocalePrefix,
     localizePathname,
@@ -23,6 +24,82 @@ const intlMiddleware = createMiddleware(routing)
 
 // Protected routes that require authentication (without locale prefix)
 const protectedRoutes = ['/user', '/order']
+const AUTO_LOCALE_COOKIE = 'cr_auto_locale'
+const AUTO_LOCALE_MAX_AGE = 60 * 60 * 24 * 30
+const COUNTRY_LOOKUP_TIMEOUT_MS = 750
+
+const arabicCountryCodes = new Set([
+    'AE', 'BH', 'DZ', 'EG', 'IQ', 'JO', 'KW', 'LB', 'LY', 'MA',
+    'OM', 'PS', 'QA', 'SA', 'SD', 'SY', 'TN', 'YE',
+])
+
+function isLocale(value: string | undefined): value is Locale {
+    return !!value && routing.locales.includes(value as Locale)
+}
+
+function getClientIp(req: NextRequest): string | undefined {
+    const forwardedFor = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    return (
+        req.headers.get('cf-connecting-ip')?.trim() ||
+        req.headers.get('x-real-ip')?.trim() ||
+        forwardedFor ||
+        undefined
+    )
+}
+
+function isLookupableIp(ip: string | undefined): ip is string {
+    if (!ip) return false
+    if (ip === '::1' || ip === '127.0.0.1' || ip.startsWith('10.') || ip.startsWith('192.168.')) return false
+    if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(ip)) return false
+    return true
+}
+
+function localeForCountry(countryCode: string | undefined, acceptLanguage: string | null): Locale {
+    const code = countryCode?.toUpperCase()
+    const language = acceptLanguage?.toLowerCase() ?? ''
+
+    if (code === 'IN') {
+        return language.includes('hi') ? 'hi-IN' : 'en-IN'
+    }
+
+    if (code === 'GB') {
+        return 'en-GB'
+    }
+
+    if (code && arabicCountryCodes.has(code)) {
+        return 'ar'
+    }
+
+    return 'en-US'
+}
+
+async function detectLocaleFromCountry(req: NextRequest): Promise<Locale> {
+    const cookieLocale = req.cookies.get(AUTO_LOCALE_COOKIE)?.value
+    if (isLocale(cookieLocale)) {
+        return cookieLocale
+    }
+
+    const ip = getClientIp(req)
+    if (!isLookupableIp(ip)) {
+        return routing.defaultLocale
+    }
+
+    try {
+        const response = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=country,countryCode,query`, {
+            signal: AbortSignal.timeout(COUNTRY_LOOKUP_TIMEOUT_MS),
+            cache: 'no-store',
+        })
+
+        if (!response.ok) {
+            return routing.defaultLocale
+        }
+
+        const data = await response.json() as { countryCode?: string }
+        return localeForCountry(data.countryCode, req.headers.get('accept-language'))
+    } catch {
+        return routing.defaultLocale
+    }
+}
 
 export async function proxy(req: NextRequest) {
     const pathname = req.nextUrl.pathname
@@ -37,6 +114,19 @@ export async function proxy(req: NextRequest) {
             redirectUrl.pathname = canonicalPathname
             return NextResponse.redirect(redirectUrl)
         }
+    }
+
+    if (!detectedLocale) {
+        const locale = await detectLocaleFromCountry(req)
+        const redirectUrl = req.nextUrl.clone()
+        redirectUrl.pathname = localizePathname(pathname, locale)
+        const response = NextResponse.redirect(redirectUrl)
+        response.cookies.set(AUTO_LOCALE_COOKIE, locale, {
+            maxAge: AUTO_LOCALE_MAX_AGE,
+            path: '/',
+            sameSite: 'lax',
+        })
+        return response
     }
 
     // Strip locale prefix to check against protected route list
