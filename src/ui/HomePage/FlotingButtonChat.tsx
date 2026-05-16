@@ -12,7 +12,7 @@ const FloatingButtonChat = ({ siteData }: { className?: string, siteData: SiteDa
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col-reverse items-center gap-3">
+        <div className="fixed ~bottom-24/6 right-6 z-[9997] flex flex-col-reverse items-center gap-3">
             {/* Main Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}

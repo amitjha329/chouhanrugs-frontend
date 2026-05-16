@@ -90,7 +90,7 @@ export const productImageSizes = {
  * These should match your next.config.ts qualities array
  */
 export const imageQuality = {
-  thumbnail: 40,
+  thumbnail: 10,
   preview: 60,
   standard: 75,
   high: 85,

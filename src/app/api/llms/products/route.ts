@@ -1,5 +1,5 @@
 import getProductListForLLMS from "@/backend/serverActions/getProductList";
-import { resolveLocalizedString } from "@/lib/resolveLocalized";
+import { LocalizedField, resolveLocalizedString } from "@/lib/resolveLocalized";
 import { type Locale } from "@/i18n/routing";
 
 // export const runtime = 'edge';
@@ -36,16 +36,16 @@ function stripHtml(html: string): string {
 }
 
 interface ProductEntry {
-    productName: string;
-    productURL: string;
-    productDescriptionShort: string;
-    productDescriptionLong: string;
+    productName: LocalizedField<string>;
+    productURL: LocalizedField<string>;
+    productDescriptionShort: LocalizedField<string>;
+    productDescriptionLong: LocalizedField<string>;
     productSellingPrice: number;
     productMSRP: number;
     productCategory: string;
     tags: string[];
     productBaseColor: string;
-    highlights: string[];
+    highlights: LocalizedField<string[]>;
     productStockQuantity: number;
     updatedOn: number;
 }

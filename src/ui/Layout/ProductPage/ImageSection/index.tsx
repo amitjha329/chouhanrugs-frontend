@@ -12,7 +12,7 @@ import onPageNotifications from "@/utils/onPageNotifications"
 import { useSession } from '@/lib/auth-client'
 import { useRouter } from "next/navigation"
 import { FaHeart } from "react-icons/fa"
-import { IoClose, IoChevronBack, IoChevronForward } from "react-icons/io5"
+import { IoClose, IoChevronBack, IoChevronForward, IoChevronUp, IoChevronDown } from "react-icons/io5"
 import { blurPlaceholders, imageQuality, productImageSizes } from "@/utils/imageOptimization"
 import { useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
@@ -42,21 +42,25 @@ const ThumbnailImage = memo(function ThumbnailImage({
             data-carousel-item
             data-item-url={image}
             className={clsx(
-                "cursor-pointer carousel-item overflow-hidden rounded-lg w-20 h-20 border-primary border transition-all duration-200",
-                "!h-[100px] !w-[100px] flex-shrink-0",
-                { 'ring-2 ring-primary shadow ring-offset-1': isSelected },
-                { 'opacity-0': !isLoaded }
+                "relative cursor-pointer carousel-item overflow-hidden rounded-lg border border-primary bg-gray-100 transition-all duration-200",
+                "!h-[86px] !w-[86px] flex-shrink-0 md:!h-[92px] md:!w-[92px]",
+                { 'ring-2 ring-primary shadow ring-offset-1': isSelected }
             )}
             onMouseOver={() => onHover(index)}
             onClick={() => onHover(index)}
         >
+            {!isLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-primary" />
+                </div>
+            )}
             <Image
                 src={image}
                 alt={`${productName} - Image ${index + 1}`}
-                height={100}
-                width={100}
+                height={92}
+                width={92}
                 className={clsx(
-                    "!relative object-fill transition-opacity duration-300",
+                    "!relative h-full w-full object-cover transition-opacity duration-300",
                     isLoaded ? "opacity-100" : "opacity-0"
                 )}
                 quality={imageQuality.thumbnail}
@@ -86,11 +90,11 @@ const MainImageSkeleton = memo(function MainImageSkeleton() {
  */
 const ThumbnailSkeleton = memo(function ThumbnailSkeleton() {
     return (
-        <div className="flex gap-3 py-3 pl-2">
+        <div className="flex gap-3 py-3 pl-2 md:flex-col md:py-0 md:pl-0">
             {[...Array(4)].map((_, i) => (
                 <div
                     key={i}
-                    className="w-[100px] h-[100px] rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse flex-shrink-0"
+                    className="h-[86px] w-[86px] flex-shrink-0 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse md:h-[92px] md:w-[92px]"
                     style={{ animationDelay: `${i * 100}ms` }}
                 />
             ))}
@@ -331,8 +335,8 @@ const MobileGallery = memo(function MobileGallery({
  * Magnifier configuration
  */
 const MAGNIFIER_CONFIG = {
-    size: 340,           // Diameter of the magnifier circle
-    zoomLevel: 3,      // Magnification level
+    size: 420,           // Diameter of the magnifier circle
+    zoomLevel: 4,        // Magnification level
     borderWidth: 2,      // Border thickness
 }
 
@@ -436,8 +440,10 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
         const carousel = thumbnailCarouselRef.current
         if (!carousel) return
 
+        const amount = direction === "next" ? 220 : -220
         carousel.scrollBy({
-            left: direction === "next" ? 220 : -220,
+            left: amount,
+            top: amount,
             behavior: "smooth",
         })
     }, [])
@@ -445,6 +451,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
     // Track main image loading state for progressive loading
     const [mainImageLoaded, setMainImageLoaded] = useState(false)
     const [imagesInitialized, setImagesInitialized] = useState(false)
+    const [mainImageAspectRatio, setMainImageAspectRatio] = useState(1)
 
     // Reset loading states when images change
     React.useEffect(() => {
@@ -483,42 +490,117 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                 }
             </button>
             
-            {/* Main Image Container */}
-            <div
-                ref={containerRef}
-                className={clsx(
-                    "rounded-2xl relative aspect-[4/5] w-full overflow-hidden bg-gray-50 transition-shadow duration-300",
-                    isZooming && "shadow-lg"
-                )}
-                onMouseMove={handleMouseMove}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                onClick={() => mobile && setIsMobileGalleryOpen(true)}
-                style={{ cursor: mobile ? 'pointer' : (!mobile ? 'none' : 'default') }}
-            >
-                {/* Skeleton placeholder while image loads */}
-                {!mainImageLoaded && <MainImageSkeleton />}
-                
-                <Image
-                    src={selectedImage}
-                    alt={productName}
-                    data-main-image
-                    className={clsx(
-                        "!relative object-fill h-full w-full transition-opacity duration-300",
-                        mainImageLoaded ? "opacity-100" : "opacity-0"
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:gap-4">
+                {/* Thumbnails with optimized loading */}
+                <div className="relative order-2 md:order-1 md:w-[104px] md:flex-shrink-0">
+                    {!mobile && (images?.length ?? 0) > 4 && (
+                        <>
+                            <button
+                                type="button"
+                                className="absolute left-1/2 top-0 z-20 hidden -translate-x-1/2 rounded-full bg-white/90 p-2 text-primary shadow md:block"
+                                onClick={() => scrollThumbnails("prev")}
+                                aria-label="Previous thumbnails"
+                            >
+                                <IoChevronUp className="h-5 w-5" />
+                            </button>
+                            <button
+                                type="button"
+                                className="absolute bottom-0 left-1/2 z-20 hidden -translate-x-1/2 rounded-full bg-white/90 p-2 text-primary shadow md:block"
+                                onClick={() => scrollThumbnails("next")}
+                                aria-label="Next thumbnails"
+                            >
+                                <IoChevronDown className="h-5 w-5" />
+                            </button>
+                        </>
                     )}
-                    loading="eager"
-                    sizes={productImageSizes.main}
-                    width={800}
-                    height={800}
-                    quality={imageQuality.high}
-                    placeholder="blur"
-                    blurDataURL={blurPlaceholders.warmNeutral}
-                    onLoad={() => setMainImageLoaded(true)}
-                    fetchPriority="high"
-                />
+                    {mobile && (images?.length ?? 0) > 4 && (
+                        <>
+                            <button
+                                type="button"
+                                className="absolute left-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-primary shadow"
+                                onClick={() => scrollThumbnails("prev")}
+                                aria-label="Previous thumbnails"
+                            >
+                                <IoChevronBack className="h-5 w-5" />
+                            </button>
+                            <button
+                                type="button"
+                                className="absolute right-0 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-primary shadow"
+                                onClick={() => scrollThumbnails("next")}
+                                aria-label="Next thumbnails"
+                            >
+                                <IoChevronForward className="h-5 w-5" />
+                            </button>
+                        </>
+                    )}
+                    <div
+                        ref={thumbnailCarouselRef}
+                        className="carousel flex w-full gap-3 overflow-x-auto p-2 md:max-h-[640px] md:flex-col md:overflow-x-hidden md:overflow-y-auto md:px-1 md:py-10"
+                        id="thumbnail-carousel"
+                    >
+                        {!imagesInitialized ? (
+                            <ThumbnailSkeleton />
+                        ) : (
+                            images?.map((image, index) => (
+                                <ThumbnailImage
+                                    key={image}
+                                    image={image}
+                                    index={index}
+                                    productName={productName}
+                                    isSelected={index === (selectedImageIndex ?? 0)}
+                                    onHover={handleThumbnailHover ?? (() => {})}
+                                />
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {/* Main Image Container */}
+                <div
+                    ref={containerRef}
+                    className={clsx(
+                        "order-1 rounded-2xl relative w-full max-h-[640px] overflow-hidden bg-gray-50 transition-shadow duration-300 md:order-2 md:flex-1 md:max-h-[760px]",
+                        isZooming && "shadow-lg"
+                    )}
+                    onMouseMove={handleMouseMove}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={() => mobile && setIsMobileGalleryOpen(true)}
+                    style={{
+                        aspectRatio: mainImageAspectRatio,
+                        cursor: mobile ? 'pointer' : (!mobile ? 'none' : 'default')
+                    }}
+                >
+                    {/* Skeleton placeholder while image loads */}
+                    {!mainImageLoaded && <MainImageSkeleton />}
+
+                    <Image
+                        src={selectedImage}
+                        alt={productName}
+                        data-main-image
+                        className={clsx(
+                            "!relative h-full w-full object-contain transition-opacity duration-300",
+                            mainImageLoaded ? "opacity-100" : "opacity-0"
+                        )}
+                        loading="eager"
+                        sizes={productImageSizes.main}
+                        width={800}
+                        height={800}
+                        quality={imageQuality.high}
+                        placeholder="blur"
+                        blurDataURL={blurPlaceholders.warmNeutral}
+                        onLoad={(event) => {
+                            const image = event.currentTarget
+                            if (image.naturalWidth > 0 && image.naturalHeight > 0) {
+                                setMainImageAspectRatio(image.naturalWidth / image.naturalHeight)
+                            }
+                            setMainImageLoaded(true)
+                        }}
+                        fetchPriority="high"
+                    />
+                </div>
             </div>
-            
+
             {/* Circular Magnifier - rendered in portal to avoid clipping */}
             {isZooming && !mobile && mainImageLoaded && portalContainer && createPortal(
                 <div
@@ -548,50 +630,6 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                 </div>,
                 portalContainer
             )}
-            
-            {/* Thumbnails with optimized loading */}
-            <div className="relative">
-                {!mobile && (images?.length ?? 0) > 4 && (
-                    <>
-                        <button
-                            type="button"
-                            className="absolute left-0 top-1/2 z-20 hidden -translate-y-1/2 rounded-full bg-white/90 p-2 text-primary shadow md:block"
-                            onClick={() => scrollThumbnails("prev")}
-                            aria-label="Previous thumbnails"
-                        >
-                            <IoChevronBack className="h-5 w-5" />
-                        </button>
-                        <button
-                            type="button"
-                            className="absolute right-0 top-1/2 z-20 hidden -translate-y-1/2 rounded-full bg-white/90 p-2 text-primary shadow md:block"
-                            onClick={() => scrollThumbnails("next")}
-                            aria-label="Next thumbnails"
-                        >
-                            <IoChevronForward className="h-5 w-5" />
-                        </button>
-                    </>
-                )}
-                <div
-                    ref={thumbnailCarouselRef}
-                    className="carousel flex w-full gap-3 overflow-x-auto p-2"
-                    id="thumbnail-carousel"
-                >
-                    {!imagesInitialized ? (
-                        <ThumbnailSkeleton />
-                    ) : (
-                        images?.map((image, index) => (
-                            <ThumbnailImage
-                                key={image}
-                                image={image}
-                                index={index}
-                                productName={productName}
-                                isSelected={index === (selectedImageIndex ?? 0)}
-                                onHover={handleThumbnailHover ?? (() => {})}
-                            />
-                        ))
-                    )}
-                </div>
-            </div>
             
             {/* Mobile fullscreen gallery */}
             {mobile && isMobileGalleryOpen && portalContainer && images && createPortal(

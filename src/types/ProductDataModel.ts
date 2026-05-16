@@ -34,6 +34,35 @@ export interface ProductDataModel {
     productActive: boolean;
     addedOn: number;
     updatedOn: number;
+
+    // Enhanced Fields
+    metaTitle?: LocalizedField<string>;
+    metaDescription?: LocalizedField<string>;
+    metaKeywords?: LocalizedField<string>;
+    sku?: string;
+    gtin?: string;
+    lowStockThreshold?: number;
+    weight?: number;
+    weightUnit?: string;
+    dimensions?: {
+        length: number;
+        width: number;
+        height: number;
+        unit: string;
+    };
+    productStatus?: 'Draft' | 'Published' | 'Archived';
+    visibility?: 'Catalog' | 'Search' | 'Hidden' | 'Both';
+    isFeatured?: boolean;
+    material?: LocalizedField<string>;
+    countryOfOrigin?: string;
+
+    // Rug Specific / Competitor Analysis Fields
+    pileThickness?: string;
+    texture?: LocalizedField<string>;
+    warranty?: string;
+    variationWarning?: LocalizedField<string>;
+    itemCode?: string;
+    certifications?: string[];
 }
 
 export interface ProductDataModelWithColorMap extends ProductDataModel {

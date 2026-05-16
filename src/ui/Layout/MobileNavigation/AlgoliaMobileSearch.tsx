@@ -4,8 +4,9 @@ import { autocomplete } from '@algolia/autocomplete-js'
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions'
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches'
 import { liteClient as algoliasearch } from 'algoliasearch/lite'
-import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import { useLocale } from 'next-intl'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 interface AlgoliaMobileSearchProps {
   appId: string
@@ -22,6 +23,7 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const searchClientRef = useRef(algoliasearch(appId, apiKey))
+  const locale = useLocale() as Locale
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -90,15 +92,16 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
             },
             templates: {
               item({ item, html }) {
+                const productName = resolveLocalizedString((item as any).productName, locale)
                 return html`
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">
                       <div class="aa-ItemIcon aa-imageIcon">
-                        <img src="${(item as any).images[0]}" alt="${(item as any).productName}"/>
+                        <img src="${(item as any).images[0]}" alt="${productName}"/>
                       </div>
                       <div class="aa-ItemContentBody">
                         <div class="aa-ItemContentTitle">
-                          ${(item as any).productName}
+                          ${productName}
                         </div>
                         <div class="aa-ItemContentDescription">
                           $${(item as any).productSellingPrice}
@@ -113,7 +116,8 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
               }
             },
             onSelect({ item }: { item: any }) {
-              window.location.href = `/products/${(item as any).productURL}`
+              const productURL = resolveLocalizedString((item as any).productURL, locale)
+              window.location.href = `/products/${encodeURIComponent(productURL)}`
             }
           }
         ]
@@ -128,7 +132,7 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
     return () => {
       autocompleteInstance.destroy()
     }
-  }, [appId, apiKey, indexName, querySuggestionsIndex])
+  }, [appId, apiKey, indexName, querySuggestionsIndex, locale])
 
   return (
     <div className="w-full">

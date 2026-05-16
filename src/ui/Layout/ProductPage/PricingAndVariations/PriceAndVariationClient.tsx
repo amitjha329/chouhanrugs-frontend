@@ -119,29 +119,28 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
     // Accessibility: set aria attributes for selects and buttons
     return (
         <>
-            <div className="flex items-center mb-4">
+            <div className="mb-3 flex items-end gap-2 border-y border-neutral-200 py-3">
                 {priceLoading ? (
-                    <div className="skeleton h-8 w-32 rounded" style={{ minWidth: 120 }} aria-busy="true" aria-live="polite" />
+                    <div className="skeleton h-7 w-28 rounded" style={{ minWidth: 112 }} aria-busy="true" aria-live="polite" />
                 ) : (
                     <>
-                        <span className="~text-xl/3xl font-bold text-brown-700" id='selling_price' aria-label="Selling price">${getSellingPrice().toFixed(1)}</span>
-                        <span className="line-through ml-2 text-gray-500" id='msrp' aria-label="MSRP">${getMsrp().toFixed(1)}</span>
-                        <button className="bg-green-500 text-white ~px-1/3 py-1 rounded ml-4 ~text-sm/base" aria-label={`Save ${product.productDiscountPercentage}`}>Save {product.productDiscountPercentage}
-                        </button>
+                        <span className="text-xl font-semibold leading-none text-neutral-950 md:text-2xl" id='selling_price' aria-label="Selling price">${getSellingPrice().toFixed(1)}</span>
+                        <span className="pb-0.5 text-xs text-neutral-400 line-through" id='msrp' aria-label="MSRP">${getMsrp().toFixed(1)}</span>
+                        <span className="mb-0.5 rounded-full border border-emerald-200 px-2 py-0.5 text-[10px] font-semibold text-emerald-700" aria-label={`Save ${product.productDiscountPercentage}`}>Save {product.productDiscountPercentage}</span>
                     </>
                 )}
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 mb-6 w-full">
-                <div className={clsx("flex flex-row gap-3 mb-3 w-full", { "hidden": (colorData.length == 0 && sortedSizeData.length == 0) })}>
+            <div className="mb-3 flex w-full flex-col gap-2 sm:flex-row">
+                <div className={clsx("grid w-full grid-cols-1 gap-2 sm:grid-cols-2", { "hidden": (colorData.length == 0 && sortedSizeData.length == 0) })}>
                     {colorData.length > 0 && <div className="basis-1/2 md:basis-1/3 flex-1">
-                        <label className="block mb-1 font-semibold text-gray-700" htmlFor="color-select">Color</label>
+                        <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-neutral-500" htmlFor="color-select">Color</label>
                         <div className="relative">
                             {priceLoading ? (
-                                <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                                <div className="skeleton h-10 w-full rounded-lg" aria-busy="true" />
                             ) : (
                                 <select
                                     id="color-select"
-                                    className="block w-full rounded-xl border-2 border-gray-200 bg-white py-3 px-10 pr-10 text-base font-medium text-gray-700 shadow-sm focus:border-accent focus:ring-2 focus:ring-accent transition-all duration-150 ease-in-out appearance-none"
+                                    className="block w-full appearance-none rounded-lg border border-neutral-300 bg-white py-2 pl-8 pr-8 text-[13px] font-medium text-neutral-800 transition-all duration-150 ease-in-out focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                                     name="color"
                                     value={selectedColor}
                                     onChange={e => setSelectedColor && setSelectedColor(e.target.value)}
@@ -157,25 +156,25 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                             )}
                             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                 <span
-                                    className="inline-block w-5 h-5 rounded border border-gray-300"
+                                    className="inline-block h-3.5 w-3.5 rounded border border-gray-300"
                                     id='display-color'
                                     style={{ backgroundColor: selectedColor ? colorData.find(c => c.name === selectedColor)?.colorCode.hex : "#fff" }}
                                 ></span>
                             </div>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-                                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </div>
                         </div>
                     </div>}
                     {sortedSizeData.length > 0 && <div className="basis-1/2 md:basis-1/3 flex-1">
-                        <label className="block mb-1 font-semibold text-gray-700" htmlFor="size-select">Size</label>
+                        <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-neutral-500" htmlFor="size-select">Size</label>
                         <div className="relative">
                             {priceLoading ? (
-                                <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                                <div className="skeleton h-10 w-full rounded-lg" aria-busy="true" />
                             ) : (
                                 <select
                                     id="size-select"
-                                    className="block w-full rounded-xl border-2 border-gray-200 bg-white py-3 px-4 pr-10 text-base font-medium text-gray-700 shadow-sm focus:border-accent focus:ring-2 focus:ring-accent transition-all duration-150 ease-in-out appearance-none"
+                                    className="block w-full appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2 pr-8 text-[13px] font-medium text-neutral-800 transition-all duration-150 ease-in-out focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                                     value={selectedSize}
                                     onChange={e => setSelectedSize && setSelectedSize(e.target.value)}
                                     aria-label="Select size"
@@ -188,8 +187,8 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                     ))}
                                 </select>
                             )}
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-                                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </div>
                         </div>
                     </div>}
@@ -197,14 +196,14 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                 {/* On desktop, show quantity in the same row, else in next row */}
                 <div className="hidden md:block basis-1/3 flex-1">
                     <div className="w-full max-w-40">
-                        <label className="block mb-1 font-semibold text-gray-700" htmlFor="product_quantity">Quantity</label>
+                        <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-neutral-500" htmlFor="product_quantity_desktop">Quantity</label>
                         <div className="relative">
                             {priceLoading ? (
-                                <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                                <div className="skeleton h-10 w-full rounded-lg" aria-busy="true" />
                             ) : (
                                 <select
-                                    className="block w-full rounded-xl border-2 border-gray-200 bg-white py-3 px-4 pr-10 text-base font-medium text-gray-700 shadow-sm focus:border-accent focus:ring-2 focus:ring-accent transition-all duration-150 ease-in-out appearance-none"
-                                    id='product_quantity'
+                                    className="block w-full appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2 pr-8 text-[13px] font-medium text-neutral-800 transition-all duration-150 ease-in-out focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                    id='product_quantity_desktop'
                                     aria-label="Select quantity"
                                     value={quantity}
                                     onChange={e => setQuantity(Number(e.target.value))}
@@ -215,24 +214,24 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                     ))}
                                 </select>
                             )}
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-                                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             {/* On mobile, show quantity in its own row */}
-            <div className="flex flex-row gap-3 mb-6 w-full md:hidden">
+            <div className="mb-3 flex w-full flex-row gap-3 md:hidden">
                 <div className="w-full">
-                    <label className="block mb-1 font-semibold text-gray-700" htmlFor="product_quantity">Quantity</label>
+                    <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-neutral-500" htmlFor="product_quantity_mobile">Quantity</label>
                     <div className="relative">
                         {priceLoading ? (
-                            <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                            <div className="skeleton h-10 w-full rounded-lg" aria-busy="true" />
                         ) : (
                             <select
-                                className="block w-full rounded-xl border-2 border-gray-200 bg-white py-3 px-4 pr-10 text-base font-medium text-gray-700 shadow-sm focus:border-accent focus:ring-2 focus:ring-accent transition-all duration-150 ease-in-out appearance-none"
-                                id='product_quantity'
+                                className="block w-full appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2 pr-8 text-[13px] font-medium text-neutral-800 transition-all duration-150 ease-in-out focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                id='product_quantity_mobile'
                                 aria-label="Select quantity"
                                 value={quantity}
                                 onChange={e => setQuantity(Number(e.target.value))}
@@ -243,24 +242,25 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                 ))}
                             </select>
                         )}
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
-                            <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                         </div>
                     </div>
                 </div>
-            </div>            <div className="flex flex-col gap-3 mb-4 w-full">
+            </div>
+            <div className="mb-3 flex w-full flex-col gap-2">
                 {priceLoading ? (
                     <>
-                        <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
-                        <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
-                        <div className="skeleton h-12 w-full rounded-xl" aria-busy="true" />
+                        <div className="skeleton h-10 w-full rounded-lg" aria-busy="true" />
+                        <div className="skeleton h-10 w-full rounded-lg" aria-busy="true" />
+                        <div className="skeleton h-9 w-full rounded-lg" aria-busy="true" />
                     </>
                 ) : (
                     <>
                         {/* Primary Action Buttons Row */}
-                        <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+                        <div className="flex w-full flex-col items-center gap-2 sm:flex-row">
                             <button
-                                className={`w-full flex-1 rounded-full bg-accent text-white font-bold py-3 px-4 shadow-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                className={`w-full flex-1 rounded-lg bg-primary px-3.5 py-2.5 text-[13px] font-semibold tracking-wide text-white shadow-primary/20 transition-all duration-150 ease-in-out hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 id='buy_now_btn'
                                 tabIndex={0}
                                 aria-label="Buy Now"
@@ -322,7 +322,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                             </button>
 
                             <button
-                                className={`w-full flex-1 rounded-full border-2 border-accent text-accent font-bold py-3 px-4 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                className={`w-full flex-1 rounded-lg border border-primary bg-white px-3.5 py-2.5 text-[13px] font-semibold tracking-wide text-primary transition-all duration-150 ease-in-out hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 id='add_to_cart_btn'
                                 tabIndex={0}
                                 aria-label="Add to Cart"
@@ -384,13 +384,13 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
 
                             {/* Wishlist button - only on desktop, fixed size */}
                             <button
-                                className={`hidden sm:flex items-center justify-center w-12 h-12 rounded-full border-2 border-accent text-accent shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                className={`hidden h-9 w-9 items-center justify-center rounded-lg border border-neutral-300 bg-white text-primary transition-all duration-150 ease-in-out hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 sm:flex ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 onClick={addToWishlist}
                                 aria-label={wishlistItems.includes((product._id ?? product.objectID).toString() ?? "") ? "Remove from wishlist" : "Add to wishlist"}
                                 disabled={actionLoading}
                             >
                                 <FaHeart className={clsx(
-                                    "text-lg",
+                                    "text-base",
                                     wishlistItems.includes((product._id ?? product.objectID).toString() ?? "")
                                         ? "text-red-600"
                                         : "text-gray-400"
@@ -399,9 +399,9 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                         </div>
 
                         {/* Secondary Action Buttons Row */}
-                        <div className="flex flex-row gap-3 w-full">
+                        <div className="flex flex-row gap-2 w-full">
                             <Link
-                                className={`w-full flex-1 rounded-full border-2 border-accent text-accent font-bold py-3 px-4 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide text-center ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                className={`w-full flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-center text-[11px] font-semibold tracking-wide text-neutral-700 transition-all duration-150 ease-in-out hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 aria-label="Request bulk order"
                                 target='_blank'
                                 href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20bulk%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${productURL ? encodeURIComponent(productURL) : ''}`}
@@ -410,7 +410,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                             </Link>
 
                             <Link
-                                className={`w-full flex-1 rounded-full border-2 border-accent text-accent font-bold py-3 px-4 shadow-lg hover:bg-accent/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 transition-all duration-150 ease-in-out text-sm tracking-wide text-center ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                className={`w-full flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-center text-[11px] font-semibold tracking-wide text-neutral-700 transition-all duration-150 ease-in-out hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 aria-label="Request custom order"
                                 target='_blank'
                                 href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20custom%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${productURL ? encodeURIComponent(productURL) : ''}`}

@@ -1,5 +1,5 @@
 import getDynamicPageBySlug from "@/backend/serverActions/getDynamicPageBySlug";
-import { type Locale } from "@/i18n/routing";
+import { getLocaleFromPathname, type Locale } from "@/i18n/routing";
 import { resolveLocalizedString } from "@/lib/resolveLocalized";
 import DynamicPageRenderer from "@/ui/DynamicPages/DynamicPageRenderer";
 import { Metadata } from "next";
@@ -25,16 +25,34 @@ const RESERVED_ROUTE_PREFIXES = new Set([
     "user",
 ]);
 
+function getNormalizedRoute(locale: string, slug: string[]) {
+    const prefixedLocale = getLocaleFromPathname(`/${[locale, ...slug].join("/")}`);
+
+    if (prefixedLocale && prefixedLocale !== locale && slug.length > 0) {
+        return {
+            locale: prefixedLocale,
+            slug: slug.slice(1),
+        };
+    }
+
+    return {
+        locale: locale as Locale,
+        slug,
+    };
+}
+
 const isReservedRoute = (slug: string[]) => RESERVED_ROUTE_PREFIXES.has(slug[0] ?? "");
 
 export async function generateMetadata(props: DynamicPageProps): Promise<Metadata> {
     const { slug, locale: loc } = await props.params;
-    if (isReservedRoute(slug)) {
+    const normalized = getNormalizedRoute(loc, slug);
+
+    if (isReservedRoute(normalized.slug)) {
         return {};
     }
 
-    const locale = loc as Locale;
-    const page = await getDynamicPageBySlug(slug.join("/"));
+    const locale = normalized.locale;
+    const page = await getDynamicPageBySlug(normalized.slug.join("/"));
 
     if (!page) {
         return {};
@@ -71,12 +89,14 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
 }
 
 export default async function DynamicPage(props: DynamicPageProps) {
-    const { slug } = await props.params;
-    if (isReservedRoute(slug)) {
+    const { slug, locale: loc } = await props.params;
+    const normalized = getNormalizedRoute(loc, slug);
+
+    if (isReservedRoute(normalized.slug)) {
         return null;
     }
 
-    const page = await getDynamicPageBySlug(slug.join("/"));
+    const page = await getDynamicPageBySlug(normalized.slug.join("/"));
 
     if (!page) {
         notFound();

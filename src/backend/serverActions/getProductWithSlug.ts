@@ -25,7 +25,9 @@ async function getProductWithSlugInternal(slug: string): Promise< ProductWithSiz
                 { productURL: slug },
                 ...locales.map(loc => ({ [`productURL.${loc}`]: slug }))
             ],
-            productActive: true
+            productActive: true,
+            productStatus: { $nin: ["Draft", "Archived"] },
+            visibility: { $ne: "Hidden" }
         });
         if (product === null) {
             return undefined;

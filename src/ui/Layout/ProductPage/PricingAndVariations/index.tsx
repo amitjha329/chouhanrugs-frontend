@@ -13,6 +13,7 @@ import getSiteData from '@/backend/serverActions/getSiteData'
 import { getTranslations, getLocale } from 'next-intl/server'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import InformationTabs from '../InformationTabs'
 
 interface returnProps extends ProductDataModel {
     colorData: ColorDataModel[],
@@ -25,14 +26,28 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
     const locale = await getLocale() as Locale
     const name = resolveLocalizedString(product.productName, locale)
     const shortDesc = resolveLocalizedString(product.productDescriptionShort, locale)
+    const category = product.productCategory?.trim() || 'Rug'
     return (
-        <div className='basis-1/2'>
-            <div className="p-6 max-w-xl mx-auto">
-                <div className="mb-4">
-                    <button className="border border-gray-500 text-gray-500 px-3 py-1 rounded-md ~text-sm/base">{t('byBrand')}</button>
+        <aside className='lg:sticky lg:top-24'>
+            <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-[0_16px_48px_rgba(37,30,20,0.07)]">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="inline-flex max-w-full items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
+                        <span className="text-neutral-500">Category</span>
+                        <span className="truncate normal-case tracking-normal text-neutral-950">{category}</span>
+                    </span>
+                    <span className="rounded-full border border-emerald-200 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                        In stock
+                    </span>
                 </div>
-                <h1 className="~text-lg/2xl font-bold mb-2">{name}</h1>
-                <div className="flex items-center mb-4 text-gray-500 text-sm">
+                <div className="mt-3 border-b border-neutral-200 pb-3">
+                    <p id="product-name-label" className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
+                        Product name
+                    </p>
+                    <h1 aria-describedby="product-name-label" className="text-base font-semibold leading-snug text-neutral-950 md:text-lg">
+                        {name}
+                    </h1>
+                </div>
+                <div className="mb-3 mt-3 flex items-center text-[11px] text-neutral-500">
                     <div className="rating rating-sm pointer-events-none">
                         <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
                         <input type="radio" name="rating-7" className="mask mask-star-2 bg-orange-400" />
@@ -49,29 +64,32 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
                     {/* <a href="#">Write A Review</a> */}
                 </div>
                 <PriceAndVariationClient product={product} siteData={siteData} />
-                <div className="flex items-center mb-4 text-brown-700 ~text-xs/base">
+                <p className="border-t border-neutral-200 py-3 text-[13px] leading-5 text-neutral-600">
                     {shortDesc}
+                </p>
+                <div className="grid grid-cols-1 gap-x-4 gap-y-2 border-b border-neutral-200 pb-3 text-[11px] text-neutral-700 sm:grid-cols-2">
+                    <div className='flex items-center gap-2'>
+                        <Image src={dhl} alt="DHL logo" className='h-5 w-5 object-contain' />
+                        <span className='font-medium'>{t('deliveryPartner')}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <Image src={returns_replacements} alt="Returns & Replacements icon" className='h-5 w-5 object-contain' />
+                        <span className='font-medium'>{t('returnsReplacements')}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <Image src={free_delivery} alt="Free Deliveries icon" className='h-5 w-5 object-contain' />
+                        <span className='font-medium'>{t('freeDeliveries')}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <Image src={hand_crafted} alt="Hand Crafted icon" className='h-5 w-5 object-contain' />
+                        <span className='font-medium'>{t('handCrafted')}</span>
+                    </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-center ~text-xs/base">
-                    <div className='flex items-center justify-start gap-3'>
-                        <Image src={dhl} alt="DHL logo" className='~w-7/10 ~h-7/10' />
-                        <span>{t('deliveryPartner')}</span>
-                    </div>
-                    <div className='flex items-center justify-start gap-3'>
-                        <Image src={returns_replacements} alt="Returns & Replacements icon" className='w-7 h-7' />
-                        <span>{t('returnsReplacements')}</span>
-                    </div>
-                    <div className='flex items-center justify-start gap-3'>
-                        <Image src={free_delivery} alt="Free Deliveries icon" className='~w-7/10 ~h-7/10' />
-                        <span>{t('freeDeliveries')}</span>
-                    </div>
-                    <div className='flex items-center justify-start gap-3'>
-                        <Image src={hand_crafted} alt="Hand Crafted icon" className='w-7 h-7' />
-                        <span>{t('handCrafted')}</span>
-                    </div>
+                <div className="pt-3">
+                    <InformationTabs product={product} compact />
                 </div>
             </div>
-        </div>
+        </aside>
     )
 }
 

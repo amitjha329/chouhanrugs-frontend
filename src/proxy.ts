@@ -132,6 +132,12 @@ export async function proxy(req: NextRequest) {
     // Strip locale prefix to check against protected route list
     const pathWithoutLocale = stripLocaleFromPathname(pathname)
 
+    if (pathWithoutLocale.startsWith('/products')) {
+        const rewriteUrl = req.nextUrl.clone()
+        rewriteUrl.pathname = `/${detectedLocale}${pathWithoutLocale}`
+        return NextResponse.rewrite(rewriteUrl)
+    }
+
     // ── Auth guard ──────────────────────────────────────────────────────
     const isProtected = protectedRoutes.some((r) =>
         pathWithoutLocale.startsWith(r)

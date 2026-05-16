@@ -10,12 +10,12 @@ import getDevice from '@/utils/getDevice'
 import PriceAndVariation from '@/ui/Layout/ProductPage/PricingAndVariations'
 import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
 import getRelatedProducts from '@/backend/serverActions/getRelatedProduct'
-import InformationTabs from '@/ui/Layout/ProductPage/InformationTabs'
 import { ProductDataModel } from '@/types/ProductDataModel'
 import { serializeForClient } from '@/utils/serializeForClient'
 import TrackProductView from '@/ui/RecentlyViewed/TrackProductView'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import ProductCraftStorySection from '@/ui/Layout/ProductPage/ProductCraftStorySection'
 
 export async function generateMetadata(props: { params: Promise<{ productId: string, locale: string }> }): Promise<Metadata> {
     await connection()
@@ -23,8 +23,8 @@ export async function generateMetadata(props: { params: Promise<{ productId: str
     const data = await getProductWithSlug(params.productId)
     if (data == undefined) return {}
     const locale = params.locale as Locale
-    const name = resolveLocalizedString(data.productName, locale)
-    const desc = resolveLocalizedString(data.productDescriptionShort, locale)
+    const name = resolveLocalizedString(data.metaTitle, locale) || resolveLocalizedString(data.productName, locale)
+    const desc = resolveLocalizedString(data.metaDescription, locale) || resolveLocalizedString(data.productDescriptionShort, locale)
     const dataAdditional = await getSiteData()
     return {
         title: name,
@@ -168,7 +168,10 @@ const ProductPage = async (props: { params: Promise<{ productId: string, locale:
     const locale = params.locale as Locale
 
     // Fetch product data - this will be part of the static shell
-    const data = await getProductWithSlug(productId)
+    const [data, dataAdditional] = await Promise.all([
+        getProductWithSlug(productId),
+        getSiteData(),
+    ])
     if (data == undefined) return notFound();
     
     // Get device type for responsive rendering
@@ -189,22 +192,35 @@ const ProductPage = async (props: { params: Promise<{ productId: string, locale:
     }
 
     return (
-        <div className='fluid_container'>
+        <article className='bg-[#fbfaf7]'>
             <TrackProductView product={trackData} />
-            {/* Main product content - loads with the page */}
-            <div className='flex max-md:flex-col gap-10 ~px-5/0'>
-                <ImageSection mobile={isMobile} className='md:basis-1/2 overflow-hidden' />
-                <PriceAndVariation product={data} />
+            <div className='fluid_container ~px-4/0 ~py-5/10'>
+                <nav className='mb-5 flex items-center gap-2 text-sm text-neutral-500'>
+                    <span>Home</span>
+                    <span>/</span>
+                    <span>Products</span>
+                    {data.productCategory && (
+                        <>
+                            <span>/</span>
+                            <span className='text-neutral-800'>{data.productCategory}</span>
+                        </>
+                    )}
+                </nav>
+
+                <section className='grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(420px,0.92fr)] lg:items-start'>
+                    <ImageSection mobile={isMobile} className='overflow-hidden lg:sticky lg:top-24' />
+                    <PriceAndVariation product={data} />
+                </section>
             </div>
             
-            {/* Product information tabs */}
-            <InformationTabs product={data} />
-            
-            {/* Related products - streamed in after initial load */}
-            <Suspense fallback={<RelatedProductsSkeleton />}>
-                <RelatedProductsSection product={data} isMobile={isMobile} />
-            </Suspense>
-        </div>
+            <ProductCraftStorySection section={dataAdditional.productCraftSection} />
+
+            <section className='bg-[#fbfaf7]'>
+                <Suspense fallback={<RelatedProductsSkeleton />}>
+                    <RelatedProductsSection product={data} isMobile={isMobile} />
+                </Suspense>
+            </section>
+        </article>
     )
 }
 

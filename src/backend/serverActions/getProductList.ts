@@ -1,19 +1,20 @@
 'use server'
 import clientPromise from "@/lib/clientPromise";
+import { LocalizedField } from "@/lib/resolveLocalized";
 // import { ProductDataModel } from "@/types/ProductDataModel";
 // import converter from "@/utils/mongoObjectConversionUtility";
 
 interface ProductEntry {
-    productName: string;
-    productURL: string;
-    productDescriptionShort: string;
-    productDescriptionLong: string;
+    productName: LocalizedField<string>;
+    productURL: LocalizedField<string>;
+    productDescriptionShort: LocalizedField<string>;
+    productDescriptionLong: LocalizedField<string>;
     productSellingPrice: number;
     productMSRP: number;
     productCategory: string;
     tags: string[];
     productBaseColor: string;
-    highlights: string[];
+    highlights: LocalizedField<string[]>;
     productStockQuantity: number;
     updatedOn: number;
 }

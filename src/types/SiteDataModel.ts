@@ -8,7 +8,31 @@ type SiteDataModel = {
     isTitle: boolean;
     profiles:string[]
     marketplaceLinks?: MarketplaceLink[];
+    productCraftSection?: ProductCraftSection;
     contact_details: ContactDetails;
+}
+
+export type ProductCraftSection = {
+    enabled?: boolean;
+    eyebrow?: string;
+    title?: string;
+    subtitle?: string;
+    body?: string;
+    image?: string;
+    imageAlt?: string;
+    stats?: ProductCraftStat[];
+    steps?: ProductCraftStep[];
+    highlights?: string[];
+}
+
+export type ProductCraftStat = {
+    value: string;
+    label: string;
+}
+
+export type ProductCraftStep = {
+    title: string;
+    description: string;
 }
 
 export type MarketplaceLink = {

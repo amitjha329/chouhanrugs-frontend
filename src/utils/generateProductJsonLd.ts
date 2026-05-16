@@ -5,6 +5,8 @@ import { type Locale } from "@/i18n/routing";
 export default function generateProductJsonLd(productData: ProductDataModel, locale: Locale = 'en-US') {
   const name = resolveLocalizedString(productData.productName, locale).replace(/"/g, '\\"')
   const desc = resolveLocalizedString(productData.productDescriptionShort, locale).replace(/"/g, '\\"')
+  const sku = (productData.sku || productData.itemCode || productData.addedOn).toString().replace(/"/g, '\\"')
+  const mpn = (productData.gtin || productData.itemCode || productData.addedOn).toString().replace(/"/g, '\\"')
   // "aggregateRating": {
   //       "@type": "AggregateRating",
   //       "ratingValue": "${productData.productReviews.average}",
@@ -15,10 +17,10 @@ export default function generateProductJsonLd(productData: ProductDataModel, loc
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": "${name}",
-      "image": "${productData.images[0]}",
+      "image": "${productData.images[productData.productPrimaryImageIndex] ?? productData.images[0]}",
       "description": "${desc}",
-      "sku": "${productData.addedOn}",
-      "mpn": "${productData.addedOn}",
+      "sku": "${sku}",
+      "mpn": "${mpn}",
       "brand": {
         "@type": "Brand",
         "name": "${productData.productBrand}"
