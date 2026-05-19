@@ -1,37 +1,38 @@
 'use server';
 import ImageUploadResponse from "@/types/ImageUploadResponse";
-import { ensureDir, writeFile } from "fs-extra";
-import sharp from "sharp";
-import { getConfig } from '@/lib/services/ConfigService';
+import { buildFirebaseStoragePath, uploadFileToFirebaseStorage } from "@/utils/firebaseStorage";
+
+const ALLOWED_MIME_TYPES = new Set([
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+    'image/avif',
+])
 
 const uploadImages = async (data: FormData): Promise<Array<ImageUploadResponse>> => {
     const id = data.get("id")?.toString()
     const type = data.get("type")?.toString()
     const imgBlobArray = data.has('image') ? data.getAll('image') as File[] : []
-    const host = process.env.NODE_ENV == "production" ? await getConfig('NEXTCDN') : ""
-    const responseArray: Array<ImageUploadResponse> = []
-    for (const imgBlob of imgBlobArray) {
-        const dataFileName = imgBlob?.name.split('.')
-        const imageName = `${dataFileName?.at(0)}_${Date.now()}.webp`
-        if (imgBlob) {
-            let imagePath: string = `./public/uploads/${type}/${id ? id+"/":""}`
-            await ensureDir(imagePath)
-            imagePath = imagePath + imageName
-            const imgFileArray = await imgBlob.arrayBuffer()
-            if (dataFileName?.at(-1) !== "webp") {
-                const imgTemp = sharp(imgFileArray)
-                const webPConverted = imgTemp.webp({ quality: 75 })
-                await writeFile(imagePath, await webPConverted.toBuffer())
-            } else {
-                await writeFile(imagePath, Buffer.from(imgFileArray))
+    const results = await Promise.all(
+        imgBlobArray.map(async (imgBlob): Promise<ImageUploadResponse | null> => {
+            if (!imgBlob || imgBlob.size === 0) return null
+
+            if (!ALLOWED_MIME_TYPES.has(imgBlob.type)) {
+                throw new Error(`Invalid file type: ${imgBlob.type}`)
             }
-        }
-        responseArray.push({
-            imgName: imageName,
-            url: `${host}/uploads/${type}/${id ? id+"/":""}${imageName}`
+
+            const { fileName, storagePath } = buildFirebaseStoragePath(imgBlob, type, id, 'jpg')
+            const uploaded = await uploadFileToFirebaseStorage(imgBlob, storagePath)
+
+            return {
+                imgName: fileName,
+                url: uploaded.url,
+            }
         })
-    }
-    return responseArray
+    )
+
+    return results.filter((r): r is ImageUploadResponse => r !== null)
 }
 
 export default uploadImages

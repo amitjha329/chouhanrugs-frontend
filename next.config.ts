@@ -34,6 +34,9 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**.yashkumarjha.tk' },
       { protocol: 'https', hostname: '**.chouhanrugs.com' },
       { protocol: 'https', hostname: '**.caredone.in' },
+      { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
+      { protocol: 'https', hostname: 'storage.googleapis.com' },
+      { protocol: 'https', hostname: '**.firebasestorage.app' },
     ]
   },
   redirects: async () => {
@@ -179,7 +182,7 @@ const nextConfig: NextConfig = {
       'font-src': ["'self'", '*'],
       'object-src': ["'none'"],
       'img-src': ["'self'", '*', '*.google-analytics.com', '*.googletagmanager.com', '*.googleadservices.com', 'data:', 'blob:'],
-      'media-src': ["'self'", '*', '*.chouhanrugs.com', '*.caredone.in', 'data:', 'blob:'],
+      'media-src': ["'self'", '*', '*.chouhanrugs.com', '*.caredone.in', 'firebasestorage.googleapis.com', 'storage.googleapis.com', '*.firebasestorage.app', 'data:', 'blob:'],
     }
 
     const ContentSecurityPolicy = buildCsp(cspDirectives)
