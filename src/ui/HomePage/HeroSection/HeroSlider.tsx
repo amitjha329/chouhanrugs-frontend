@@ -89,7 +89,7 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel }) => {
                     const description = resolveLocalizedString(image.desc as any, locale) || 'Crafted for comfort. Made to impress.'
 
                     return (
-                        <div key={`${imageSrc}-${index}`} className="relative h-[430px] overflow-hidden md:h-[540px] lg:h-[620px]">
+                        <div key={`${imageSrc}-${index}`} className="relative mx-4 h-[368px] overflow-hidden rounded-2xl md:mx-0 md:h-[540px] md:rounded-none lg:h-[620px]">
                             <Image
                                 src={imageSrc || banner_2.src}
                                 alt={`Hero banner ${index + 1}`}
@@ -99,20 +99,20 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel }) => {
                                 sizes="100vw"
                                 className="object-cover"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/30 to-black/45" />
-                            <div className="absolute inset-x-4 top-[16%] mx-auto flex max-w-4xl flex-col items-center text-center text-white md:top-[18%]">
-                                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#d8b176] md:text-xs">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#fff8ef]/90 via-[#fff8ef]/45 to-transparent md:bg-gradient-to-b md:from-black/15 md:via-black/30 md:to-black/45" />
+                            <div className="absolute inset-x-6 top-8 mx-auto flex max-w-4xl flex-col items-start text-left text-primary md:inset-x-4 md:top-[18%] md:items-center md:text-center md:text-white">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary md:text-xs md:text-[#d8b176]">
                                     {eyebrow}
                                 </p>
-                                <h1 className="mt-3 font-serif text-4xl font-semibold uppercase leading-none tracking-[0.12em] text-white drop-shadow md:text-6xl lg:text-7xl">
+                                <h1 className="mt-3 max-w-[15rem] font-serif text-[2rem] font-semibold leading-tight tracking-normal text-neutral-950 md:max-w-none md:text-6xl md:uppercase md:leading-none md:tracking-[0.12em] md:text-white md:drop-shadow lg:text-7xl">
                                     {heading}
                                 </h1>
-                                <p className="mt-4 max-w-2xl text-sm font-medium leading-6 text-white/90 md:text-lg">
+                                <p className="mt-4 max-w-[15rem] text-sm font-semibold leading-6 text-primary md:max-w-2xl md:text-lg md:text-white/90">
                                     {description}
                                 </p>
                                 <Link
                                     href="/products"
-                                    className="mt-5 rounded-md bg-[#c99548] px-7 py-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white shadow-[0_10px_28px_rgba(0,0,0,0.18)] transition hover:bg-[#b68036] focus:outline-none focus:ring-2 focus:ring-white/80"
+                                    className="mt-5 rounded-lg bg-primary px-6 py-3 text-[12px] font-semibold text-primary-content shadow-[0_10px_28px_rgba(69,42,22,0.20)] transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 md:rounded-md md:bg-[#c99548] md:px-7 md:py-2.5 md:text-[11px] md:uppercase md:tracking-[0.08em] md:text-white md:hover:bg-[#b68036] md:focus:ring-white/80"
                                 >
                                     Shop Collection
                                 </Link>

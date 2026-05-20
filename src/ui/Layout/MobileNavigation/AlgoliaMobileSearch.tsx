@@ -70,7 +70,7 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
 
     const autocompleteInstance = autocomplete({
       container: containerRef.current,
-      placeholder: 'Search',
+      placeholder: 'Search rugs, bags & more...',
       openOnFocus: true,
       detachedMediaQuery: 'none',
       plugins: [recentSearchesPlugin, querySuggestionsPlugin],
@@ -140,34 +140,27 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
       <style jsx global>{`
         /* Mobile-specific Algolia styles */
         .aa-Form {
-          @apply join join-horizontal w-full;
+          @apply relative flex w-full items-center overflow-hidden rounded-xl border border-primary/15 bg-white shadow-sm;
         }
         
         .aa-InputWrapper {
-          @apply join-item w-full relative;
+          @apply relative w-full;
         }
         
         .aa-Input {
-          @apply join-item input input-md input-bordered border-r-0 rounded-l-full w-full;
-          @apply placeholder:text-primary focus:outline-none focus:ring-0 focus:border-gray-300;
-          border-top-right-radius: 0 !important;
-          border-bottom-right-radius: 0 !important;
+          @apply h-10 w-full border-0 bg-transparent pl-10 pr-12 text-[13px] text-base-content placeholder:text-base-content/45 focus:outline-none focus:ring-0;
         }
         
         .aa-SubmitButton {
-          @apply join-item btn btn-outline btn-md border-l-0 rounded-r-full border-gray-300;
-          @apply flex items-center justify-center hover:bg-gray-50;
-          border-top-left-radius: 0 !important;
-          border-bottom-left-radius: 0 !important;
+          @apply absolute left-2.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center text-primary;
         }
         
         .aa-SubmitIcon {
-          @apply w-5 h-5;
+          @apply h-4 w-4;
         }
         
         .aa-Panel {
-          @apply absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1;
-          @apply max-h-80 overflow-y-auto z-50;
+          @apply absolute left-4 right-4 top-full z-50 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-primary/10 bg-white shadow-xl;
         }
         
         .aa-PanelLayout {

@@ -7,6 +7,7 @@ import AlgoliaMobileSearch from './AlgoliaMobileSearch'
 import { getSession } from '@/lib/auth-server'
 import { getConfigBulk } from '@/lib/services/ConfigService'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
+import { HiOutlineAdjustmentsHorizontal, HiOutlineBars3, HiOutlineUserCircle } from 'react-icons/hi2'
 
 
 const MobileNavigation = async () => {
@@ -14,33 +15,52 @@ const MobileNavigation = async () => {
     const algolia = await getConfigBulk(['ALGOLIA_APPID', 'ALGOLIA_KEY_CLIENT', 'ALGOLIA_INDEX', 'ALGOLIA_QUERY_INDEX'])
     return (
         <>
-            <header className='sticky top-0 z-50 bg-base-100'>
-                <div className='flex pt-3 px-3 justify-between items-center'>
-                    <Image src="/vector/menu.svg" alt="Search" width={25} height={25} id='mobile_menu_button' />
-                    <Logo logoClass='text-accent' taglineClass='text-[8px] text-center' />
-                    <div className='flex items-center gap-5'>
-                        <Link href="/user/wishlist"><Image src="/vector/Heart.svg" alt="My Wishlist" width={20} height={20} /></Link>
+            <header className='sticky top-0 z-50 bg-[#fffaf5]/95 px-3 pb-3 pt-2.5 shadow-[0_8px_24px_rgba(69,42,22,0.06)] backdrop-blur relative'>
+                <div className='flex items-center justify-between gap-2'>
+                    <button
+                        type="button"
+                        id='mobile_menu_button'
+                        aria-label="Open menu"
+                        className="flex h-9 w-9 items-center justify-center rounded-full text-primary"
+                    >
+                        <HiOutlineBars3 className="h-7 w-7" aria-hidden="true" />
+                    </button>
+
+                    <Logo logoClass='text-accent text-[1.18rem] min-[380px]:text-[1.32rem] leading-none' taglineClass='text-[7px] min-[380px]:text-[8px] text-center text-base-content' className="min-w-0 flex-1 text-left" />
+
+                    <div className='flex shrink-0 items-center gap-1.5'>
+                        <div className="hidden min-[410px]:block">
+                            <LocaleSwitcher />
+                        </div>
                         {session?.user ? (
-                            <Link href="/user/profile" className='flex items-center flex-col justify-center'>
-                                <Image src="/vector/UserIcon.svg" alt="My Profile" width={20} height={20} />
-                                <span className='text-xs'>{session?.user?.name?.split(' ')[0].slice(0,4) ?? ""}</span>
+                            <Link href="/user/profile" className='flex h-9 items-center gap-1 rounded-lg bg-[#f4ebe4] px-2 text-[11px] font-semibold text-primary'>
+                                <HiOutlineUserCircle className="h-4 w-4" aria-hidden="true" />
+                                <span className='hidden max-w-12 truncate min-[360px]:inline'>Hi, {session?.user?.name?.split(' ')[0] ?? ""}</span>
                             </Link>
                         ) : (
-                            <Link href="/signin" className='flex items-center flex-col justify-center'>
-                                <Image src="/vector/UserIcon.svg" alt="Login" width={20} height={20} />
-                                <span className='text-xs'>Login</span>
+                            <Link href="/signin" className='flex h-9 items-center gap-1 rounded-lg bg-[#f4ebe4] px-2 text-[11px] font-semibold text-primary'>
+                                <HiOutlineUserCircle className="h-4 w-4" aria-hidden="true" />
+                                <span className="hidden min-[360px]:inline">Login</span>
                             </Link>
                         )}
-                        <Link href="/cart"><HeaderCartItemMobile /></Link>
-                        <LocaleSwitcher />
+                        <Link href="/cart" className="flex h-9 w-9 items-center justify-center rounded-full text-primary"><HeaderCartItemMobile /></Link>
                     </div>
-                </div>                <div className='pb-4 pt-5 px-3'>
+                </div>
+
+                <div className='pt-3'>
                     <AlgoliaMobileSearch
                         appId={algolia.ALGOLIA_APPID}
                         apiKey={algolia.ALGOLIA_KEY_CLIENT}
                         indexName={algolia.ALGOLIA_INDEX}
                         querySuggestionsIndex={algolia.ALGOLIA_QUERY_INDEX}
                     />
+                    <button
+                        type="button"
+                        aria-label="Open filters"
+                        className="pointer-events-none absolute right-6 top-[4.6rem] z-10 flex h-9 w-9 items-center justify-center text-primary"
+                    >
+                        <HiOutlineAdjustmentsHorizontal className="h-5 w-5" aria-hidden="true" />
+                    </button>
                 </div>
                 {/* Fallback form for when JavaScript is disabled */}
                 <noscript>

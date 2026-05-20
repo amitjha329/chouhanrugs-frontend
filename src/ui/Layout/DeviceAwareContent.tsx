@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react'
 import { headers } from 'next/headers'
-import clsx from 'clsx'
 import getDevice from '@/utils/getDevice'
 import Navigation from './Navigation'
 import MobileNavigation from './MobileNavigation'
 import Footer from './Footer'
 import SideNav from './MobileNavigation/SideNav'
+import BottomNavigation from '@/ui/BottomNavigation'
 
 interface DeviceAwareContentProps {
     children: ReactNode
@@ -17,13 +17,11 @@ const DeviceAwareContent = async ({ children }: DeviceAwareContentProps) => {
 
     return (
         <>
-            <div 
-                className={clsx('bg-base-100', { "absolute max-w-full transition-all z-20": isMobile })} 
-                id='main_body_container'
-            >
+            <div className='bg-base-100' id='main_body_container'>
                 {isMobile ? <MobileNavigation /> : <Navigation />}
                 {children}
                 <Footer />
+                {isMobile && <BottomNavigation />}
             </div>
             {isMobile && <SideNav />}
         </>

@@ -1,33 +1,44 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const menuButtom = document.getElementById("mobile_menu_button")
-    const close_mobile_menu = document.getElementById("close_mobile_menu")
-    const main_body_container = document.getElementById("main_body_container")
-    let openMenu = true
+document.addEventListener('DOMContentLoaded', function () {
+    const menuButton = document.getElementById('mobile_menu_button')
+    const closeButton = document.getElementById('close_mobile_menu')
+    const overlay = document.getElementById('mobile_menu_overlay')
+    const panel = document.getElementById('mobile_menu_panel')
+    const mainContainer = document.getElementById('main-container')
+    let isOpen = false
 
-    /**
-     * @returns Mouse Event Handler
-     */
-    const handleMenuClick = (e) => {
-        console.log(`menu.clicked ${openMenu ? "close" : "open"}`)
-        if (openMenu) {
-            main_body_container.style.borderRadius = "3rem"
-            main_body_container.style.left = "75%"
-            main_body_container.style.scale = 0.9
-            main_body_container.style.maxHeight = "100vh"
-            main_body_container.style.pointerEvents = "none"
-            main_body_container.style.overflow = "hidden"
-        } else {
-            main_body_container.style.removeProperty("border-radius")
-            main_body_container.style.removeProperty("left")
-            main_body_container.style.removeProperty("scale")
-            main_body_container.style.removeProperty("max-height")
-            main_body_container.style.removeProperty("pointer-events")
-            main_body_container.style.removeProperty("overflow")
+    const setMenuOpen = (open) => {
+        if (!overlay || !panel) return
+
+        isOpen = open
+        overlay.setAttribute('aria-hidden', String(!open))
+        overlay.classList.toggle('pointer-events-none', !open)
+        overlay.classList.toggle('opacity-0', !open)
+        overlay.classList.toggle('opacity-100', open)
+        panel.classList.toggle('-translate-x-full', !open)
+        panel.classList.toggle('translate-x-0', open)
+
+        if (mainContainer) {
+            mainContainer.style.overflow = open ? 'hidden' : ''
         }
-        openMenu = !openMenu
     }
-    if (menuButtom && close_mobile_menu) {
-        menuButtom.addEventListener("click", handleMenuClick)
-        close_mobile_menu.addEventListener("click", handleMenuClick)
-    }
-});
+
+    menuButton?.addEventListener('click', function () {
+        setMenuOpen(true)
+    })
+
+    closeButton?.addEventListener('click', function () {
+        setMenuOpen(false)
+    })
+
+    overlay?.addEventListener('click', function (event) {
+        if (event.target === overlay) {
+            setMenuOpen(false)
+        }
+    })
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && isOpen) {
+            setMenuOpen(false)
+        }
+    })
+})
