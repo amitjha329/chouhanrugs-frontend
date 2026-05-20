@@ -7,10 +7,11 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json pnpm-lock.yaml* ./
+# Install dependencies based on the preferred package manager.
+# pnpm-workspace.yaml carries the approved dependency build-script list used by pnpm v10.
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 RUN \
-  if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --package-import-method copy --frozen-lockfile; \
+  if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && corepack prepare pnpm@10.28.1 --activate && pnpm i --package-import-method copy --frozen-lockfile; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
@@ -48,7 +49,7 @@ ENV MONGODB=$MONGODB \
 
 # Build the application (not standalone)
 RUN \
-  if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && corepack prepare pnpm@10.28.1 --activate && pnpm run build; \
   else npm run build; \
   fi
 
