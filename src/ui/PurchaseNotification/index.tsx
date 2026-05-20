@@ -144,7 +144,7 @@ export default function PurchaseNotification({ products, translations }: { produ
 
     return (
         <div
-            className={`fixed bottom-3 left-3 right-3 z-[9998] transition-all duration-500 ease-out sm:bottom-4 sm:left-4 sm:right-auto ${
+            className={`fixed bottom-3 left-3 right-3 z-[9998] transition-all duration-500 ease-out sm:bottom-4 sm:left-4 sm:right-auto max-sm:hidden ${
                 visible
                     ? "translate-y-0 opacity-100 pointer-events-auto"
                     : "translate-y-8 opacity-0 pointer-events-none"

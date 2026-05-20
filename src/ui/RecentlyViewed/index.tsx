@@ -78,8 +78,9 @@ const RecentlyViewedSidebar = () => {
         <>
             {/* Floating Action Button */}
             <button
+                data-floating-action="true"
                 onClick={() => setIsOpen(true)}
-                className="fixed ~bottom-24/6 right-[5.5rem] z-[9997] rounded-full p-4 bg-secondary text-secondary-content shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
+                className="fixed ~bottom-24/6 right-[5.5rem] z-[9997] translate-y-0 rounded-full bg-secondary p-4 text-secondary-content shadow-lg transition-all duration-300 ease-out will-change-transform hover:scale-110 hover:shadow-xl"
                 aria-label="Recently viewed products"
             >
                 <HiClock size={24} />

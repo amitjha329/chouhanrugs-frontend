@@ -6,6 +6,7 @@ import MobileNavigation from './MobileNavigation'
 import Footer from './Footer'
 import SideNav from './MobileNavigation/SideNav'
 import BottomNavigation from '@/ui/BottomNavigation'
+import MobileNavAutoHide from './MobileNavigation/MobileNavAutoHide'
 
 interface DeviceAwareContentProps {
     children: ReactNode
@@ -21,7 +22,12 @@ const DeviceAwareContent = async ({ children }: DeviceAwareContentProps) => {
                 {isMobile ? <MobileNavigation /> : <Navigation />}
                 {children}
                 <Footer />
-                {isMobile && <BottomNavigation />}
+                {isMobile && (
+                    <>
+                        <BottomNavigation />
+                        <MobileNavAutoHide />
+                    </>
+                )}
             </div>
             {isMobile && <SideNav />}
         </>

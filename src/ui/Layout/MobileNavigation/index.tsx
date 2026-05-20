@@ -15,7 +15,10 @@ const MobileNavigation = async () => {
     const algolia = await getConfigBulk(['ALGOLIA_APPID', 'ALGOLIA_KEY_CLIENT', 'ALGOLIA_INDEX', 'ALGOLIA_QUERY_INDEX'])
     return (
         <>
-            <header className='sticky top-0 z-50 bg-[#fffaf5]/95 px-3 pb-3 pt-2.5 shadow-[0_8px_24px_rgba(69,42,22,0.06)] backdrop-blur relative'>
+            <header
+                id="mobile_top_nav"
+                className='sticky top-0 z-50 translate-y-0 bg-[#fffaf5]/95 px-3 pb-3 pt-2.5 shadow-[0_8px_24px_rgba(69,42,22,0.06)] backdrop-blur relative transition-transform duration-300 ease-out will-change-transform'
+            >
                 <div className='flex items-center justify-between gap-2'>
                     <button
                         type="button"
