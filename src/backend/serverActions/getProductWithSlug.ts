@@ -4,7 +4,6 @@ import converter from "@/utils/mongoObjectConversionUtility";
 import { extractColorsAndSizes } from "./extractColorsSizesFromVariation";
 import ColorDataModel from "@/types/ColorDataModel";
 import SizeDataModel from "@/types/SizeDataModel";
-import { cacheLife, cacheTag } from "next/cache";
 import { locales } from '@/i18n/routing';
 
 interface ProductWithSizeandColorData extends ProductDataModel{
@@ -13,11 +12,6 @@ interface ProductWithSizeandColorData extends ProductDataModel{
 }
 
 async function getProductWithSlugInternal(slug: string): Promise< ProductWithSizeandColorData| undefined> {
-    "use cache";
-
-    cacheLife("seconds");
-    cacheTag("products");
-
     try {
         const db = await getStorefrontDb();
         const product = await db.collection("products").findOne({
