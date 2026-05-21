@@ -1,7 +1,7 @@
 .product_card {
 
     &:hover .wish_button {
-        left: 0.5rem;
+        right: 0.75rem;
     }
 
     &:hover .rating {
@@ -15,7 +15,7 @@
 
     .wish_button {
         transition: all 150ms linear;
-        left: -100px;
+        right: 0.75rem;
     }
 
     .wish_button:not(.active):hover {
@@ -37,7 +37,7 @@
 
     @media (hover: none) and ((pointer: coarse) or (pointer: fine)) {
         .wish_button {
-            left: 0;
+            right: 0.75rem;
         }
 
         .rating {

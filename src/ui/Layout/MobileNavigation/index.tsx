@@ -8,11 +8,45 @@ import { getSession } from '@/lib/auth-server'
 import { getConfigBulk } from '@/lib/services/ConfigService'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
 import { HiOutlineAdjustmentsHorizontal, HiOutlineBars3, HiOutlineUserCircle } from 'react-icons/hi2'
+import { getTranslations } from 'next-intl/server'
+import SignOutClient from '@/ui/SignOutClient'
 
+type SessionUserNameFields = {
+    displayName?: string | null
+    displayUsername?: string | null
+    username?: string | null
+    name?: string | null
+    email?: string | null
+}
+
+const readableEmailUsername = (email?: string | null) => {
+    const emailName = email?.trim().split('@')[0]
+    if (!emailName) return ''
+
+    return emailName
+        .replace(/[._-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .split(/\s+/)[0]
+}
+
+const getSessionDisplayName = (user?: SessionUserNameFields) => {
+    const candidate = [
+        user?.displayName,
+        user?.displayUsername,
+        user?.username,
+        user?.name,
+    ].find((value) => value?.trim())
+
+    return candidate?.trim().split(/\s+/)[0] || readableEmailUsername(user?.email) || 'User'
+}
 
 const MobileNavigation = async () => {
     const session = await getSession()
+    const t = await getTranslations('nav')
     const algolia = await getConfigBulk(['ALGOLIA_APPID', 'ALGOLIA_KEY_CLIENT', 'ALGOLIA_INDEX', 'ALGOLIA_QUERY_INDEX'])
+    const userDisplayName = getSessionDisplayName(session?.user)
+
     return (
         <>
             <header
@@ -36,14 +70,30 @@ const MobileNavigation = async () => {
                             <LocaleSwitcher />
                         </div>
                         {session?.user ? (
-                            <Link href="/user/profile" className='flex h-9 items-center gap-1 rounded-lg bg-[#f4ebe4] px-2 text-[11px] font-semibold text-primary'>
-                                <HiOutlineUserCircle className="h-4 w-4" aria-hidden="true" />
-                                <span className='hidden max-w-12 truncate min-[360px]:inline'>Hi, {session?.user?.name?.split(' ')[0] ?? ""}</span>
-                            </Link>
+                            <div className="dropdown dropdown-end">
+                                <button
+                                    type="button"
+                                    tabIndex={0}
+                                    className='flex h-9 items-center gap-1 rounded-lg bg-[#f4ebe4] px-2 text-[11px] font-semibold text-primary'
+                                    aria-label="Open account menu"
+                                >
+                                    <HiOutlineUserCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                                    <span className='max-w-[6.75rem] truncate leading-none'>Hi, {userDisplayName}</span>
+                                </button>
+                                <ul
+                                    tabIndex={0}
+                                    className="dropdown-content menu menu-sm z-[70] mt-2 w-44 rounded-xl border border-primary/10 bg-[#fffaf5] p-2 text-sm font-semibold text-base-content shadow-xl"
+                                >
+                                    <li><Link href="/user/profile">{t('myProfile')}</Link></li>
+                                    <li><Link href="/user/orders">{t('orders')}</Link></li>
+                                    <li><Link href="/user/wishlist">{t('myWishlist')}</Link></li>
+                                    <li><SignOutClient><span>{t('signOut')}</span></SignOutClient></li>
+                                </ul>
+                            </div>
                         ) : (
                             <Link href="/signin" className='flex h-9 items-center gap-1 rounded-lg bg-[#f4ebe4] px-2 text-[11px] font-semibold text-primary'>
                                 <HiOutlineUserCircle className="h-4 w-4" aria-hidden="true" />
-                                <span className="hidden min-[360px]:inline">Login</span>
+                                <span className="min-[360px]:inline">Login</span>
                             </Link>
                         )}
                         <Link href="/cart" className="flex h-9 w-9 items-center justify-center rounded-full text-primary"><HeaderCartItemMobile /></Link>

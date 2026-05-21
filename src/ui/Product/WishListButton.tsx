@@ -1,5 +1,5 @@
 "use client"
-import React, { MouseEventHandler, useState } from 'react'
+import React, { KeyboardEventHandler, MouseEventHandler, useState } from 'react'
 import ProductsCardStyle from './WishlistButton.module.scss'
 import clsx from 'clsx'
 import { ProductDataModel } from '@/types/ProductDataModel'
@@ -36,15 +36,24 @@ const WishListButton = ({ productDetails }: { productDetails: ProductDataModel }
         }).finally(() => { refreshWishList() })
         setWishAnimate(!wishAnimate)
     }
+    const handleKeyboardToggle: KeyboardEventHandler<HTMLDivElement> = (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return
+        e.preventDefault()
+        e.currentTarget.click()
+    }
     return (
-        <div className={clsx("flex text-xs items-center bg-white rounded-badge p-0 text-black top-2 absolute z-20 cursor-pointer",
+        <div className={clsx("flex h-8 w-8 items-center justify-center rounded-full bg-white/95 p-0 text-black top-3 absolute z-20 cursor-pointer shadow-sm ring-1 ring-black/5 transition hover:bg-white",
             wishAnimate ? ` ${ProductsCardStyle.active} ${ProductsCardStyle.animate}` : "", ProductsCardStyle.wish_button
         )}
             onClick={addToWishlist}
+            aria-label="Toggle wishlist"
+            role="button"
+            tabIndex={0}
+            onKeyDown={handleKeyboardToggle}
         >
             <svg
-                width="35px"
-                height="25px"
+                width="28px"
+                height="22px"
                 xmlns="http://www.w3.org/2000/svg"
             >
                 <g fill="none" fillRule="evenodd">

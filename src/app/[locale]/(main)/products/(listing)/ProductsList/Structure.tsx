@@ -34,7 +34,7 @@ const StructureListing = ({ children, userCurrency }: {
                     <FaAngleDown className="ml-2 h-5 w-5" />
                 </div>
             </div>
-            <div className="container flex flex-row mx-auto py-10 px-10 sm:px-0 gap-x-4 no-scrollbar items-start">
+            <div className="container flex flex-row mx-auto ~py-5/10 px-3 sm:px-0 gap-x-4 no-scrollbar items-start">
                 <div className="basis-1/6 hidden lg:block flex-grow-0 sticky bottom-0">
                     <div className="flex bg-secondary p-5 mb-5 items-center justify-between">
                         <div>Reset Filter</div>

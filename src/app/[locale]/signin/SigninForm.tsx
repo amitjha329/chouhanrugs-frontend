@@ -3,8 +3,10 @@
 import { authClient } from '@/lib/auth-client'
 import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import React, { useCallback, useState, KeyboardEvent } from 'react'
-import { FaSignInAlt } from 'react-icons/fa'
+import React, { KeyboardEvent, useCallback, useState } from 'react'
+import { FiArrowLeft, FiArrowRight, FiBox, FiCheckCircle, FiMail, FiShield } from 'react-icons/fi'
+import { FcGoogle } from 'react-icons/fc'
+import { HiOutlineSparkles } from 'react-icons/hi2'
 
 type propTypes = {
     siteTitle: string,
@@ -19,8 +21,10 @@ const SigninForm = ({ siteTitle }: propTypes) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
+    const callbackURL = () => window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/')
+
     const handleSignInUsingEmail = useCallback(async () => {
-        if (isLoading) return; // Prevent duplicate calls
+        if (isLoading) return;
         if (!email || !email.includes('@')) {
             setError(t('invalidEmail'));
             return;
@@ -49,10 +53,10 @@ const SigninForm = ({ siteTitle }: propTypes) => {
         } finally {
             setIsLoading(false);
         }
-    }, [email, isLoading]);
+    }, [email, isLoading, t]);
 
     const onReady = useCallback(async () => {
-        if (isLoading) return; // Prevent duplicate calls
+        if (isLoading) return;
         if (!code || code.length !== 6) {
             setError(t('invalidOTP'));
             return;
@@ -71,7 +75,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                 setError(t('wrongOTPError'));
                 setIsLoading(false);
             } else if (data) {
-                window.location.href = window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/');
+                window.location.href = callbackURL();
             } else {
                 setError(t('signInFailed'));
                 setIsLoading(false);
@@ -81,7 +85,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
             console.error('Error during sign-in:', err);
             setIsLoading(false);
         }
-    }, [code, email, searchParams, isLoading]);
+    }, [code, email, isLoading, searchParams, t]);
 
     const onKeyPress = useCallback(
         (e: KeyboardEvent) => {
@@ -93,123 +97,154 @@ const SigninForm = ({ siteTitle }: propTypes) => {
     );
 
     return (
-        <div className="sm:mt-10 mt-5 flex flex-col items-center">
-            <div className="w-full flex-1 mt-8">
-                {
-                    !isOTPForm && <>
-                        <div className="flex flex-col items-center">
-                            <button className="w-full max-w-xs sm:max-w-sm font-bold shadow-sm rounded-lg py-3 bg-secondary bg-opacity-40 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow-2xl hover:scale-105 focus:shadow-sm focus:shadow-outline" onClick={e => { authClient.signIn.social({ provider: "google", callbackURL: window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/') }) }}>
-                                <div className="bg-white p-2 rounded-full">
-                                    <svg className="w-4" viewBox="0 0 533.5 544.3">
-                                        <path
-                                            d="M533.5 278.4c0-18.5-1.5-37.1-4.7-55.3H272.1v104.8h147c-6.1 33.8-25.7 63.7-54.4 82.7v68h87.7c51.5-47.4 81.1-117.4 81.1-200.2z"
-                                            fill="#4285f4"
-                                        />
-                                        <path
-                                            d="M272.1 544.3c73.4 0 135.3-24.1 180.4-65.7l-87.7-68c-24.4 16.6-55.9 26-92.6 26-71 0-131.2-47.9-152.8-112.3H28.9v70.1c46.2 91.9 140.3 149.9 243.2 149.9z"
-                                            fill="#34a853"
-                                        />
-                                        <path
-                                            d="M119.3 324.3c-11.4-33.8-11.4-70.4 0-104.2V150H28.9c-38.6 76.9-38.6 167.5 0 244.4l90.4-70.1z"
-                                            fill="#fbbc04"
-                                        />
-                                        <path
-                                            d="M272.1 107.7c38.8-.6 76.3 14 104.4 40.8l77.7-77.7C405 24.6 339.7-.8 272.1 0 169.2 0 75.1 58 28.9 150l90.4 70.1c21.5-64.5 81.8-112.4 152.8-112.4z"
-                                            fill="#ea4335"
-                                        />
-                                    </svg>
-                                </div>
-                                <span className="ml-4">{t('signInWithGoogle')}</span>
-                            </button>
-                        </div>
-                        <div className="sm:my-12 my-7 border-b text-center">
-                            <div className="leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2">
-                                {t('orSignInWithEmail')}
-                            </div>
-                        </div>
-                        <div className="mx-auto max-w-xs sm:max-w-sm ">
+        <div className="w-full">
+            <div className="mb-6 flex flex-wrap items-center gap-2 max-sm:hidden">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                    <HiOutlineSparkles className="h-4 w-4" aria-hidden="true" />
+                    Handloom access
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/60 px-3 py-1 text-xs font-semibold text-secondary-content">
+                    <FiShield className="h-4 w-4" aria-hidden="true" />
+                    Secure OTP
+                </span>
+            </div>
+
+            <div className="mb-7">
+                <h2 className="text-2xl font-semibold leading-tight text-base-content sm:text-3xl">
+                    {isOTPForm ? 'Verify your email' : 'Sign in or create your account'}
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-base-content/65">
+                    {isOTPForm
+                        ? t('otpSent', { email })
+                        : `Continue to ${siteTitle} with Google or a secure email OTP. No password needed.`}
+                </p>
+            </div>
+
+            {!isOTPForm && (
+                <>
+                    <button
+                        className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-sm font-semibold text-base-content shadow-sm transition hover:border-primary/30 hover:bg-base-200 focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60"
+                        onClick={() => { authClient.signIn.social({ provider: "google", callbackURL: callbackURL() }) }}
+                        disabled={isLoading}
+                    >
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-base-100 shadow-sm">
+                            <FcGoogle className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                        <span>{t('signInWithGoogle')}</span>
+                    </button>
+
+                    <div className="my-6 flex items-center gap-4">
+                        <span className="h-px flex-1 bg-base-300" />
+                        <span className="text-xs font-semibold uppercase tracking-wide text-base-content/45">OR</span>
+                        <span className="h-px flex-1 bg-base-300" />
+                    </div>
+
+                    <div className="space-y-3">
+                        <label className="block text-sm font-semibold text-base-content" htmlFor="signin-email">
+                            Email address
+                        </label>
+                        <div className="relative">
+                            <FiMail className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-base-content/45" aria-hidden="true" />
                             <input
-                                className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                id="signin-email"
+                                className="h-14 w-full rounded-2xl border border-base-300 bg-base-100 pl-12 pr-4 text-base font-medium text-base-content shadow-sm placeholder:text-base-content/40 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15"
                                 type="email"
-                                defaultValue={email}
+                                value={email}
                                 onChange={e => setEmail(e.currentTarget.value)}
                                 placeholder={t('emailPlaceholder')}
                                 disabled={isLoading}
+                                autoComplete="email"
                             />
-                            {
-                                searchParams.get('error') && <p className='mb-6 text-red-600 text-opacity-70 font-semibold'>{t('wrongOTP')}</p>
-                            }
-                            {
-                                error && <p className='mb-6 text-red-600 text-opacity-70 font-semibold'>{error}</p>
-                            }
-                            <p className="mt-6 max-sm:mb-6 text-xs text-center">
-                                <b className='text-red-600'>{t('noteLabel')}</b> {t('otpNote', { inbox: 'inbox', spam: 'spam/junk' })}
-                            </p>
-                            {/* <input
-                                className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-                                type="password"
-                                defaultValue={password}
-                                onChange={e => setPassword(e.currentTarget.value)}
-                                placeholder="Password"
-                            /> */}
-                            <button
-                                className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                                onClick={_ => handleSignInUsingEmail()}
-                                disabled={isLoading}
-                            >
-                                <FaSignInAlt className="w-6 h-6 -ml-2" />
-                                <span className="ml-3">{isLoading ? t('sendingOTP') : t('signIn')}</span>
-                            </button>
-                            <p className="mt-6 max-sm:mb-6 text-xs text-gray-600 text-center">
-                                {t('agreeTerms')} {siteTitle}&nbsp;
-                                <a href="#" className="border-b border-gray-500 border-dotted">
-                                    {t('termsOfService')}&nbsp;
-                                </a>
-                                {t('andIts')}&nbsp;
-                                <a href="#" className="border-b border-gray-500 border-dotted">
-                                    {t('privacyPolicy')}
-                                </a>
-                            </p>
                         </div>
-                    </>
-                }
-                {
-                    isOTPForm && <div className='mx-auto max-w-xs sm:max-w-sm '>
-                        {
-                            error && <p className='mb-6 text-red-600 text-opacity-70 font-semibold text-center'>{error}</p>
-                        }
-                        <p className='mb-6 text-primary text-opacity-70 text-center'>{t('otpSent', { email })}</p>
-                        <input
-                            className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white'
-                            maxLength={6}
-                            type='text'
-                            placeholder={t('otpPlaceholder')}
-                            onChange={e => setCode(e.currentTarget.value)}
-                            onKeyDown={onKeyPress}
-                            disabled={isLoading}
-                        />
-                        <button
-                            className="mt-5 tracking-wide font-semibold bg-secondary text-primary hover:text-gray-100 w-full py-4 rounded-lg hover:bg-primary transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                            onClick={_ => onReady()}
-                            disabled={isLoading}
-                        >
-                            <FaSignInAlt className="w-6 h-6 -ml-2" />
-                            <span className="ml-3">{isLoading ? t('verifying') : t('verify')}</span>
-                        </button>
-                        <button
-                            className="mt-3 text-sm text-primary underline hover:text-secondary transition-colors"
-                            onClick={() => {
-                                setIsOTPForm(false);
-                                setCode('');
-                                setError('');
-                            }}
-                            disabled={isLoading}
-                        >
-                            {t('backToEmail')}
-                        </button>
                     </div>
-                }
+
+                    {searchParams.get('error') && <p className="mt-3 text-sm font-semibold text-error/80">{t('wrongOTP')}</p>}
+                    {error && <p className="mt-3 text-sm font-semibold text-error/80">{error}</p>}
+
+                    <button
+                        className="mt-5 flex h-14 w-full items-center justify-center rounded-2xl bg-primary px-5 text-base font-semibold text-primary-content shadow-lg shadow-primary/20 transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-60"
+                        onClick={() => handleSignInUsingEmail()}
+                        disabled={isLoading}
+                    >
+                        <span>{isLoading ? t('sendingOTP') : t('signIn')}</span>
+                        <FiArrowRight className="ml-3 h-5 w-5" aria-hidden="true" />
+                    </button>
+                </>
+            )}
+
+            {isOTPForm && (
+                <div>
+                    {error && <p className="mb-4 text-sm font-semibold text-error/80">{error}</p>}
+                    <label className="block text-sm font-semibold text-base-content" htmlFor="signin-otp">
+                        Verification code
+                    </label>
+                    <input
+                        id="signin-otp"
+                        className="mt-3 h-14 w-full rounded-2xl border border-base-300 bg-base-100 px-4 text-center text-xl font-semibold tracking-[0.35em] text-base-content shadow-sm placeholder:text-base-content/35 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15"
+                        maxLength={6}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder={t('otpPlaceholder')}
+                        onChange={e => setCode(e.currentTarget.value)}
+                        onKeyDown={onKeyPress}
+                        disabled={isLoading}
+                    />
+                    <button
+                        className="mt-5 flex h-14 w-full items-center justify-center rounded-2xl bg-primary px-5 text-base font-semibold text-primary-content shadow-lg shadow-primary/20 transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-60"
+                        onClick={() => onReady()}
+                        disabled={isLoading}
+                    >
+                        <span>{isLoading ? t('verifying') : t('verify')}</span>
+                        <FiArrowRight className="ml-3 h-5 w-5" aria-hidden="true" />
+                    </button>
+                    <button
+                        className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-secondary"
+                        onClick={() => {
+                            setIsOTPForm(false);
+                            setCode('');
+                            setError('');
+                        }}
+                        disabled={isLoading}
+                    >
+                        <FiArrowLeft className="h-4 w-4" aria-hidden="true" />
+                        {t('backToEmail')}
+                    </button>
+                </div>
+            )}
+
+            <div className="mt-6 rounded-2xl border border-base-300 bg-base-200/70 p-4">
+                <div className="grid grid-cols-3 gap-3 text-center">
+                    <div className="min-w-0">
+                        <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-content">
+                            <HiOutlineSparkles className="h-4 w-4" aria-hidden="true" />
+                        </span>
+                        <p className="mt-2 text-[11px] font-semibold leading-4 text-base-content">Premium craft</p>
+                    </div>
+                    <div className="min-w-0">
+                        <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-content">
+                            <FiCheckCircle className="h-4 w-4" aria-hidden="true" />
+                        </span>
+                        <p className="mt-2 text-[11px] font-semibold leading-4 text-base-content">Fast checkout</p>
+                    </div>
+                    <div className="min-w-0">
+                        <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-content">
+                            <FiBox className="h-4 w-4" aria-hidden="true" />
+                        </span>
+                        <p className="mt-2 text-[11px] font-semibold leading-4 text-base-content">Order updates</p>
+                    </div>
+                </div>
             </div>
+
+            <p className="mt-5 text-center text-xs leading-5 text-base-content/55">
+                {t('agreeTerms')} {siteTitle}&nbsp;
+                <a href="#" className="font-semibold text-primary underline-offset-4 hover:underline">
+                    {t('termsOfService')}
+                </a>
+                &nbsp;{t('andIts')}&nbsp;
+                <a href="#" className="font-semibold text-primary underline-offset-4 hover:underline">
+                    {t('privacyPolicy')}
+                </a>
+            </p>
         </div>
     )
 }

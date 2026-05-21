@@ -10,10 +10,40 @@ import { getTranslations } from 'next-intl/server'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
 import { HiOutlineChevronRight, HiOutlineGlobeAlt, HiOutlineHeart, HiOutlineShieldCheck, HiOutlineSparkles, HiOutlineTruck } from 'react-icons/hi2'
 
+type SessionUserNameFields = {
+    displayName?: string | null
+    displayUsername?: string | null
+    username?: string | null
+    name?: string | null
+    email?: string | null
+}
+
+const readableEmailUsername = (email?: string | null) => {
+    const emailName = email?.trim().split('@')[0]
+    if (!emailName) return ''
+
+    return emailName
+        .replace(/[._-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .split(/\s+/)[0]
+}
+
+const getSessionDisplayName = (user?: SessionUserNameFields) => {
+    const candidate = [
+        user?.displayName,
+        user?.displayUsername,
+        user?.username,
+        user?.name,
+    ].find((value) => value?.trim())
+
+    return candidate?.trim().split(/\s+/)[0] || readableEmailUsername(user?.email)
+}
+
 const SideNav = async () => {
     const session = await getSession()
     const t = await getTranslations('nav')
-    const userName = session?.user?.name ?? session?.user?.email ?? ''
+    const userName = getSessionDisplayName(session?.user)
 
     const primaryLinks = [
         { href: '/', label: 'Home', Icon: FiHome },

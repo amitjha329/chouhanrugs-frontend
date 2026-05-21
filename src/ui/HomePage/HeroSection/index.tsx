@@ -13,7 +13,7 @@ import Link from 'next/link'
 const promises = [
     {
         icon: freeShippingIcon,
-        title: 'Free worldwide shipping',
+        title: 'Free shipping',
         description: 'On all orders over $99',
     },
     {
@@ -70,7 +70,7 @@ const HeroSection = async ({ slider }: { slider: SliderDataModel }) => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-x-3 gap-y-6 pb-2 min-[390px]:grid-cols-4 sm:grid-flow-row sm:grid-cols-4 sm:overflow-visible md:grid-cols-6 lg:grid-cols-8">
+                <div className="grid gap-x-5 gap-y-6 pb-2 grid-cols-4 sm:overflow-visible lg:grid-cols-9">
                     <CategoriesInHero />
                 </div>
             </div>

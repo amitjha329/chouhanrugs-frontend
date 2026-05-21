@@ -22,10 +22,10 @@ const CategoriesInHero = async () => {
                   fill
                   loading="eager"
                   sizes="(max-width: 640px) 96px, (max-width: 1024px) 150px, 180px"
-                  className="object-cover transition duration-500 group-hover:scale-105"
+                  className="object-cover transition duration-500 group-hover:scale-110"
                 />
               </div>
-              <div className="flex min-h-[48px] items-start justify-center px-1 pt-3 text-center text-[0.92rem] font-medium leading-5 text-neutral-950 sm:min-h-[56px] sm:items-center sm:px-2 sm:py-2 sm:text-[12px] sm:font-semibold sm:leading-4 sm:text-neutral-900">
+              <div className="flex min-h-[48px] items-start justify-center px-1 pt-3 text-center text-xs font-medium leading-5 text-neutral-950 sm:min-h-[56px] sm:items-center sm:px-2 sm:py-2 sm:text-[12px] sm:font-semibold sm:leading-4 sm:text-neutral-900">
                 {category.name}
               </div>
             </Link>
