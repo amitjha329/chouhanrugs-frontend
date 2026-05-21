@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**.caredone.in' },
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
       { protocol: 'https', hostname: 'storage.googleapis.com' },
-      { protocol: 'https', hostname: '**.firebasestorage.app' },
+      { protocol: 'https', hostname: '**.firebasestorage.app' }
     ]
   },
   redirects: async () => {
@@ -98,6 +98,7 @@ const nextConfig: NextConfig = {
         'www.googleadservices.com',
         'www.google.com',
         'www.gstatic.com',
+        '*.cloudflareinsights.com'
       ],
       'connect-src': [
         "'self'",
@@ -124,6 +125,7 @@ const nextConfig: NextConfig = {
         '*.google.com',
         'ipapi.co',
         '*.ipapi.co',
+        '*.cloudflareinsights.com',
         'data:',
         'gap:',
         'ws:',
@@ -146,6 +148,7 @@ const nextConfig: NextConfig = {
         '*.google-analytics.com',
         '*.doubleclick.net',
         '*.google.com',
+        '*.cloudflareinsights.com'
       ],
       'child-src': [
         "'self'",
@@ -161,6 +164,7 @@ const nextConfig: NextConfig = {
         '*.razorpay.com',
         'paypal.com',
         '*.paypal.com',
+        '*.cloudflareinsights.com'
       ],
       'style-src': [
         "'self'",
@@ -178,11 +182,12 @@ const nextConfig: NextConfig = {
         'paypal.com',
         '*.paypal.com',
         'fonts.googleapis.com',
+        '*.cloudflareinsights.com'
       ],
       'font-src': ["'self'", '*'],
       'object-src': ["'none'"],
-      'img-src': ["'self'", '*', '*.google-analytics.com', '*.googletagmanager.com', '*.googleadservices.com', 'data:', 'blob:'],
-      'media-src': ["'self'", '*', '*.chouhanrugs.com', '*.caredone.in', 'firebasestorage.googleapis.com', 'storage.googleapis.com', '*.firebasestorage.app', 'data:', 'blob:'],
+      'img-src': ["'self'", '*', '*.google-analytics.com', '*.googletagmanager.com', '*.googleadservices.com','*.cloudflareinsights.com', 'data:', 'blob:'],
+      'media-src': ["'self'", '*', '*.chouhanrugs.com', '*.caredone.in', 'firebasestorage.googleapis.com', 'storage.googleapis.com', '*.firebasestorage.app','*.cloudflareinsights.com', 'data:', 'blob:'],
     }
 
     const ContentSecurityPolicy = buildCsp(cspDirectives)
