@@ -1,6 +1,7 @@
 import clientPromise from '@/lib/clientPromise'
 import { decryptValue } from '@/lib/encryption'
 import type AppConfigDataModel from '@/lib/types/AppConfigDataModel'
+import { cacheLife, cacheTag } from 'next/cache'
 
 const COLLECTION = 'app_config'
 
@@ -29,6 +30,12 @@ async function getCollection() {
  * Get a single config value by key. Decrypts secret-tier values automatically.
  */
 export async function getConfig(key: string, defaultValue: string = ''): Promise<string> {
+    'use cache'
+
+    cacheLife('seconds')
+    cacheTag('app-config')
+    cacheTag(`app-config-${key}`)
+
     const cached = cache.get(key)
     if (cached && (Date.now() - cached.fetchedAt) < cacheTTL) {
         return cached.value
@@ -59,6 +66,12 @@ export async function getConfig(key: string, defaultValue: string = ''): Promise
  * Get multiple config values by keys. Returns a Record<key, value>.
  */
 export async function getConfigBulk(keys: string[]): Promise<Record<string, string>> {
+    'use cache'
+
+    cacheLife('seconds')
+    cacheTag('app-config')
+    keys.forEach((key) => cacheTag(`app-config-${key}`))
+
     const result: Record<string, string> = {}
     const uncachedKeys: string[] = []
 

@@ -5,7 +5,6 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ImageSection from '@/ui/Layout/ProductPage/ImageSection'
 import { headers } from 'next/headers'
-import { connection } from 'next/server'
 import getDevice from '@/utils/getDevice'
 import PriceAndVariation from '@/ui/Layout/ProductPage/PricingAndVariations'
 import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
@@ -14,12 +13,18 @@ import { ProductDataModel } from '@/types/ProductDataModel'
 import { serializeForClient } from '@/utils/serializeForClient'
 import TrackProductView from '@/ui/RecentlyViewed/TrackProductView'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
-import { type Locale } from '@/i18n/routing'
+import { locales, type Locale } from '@/i18n/routing'
 import ProductCraftStorySection from '@/ui/Layout/ProductPage/ProductCraftStorySection'
 
+const PRODUCT_BUILD_PLACEHOLDER = '__product_build_placeholder__'
+
+export function generateStaticParams() {
+    return locales.map(locale => ({ locale, productId: PRODUCT_BUILD_PLACEHOLDER }))
+}
+
 export async function generateMetadata(props: { params: Promise<{ productId: string, locale: string }> }): Promise<Metadata> {
-    await connection()
     const params = await props.params;
+    if (params.productId === PRODUCT_BUILD_PLACEHOLDER) return {}
     const data = await getProductWithSlug(params.productId)
     if (data == undefined) return {}
     const locale = params.locale as Locale
@@ -158,12 +163,13 @@ async function RelatedProductsSection({ product, isMobile }: { product: ProductD
  * - Responsive design with device detection
  */
 const ProductPage = async (props: { params: Promise<{ productId: string, locale: string }> }) => {
-    await connection()
     const params = await props.params;
 
     const {
         productId
     } = params;
+
+    if (productId === PRODUCT_BUILD_PLACEHOLDER) return notFound()
 
     const locale = params.locale as Locale
 

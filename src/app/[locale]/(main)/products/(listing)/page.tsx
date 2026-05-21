@@ -1,6 +1,7 @@
 import { type Locale } from '@/i18n/routing'
 import { getStaticPageMetadata } from '@/lib/pageMetadata'
 import { Metadata } from 'next'
+import { connection } from 'next/server'
 import React from 'react'
 import ProductList from './ProductsList'
 
@@ -17,6 +18,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 }
 
 const ProductsListPage = async (props: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
+    await connection()
     const searchParams = await props.searchParams;
     return (
         <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} />

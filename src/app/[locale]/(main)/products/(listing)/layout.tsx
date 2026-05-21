@@ -4,8 +4,10 @@ import StructureListing from './ProductsList/Structure'
 import { cookies } from 'next/headers'
 import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 import { getConfigBulk } from '@/lib/services/ConfigService'
+import { connection } from 'next/server'
 
 const ProductListingLayout = async ({ children }: { children: React.ReactNode }) => {
+    await connection()
     const cookie = await cookies()
     const currencies = await getCurrencyList()
     const userCurrency = cookie.get('userCurrency')?.value ? JSON.parse(cookie.get('userCurrency')!.value) : currencies[0]
