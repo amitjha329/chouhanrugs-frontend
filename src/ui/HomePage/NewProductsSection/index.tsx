@@ -53,6 +53,14 @@ const NewProductsSection = async () => {
   return (
     <section className="bg-[#fbf7ef] py-8 md:py-14">
       <div className="fluid_container mx-auto ~px-4/0">
+        <div className='md:hidden mb-3'>
+          <h2 className="font-serif text-[32px] leading-none text-[#1f1a17] md:text-[54px]">
+            Shop by New Arrivals
+          </h2>
+          <p className="mt-2 text-sm text-[#7b6f65] md:text-base">
+            Unique designs, timeless quality.
+          </p>
+        </div>
         <div className="overflow-hidden rounded-[28px] bg-white shadow-[0_20px_44px_rgba(83,53,28,0.12)]">
           <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_0.98fr]">
             <Link
@@ -111,7 +119,7 @@ const NewProductsSection = async () => {
                   </Link>
                 </div>
 
-                <div className="mt-7 grid grid-cols-2 gap-3 md:grid-cols-4">
+                <div className="mt-7 grid grid-cols-2 gap-3 md:grid-cols-4 max-md:hidden">
                   {featureItems.map((item) => {
                     const Icon = item.icon
 
@@ -136,7 +144,7 @@ const NewProductsSection = async () => {
         </div>
 
         <div className="mb-5 mt-8 flex items-end justify-between gap-4 md:mb-6 md:mt-10">
-          <div>
+          <div className='max-md:hidden'>
             <h2 className="font-serif text-[32px] leading-none text-[#1f1a17] md:text-[54px]">
               Shop by New Arrivals
             </h2>

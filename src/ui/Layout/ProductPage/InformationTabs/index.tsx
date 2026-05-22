@@ -213,7 +213,7 @@ const InformationTabs = ({ product, compact = false }: { product: ProductDataMod
                         >
                             <button
                                 type="button"
-                                className={compact ? "flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[13px] font-semibold text-neutral-950 transition-colors hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/30" : "flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-base font-semibold text-neutral-950 transition-colors hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary/30 md:px-6 md:py-5"}
+                                className={compact ? "flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[13px] font-semibold text-neutral-950 transition-colors hover:text-primary" : "flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-base font-semibold text-neutral-950 transition-colors hover:bg-neutral-50 md:px-6 md:py-5"}
                                 onClick={() => handleDropdownToggle(tab.id)}
                                 aria-expanded={isOpen}
                                 aria-controls={`product-info-${tab.id}`}

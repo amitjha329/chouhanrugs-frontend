@@ -108,7 +108,7 @@ const ProductCardItem = (props: CompoProps) => {
                         <Image
                             src={primaryImage}
                             alt={name}
-                            className="!absolute inset-0 !h-full !w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                            className="!absolute inset-0 !h-full !w-full object-fill transition duration-700 group-hover:scale-[1.04]"
                             fill
                             placeholder="blur"
                             blurDataURL={blurPlaceholders.warmNeutral}
@@ -161,7 +161,7 @@ const ProductCardItem = (props: CompoProps) => {
                         <Image
                             src={primaryImage}
                             alt={name}
-                            className="!absolute inset-0 !h-full !w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+                            className="!absolute inset-0 !h-full !w-full object-fill transition duration-500 group-hover:scale-[1.035]"
                             fill
                             placeholder="blur"
                             blurDataURL={blurPlaceholders.warmNeutral}
@@ -173,7 +173,7 @@ const ProductCardItem = (props: CompoProps) => {
                         <Image
                             src={primaryImage}
                             alt={name}
-                            className="!relative !h-full !w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+                            className="!relative !h-full !w-full object-fill transition duration-500 group-hover:scale-[1.035]"
                             width={400}
                             height={400}
                             placeholder="blur"

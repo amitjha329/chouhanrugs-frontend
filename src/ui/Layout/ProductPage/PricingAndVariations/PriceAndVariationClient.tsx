@@ -16,6 +16,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { MouseEventHandler, useState } from 'react'
 import { FaHeart } from 'react-icons/fa'
+import { FiChevronDown, FiMail, FiMessageSquare, FiShare2 } from 'react-icons/fi'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { useLocale } from 'next-intl'
 import { type Locale } from '@/i18n/routing'
@@ -27,7 +28,13 @@ interface VariationExtraDataModel extends ProductDataModel {
 
 const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtraDataModel, siteData: SiteDataModel }) => {
     const locale = useLocale() as Locale
+    const productName = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)
     const productURL = resolveLocalizedString(product.productURL, locale)
+    const shareUrl = `https://chouhanrugs.com/products/${productURL ? encodeURIComponent(productURL) : ''}`
+    const shareText = `Take a look at this product from Chouhan Rugs: ${productName}`
+    const whatsappShareHref = `https://wa.me/${siteData.contact_details.whatsapp}?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`
+    const mailShareHref = `mailto:${siteData.contact_details.email}?subject=${encodeURIComponent(productName)}&body=${encodeURIComponent(`${shareText}\n\n${shareUrl}`)}`
+    const smsShareHref = `sms:?&body=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`
     const {
         variation,
         selectedColor,
@@ -69,6 +76,25 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
     const [quantity, setQuantity] = React.useState(1);
     // Add state for button loading/disabled
     const [actionLoading, setActionLoading] = React.useState(false);
+    const [shareMenuOpen, setShareMenuOpen] = React.useState(false);
+
+    const canUseNativeShare = typeof navigator !== 'undefined' && 'share' in navigator;
+
+    const handleNativeShare = async () => {
+        if (!canUseNativeShare) return;
+
+        try {
+            await navigator.share({
+                title: productName,
+                text: shareText,
+                url: shareUrl,
+            });
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setShareMenuOpen(false);
+        }
+    };
 
     // Use context's current variation object for price and msrp
     const getCurrentVariation = React.useCallback(() => {
@@ -318,7 +344,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                     );
                                 }}
                             >
-                                Buy Now
+                                <span className='animate-pulse'>Buy Now</span>
                             </button>
 
                             <button
@@ -402,21 +428,69 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                         <div className="flex flex-row gap-2 w-full">
                             <Link
                                 className={`w-full flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-center text-[11px] font-semibold tracking-wide text-neutral-700 transition-all duration-150 ease-in-out hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                                aria-label="Request bulk order"
+                                aria-label="Request bulk or custom order"
                                 target='_blank'
-                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20bulk%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${productURL ? encodeURIComponent(productURL) : ''}`}
+                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=${encodeURIComponent(`I want to request a bulk or custom order for:\n${shareUrl}`)}`}
                             >
-                                Bulk Order
+                                Bulk & Custom Order
                             </Link>
 
-                            <Link
-                                className={`w-full flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-center text-[11px] font-semibold tracking-wide text-neutral-700 transition-all duration-150 ease-in-out hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                                aria-label="Request custom order"
-                                target='_blank'
-                                href={`https://wa.me/${siteData.contact_details.whatsapp}?text=I%20want%20to%20request%20a%20custom%20order%20for%3A%0Ahttps://chouhanrugs.com/products/${productURL ? encodeURIComponent(productURL) : ''}`}
-                            >
-                                Custom Order
-                            </Link>
+                            <div className="relative w-full flex-1">
+                                <button
+                                    type="button"
+                                    className={`flex w-full items-center justify-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-center text-[11px] font-semibold tracking-wide text-neutral-700 transition-all duration-150 ease-in-out hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${actionLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                    aria-label="Share product"
+                                    aria-expanded={shareMenuOpen}
+                                    disabled={actionLoading}
+                                    onClick={() => setShareMenuOpen((open) => !open)}
+                                >
+                                    <FiShare2 className="h-3.5 w-3.5" aria-hidden="true" />
+                                    Share
+                                    <FiChevronDown className={clsx("h-3.5 w-3.5 transition", shareMenuOpen && 'rotate-180')} aria-hidden="true" />
+                                </button>
+
+                                {shareMenuOpen && (
+                                    <div className="absolute right-0 top-[calc(100%+0.4rem)] z-20 min-w-full overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-lg">
+                                        <div className="flex flex-col p-1">
+                                            <Link
+                                                href={whatsappShareHref}
+                                                target="_blank"
+                                                className="flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium text-neutral-700 transition hover:bg-neutral-50 hover:text-primary"
+                                                onClick={() => setShareMenuOpen(false)}
+                                            >
+                                                <FiShare2 className="h-3.5 w-3.5" aria-hidden="true" />
+                                                WhatsApp
+                                            </Link>
+                                            <Link
+                                                href={mailShareHref}
+                                                className="flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium text-neutral-700 transition hover:bg-neutral-50 hover:text-primary"
+                                                onClick={() => setShareMenuOpen(false)}
+                                            >
+                                                <FiMail className="h-3.5 w-3.5" aria-hidden="true" />
+                                                Email
+                                            </Link>
+                                            <Link
+                                                href={smsShareHref}
+                                                className="flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium text-neutral-700 transition hover:bg-neutral-50 hover:text-primary"
+                                                onClick={() => setShareMenuOpen(false)}
+                                            >
+                                                <FiMessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                                                SMS
+                                            </Link>
+                                            {canUseNativeShare && (
+                                                <button
+                                                    type="button"
+                                                    className="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[12px] font-medium text-neutral-700 transition hover:bg-neutral-50 hover:text-primary"
+                                                    onClick={handleNativeShare}
+                                                >
+                                                    <FiShare2 className="h-3.5 w-3.5" aria-hidden="true" />
+                                                    More options
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </>
                 )}

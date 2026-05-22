@@ -70,7 +70,7 @@ const NewProductCard = (product: itemProps) => {
             src={primaryImage}
             alt={name}
             fill
-            className="object-cover transition duration-500 group-hover:scale-[1.035]"
+            className="object-fill transition duration-500 group-hover:scale-[1.035]"
             loading={shouldLoadEager ? 'eager' : 'lazy'}
             placeholder="blur"
             blurDataURL={blurDataURL}

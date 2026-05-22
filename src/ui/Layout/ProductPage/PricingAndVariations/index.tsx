@@ -24,27 +24,29 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
     const siteData = await getSiteData()
     const t = await getTranslations('product')
     const locale = await getLocale() as Locale
-    const name = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)
+    const name = resolveLocalizedString(product.productName, locale)
+    const title = resolveLocalizedString(product.productTitle, locale)
     const shortDesc = resolveLocalizedString(product.productDescriptionShort, locale)
     const category = product.productCategory?.trim() || 'Rug'
     return (
         <aside className='lg:sticky lg:top-24'>
             <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-[0_16px_48px_rgba(37,30,20,0.07)]">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="inline-flex max-w-full items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
-                        <span className="text-neutral-500">Category</span>
-                        <span className="truncate normal-case tracking-normal text-neutral-950">{category}</span>
+                    <span className="inline-flex max-w-full items-center gap-1.5 uppercase tracking-[0.12em] text-primary">
+                        <span className="text-neutral-500 font-thin text-xs">Category: </span>
+                        <span className="truncate normal-case tracking-normal text-neutral-950 ~text-sm/base">{category}</span>
                     </span>
                     <span className="rounded-full border border-emerald-200 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                         In stock
                     </span>
                 </div>
-                <div className="mt-3 border-b border-neutral-200 pb-3">
-                    <p id="product-name-label" className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
-                        Product name
+                <div className="mt-2 border-b border-neutral-200 pb-3">
+                    <p id="product-name-label" className="mb-1 uppercase gap-1.5 tracking-[0.14em] text-neutral-500 ~text-base/xl">
+                        {/* <span className="text-neutral-500 font-thin text-xs">Product name:</span> */}
+                        <span className="truncate normal-case tracking-normal text-neutral-950 font-semibold">{name}</span>
                     </p>
-                    <h1 aria-describedby="product-name-label" className="text-base font-semibold leading-snug text-neutral-950 md:text-lg">
-                        {name}
+                    <h1 aria-describedby="product-name-label" className="leading-snug text-neutral-950 ~text-sm/base">
+                        {title}
                     </h1>
                 </div>
                 <div className="mb-3 mt-3 flex items-center text-[11px] text-neutral-500">
@@ -61,7 +63,7 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
                     </div>
                     <span className="ml-2">{t('reviewCount')}</span>
                     <span className="mx-2">/</span>
-                    {/* <a href="#">Write A Review</a> */}
+                    <a href="#">Write A Review</a>
                 </div>
                 <PriceAndVariationClient product={product} siteData={siteData} />
                 <p className="border-t border-neutral-200 py-3 text-[13px] leading-5 text-neutral-600">
