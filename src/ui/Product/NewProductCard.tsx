@@ -12,6 +12,7 @@ import { FiArrowRight, FiShoppingBag } from 'react-icons/fi'
 interface itemProps extends ProductDataModelWithColorMap {
   className?: string
   index?: number
+  variant?: 'default' | 'feature'
 }
 
 // Tiny transparent placeholder for blur effect - helps with perceived performance
@@ -26,6 +27,7 @@ const NewProductCard = (product: itemProps) => {
   const discountValue = Number.parseFloat(String(product.productDiscountPercentage ?? '0'))
   const discountLabel = Number.isFinite(discountValue) && discountValue > 0 ? `${discountValue}% OFF` : null
   const shouldLoadEager = (product.index ?? 0) < 2
+  const isFeature = product.variant === 'feature'
 
   // Calculate least selling price (after discount) among all variations and the main product
   let leastSellingPrice: string;
@@ -68,50 +70,91 @@ const NewProductCard = (product: itemProps) => {
   if (!primaryImage) return null
 
   return (
-    <article className={clsx('group overflow-hidden rounded-2xl border border-[#eadfd6] bg-white text-left shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#d6bda9] hover:shadow-lg', product.className)}>
-      <Link href={'/products/' + slugify(url, { lower: true, strict: true })} className="block h-full" prefetch={false}>
-        <div className="relative overflow-hidden bg-[#f6eee7]">
+    <article className={clsx(
+      'group overflow-hidden rounded-xl border border-primary/10 bg-base-100 text-left shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md',
+      isFeature && 'lg:h-full',
+      product.className
+    )}>
+      <Link href={'/products/' + slugify(url, { lower: true, strict: true })} className={clsx('block', isFeature && 'lg:h-full')} prefetch={false}>
+        <div className={clsx('relative overflow-hidden bg-secondary/30', isFeature && 'lg:h-full')}>
           <Image
             src={primaryImage}
             alt={name}
             width={420}
-            height={520}
-            className="aspect-[4/5] w-full object-fill transition duration-300 group-hover:scale-[1.03]"
+            height={420}
+            className={clsx(
+              'w-full object-cover transition duration-500 group-hover:scale-[1.03]',
+              isFeature ? 'aspect-[1.25/1] lg:h-full lg:aspect-auto' : 'aspect-[1.45/1]'
+            )}
             loading={shouldLoadEager ? 'eager' : 'lazy'}
             placeholder="blur"
             blurDataURL={blurDataURL}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            sizes={isFeature ? '(max-width: 1024px) 100vw, 30vw' : '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw'}
+          />
+          <div
+            className={clsx(
+              'pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent',
+              isFeature ? 'h-2/3 opacity-100' : 'h-1/3 opacity-0 transition group-hover:opacity-100'
+            )}
+            aria-hidden="true"
           />
           {discountLabel && (
-            <span className="absolute left-2 top-2 rounded-md bg-[#d60911] px-2 py-1 text-[10px] font-bold uppercase leading-none text-white shadow-sm sm:left-3 sm:top-3">
+            <span className="absolute left-2 top-2 rounded-md bg-error px-1.5 py-1 text-[9px] font-bold uppercase leading-none text-error-content shadow-sm">
               {discountLabel}
             </span>
           )}
+
+          {isFeature && (
+            <div className="absolute inset-x-0 bottom-0 p-3 text-white sm:p-3.5">
+              <p className="inline-flex items-center gap-1.5 rounded-full bg-white/18 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.13em] backdrop-blur">
+                <FiShoppingBag className="h-3 w-3" aria-hidden="true" />
+                New arrival
+              </p>
+              <h3 className="mt-2 line-clamp-2 font-serif text-lg leading-tight sm:text-xl">
+                {name}
+              </h3>
+              <div className="mt-2 flex items-end justify-between gap-3">
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="text-base font-bold leading-none">${leastSellingPrice}</span>
+                  {Number(leastMSRP) > Number(leastSellingPrice) && (
+                    <span className="text-xs font-medium text-white/72 line-through">${leastMSRP}</span>
+                  )}
+                </div>
+                <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-primary transition group-hover:translate-x-0.5" aria-hidden="true">
+                  <FiArrowRight className="h-3.5 w-3.5" />
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex min-h-[128px] flex-col p-3 sm:min-h-[142px] sm:p-4">
-          <p className="line-clamp-1 text-[11px] leading-4 text-[#7d7169] sm:text-xs">{product.productCategory}</p>
-          <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-[#25170e] sm:text-[15px]">
-            {name}
-          </h3>
+        {!isFeature && (
+          <div className="flex min-h-[74px] flex-col p-2 sm:min-h-[82px] sm:p-2.5">
+            <p className="line-clamp-1 text-[9px] font-medium leading-3 text-base-content/55">
+              {product.productCategory}
+            </p>
+            <h3 className="line-clamp-2 text-[11px] font-semibold leading-[1.25] text-base-content">
+              {name}
+            </h3>
 
-          <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <span className="text-sm font-bold leading-5 text-[#5b2f12] sm:text-base">${leastSellingPrice}</span>
-            {Number(leastMSRP) > Number(leastSellingPrice) && (
-              <span className="text-[11px] font-medium leading-4 text-[#8b817a] line-through sm:text-xs">${leastMSRP}</span>
-            )}
-          </div>
+            <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
+              <span className="text-xs font-bold leading-5 text-primary">${leastSellingPrice}</span>
+              {Number(leastMSRP) > Number(leastSellingPrice) && (
+                <span className="text-[9px] font-medium leading-4 text-base-content/45 line-through">${leastMSRP}</span>
+              )}
+            </div>
 
-          <div className="mt-auto flex items-center justify-between gap-2 pt-3">
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#6c584b] sm:text-xs">
-              <FiShoppingBag className="h-3.5 w-3.5" aria-hidden="true" />
-              New
-            </span>
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#f1e6dd] text-[#5b2f12] transition group-hover:bg-[#5b2f12] group-hover:text-white" aria-hidden="true">
-              <FiArrowRight className="h-4 w-4" />
-            </span>
+            <div className="mt-auto flex items-center justify-between gap-2 pt-1">
+              <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-base-content/60">
+                <FiShoppingBag className="h-3 w-3" aria-hidden="true" />
+                New
+              </span>
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-secondary/55 text-primary transition group-hover:bg-primary group-hover:text-primary-content" aria-hidden="true">
+                <FiArrowRight className="h-3.5 w-3.5" />
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </Link>
     </article>
   )
