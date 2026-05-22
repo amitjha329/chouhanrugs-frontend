@@ -89,7 +89,7 @@ const ProductCraftStorySection = ({ section }: { section?: ProductCraftSection }
                             ))}
                         </dl>
 
-                        <ol className="mt-5 grid gap-4 md:grid-cols-3">
+                        <ol className="mt-5 grid gap-4 md:grid-cols-3 pl-2 md:pl-0">
                             {content.steps.map((step, index) => (
                                 <li key={`${step.title}-${index}`} className="relative border-l border-neutral-200 pl-4">
                                     <span className="absolute -left-[13px] flex h-6 w-6 items-center justify-center rounded-full border border-primary bg-white text-[11px] font-semibold text-primary" aria-hidden="true">
