@@ -37,6 +37,7 @@ function stripHtml(html: string): string {
 
 interface ProductEntry {
     productName: LocalizedField<string>;
+    productTitle?: LocalizedField<string>;
     productURL: LocalizedField<string>;
     productDescriptionShort: LocalizedField<string>;
     productDescriptionLong: LocalizedField<string>;
@@ -112,7 +113,7 @@ export async function GET(request: Request): Promise<Response> {
                 : '';
 
         lines.push(
-            `## ${resolveLocalizedString(p.productName, locale)}`,
+            `## ${resolveLocalizedString(p.productTitle, locale) || resolveLocalizedString(p.productName, locale)}`,
             '',
             `- URL: /products/${encodeURIComponent(resolveLocalizedString(p.productURL, locale))}`,
             `- Category: ${p.productCategory ?? 'Uncategorized'}`,

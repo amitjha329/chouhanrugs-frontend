@@ -28,7 +28,8 @@ export async function generateMetadata(props: { params: Promise<{ productId: str
     const data = await getProductWithSlug(params.productId)
     if (data == undefined) return {}
     const locale = params.locale as Locale
-    const name = resolveLocalizedString(data.metaTitle, locale) || resolveLocalizedString(data.productName, locale)
+    const productDisplayName = resolveLocalizedString(data.productTitle, locale) || resolveLocalizedString(data.productName, locale)
+    const name = resolveLocalizedString(data.metaTitle, locale) || productDisplayName
     const desc = resolveLocalizedString(data.metaDescription, locale) || resolveLocalizedString(data.productDescriptionShort, locale)
     const dataAdditional = await getSiteData()
     return {
@@ -189,7 +190,7 @@ const ProductPage = async (props: { params: Promise<{ productId: string, locale:
     // Build compact product data for recently viewed tracking
     const trackData = {
         slug: resolveLocalizedString(data.productURL, locale),
-        name: resolveLocalizedString(data.productName, locale),
+        name: resolveLocalizedString(data.productTitle, locale) || resolveLocalizedString(data.productName, locale),
         image: data.images?.[data.productPrimaryImageIndex] ?? data.images?.[0] ?? '',
         price: Number(data.productSellingPrice),
         msrp: Number(data.productMSRP),

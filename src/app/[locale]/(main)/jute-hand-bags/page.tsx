@@ -321,7 +321,7 @@ function ArrowRightIcon({ className = "w-5 h-5" }: { className?: string }) {
 /*  Product Card                                                      */
 /* ------------------------------------------------------------------ */
 function ProductCard({ product, index, locale }: { product: ProductDataModel; index: number; locale: Locale }) {
-    const name = resolveLocalizedString(product.productName, locale)
+    const name = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)
     const url = resolveLocalizedString(product.productURL, locale)
     // Calculate selling price (after discount)
     const variations = product.variations ?? []

@@ -9,6 +9,7 @@ export interface ProductDataModel {
     highlights: LocalizedField<string[]>;
     careInstructions: LocalizedField<string[]>;
     productName: LocalizedField<string>;
+    productTitle?: LocalizedField<string>;
     productURL: LocalizedField<string>;
     productBrand: string;
     productBaseColor: string;

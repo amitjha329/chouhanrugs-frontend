@@ -15,7 +15,7 @@ import { type Locale } from '@/i18n/routing'
 const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurrency: Currency }) => {
     const locale = useLocale() as Locale
     const product = item.cartProduct[0]
-    const name = product ? resolveLocalizedString(product.productName, locale) : ''
+    const name = product ? resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale) : ''
     const url = product ? resolveLocalizedString(product.productURL, locale) : ''
 
     const calculateProductPrice = (): number => {

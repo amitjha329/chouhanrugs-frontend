@@ -10,7 +10,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
 import slugify from 'slugify'
-import { FiShoppingBag, FiStar } from 'react-icons/fi'
+import { FiArrowRight, FiStar } from 'react-icons/fi'
 
 interface CompoProps extends ProductDataModelWithColorMap {
     className?: string,
@@ -26,7 +26,7 @@ interface CompoProps extends ProductDataModelWithColorMap {
 const ProductCardItem = (props: CompoProps) => {
     const t = useTranslations('product')
     const locale = useLocale() as Locale
-    const name = resolveLocalizedString(props.productName, locale)
+    const name = resolveLocalizedString(props.productTitle, locale) || resolveLocalizedString(props.productName, locale)
     const url = resolveLocalizedString(props.productURL, locale)
     const productVariations = props.variations ?? []
     const productHref = '/products/' + slugify(url, {
@@ -82,16 +82,16 @@ const ProductCardItem = (props: CompoProps) => {
     }
 
     return (
-        <div className={clsx('group relative w-full overflow-hidden rounded-2xl border border-[#eadfd6] bg-[#fffaf7] text-left shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg', props.className, ProductsCardStyle.product_card)}>
+        <div className={clsx('group relative w-full overflow-hidden rounded-xl border border-[#eadfd6] bg-white text-left shadow-[0_8px_24px_rgba(83,53,28,0.06)] transition duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-[0_14px_30px_rgba(83,53,28,0.12)]', props.className, ProductsCardStyle.product_card)}>
             <WishListButton productDetails={props} />
             <Link href={productHref} className="block" prefetch={false}>
                 <div className="relative overflow-hidden bg-[#f8f1ea]">
                     <Image 
                         src={props.images[props.productPrimaryImageIndex]} 
                         alt={name} 
-                        className="!w-full !relative aspect-[4/5] object-fill"
+                        className="!relative !w-full aspect-square object-cover transition duration-500 group-hover:scale-[1.035]"
                         width={400} 
-                        height={500}
+                        height={400}
                         placeholder="blur"
                         blurDataURL={blurPlaceholders.warmNeutral}
                         loading={shouldLoadEager ? "eager" : "lazy"}
@@ -99,7 +99,7 @@ const ProductCardItem = (props: CompoProps) => {
                         quality={imageQuality.standard}
                     />
                     {discountLabel && (
-                        <div className="absolute left-3 top-3 rounded-md bg-[#d60911] px-2 py-1 text-[10px] font-bold uppercase leading-none text-white shadow-sm sm:text-xs">
+                        <div className="absolute left-2 top-2 rounded-full bg-[#d60911] px-2 py-1 text-[9px] font-bold uppercase leading-none text-white shadow-sm sm:text-[10px]">
                             {discountLabel}
                         </div>
                     )}
@@ -121,26 +121,26 @@ const ProductCardItem = (props: CompoProps) => {
                         </div>
                     </div>}
                 </div>
-                <div className="px-3 pb-3 pt-3 sm:px-3.5 sm:pb-3.5">
-                    <div className="line-clamp-1 text-xs font-light leading-4 text-[#7d7169] sm:text-xs">{props.productCategory}</div>
-                    <h2 className="mt-1 line-clamp-2 min-h-9 text-xs font-medium leading-[18px] text-[#25170e] sm:text-sm sm:leading-5">
+                <div className="px-2.5 pb-2.5 pt-2.5 sm:px-3 sm:pb-3">
+                    <div className="line-clamp-1 text-[10px] font-medium leading-3 text-[#8a7d72] sm:text-[11px]">{props.productCategory}</div>
+                    <h2 className="mt-1 line-clamp-2 min-h-[32px] text-[12px] font-semibold leading-4 text-[#25170e] sm:text-[13px] sm:leading-[18px]">
                         {name}
                     </h2>
-                    <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                        <span className="text-[15px] font-bold leading-5 text-[#4d2a12] sm:text-base">${leastSellingPrice}</span>
+                    <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                        <span className="text-sm font-bold leading-5 text-[#4d2a12] sm:text-[15px]">${leastSellingPrice}</span>
                         {Number(leastMSRP) > Number(leastSellingPrice) && (
-                            <span className="text-xs font-medium leading-4 text-[#8b817a] line-through">${leastMSRP}</span>
+                            <span className="text-[10px] font-medium leading-4 text-[#8b817a] line-through sm:text-[11px]">${leastMSRP}</span>
                         )}
                     </div>
-                    <div className="mt-2.5 flex items-center justify-end gap-2">
-                        {/* <div className="flex min-w-0 items-center gap-1 text-[11px] font-medium leading-4 text-[#5b4030] sm:text-xs">
+                    <div className="mt-2.5 flex items-center justify-between gap-2">
+                        <div className="flex min-w-0 items-center gap-1 text-[10px] font-medium leading-4 text-[#5b4030] sm:text-[11px]">
                             <FiStar className="h-3.5 w-3.5 shrink-0 fill-[#6b360f] text-[#6b360f]" aria-hidden="true" />
                             <span>{reviewAverage > 0 ? reviewAverage.toFixed(1) : '4.8'}</span>
                             <span className="text-[#7d7169]">({reviewCount > 0 ? reviewCount : 32})</span>
-                        </div> */}
-                        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#c8b7a8] bg-white px-2.5 py-1.5 text-[11px] font-semibold leading-4 text-[#4d2a12] transition group-hover:border-[#4d2a12] group-hover:bg-[#4d2a12] group-hover:text-white sm:px-3 sm:text-xs">
-                            <FiShoppingBag className="h-3.5 w-3.5" aria-hidden="true" />
-                            <span className="max-[380px]:sr-only">Add to cart</span>
+                        </div>
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#f2e7dc] px-2.5 py-1.5 text-[10px] font-bold leading-4 text-[#4d2a12] transition group-hover:bg-[#4d2a12] group-hover:text-white sm:text-[11px]">
+                            <span className="max-[380px]:sr-only">View</span>
+                            <FiArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" aria-hidden="true" />
                         </span>
                     </div>
                 </div>

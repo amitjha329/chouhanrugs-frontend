@@ -56,7 +56,7 @@ const RootEnhancements = async ({ children }: { children: ReactNode }) => {
     }
     const dir = locale === 'ar' ? 'rtl' : 'ltr'
     const purchaseProducts = notifProducts.map(p => ({
-        name: resolveLocalizedString(p.productName, locale),
+        name: resolveLocalizedString(p.productTitle, locale) || resolveLocalizedString(p.productName, locale),
         url: `/products/${resolveLocalizedString(p.productURL, locale)}`,
         image: p.images?.[p.productPrimaryImageIndex] ?? p.images?.[0] ?? "",
     }))

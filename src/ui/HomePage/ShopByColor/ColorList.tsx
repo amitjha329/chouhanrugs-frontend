@@ -1,54 +1,25 @@
 import { getColorsList } from '@/backend/serverActions/getColorsList'
+import ColorDataModel from '@/types/ColorDataModel'
 import React from 'react'
 import ColorItem from './ColorItem'
 
-const ColorList = async () => {
-    const colors = await getColorsList()
+const pickRandomColors = (colors: ColorDataModel[], limit: number) => {
+    return [...colors]
+        .filter(color => color.name && color.colorCode?.hex)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, limit)
+}
+
+const ColorList = async ({ limit = 12 }: { limit?: number }) => {
+    const colors = pickRandomColors(await getColorsList(), limit)
+
+    if (colors.length === 0) return null
+
     return (
-        <>
-            <div className='flex flex-wrap gap-4 justify-center items-center'>
-                {
-                    colors.slice(0, 12).map(color => <ColorItem key={color._id} {...color} />)
-                }
-            </div>
-            <div className="collapse">
-                <input type="checkbox" />
-                <div className="collapse-title text-center text-primary">
-                    View All &#9660;
-                </div>
-                <div className="collapse-content flex flex-wrap justify-center items-center gap-4 p-0">
-                    {
-                        colors.slice(12).map(color => <ColorItem key={color._id} {...color} />)
-                    }
-                </div>
-            </div>
-        </>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-3">
+            {colors.map(color => <ColorItem key={color._id} {...color} />)}
+        </div>
     )
 }
 
-const ColorListMobile = async () => {
-    const colors = await getColorsList()
-    return (
-        <>
-            <div className='flex flex-wrap justify-center items-center gap-4'>
-                {
-                    colors.slice(0, 6).map(color => <ColorItem key={color._id} {...color} />)
-                }
-            </div>
-            <div className="collapse">
-                <input type="checkbox" />
-                <div className="collapse-title text-center text-primary">
-                    View All &#9660;
-                </div>
-                <div className="collapse-content flex flex-wrap justify-center items-center gap-4 p-0">
-                    {
-                        colors.slice(6).map(color => <ColorItem key={color._id} {...color} />)
-                    }
-                </div>
-            </div>
-        </>
-
-    )
-}
-
-export { ColorList, ColorListMobile }
+export { ColorList }

@@ -21,7 +21,7 @@ const WishlistProductList = async ({ productList, itemIds }: { productList: (Pro
         <div className="space-y-3">
             {
                 productList.length > 0 ? productList.map((product, index) => {
-                    const name = product ? resolveLocalizedString(product.productName, locale) : ''
+                    const name = product ? resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale) : ''
                     const url = product ? resolveLocalizedString(product.productURL, locale) : ''
                     return product ? (
                         <div

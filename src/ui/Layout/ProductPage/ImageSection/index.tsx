@@ -349,7 +349,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
     } = useProductContext() || {}
     
     const locale = useLocale() as Locale
-    const productName = resolveLocalizedString(product?.productName, locale) || 'Product'
+    const productName = resolveLocalizedString(product?.productTitle, locale) || resolveLocalizedString(product?.productName, locale) || 'Product'
     
     const sectionRef = useRef<HTMLElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)

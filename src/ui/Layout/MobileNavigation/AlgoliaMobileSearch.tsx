@@ -86,13 +86,13 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
                   indexName,
                   query,
                   hitsPerPage: 4,
-                  attributesToRetrieve: ['objectID', 'productName', 'productSellingPrice', 'images', 'productURL']
+                  attributesToRetrieve: ['objectID', 'productName', 'productTitle', 'productSellingPrice', 'images', 'productURL']
                 }]
               }).then(({ results }) => (results[0] as any).hits as any[])
             },
             templates: {
               item({ item, html }) {
-                const productName = resolveLocalizedString((item as any).productName, locale)
+                const productName = resolveLocalizedString((item as any).productTitle, locale) || resolveLocalizedString((item as any).productName, locale)
                 return html`
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">

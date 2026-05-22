@@ -3,7 +3,7 @@ import { resolveLocalizedString } from "@/lib/resolveLocalized";
 import { type Locale } from "@/i18n/routing";
 
 export default function generateProductJsonLd(productData: ProductDataModel, locale: Locale = 'en-US') {
-  const name = resolveLocalizedString(productData.productName, locale).replace(/"/g, '\\"')
+  const name = (resolveLocalizedString(productData.productTitle, locale) || resolveLocalizedString(productData.productName, locale)).replace(/"/g, '\\"')
   const desc = resolveLocalizedString(productData.productDescriptionShort, locale).replace(/"/g, '\\"')
   const sku = (productData.sku || productData.itemCode || productData.addedOn).toString().replace(/"/g, '\\"')
   const mpn = (productData.gtin || productData.itemCode || productData.addedOn).toString().replace(/"/g, '\\"')

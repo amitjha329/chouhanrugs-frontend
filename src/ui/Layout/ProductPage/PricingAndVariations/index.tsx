@@ -24,7 +24,7 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
     const siteData = await getSiteData()
     const t = await getTranslations('product')
     const locale = await getLocale() as Locale
-    const name = resolveLocalizedString(product.productName, locale)
+    const name = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)
     const shortDesc = resolveLocalizedString(product.productDescriptionShort, locale)
     const category = product.productCategory?.trim() || 'Rug'
     return (

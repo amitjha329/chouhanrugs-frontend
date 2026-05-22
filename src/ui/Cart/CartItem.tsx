@@ -14,7 +14,7 @@ const CartItem = ({ item }: { item: CartDataModel, }) => {
     const userCurrency = null
     const locale = useLocale() as Locale
     const product = item.cartProduct[0]
-    const name = product ? resolveLocalizedString(product.productName, locale) : ''
+    const name = product ? resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale) : ''
     const url = product ? resolveLocalizedString(product.productURL, locale) : ''
 
     const calculateProductPrice = (): number => {

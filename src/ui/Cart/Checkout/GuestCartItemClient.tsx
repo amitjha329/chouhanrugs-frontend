@@ -13,7 +13,7 @@ const GuestCartItemClient = ({ item, userCurrency, onQuantityChange, onRemove }:
     onRemove: () => void
 }) => {
     const locale = useLocale() as Locale
-    const pName = resolveLocalizedString(item.cartProduct[0]?.productName, locale) || 'Product'
+    const pName = resolveLocalizedString(item.cartProduct[0]?.productTitle, locale) || resolveLocalizedString(item.cartProduct[0]?.productName, locale) || 'Product'
     const pUrl = resolveLocalizedString(item.cartProduct[0]?.productURL, locale)
     // Helper to get variation details
     const getVariation = () => {
