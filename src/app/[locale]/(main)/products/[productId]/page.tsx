@@ -16,6 +16,10 @@ import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage, getProductGalleryImages } from '@/lib/getProductFeaturedImage'
 import { locales, type Locale } from '@/i18n/routing'
 import ProductCraftStorySection from '@/ui/Layout/ProductPage/ProductCraftStorySection'
+import ProductReviewsSection from '@/ui/Layout/ProductPage/Reviews'
+import { getApprovedProductReviews } from '@/backend/serverActions/getApprovedProductReviews'
+import getProductReviewEligibility from '@/backend/serverActions/getProductReviewEligibility'
+import { getSession } from '@/lib/auth-server'
 
 const PRODUCT_BUILD_PLACEHOLDER = '__product_build_placeholder__'
 
@@ -176,9 +180,10 @@ const ProductPage = async (props: { params: Promise<{ productId: string, locale:
     const locale = params.locale as Locale
 
     // Fetch product data - this will be part of the static shell
-    const [data, dataAdditional] = await Promise.all([
+    const [data, dataAdditional, session] = await Promise.all([
         getProductWithSlug(productId),
         getSiteData(),
+        getSession(),
     ])
     if (data == undefined) return notFound();
     
@@ -187,6 +192,11 @@ const ProductPage = async (props: { params: Promise<{ productId: string, locale:
     // is still cached and the related products stream in via Suspense
     const header = await headers()
     const isMobile = getDevice({ headers: header }) == "mobile"
+    const productDbId = typeof data._id === "string" ? data._id : data._id?.toString?.() ?? ""
+    const [{ reviews, summary }, reviewEligibility] = await Promise.all([
+        getApprovedProductReviews(productDbId),
+        getProductReviewEligibility(productDbId, session?.user?.id ?? null),
+    ])
     
     // Build compact product data for recently viewed tracking
     const trackData = {
@@ -222,6 +232,15 @@ const ProductPage = async (props: { params: Promise<{ productId: string, locale:
             </div>
             
             <ProductCraftStorySection section={dataAdditional.productCraftSection} />
+
+            <ProductReviewsSection
+                productId={productDbId}
+                productTitle={resolveLocalizedString(data.productTitle, locale) || resolveLocalizedString(data.productName, locale)}
+                summary={summary}
+                reviews={reviews}
+                eligibility={reviewEligibility}
+                locale={locale}
+            />
 
             <section className='bg-[#fbfaf7]'>
                 <Suspense fallback={<RelatedProductsSkeleton />}>
