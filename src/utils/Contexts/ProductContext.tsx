@@ -2,6 +2,7 @@
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import { trackAddToCartWithDetails } from '@/lib/gtagConversion'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
+import { getProductGalleryImages } from '@/lib/getProductFeaturedImage'
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 const ProductDataContext = createContext<Partial<{
@@ -29,15 +30,12 @@ const ProductDataContext = createContext<Partial<{
 
 const ProductContext = ({ children, product }: { children: React.ReactNode, product: any }) => {
     const googleAdsConfig = useGoogleAdsConfig()
+    const baseProductImages = useMemo(() => getProductGalleryImages(product), [product])
     const [variation, setVariation] = useState("")
-    const [images, setImages] = useState<string[]>(product.images)
+    const [images, setImages] = useState<string[]>(baseProductImages)
     const [isVariation, setIsVariation] = useState(false)
     const [selectedImageIndex, setSelectedImageIndex] = useState(0)
     const [zoomPosition, setZoomPosition] = useState<{ x: number; y: number } | null>(null)
-
-    useEffect(()=>{
-        console.log("Product images:", product)
-    }, [product])
 
     // New state for color and size selection (handle missing colorData/sizeData gracefully)
     // Find the smallest size by area for default selection
@@ -57,6 +55,11 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
     };
     const [selectedColor, setSelectedColor] = useState(product.colorData?.[0]?.name || '');
     const [selectedSize, setSelectedSize] = useState(getSmallestSizeCode());
+
+    useEffect(() => {
+        setImages(baseProductImages)
+        setSelectedImageIndex(0)
+    }, [baseProductImages])
 
     // If sizeData changes, update selectedSize to the new smallest
     useEffect(() => {
@@ -84,10 +87,10 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
     useEffect(() => {
         if (isVariation) {
             const variationImage = (product.variations.find((item: any) => item.variationCode == variation)?.variationImages ?? [])
-            setImages((variationImage?.length ?? 0) > 0 ? variationImage : product.images)
+            setImages((variationImage?.length ?? 0) > 0 ? variationImage : baseProductImages)
             setSelectedImageIndex(0)
         }
-    }, [isVariation, product, variation])
+    }, [baseProductImages, isVariation, product, variation])
 
     // Helper: get current variation object
     const getCurrentVariation = React.useCallback(() => {
@@ -113,16 +116,16 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
                 setImages(variationObj.variationImages);
                 setSelectedImageIndex(0);
             } else {
-                setImages(product.images);
+                setImages(baseProductImages);
                 setSelectedImageIndex(0);
             }
         } else {
             setIsVariation(false);
             setVariation('');
-            setImages(product.images);
+            setImages(baseProductImages);
             setSelectedImageIndex(0);
         }
-    }, [selectedColor, selectedSize, product.images, product.variations, getCurrentVariation]);
+    }, [baseProductImages, selectedColor, selectedSize, product.variations, getCurrentVariation]);
     useEffect(() => {
         if (typeof window !== 'undefined' && product.colorData && selectedColor) {
             const colorObj = product.colorData.find((c: any) => c.name === selectedColor);

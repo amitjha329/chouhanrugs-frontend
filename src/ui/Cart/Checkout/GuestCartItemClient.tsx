@@ -5,6 +5,7 @@ import Currency from '@/types/Currency'
 import { useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 
 const GuestCartItemClient = ({ item, userCurrency, onQuantityChange, onRemove }: {
     item: any,
@@ -30,7 +31,7 @@ const GuestCartItemClient = ({ item, userCurrency, onQuantityChange, onRemove }:
                         height={140}
                         width={140}
                         className="object-contain w-full h-full"
-                        src={item.cartProduct[0].images?.[item.cartProduct[0].productPrimaryImageIndex] || '/vector/Cart.svg'}
+                        src={getProductFeaturedImage(item.cartProduct[0]) || '/vector/Cart.svg'}
                         alt={pName}
                     />
                 </a>

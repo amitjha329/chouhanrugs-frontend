@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import React from 'react'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { useLocale } from 'next-intl'
 import { type Locale } from '@/i18n/routing'
 import slugify from 'slugify'
@@ -54,7 +55,7 @@ const NewProductCard = (product: itemProps) => {
   const locale = useLocale() as Locale
   const name = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)
   const url = resolveLocalizedString(product.productURL, locale)
-  const primaryImage = product.images?.[product.productPrimaryImageIndex] ?? product.images?.[0]
+  const primaryImage = getProductFeaturedImage(product)
   const shouldLoadEager = (product.index ?? 0) < 4
   const { sellingPrice, msrp } = getProductPrices(product)
   const hasDiscount = Number.isFinite(msrp) && Number.isFinite(sellingPrice) && msrp > sellingPrice

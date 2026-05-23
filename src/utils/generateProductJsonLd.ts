@@ -1,6 +1,7 @@
 import { ProductDataModel } from "../types/ProductDataModel";
 import { resolveLocalizedString } from "@/lib/resolveLocalized";
 import { type Locale } from "@/i18n/routing";
+import { getProductFeaturedImage } from "@/lib/getProductFeaturedImage";
 
 export default function generateProductJsonLd(productData: ProductDataModel, locale: Locale = 'en-US') {
   const name = (resolveLocalizedString(productData.productTitle, locale) || resolveLocalizedString(productData.productName, locale)).replace(/"/g, '\\"')
@@ -17,7 +18,7 @@ export default function generateProductJsonLd(productData: ProductDataModel, loc
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": "${name}",
-      "image": "${productData.images[productData.productPrimaryImageIndex] ?? productData.images[0]}",
+      "image": "${getProductFeaturedImage(productData)}",
       "description": "${desc}",
       "sku": "${sku}",
       "mpn": "${mpn}",

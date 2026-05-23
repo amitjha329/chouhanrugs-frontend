@@ -22,6 +22,7 @@ import { getProductsByCategory } from "@/backend/serverActions/getProductsByCate
 import { ProductDataModel } from "@/types/ProductDataModel"
 import { getLocale, getTranslations } from "next-intl/server"
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { type Locale } from '@/i18n/routing'
 
 /* ------------------------------------------------------------------ */
@@ -344,7 +345,7 @@ function ProductCard({ product, index, locale }: { product: ProductDataModel; in
     }
 
     const hasDiscount = msrpPrice > sellingPrice
-    const primaryImage = product.images?.[product.productPrimaryImageIndex] ?? product.images?.[0]
+    const primaryImage = getProductFeaturedImage(product)
     const productLink = `/products/${url}`
     const tag = product.tags?.[0] ?? null
 

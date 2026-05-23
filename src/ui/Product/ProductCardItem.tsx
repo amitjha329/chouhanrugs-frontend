@@ -8,6 +8,7 @@ import ProductsCardStyle from './WishlistButton.module.scss'
 import { blurPlaceholders, productImageSizes, imageQuality } from '@/utils/imageOptimization'
 import { useTranslations, useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { type Locale } from '@/i18n/routing'
 import slugify from 'slugify'
 import { FiArrowRight, FiStar } from 'react-icons/fi'
@@ -39,7 +40,7 @@ const ProductCardItem = (props: CompoProps) => {
     const locale = useLocale() as Locale
     const name = resolveLocalizedString(props.productTitle, locale) || resolveLocalizedString(props.productName, locale)
     const url = resolveLocalizedString(props.productURL, locale)
-    const primaryImage = props.images?.[props.productPrimaryImageIndex] ?? props.images?.[0]
+    const primaryImage = getProductFeaturedImage(props)
     const productVariations = props.variations ?? []
     const productHref = '/products/' + slugify(url, {
         lower: true,

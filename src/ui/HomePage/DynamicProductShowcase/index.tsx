@@ -6,6 +6,7 @@ import { getHomePageProductShowcase } from "@/backend/serverActions/getHomePageP
 import { getProductsByCategory } from "@/backend/serverActions/getProductsByCategory";
 import { type Locale } from "@/i18n/routing";
 import { resolveLocalizedString } from "@/lib/resolveLocalized";
+import { getProductFeaturedImage } from "@/lib/getProductFeaturedImage";
 import { type ProductDataModel } from "@/types/ProductDataModel";
 
 function getProductPrices(product: ProductDataModel) {
@@ -38,7 +39,7 @@ function MiniProductCard({ product, locale }: { product: ProductDataModel; local
     const url = resolveLocalizedString(product.productURL, locale);
     const { sellingPrice, msrpPrice } = getProductPrices(product);
     const hasDiscount = Number.isFinite(msrpPrice) && Number.isFinite(sellingPrice) && msrpPrice > sellingPrice;
-    const primaryImage = product.images?.[product.productPrimaryImageIndex] ?? product.images?.[0];
+    const primaryImage = getProductFeaturedImage(product);
 
     if (!name || !url || !primaryImage || !Number.isFinite(sellingPrice)) return null;
 

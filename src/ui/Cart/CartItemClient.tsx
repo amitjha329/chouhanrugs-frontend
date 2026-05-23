@@ -9,6 +9,7 @@ import IncrementDecrement from './IncrementDecrement'
 import { DeleteFromCartLg, DeleteFromCartSm } from './DeleteFromCart'
 import Currency from '@/types/Currency'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { useLocale } from 'next-intl'
 import { type Locale } from '@/i18n/routing'
 
@@ -56,7 +57,7 @@ const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurre
                             width={128}
                             quality={75}
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                            src={item.cartProduct[0].images[item.cartProduct[0].productPrimaryImageIndex]}
+                            src={getProductFeaturedImage(item.cartProduct[0])}
                             alt={name}
                         />
                     </a>

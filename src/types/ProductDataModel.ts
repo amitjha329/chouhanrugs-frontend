@@ -24,6 +24,7 @@ export interface ProductDataModel {
     productDescriptionLong: LocalizedField<string>;
     productShippingInfo: LocalizedField<string>;
     productPrimaryImageIndex: number;
+    productFeaturedImage?: string;
     productCustomizable: boolean;
     productReturns: boolean;
     productFreeDel: boolean;

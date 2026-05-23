@@ -7,6 +7,7 @@ import CartDataModel from '@/types/CartDataModel'
 import IncrementDecrement from './IncrementDecrement'
 import { DeleteFromCartLg, DeleteFromCartSm } from './DeleteFromCart'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { useLocale } from 'next-intl'
 import { type Locale } from '@/i18n/routing'
 
@@ -54,7 +55,7 @@ const CartItem = ({ item }: { item: CartDataModel, }) => {
                             height={112}
                             width={112}
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                            src={product.images[product.productPrimaryImageIndex]}
+                            src={getProductFeaturedImage(product)}
                             alt={name}
                         />
                     </a>

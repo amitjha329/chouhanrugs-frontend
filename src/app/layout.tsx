@@ -15,6 +15,7 @@ import RecentlyViewedSidebar from '@/ui/RecentlyViewed'
 import { getNewProducts } from '@/backend/serverActions/getNewProducts'
 import Script from 'next/script'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { routing, type Locale } from '@/i18n/routing'
 import { getTranslations as getStorefrontTranslations } from '@/backend/serverActions/getTranslations'
 import { cacheLife, cacheTag } from 'next/cache'
@@ -58,7 +59,7 @@ const RootEnhancements = async ({ children }: { children: ReactNode }) => {
     const purchaseProducts = notifProducts.map(p => ({
         name: resolveLocalizedString(p.productTitle, locale) || resolveLocalizedString(p.productName, locale),
         url: `/products/${resolveLocalizedString(p.productURL, locale)}`,
-        image: p.images?.[p.productPrimaryImageIndex] ?? p.images?.[0] ?? "",
+        image: getProductFeaturedImage(p),
     }))
     const MINUTE_OPTIONS = [1, 2, 3, 5, 8, 12, 15, 20, 25, 32, 45]
     const HOUR_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]

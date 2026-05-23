@@ -13,6 +13,7 @@ import { ProductDataModel } from '@/types/ProductDataModel'
 import { serializeForClient } from '@/utils/serializeForClient'
 import TrackProductView from '@/ui/RecentlyViewed/TrackProductView'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage, getProductGalleryImages } from '@/lib/getProductFeaturedImage'
 import { locales, type Locale } from '@/i18n/routing'
 import ProductCraftStorySection from '@/ui/Layout/ProductPage/ProductCraftStorySection'
 
@@ -42,7 +43,7 @@ export async function generateMetadata(props: { params: Promise<{ productId: str
             siteName: "Chouhan Rugs",
             phoneNumbers: dataAdditional.contact_details.phone,
             emails: dataAdditional.contact_details.email,
-            images: data.images.map((image: string) => {
+            images: getProductGalleryImages(data).map((image: string) => {
                 return { url: image }
             })
         },
@@ -191,7 +192,7 @@ const ProductPage = async (props: { params: Promise<{ productId: string, locale:
     const trackData = {
         slug: resolveLocalizedString(data.productURL, locale),
         name: resolveLocalizedString(data.productTitle, locale) || resolveLocalizedString(data.productName, locale),
-        image: data.images?.[data.productPrimaryImageIndex] ?? data.images?.[0] ?? '',
+        image: getProductFeaturedImage(data),
         price: Number(data.productSellingPrice),
         msrp: Number(data.productMSRP),
         discount: data.productDiscountPercentage,

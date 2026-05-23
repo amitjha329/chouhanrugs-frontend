@@ -10,6 +10,7 @@ import WishlistProductDeleteButton from './WishlistProductDeleteButton'
 import { HiOutlineHeart, HiOutlineExclamationTriangle } from 'react-icons/hi2'
 import { getLocale } from 'next-intl/server'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { type Locale } from '@/i18n/routing'
 
 const WishlistProductList = async ({ productList, itemIds }: { productList: (ProductDataModel | null)[], itemIds: string[] }) => {
@@ -34,7 +35,7 @@ const WishlistProductList = async ({ productList, itemIds }: { productList: (Pro
                                 prefetch={false}
                             >
                                 <Image
-                                    src={product.images[product.productPrimaryImageIndex]}
+                                    src={getProductFeaturedImage(product)}
                                     alt={name}
                                     height={96}
                                     width={96}

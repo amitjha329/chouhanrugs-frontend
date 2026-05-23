@@ -9,6 +9,7 @@ import DownloadInvoiceButton from '../DownloadInvoiceButton'
 import OrderTrackingProgressbar from '../OrderTrackingProgressbar'
 import { HiOutlineCube, HiOutlineTruck, HiOutlineCheckCircle, HiOutlineXCircle, HiOutlineArrowPath, HiOutlineClock, HiOutlineArrowLeft, HiOutlineDocumentText, HiOutlineShoppingBag, HiOutlineMapPin, HiOutlineReceiptPercent, HiOutlineExclamationTriangle } from 'react-icons/hi2'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { type Locale } from '@/i18n/routing'
 
 // Status configuration for different order states
@@ -158,7 +159,7 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress, locale }: { o
                                     className="object-cover group-hover:scale-105 transition-transform duration-300" 
                                     sizes="(max-width: 640px) 80px, 96px" 
                                     quality={60} 
-                                    src={product.images[product.productPrimaryImageIndex]} 
+                                    src={getProductFeaturedImage(product)} 
                                     alt={resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)} 
                                     fill 
                                 />

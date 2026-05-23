@@ -6,6 +6,7 @@ import { Variation } from '@/types/ProductDataModel';
 import { useLocale } from 'next-intl';
 import { resolveLocalizedString } from '@/lib/resolveLocalized';
 import { type Locale } from '@/i18n/routing';
+import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage';
 
 // Helper to calculate price (simplified, as we don't have all backend logic)
 function calculateProductPrice(item: any) {
@@ -114,7 +115,7 @@ const CartLocalStorage = () => {
                                                         height={140}
                                                         width={140}
                                                         className="sm:h-36 sm:w-36 object-scale-down w-28 h-28"
-                                                        src={item.cartProduct[0].images[item.cartProduct[0].productPrimaryImageIndex]}
+                                                        src={getProductFeaturedImage(item.cartProduct[0])}
                                                         alt=""
                                                     />
                                                 </div>
@@ -221,7 +222,7 @@ const CartLocalStorage = () => {
                                                         height={140}
                                                         width={140}
                                                         className="h-28 w-28 object-scale-down rounded"
-                                                        src={item.cartProduct[0].images[item.cartProduct[0].productPrimaryImageIndex]}
+                                                        src={getProductFeaturedImage(item.cartProduct[0])}
                                                         alt=""
                                                     />
                                                 </div>

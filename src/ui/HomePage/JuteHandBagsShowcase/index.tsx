@@ -6,6 +6,7 @@ import { ProductDataModel } from "@/types/ProductDataModel"
 import heroImage from "./side-banner.webp"
 import { getLocale, getTranslations } from "next-intl/server"
 import { resolveLocalizedString } from "@/lib/resolveLocalized"
+import { getProductFeaturedImage } from "@/lib/getProductFeaturedImage"
 import { type Locale } from "@/i18n/routing"
 
 /* ------------------------------------------------------------------ */
@@ -33,7 +34,7 @@ function MiniProductCard({ product, locale }: { product: ProductDataModel; local
         msrpPrice = product.productMSRP
     }
     const hasDiscount = msrpPrice > sellingPrice
-    const primaryImage = product.images?.[product.productPrimaryImageIndex] ?? product.images?.[0]
+    const primaryImage = getProductFeaturedImage(product)
 
     return (
         <Link href={`/products/${url}`} prefetch={false} className="h-full">
