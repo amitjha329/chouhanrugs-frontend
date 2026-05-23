@@ -1,0 +1,4 @@
+export const REVIEW_IMAGE_LIMIT = 3
+export const REVIEW_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000
+export const REVIEW_RATE_LIMIT_MAX_ATTEMPTS = 3
+

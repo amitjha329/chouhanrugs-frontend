@@ -1,7 +1,9 @@
+import "server-only"
 import sharp from "sharp"
 import { Db, ObjectId } from "mongodb"
 import { buildFirebaseStoragePath, uploadFileToFirebaseStorage } from "@/utils/firebaseStorage"
 import { ReviewDataModel } from "@/types/ReviewDataModel"
+import { REVIEW_IMAGE_LIMIT, REVIEW_RATE_LIMIT_MAX_ATTEMPTS, REVIEW_RATE_LIMIT_WINDOW_MS } from "@/lib/reviewConstants"
 
 const REVIEW_COLLECTION = "product_reviews"
 const REVIEW_RATE_LIMIT_COLLECTION = "product_review_rate_limits"
@@ -19,10 +21,6 @@ const PROFANITY_WORDS = [
     "asshole",
     "damn",
 ]
-
-export const REVIEW_IMAGE_LIMIT = 3
-export const REVIEW_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000
-export const REVIEW_RATE_LIMIT_MAX_ATTEMPTS = 3
 
 export function getReviewCollection(db: Db) {
     return db.collection<ReviewDataModel>(REVIEW_COLLECTION)
@@ -119,4 +117,3 @@ export async function uploadReviewImages(productId: string, files: File[]) {
 export function getReviewPublishedTimestamp(review: ReviewDataModel) {
     return review.backdatedAt ?? review.publishedAt ?? review.submittedAt
 }
-

@@ -5,7 +5,6 @@ import { getStorefrontDb } from "@/lib/mongodb"
 import { ProductDataModel } from "@/types/ProductDataModel"
 import { ReviewDataModel } from "@/types/ReviewDataModel"
 import {
-    REVIEW_IMAGE_LIMIT,
     applyReviewRateLimit,
     ensureStorefrontReviewIndexes,
     getProfanityError,
@@ -13,6 +12,7 @@ import {
     isValidObjectId,
     uploadReviewImages,
 } from "@/lib/reviews"
+import { REVIEW_IMAGE_LIMIT } from "@/lib/reviewConstants"
 import { resolveLocalizedString } from "@/lib/resolveLocalized"
 
 const MIN_FORM_FILL_MS = 3000
@@ -170,4 +170,3 @@ export async function POST(req: NextRequest) {
         }, { status: 500 })
     }
 }
-

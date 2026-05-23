@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { HiOutlinePhotograph, HiOutlineShieldCheck, HiStar } from "react-icons/hi"
-import { REVIEW_IMAGE_LIMIT } from "@/lib/reviews"
+import { REVIEW_IMAGE_LIMIT } from "@/lib/reviewConstants"
 import { ReviewEligibility } from "@/types/ReviewDataModel"
 
 const FRONTEND_PROFANITY_WORDS = ["fuck", "shit", "bitch", "bastard", "asshole", "damn"]
@@ -192,4 +192,3 @@ const ReviewSubmissionForm = ({
 }
 
 export default ReviewSubmissionForm
-
