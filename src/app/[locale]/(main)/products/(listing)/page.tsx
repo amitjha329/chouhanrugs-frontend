@@ -18,7 +18,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 }
 
 const ProductsListPage = async (props: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
-    await connection()
+    // await connection()
     const searchParams = await props.searchParams;
     return (
         <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} />
