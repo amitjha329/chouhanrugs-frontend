@@ -29,7 +29,7 @@ const ProductList = ({ searchQuery, searchParams, categoryParam, predefinedProdu
             {
                 searchQuery && <div className='w-full text-start font-semibold text-lg'>Showing Results for &quot;{searchQuery}&quot;</div>
             }
-            <div className='grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-10'>
+            <div className='grid grid-cols-3 lg:grid-cols-4 ~gap-3/7'>
                 {/* {
                     predefinedProducts.map(product => {
                         return (
@@ -44,7 +44,7 @@ const ProductList = ({ searchQuery, searchParams, categoryParam, predefinedProdu
                         )
                     })
                 }
-            </div>
+            </div> z
             {
                 hits.length == 0 && status != "stalled" && status != "loading" && <div className='w-full min-h-[700px]'>
                     <span className='text-2xl sm:text-9xl font-extrabold opacity-50'>OOPS! <br /> Nothing Found.</span>

@@ -154,8 +154,8 @@ const ProductCardItem = (props: CompoProps) => {
                     fillHeight
                         ? 'min-h-[360px] flex-1'
                         : density === 'compact'
-                            ? 'aspect-[1/0.94] sm:aspect-[1/0.98]'
-                            : 'aspect-square',
+                            ? 'aspect-[4/5]'
+                            : 'aspect-[4/5]',
                     props.imageWrapperClassName
                 )}>
                     {fillHeight ? (

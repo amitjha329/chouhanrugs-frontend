@@ -66,7 +66,7 @@ const NewProductCard = (product: itemProps) => {
   return (
     <article className="group overflow-hidden rounded-xl border border-[#eadfd4] bg-white shadow-[0_10px_30px_rgba(83,53,28,0.06)] transition duration-200 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_16px_36px_rgba(83,53,28,0.12)]">
       <Link href={productHref} prefetch={false} className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-        <div className="relative aspect-[1.03/1] overflow-hidden bg-[#f6f1ec]">
+        <div className="relative aspect-[4/5] overflow-hidden bg-[#f6f1ec]">
           <Image
             src={primaryImage}
             alt={name}

@@ -9,21 +9,38 @@ const ProductList = ({ products }: { products: ProductDataModelWithColorMap[] })
     const featuredProduct = products[featuredIndex]
     const leftProducts = products.slice(1, featuredIndex)
     const rightProducts = products.slice(featuredIndex + 1)
+    const mobileGroups = products
+        .slice(0, 6)
+        .reduce((accumulator: ProductDataModelWithColorMap[][], _, currentIndex, array) => {
+            if (currentIndex % 2 === 0) {
+                accumulator.push(array.slice(currentIndex, currentIndex + 2))
+            }
+            return accumulator
+        }, [])
 
     return (
         <>
-            <div className="grid gap-3 md:hidden">
-                {products.slice(0, 5).map((product, index) => (
-                    <ProductCardItem
-                        key={(product._id ?? product.objectID ?? index).toString()}
-                        {...product}
-                        index={index}
-                        density="compact"
-                        imageWrapperClassName={index === 0 ? 'aspect-[1/1.04]' : 'aspect-[1/0.92]'}
-                        titleClassName={index === 0 ? 'text-[12px] sm:text-[13px] sm:leading-[18px]' : undefined}
-                        showRating={index !== 0}
-                        imageSizes={index === 0 ? '(max-width: 768px) 100vw' : '(max-width: 768px) 50vw'}
-                    />
+            <div className="carousel carousel-center max-w-full space-x-3 px-1 pb-1 pt-1 md:hidden">
+                {mobileGroups.map((group, groupIndex) => (
+                    <div
+                        key={(group[0]?._id ?? group[0]?.objectID ?? groupIndex).toString()}
+                        className="carousel-item w-[10.75rem] flex-none flex-col gap-3"
+                    >
+                        {group.map((product, indexWithinGroup) => {
+                            const absoluteIndex = groupIndex * 2 + indexWithinGroup
+                            return (
+                                <ProductCardItem
+                                    key={(product._id ?? product.objectID ?? absoluteIndex).toString()}
+                                    {...product}
+                                    index={absoluteIndex}
+                                    density="compact"
+                                    imageWrapperClassName="aspect-[4/5]"
+                                    titleClassName="text-[12px] leading-[16px]"
+                                    imageSizes="172px"
+                                />
+                            )
+                        })}
+                    </div>
                 ))}
             </div>
 
@@ -35,7 +52,7 @@ const ProductList = ({ products }: { products: ProductDataModelWithColorMap[] })
                             {...product}
                             index={index}
                             density="compact"
-                            imageWrapperClassName="aspect-[1/0.96]"
+                            imageWrapperClassName="aspect-[4/5]"
                             imageSizes="(max-width: 1280px) 16vw, 14vw"
                         />
                     ))}
@@ -46,13 +63,12 @@ const ProductList = ({ products }: { products: ProductDataModelWithColorMap[] })
                     index={featuredIndex}
                     className="h-full"
                     density="compact"
-                    imageWrapperClassName="h-full min-h-[430px] lg:min-h-[470px]"
+                    imageWrapperClassName="aspect-[4/5]"
                     contentWrapperClassName="px-3.5 pb-3.5 pt-2.5 lg:px-4 lg:pb-4"
                     titleClassName="text-[13px] leading-[17px] sm:text-[14px] sm:leading-[19px]"
                     imageSizes="(max-width: 1280px) 22vw, 20vw"
                     ctaLabel="View"
                     showRating={false}
-                    fillHeight
                 />
 
                 <div className="grid grid-cols-2 gap-3 xl:gap-4">
@@ -62,7 +78,7 @@ const ProductList = ({ products }: { products: ProductDataModelWithColorMap[] })
                             {...product}
                             index={featuredIndex + index + 1}
                             density="compact"
-                            imageWrapperClassName="aspect-[1/0.96]"
+                            imageWrapperClassName="aspect-[4/5]"
                             imageSizes="(max-width: 1280px) 16vw, 14vw"
                         />
                     ))}

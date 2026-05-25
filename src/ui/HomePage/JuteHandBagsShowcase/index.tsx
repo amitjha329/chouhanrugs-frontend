@@ -39,7 +39,7 @@ function MiniProductCard({ product, locale }: { product: ProductDataModel; local
     return (
         <Link href={`/products/${url}`} prefetch={false} className="h-full">
             <div className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:-translate-y-1 h-full flex flex-col">
-                <div className="relative aspect-square overflow-hidden bg-gray-50 flex-shrink-0">
+                <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 flex-shrink-0">
                     {primaryImage && (
                         <Image
                             src={primaryImage}
