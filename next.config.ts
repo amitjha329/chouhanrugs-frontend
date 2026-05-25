@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   experimental: {
     webpackMemoryOptimizations: true,
     cpus: 1,
-    workerThreads: true,
+    workerThreads: false,
   },
   turbopack: {
     // Example: Add aliases and externals for Turbopack (experimental, API may change)
