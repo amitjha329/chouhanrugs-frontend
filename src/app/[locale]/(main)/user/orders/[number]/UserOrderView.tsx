@@ -160,7 +160,7 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress, locale }: { o
                                     sizes="(max-width: 640px) 80px, 96px" 
                                     quality={60} 
                                     src={getProductFeaturedImage(product)} 
-                                    alt={resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)} 
+                                    alt={resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)} 
                                     fill 
                                 />
                             </div>
@@ -168,7 +168,7 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress, locale }: { o
                             {/* Product Details */}
                             <div className="flex-1 min-w-0">
                                 <h3 className="font-semibold text-base-content group-hover:text-primary transition-colors line-clamp-2 mb-2">
-                                    {resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)}
+                                    {resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)}
                                 </h3>
                                 
                                 {/* Variation Badges */}

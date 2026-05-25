@@ -46,7 +46,7 @@ const NewProductsSection = async () => {
 
   const locale = localeValue as Locale
   const heroProduct = products[0]
-  const heroName = resolveLocalizedString(heroProduct.productTitle, locale) || resolveLocalizedString(heroProduct.productName, locale)
+  const heroName = resolveLocalizedString(heroProduct.productName, locale) || resolveLocalizedString(heroProduct.productTitle, locale)
   const heroImage = getProductFeaturedImage(heroProduct)
   const heroUrl = resolveLocalizedString(heroProduct.productURL, locale)
   const heroHref = heroUrl ? `/products/${slugify(heroUrl, { lower: true, strict: true })}` : '/products?sort=new'

@@ -44,7 +44,7 @@ const OrderFinalPage = async (props: { searchParams: Promise<{ [key: string]: st
                                             orderedProducts.length > 0 ? orderedProducts.map((product, index) => product ? <div key={product._id?.toString()} className="mt-4 md:mt-6 flex  flex-col md:flex-row justify-start items-start md:items-center md:space-x-6 xl:space-x-8 w-full">
                                                 <div className="pb-4 md:pb-8 w-full relative flex flex-row items-center">
                                                     <Image src={getProductFeaturedImage(product)} alt="dress" height={100} width={100} />
-                                                    <h3 className="text-lg ml-3 leading-6 text-gray-800">{resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)}</h3>
+                                                    <h3 className="text-lg ml-3 leading-6 text-gray-800">{resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)}</h3>
                                                 </div>
                                                 <div className="md:flex-row flex-col flex justify-between items-start w-full  pb-8 space-y-4 md:space-y-0">
                                                     <div className="flex justify-between space-x-8 items-start w-full">

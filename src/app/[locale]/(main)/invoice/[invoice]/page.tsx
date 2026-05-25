@@ -147,7 +147,7 @@ export default async function Invoice({ params }: Readonly<{ params: Promise<{ i
                                             return (
                                                 <tr key={product.productId} className="hover:bg-gray-50 transition-colors print:hover:bg-white">
                                                     <td className="py-4 px-6 border-r border-gray-200 print:py-2 print:px-3 print:border-r print:border-black">
-                                                        <div className="font-semibold text-gray-900 print:text-xs print:text-black">{resolveLocalizedString(productDetails?.productTitle, locale) || resolveLocalizedString(productDetails?.productName, locale)}</div>
+                                                        <div className="font-semibold text-gray-900 print:text-xs print:text-black">{resolveLocalizedString(productDetails?.productName, locale) || resolveLocalizedString(productDetails?.productTitle, locale)}</div>
                                                         {product.variation && product.variation != "customSize" && (
                                                             <div className="mt-1 text-sm text-gray-800 flex flex-wrap gap-2 print:text-[10px] print:gap-1 print:text-black">
                                                                 {variation?.variationSize && (

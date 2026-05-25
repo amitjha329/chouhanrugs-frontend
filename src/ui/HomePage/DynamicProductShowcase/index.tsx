@@ -35,7 +35,7 @@ function getProductPrices(product: ProductDataModel) {
 }
 
 function MiniProductCard({ product, locale }: { product: ProductDataModel; locale: Locale }) {
-    const name = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale);
+    const name = resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale);
     const url = resolveLocalizedString(product.productURL, locale);
     const { sellingPrice, msrpPrice } = getProductPrices(product);
     const hasDiscount = Number.isFinite(msrpPrice) && Number.isFinite(sellingPrice) && msrpPrice > sellingPrice;

@@ -70,7 +70,7 @@ const CenterFeaturedProductCard = ({
     index: number
 }) => {
     const locale = useLocale() as Locale
-    const name = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)
+    const name = resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)
     const url = resolveLocalizedString(product.productURL, locale)
     const primaryImage = getProductFeaturedImage(product)
     const productHref = '/products/' + slugify(url, {

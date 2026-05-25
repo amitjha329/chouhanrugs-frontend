@@ -93,7 +93,7 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
                         },
                         templates: {
                             item({ item, html }) {
-                                const productName = resolveLocalizedString((item as any).productTitle, locale) || resolveLocalizedString((item as any).productName, locale)
+                                const productName = resolveLocalizedString((item as any).productName, locale) || resolveLocalizedString((item as any).productTitle, locale)
                                 return html`
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">

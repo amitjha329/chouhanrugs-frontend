@@ -13,7 +13,7 @@ import { type Locale } from "@/i18n/routing"
 /*  Mini Product Card (compact for the 50% grid)                      */
 /* ------------------------------------------------------------------ */
 function MiniProductCard({ product, locale }: { product: ProductDataModel; locale: Locale }) {
-    const name = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)
+    const name = resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)
     const url = resolveLocalizedString(product.productURL, locale)
     const variations = product.variations ?? []
     let sellingPrice: number

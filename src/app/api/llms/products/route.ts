@@ -113,7 +113,7 @@ export async function GET(request: Request): Promise<Response> {
                 : '';
 
         lines.push(
-            `## ${resolveLocalizedString(p.productTitle, locale) || resolveLocalizedString(p.productName, locale)}`,
+            `## ${resolveLocalizedString(p.productName, locale) || resolveLocalizedString(p.productTitle, locale)}`,
             '',
             `- URL: /products/${encodeURIComponent(resolveLocalizedString(p.productURL, locale))}`,
             `- Category: ${p.productCategory ?? 'Uncategorized'}`,

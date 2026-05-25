@@ -79,7 +79,7 @@ function getVariationUnitPrice(product: ProductDataModel, variationCode?: string
 function buildAddToCartItem(product: ProductDataModel, variationCode?: string, quantity = 1, locale: Locale = 'en-US'): AnalyticsItem {
     return {
         item_id: String(product._id ?? product.objectID ?? ''),
-        item_name: resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale),
+        item_name: resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale),
         item_category: product.productCategory,
         item_brand: product.productBrand,
         item_variant: variationCode,

@@ -53,7 +53,7 @@ const getProductPrices = (product: itemProps) => {
 
 const NewProductCard = (product: itemProps) => {
   const locale = useLocale() as Locale
-  const name = resolveLocalizedString(product.productTitle, locale) || resolveLocalizedString(product.productName, locale)
+  const name = resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)
   const url = resolveLocalizedString(product.productURL, locale)
   const primaryImage = getProductFeaturedImage(product)
   const shouldLoadEager = (product.index ?? 0) < 4

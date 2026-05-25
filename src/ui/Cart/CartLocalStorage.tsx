@@ -103,7 +103,7 @@ const CartLocalStorage = () => {
                         <>
                             {/* Desktop Table Rows */}
                             {mappedCart.map((item, idx) => {
-                                const pName = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productTitle, locale) || resolveLocalizedString(item.cartProduct[0].productName, locale) : ''
+                                const pName = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productName, locale) || resolveLocalizedString(item.cartProduct[0].productTitle, locale) : ''
                                 const pUrl = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productURL, locale) : ''
                                 return item.cartProduct[0] ? (
                                     <div key={idx} className="hidden sm:flex items-center justify-between hover:bg-gray-100 mb-2 w-full">
@@ -211,7 +211,7 @@ const CartLocalStorage = () => {
                             })}
                             {/* Mobile Card Rows */}
                             {mappedCart.map((item, idx) => {
-                                const pName = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productTitle, locale) || resolveLocalizedString(item.cartProduct[0].productName, locale) : ''
+                                const pName = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productName, locale) || resolveLocalizedString(item.cartProduct[0].productTitle, locale) : ''
                                 const pUrl = item.cartProduct[0] ? resolveLocalizedString(item.cartProduct[0].productURL, locale) : ''
                                 return item.cartProduct[0] ? (
                                     <div key={idx} className="flex flex-col sm:hidden bg-base-100 rounded-lg shadow mb-4 p-4 border border-base-300">

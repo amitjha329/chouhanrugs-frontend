@@ -38,7 +38,7 @@ interface CompoProps extends ProductDataModelWithColorMap {
 const ProductCardItem = (props: CompoProps) => {
     const t = useTranslations('product')
     const locale = useLocale() as Locale
-    const name = resolveLocalizedString(props.productTitle, locale) || resolveLocalizedString(props.productName, locale)
+    const name = resolveLocalizedString(props.productName, locale) || resolveLocalizedString(props.productTitle, locale)
     const url = resolveLocalizedString(props.productURL, locale)
     const primaryImage = getProductFeaturedImage(props)
     const productVariations = props.variations ?? []
