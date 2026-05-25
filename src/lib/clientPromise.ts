@@ -1,7 +1,7 @@
 import { MongoClient, MongoClientOptions } from 'mongodb'
 let uri = process.env.MONGODB
 const options = {
-    maxPoolSize: Number(process.env.MONGODB_MAX_POOL_SIZE ?? 10),
+    maxPoolSize: Number(process.env.MONGODB_MAX_POOL_SIZE ?? 3),
     minPoolSize: 0,
     maxIdleTimeMS: 30_000,
     serverSelectionTimeoutMS: 30_000,

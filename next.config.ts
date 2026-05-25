@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   allowedDevOrigins:['192.168.1.9','chouhanrugs.com','www.chouhanrugs.com','testing.yashjha.dev'],
   experimental: {
-    webpackMemoryOptimizations: true
+    webpackMemoryOptimizations: true,
+    cpus: 4,
+    workerThreads: true,
   },
   turbopack: {
     // Example: Add aliases and externals for Turbopack (experimental, API may change)

@@ -7,7 +7,14 @@ import { createTransport } from 'nodemailer'
 import html from '../../templates/otp_email'
 import { getConfigBulk } from '@/lib/services/ConfigService'
 
-const client = new MongoClient(process.env.MONGODB!)
+const client = new MongoClient(process.env.MONGODB!, {
+    maxPoolSize: 2,
+    minPoolSize: 0,
+    maxIdleTimeMS: 15_000,
+    serverSelectionTimeoutMS: 15_000,
+    connectTimeoutMS: 15_000,
+    socketTimeoutMS: 30_000,
+})
 const db = client.db(process.env.MONGODB_DB)
 
 export const auth = betterAuth({
