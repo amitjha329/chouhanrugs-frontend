@@ -11,7 +11,15 @@ import { useSession } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 
 
-const WishListButton = ({ productDetails }: { productDetails: ProductDataModel }) => {
+const WishListButton = ({
+    productDetails,
+    className,
+    iconClassName,
+}: {
+    productDetails: ProductDataModel
+    className?: string
+    iconClassName?: string
+}) => {
     const [wishAnimate, setWishAnimate] = useState(false)
     const { wishlistItems, refreshWishList } = useDataConnectionContext()
     const { data: session } = useSession()
@@ -43,7 +51,7 @@ const WishListButton = ({ productDetails }: { productDetails: ProductDataModel }
     }
     return (
         <div className={clsx("flex h-8 w-8 items-center justify-center rounded-full bg-white/95 p-0 text-black top-3 absolute z-20 cursor-pointer shadow-sm ring-1 ring-black/5 transition hover:bg-white",
-            wishAnimate ? ` ${ProductsCardStyle.active} ${ProductsCardStyle.animate}` : "", ProductsCardStyle.wish_button
+            wishAnimate ? ` ${ProductsCardStyle.active} ${ProductsCardStyle.animate}` : "", ProductsCardStyle.wish_button, className
         )}
             onClick={addToWishlist}
             aria-label="Toggle wishlist"
@@ -52,6 +60,7 @@ const WishListButton = ({ productDetails }: { productDetails: ProductDataModel }
             onKeyDown={handleKeyboardToggle}
         >
             <svg
+                className={iconClassName}
                 width="28px"
                 height="22px"
                 xmlns="http://www.w3.org/2000/svg"
