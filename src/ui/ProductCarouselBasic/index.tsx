@@ -19,7 +19,8 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
     const total = products.length;
     const [startIndex, setStartIndex] = useState(0);
     const maxStartIndex = total > visibleCount ? total - visibleCount : 0;
-    const sliderRef = useRef<HTMLDivElement>(null);
+    const viewportRef = useRef<HTMLDivElement>(null);
+    const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
     const touchStartX = useRef<number | null>(null);
 
     // Reset startIndex if visibleCount or total changes
@@ -27,11 +28,52 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
         setStartIndex(0);
     }, [visibleCount, total]);
 
+    useEffect(() => {
+        const viewport = viewportRef.current;
+        if (!viewport) return;
+
+        const handleScroll = () => {
+            const itemOffsets = itemRefs.current
+                .map((item, index) => item ? { index, left: item.offsetLeft } : null)
+                .filter((item): item is { index: number, left: number } => item !== null);
+
+            if (itemOffsets.length === 0) return;
+
+            const nextIndex = itemOffsets.reduce((closest, current) => {
+                const currentDistance = Math.abs(current.left - viewport.scrollLeft);
+                const closestDistance = Math.abs(closest.left - viewport.scrollLeft);
+                return currentDistance < closestDistance ? current : closest;
+            }, itemOffsets[0]).index;
+
+            setStartIndex(Math.min(nextIndex, maxStartIndex));
+        };
+
+        viewport.addEventListener('scroll', handleScroll, { passive: true });
+        return () => viewport.removeEventListener('scroll', handleScroll);
+    }, [maxStartIndex, total]);
+
+    const scrollToIndex = (index: number) => {
+        const targetIndex = Math.max(0, Math.min(index, maxStartIndex));
+        const viewport = viewportRef.current;
+        const target = itemRefs.current[targetIndex];
+
+        if (!viewport || !target) {
+            setStartIndex(targetIndex);
+            return;
+        }
+
+        viewport.scrollTo({
+            left: target.offsetLeft,
+            behavior: 'smooth',
+        });
+        setStartIndex(targetIndex);
+    };
+
     const goToPrev = () => {
-        setStartIndex((prev) => Math.max(prev - visibleCount, 0));
+        scrollToIndex(startIndex - visibleCount);
     };
     const goToNext = () => {
-        setStartIndex((prev) => Math.min(prev + visibleCount, maxStartIndex));
+        scrollToIndex(startIndex + visibleCount);
     };
 
     const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
@@ -52,11 +94,6 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
         }
     };
 
-    // Calculate slider width and transform
-    const sliderWidth = `${(100 * total) / visibleCount}%`;
-    const itemWidth = `${100 / total}%`;
-    const sliderTransform = `translateX(-${startIndex * (100 / total)}%)`;
-
     return (
         <>
             <div className="fluid_container mx-auto ~px-5/0 ~py-8/14">
@@ -73,20 +110,26 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                             {'❮'}
                         </div>
                     </button>
-                    <div className="-mx-1.5 overflow-hidden px-1.5 sm:-mx-2 sm:px-2">
+                    <div
+                        ref={viewportRef}
+                        className="-mx-1.5 overflow-x-auto scroll-smooth px-1.5 sm:-mx-2 sm:px-2 no-scrollbar"
+                    >
                         <div
                             id="slider-track"
-                            ref={sliderRef}
-                            className="flex transition-transform duration-300 ease-in-out"
-                            style={{ width: sliderWidth, transform: sliderTransform }}
+                            className="flex gap-3 sm:gap-4"
                             onTouchStart={handleTouchStart}
                             onTouchEnd={handleTouchEnd}
                         >
                             {products.map((product, index) => (
                                 <div
                                     key={product._id?.toString()}
-                                    className="carousel-item flex-shrink-0 px-1.5 sm:px-2"
-                                    style={{ width: itemWidth }}
+                                    ref={(node) => {
+                                        itemRefs.current[index] = node;
+                                    }}
+                                    className={clsx(
+                                        "carousel-item flex-shrink-0 scroll-ml-1.5 sm:scroll-ml-2",
+                                        isMobile ? "basis-[calc((100%_-_0.75rem)/2)]" : "basis-[calc((100%_-_4rem)/5)]"
+                                    )}
                                 >
                                     <ProductCardItem {...product} index={index} />
                                 </div>
