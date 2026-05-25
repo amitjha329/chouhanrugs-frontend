@@ -21,8 +21,6 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
                     {children}
                 </DeviceAwareContent>
             </Suspense>
-            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-            <script id='mobile_menu_handler' src='/mobile_menu_handler.js' defer></script>
         </main>
     )
 }

@@ -135,7 +135,7 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
   }, [appId, apiKey, indexName, querySuggestionsIndex, locale])
 
   return (
-    <div className="w-full">
+    <div className="w-full" id="mobile_algolia_search">
       <div ref={containerRef} />
       <style jsx global>{`
         /* Mobile-specific Algolia styles */

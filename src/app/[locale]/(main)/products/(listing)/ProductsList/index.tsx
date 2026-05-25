@@ -11,21 +11,52 @@ const ProductList = ({ searchQuery, searchParams, categoryParam, predefinedProdu
     const { status } = useInstantSearch()
     const { refine } = useSearchBox()
 
+    const decodedCategory = decodeURIComponent(categoryParam ?? '')
+    const configureFilters: string[] = []
+    const configureFacetFilters: string[][] = []
+
+    if (decodedCategory) {
+        configureFilters.push(decodedCategory === 'Rugs & Runners'
+            ? '(productCategory:"Hemp Rugs" OR productCategory:"Wool Jute Kilim Rugs" OR productCategory:"Braided Jute Rug")'
+            : `productCategory:"${decodedCategory}"`)
+    }
+
+    if (searchParams?.color) {
+        configureFacetFilters.push([`variations.variationColor:${decodeURIComponent(searchParams.color)}`])
+    }
+
+    if (searchParams?.size) {
+        configureFacetFilters.push([`variations.variationSize:${decodeURIComponent(searchParams.size)}`])
+    }
+
+    const normalizedTag = decodeURIComponent(searchParams?.tags ?? '').trim().toLowerCase()
+    const normalizedCollection = decodeURIComponent(searchParams?.collection ?? '').trim().toLowerCase()
+    const normalizedSort = decodeURIComponent(searchParams?.sort ?? '').trim().toLowerCase()
+
+    if (normalizedSort === 'new' || normalizedCollection === 'new-arrivals' || normalizedTag === 'new-arrivals') {
+        configureFilters.push('tags:"New Arrivals"')
+    }
+
+    if (
+        normalizedCollection === 'best-sellers'
+        || normalizedTag === 'best-seller'
+        || normalizedTag === 'best-sellers'
+        || normalizedTag === 'top-selling'
+        || normalizedTag === 'top selling'
+    ) {
+        configureFilters.push('tags:"Top Selling"')
+    }
+
     useEffect(() => {
         refine(searchQuery ?? "")
     }, [searchQuery])
 
     return (
         (<div className="lg:basis-5/6 mx-auto">
-            {
-                categoryParam && <Configure filters={(decodeURIComponent(categoryParam ?? "") == "Rugs & Runners") ? '(productCategory:"Hemp Rugs" OR productCategory:"Wool Jute Kilim Rugs" OR productCategory:"Braided Jute Rug")' : `productCategory:"${(decodeURIComponent(categoryParam ?? ""))}"`} />
-            }
-            {
-                searchParams?.color && <Configure facetFilters={[['variations.variationColor:' + decodeURIComponent(searchParams.color)]]} />
-            }
-            {
-                searchParams?.size && <Configure facetFilters={[['variations.variationSize:' + decodeURIComponent(searchParams.size)]]} />
-            }
+            <Configure
+                filters={configureFilters.length > 0 ? configureFilters.join(' AND ') : undefined}
+                facetFilters={configureFacetFilters.length > 0 ? configureFacetFilters : undefined}
+            />
             {
                 searchQuery && <div className='w-full text-start font-semibold text-lg'>Showing Results for &quot;{searchQuery}&quot;</div>
             }

@@ -7,6 +7,7 @@ import Footer from './Footer'
 import SideNav from './MobileNavigation/SideNav'
 import BottomNavigation from '@/ui/BottomNavigation'
 import MobileNavAutoHide from './MobileNavigation/MobileNavAutoHide'
+import MobileMenuController from './MobileNavigation/MobileMenuController'
 
 interface DeviceAwareContentProps {
     children: ReactNode
@@ -26,6 +27,7 @@ const DeviceAwareContent = async ({ children }: DeviceAwareContentProps) => {
                     <>
                         <BottomNavigation />
                         <MobileNavAutoHide />
+                        <MobileMenuController />
                     </>
                 )}
             </div>
