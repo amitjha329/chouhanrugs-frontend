@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins:['192.168.1.9','chouhanrugs.com','www.chouhanrugs.com','testing.yashjha.dev'],
   experimental: {
     webpackMemoryOptimizations: true,
-    cpus: 4,
+    cpus: 1,
     workerThreads: true,
   },
   turbopack: {
