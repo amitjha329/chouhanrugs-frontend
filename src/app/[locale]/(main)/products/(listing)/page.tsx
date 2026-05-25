@@ -6,7 +6,6 @@ import React from 'react'
 import ProductList from './ProductsList'
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-    await connection()
     const { locale: loc } = await props.params
     return getStaticPageMetadata({
         pageKey: "products",

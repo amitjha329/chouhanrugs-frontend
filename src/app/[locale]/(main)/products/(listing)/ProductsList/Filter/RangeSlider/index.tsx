@@ -11,8 +11,8 @@ const RangeSlider = ({ userCurrency }: { userCurrency: Currency }) => {
     const [value, setValue] = useState<number[]>([min ?? 0, max ?? 0]);
     const thumbLabels = ["start", "end"]
 
-    const from = Math.max(min as number, (Number.isFinite(start[0]) ? start[0] : min) as number);
-    const to = Math.min(max as number, (Number.isFinite(start[1]) ? start[1] : max) as number);
+    const from = Math.max(min as number || 0, (Number.isFinite(start[0]) ? start[0] : min || 0) as number);
+    const to = Math.min(max as number || 1000, (Number.isFinite(start[1]) ? start[1] : max || 1000) as number);
 
     useEffect(() => {
         setValue([from, to]);
@@ -21,6 +21,10 @@ const RangeSlider = ({ userCurrency }: { userCurrency: Currency }) => {
     useEffect(() => {
         console.log(range)
     }, [range]);
+
+    if (min === undefined || max === undefined) {
+        return null;
+    }
 
     return (
         <Slider
