@@ -8,6 +8,7 @@ import ProductContext from "@/utils/Contexts/ProductContext"
 import { PayPalScriptProvider } from "@paypal/react-paypal-js"
 import { liteClient as algoliasearch } from "algoliasearch/lite";
 import { InstantSearch } from "react-instantsearch-core";
+import { useMemo } from "react";
 
 
 export function ProductDataContextProvider({ product, children }: Readonly<{ children: React.ReactNode, product: ProductDataModelWithColorMap }>) {
@@ -30,6 +31,6 @@ export function PaypalContextProvider({ children, key_id, client_token }: Readon
 }
 
 export function AlgoliaSearchProvider({ APPID, KEY, INDEX, children }: Readonly<{ children: React.ReactNode, APPID: string, KEY: string, INDEX: string }>) {
-    const searchClient = algoliasearch(APPID, KEY)
-    return <InstantSearch searchClient={searchClient} indexName={INDEX} future={{ preserveSharedStateOnUnmount: true }}  >{children}</InstantSearch>
+    const searchClient = useMemo(() => algoliasearch(APPID, KEY), [APPID, KEY])
+    return <InstantSearch searchClient={searchClient} indexName={INDEX} stalledSearchDelay={250} future={{ preserveSharedStateOnUnmount: true }}  >{children}</InstantSearch>
 }

@@ -7,7 +7,7 @@ import { liteClient as algoliasearch } from 'algoliasearch/lite'
 import '@algolia/autocomplete-theme-classic'
 import { useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
-import { type Locale } from '@/i18n/routing'
+import { localizePathname, type Locale } from '@/i18n/routing'
 
 interface AlgoliaSearchProps {
     appId: string
@@ -47,8 +47,9 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
             }
         })
 
-        // Query suggestions plugin  
-        const querySuggestionsPlugin = createQuerySuggestionsPlugin({
+        const plugins: any[] = [recentSearchesPlugin]
+
+        if (querySuggestionsIndex) plugins.push(createQuerySuggestionsPlugin({
             searchClient,
             indexName: querySuggestionsIndex,
             getSearchParams() {
@@ -67,14 +68,14 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
                     }
                 }
             }
-        })
+        }))
 
         const autocompleteInstance = autocomplete({
             container: containerRef.current,
             placeholder: 'Search for products...',
             openOnFocus: true,
             detachedMediaQuery: 'none',
-            plugins: [recentSearchesPlugin, querySuggestionsPlugin],
+            plugins,
             getSources() {
                 return [
                     {
@@ -87,18 +88,19 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
                                     indexName,
                                     query,
                                     hitsPerPage: 6,
-                                    attributesToRetrieve: ['objectID', 'productName', 'productTitle', 'productSellingPrice', 'images', 'productURL']
+                                    attributesToRetrieve: ['objectID', 'productName', 'productTitle', 'productSellingPrice', 'productFeaturedImage', 'images', 'productURL']
                                 }]
                             }).then(({ results }) => (results[0] as any).hits as any[])
                         },
                         templates: {
                             item({ item, html }) {
                                 const productName = resolveLocalizedString((item as any).productName, locale) || resolveLocalizedString((item as any).productTitle, locale)
+                                const productImage = (item as any).productFeaturedImage || (item as any).images?.[0] || ''
                                 return html`
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">
                       <div class="aa-ItemIcon aa-ItemIcon--picture aa-ItemIcon--alignTop aa-imageIcon">
-                      <img src="${(item as any).productFeaturedImage || (item as any).images[0]}" alt="${productName}"/>
+                      <img src="${productImage}" alt="${productName}"/>
                       </div>
                       <div class="aa-ItemContentBody">
                         <div class="aa-ItemContentTitle">
@@ -118,14 +120,14 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
                         },
                         onSelect({ item }: { item: any }) {
                             const productURL = resolveLocalizedString((item as any).productURL, locale)
-                            window.location.href = `/products/${encodeURIComponent(productURL)}`
+                            if (productURL) window.location.href = localizePathname(`/products/${encodeURIComponent(productURL)}`, locale)
                         }
                     }
                 ]
             },
             onSubmit({ state }) {
                 if (state.query.trim()) {
-                    window.location.href = `/products?search=${encodeURIComponent(state.query.trim())}`
+                    window.location.href = localizePathname(`/products?search=${encodeURIComponent(state.query.trim())}`, locale)
                 }
             }
         })

@@ -5,6 +5,7 @@ import ProductList from '../../(listing)/ProductsList';
 import getCategoriesWithName from '@/backend/serverActions/getCategoriesWithName';
 import getProductPromoted from '@/backend/serverActions/getProductPromoted';
 import { type Locale } from '@/i18n/routing';
+import { getInitialAlgoliaProducts } from '@/lib/algoliaProducts';
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog';
 
 function stripHtml(value?: string) {
@@ -51,9 +52,12 @@ const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: s
     const {categoryname} = await props.params;
     const category = await getCategoriesWithName(decodeURIComponent(categoryname))
     const promotedProducts = await getProductPromoted(category.name)
+    const initialProducts = await getInitialAlgoliaProducts({
+        categoryParam: category.name,
+    })
     return (
         <>
-            <ProductList categoryParam={category.name} predefinedProducts={promotedProducts} />
+            <ProductList categoryParam={category.name} predefinedProducts={initialProducts.length ? initialProducts : promotedProducts} />
         </>
     )
 }

@@ -3,7 +3,7 @@ import React, { Suspense } from 'react'
 import CategoryMenu from './CategoryMenu'
 import PageLinks from './PageLinks'
 import Header from './Header'
-import AlgoliaSearch from './AlgoliaSearch'
+import LazyAlgoliaSearch from './LazyAlgoliaSearch'
 // import SearchComp from './SearchComp'
 import { FaSearch } from 'react-icons/fa'
 import { getConfigBulk } from '@/lib/services/ConfigService'
@@ -50,7 +50,7 @@ const Navigation = async () => {
                 <div className="w-full pb-4 mx-auto fluid_container">
                     {/* AlgoliaSearch uses Math.random() internally, needs Suspense */}
                     <Suspense fallback={<div className="w-full h-12 bg-gray-100 rounded animate-pulse" />}>
-                        <AlgoliaSearch 
+                        <LazyAlgoliaSearch
                             appId={algolia.ALGOLIA_APPID}
                             apiKey={algolia.ALGOLIA_KEY_CLIENT}
                             indexName={algolia.ALGOLIA_INDEX}

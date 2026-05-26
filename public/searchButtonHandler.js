@@ -6,12 +6,14 @@ let openSearch = true
  * @returns Mouse Event Handler
  */
 const handleSearchButtonClick = (e) => {
-    console.log("search_button_clicked")
     if (openSearch) {
         searchContainer.style.height = "65px"
+        window.dispatchEvent(new CustomEvent("chouhanrugs:open-search"))
     } else {
         searchContainer.style.removeProperty("height")
     }
     openSearch = !openSearch
 }
-searchButton.addEventListener("click", handleSearchButtonClick)
+if (searchButton && searchContainer) {
+    searchButton.addEventListener("click", handleSearchButtonClick)
+}

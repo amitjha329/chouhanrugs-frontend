@@ -4,6 +4,7 @@ import { Metadata } from 'next'
 import { connection } from 'next/server'
 import React from 'react'
 import ProductList from './ProductsList'
+import { getInitialAlgoliaProducts } from '@/lib/algoliaProducts'
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     await connection()
@@ -21,8 +22,12 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 const ProductsListPage = async (props: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
     await connection()
     const searchParams = await props.searchParams;
+    const initialProducts = await getInitialAlgoliaProducts({
+        searchQuery: searchParams.search?.toString(),
+        searchParams,
+    })
     return (
-        <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} />
+        <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} predefinedProducts={initialProducts} />
     )
 }
 
