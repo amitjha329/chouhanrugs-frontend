@@ -44,9 +44,11 @@ const ThumbnailImage = memo(function ThumbnailImage({
             data-carousel-item
             data-item-url={image}
             className={clsx(
-                "relative cursor-pointer carousel-item overflow-hidden rounded-lg border border-primary bg-gray-100 transition-all duration-200",
+                "relative cursor-pointer carousel-item overflow-hidden rounded-lg border bg-gray-100 transition-all duration-200",
                 "!h-[86px] !w-[86px] flex-shrink-0 md:!h-[92px] md:!w-[92px]",
-                { 'ring-2 ring-primary shadow ring-offset-1': isSelected }
+                isSelected
+                    ? 'border-2 border-primary shadow-[inset_0_0_0_2px_rgba(255,255,255,0.9),0_6px_16px_rgba(108,70,36,0.22)]'
+                    : 'border-primary/25 opacity-70 hover:opacity-100'
             )}
             onMouseOver={() => onHover(index)}
             onClick={() => onHover(index)}
@@ -72,6 +74,9 @@ const ThumbnailImage = memo(function ThumbnailImage({
                 blurDataURL={blurPlaceholders.warmNeutral}
                 onLoad={() => setIsLoaded(true)}
             />
+            {isSelected && (
+                <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full border border-white bg-primary shadow-sm" />
+            )}
         </div>
     )
 })
@@ -537,7 +542,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                     )}
                     <div
                         ref={thumbnailCarouselRef}
-                        className="carousel flex w-full gap-3 overflow-x-auto p-2 md:max-h-[640px] md:flex-col md:overflow-x-hidden md:overflow-y-auto md:px-1 md:py-10"
+                        className="carousel flex w-full gap-3 overflow-x-auto px-4 py-2 md:max-h-[640px] md:flex-col md:overflow-x-hidden md:overflow-y-auto md:px-2 md:py-12"
                         id="thumbnail-carousel"
                     >
                         {!imagesInitialized ? (
