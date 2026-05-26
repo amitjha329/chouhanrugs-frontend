@@ -121,6 +121,13 @@ const HomePage = async () => {
       <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
         <NewProductsSection />
       </Suspense>
+
+      {/* Shop by Color - Uses content-visibility for perf */}
+      <LazySection minHeight="300px">
+        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+          <ShopByColor />
+        </Suspense>
+      </LazySection>
       
       {/* Featured Products */}
       <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
@@ -176,13 +183,7 @@ const HomePage = async () => {
           <ShopBySize />
         </Suspense>
       </LazySection>
-      
-      {/* Shop by Color - Uses content-visibility for perf */}
-      <LazySection minHeight="300px">
-        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
-          <ShopByColor />
-        </Suspense>
-      </LazySection>
+
       
       {/* Shop by Room - Uses content-visibility for perf */}
       <LazySection minHeight="500px">

@@ -11,7 +11,7 @@ const TrendingProducts = async () => {
     const t = await getTranslations('homepage')
 
     return (
-        <div className='fluid_container  ~py-5/14 ~px-5/0'>
+        <div className='fluid_container  ~py-5/14 ~px-3.5/0'>
             <SectionTitle title={t('trendingTitle')} className='text-center py-5' />
             {
                 isMobile ? <ProductListHotTrendingMobile /> : <ProductListHotTrending />

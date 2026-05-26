@@ -141,113 +141,220 @@ const AlgoliaMobileSearch: React.FC<AlgoliaMobileSearchProps> = ({
       <div ref={containerRef} />
       <style jsx global>{`
         /* Mobile-specific Algolia styles */
-        .aa-Form {
-          @apply relative flex w-full items-center overflow-hidden rounded-xl border border-primary/15 bg-white shadow-sm;
+        #mobile_algolia_search .aa-Form {
+          position: relative;
+          display: flex;
+          width: 100%;
+          height: 3rem;
+          align-items: center;
+          overflow: visible;
+          border: 1px solid rgba(108, 70, 36, 0.15);
+          border-radius: 1rem;
+          background: #fffdf9;
+          box-shadow: 0 10px 24px rgba(69, 42, 22, 0.08);
         }
         
-        .aa-InputWrapper {
-          @apply relative w-full;
+        #mobile_algolia_search .aa-InputWrapper {
+          position: relative;
+          width: 100%;
         }
         
-        .aa-Input {
-          @apply h-10 w-full border-0 bg-transparent pl-10 pr-12 text-[13px] text-base-content placeholder:text-base-content/45 focus:outline-none focus:ring-0;
+        #mobile_algolia_search .aa-Input {
+          width: 100%;
+          height: 2.75rem;
+          border: 0;
+          border-radius: 1rem;
+          background: transparent;
+          padding: 0 1rem 0 3rem;
+          color: #2a1a10;
+          font-size: 0.875rem;
+          font-weight: 500;
+          line-height: 1;
+          outline: none;
+          box-shadow: none;
+        }
+
+        #mobile_algolia_search .aa-Input::placeholder {
+          color: #9b928b;
+          opacity: 1;
+        }
+
+        #mobile_algolia_search .aa-Input:focus {
+          outline: none;
+          box-shadow: none;
         }
         
-        .aa-SubmitButton {
-          @apply absolute left-2.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center text-primary;
+        #mobile_algolia_search .aa-InputWrapperPrefix {
+          position: absolute;
+          left: 0.5rem;
+          top: 50%;
+          z-index: 10;
+          display: flex;
+          width: 2rem;
+          height: 2rem;
+          align-items: center;
+          justify-content: center;
+          transform: translateY(-50%);
+          border: 0;
+          border-radius: 999px;
+          background: #f4ebe4;
+          color: #6c4624;
+        }
+
+        #mobile_algolia_search .aa-SubmitButton {
+          display: flex;
+          width: 100%;
+          height: 100%;
+          align-items: center;
+          justify-content: center;
+          border: 0;
+          background: transparent;
+          color: inherit;
+          padding: 0;
         }
         
-        .aa-SubmitIcon {
-          @apply h-4 w-4;
+        #mobile_algolia_search .aa-SubmitIcon {
+          width: 1.125rem;
+          height: 1.125rem;
+          color: currentColor;
+        }
+
+        #mobile_algolia_search .aa-Form:focus-within {
+          border-color: rgba(108, 70, 36, 0.35);
+          background: #ffffff;
+          box-shadow: 0 12px 28px rgba(69, 42, 22, 0.12);
         }
         
-        .aa-Panel {
-          @apply absolute left-4 right-4 top-full z-50 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-primary/10 bg-white shadow-xl;
+        #mobile_algolia_search .aa-Panel {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 100%;
+          z-index: 50;
+          margin-top: 0.5rem;
+          max-height: 20rem;
+          overflow-y: auto;
+          border: 1px solid rgba(108, 70, 36, 0.1);
+          border-radius: 1rem;
+          background: #fffdf9;
+          box-shadow: 0 18px 40px rgba(69, 42, 22, 0.16);
         }
         
-        .aa-PanelLayout {
-          @apply divide-y divide-gray-100;
+        #mobile_algolia_search .aa-PanelLayout {
+          overflow: hidden;
         }
         
-        .aa-Source {
-          @apply py-1;
+        #mobile_algolia_search .aa-Source {
+          padding: 0.25rem 0;
         }
         
-        .aa-SourceHeaderTitle {
-          @apply px-3 py-2 text-xs font-semibold text-gray-500 uppercase bg-gray-50;
+        #mobile_algolia_search .aa-SourceHeaderTitle {
+          padding: 0.5rem 0.75rem;
+          background: #f8f3ee;
+          color: #6b625b;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
         }
         
-        .aa-List {
-          @apply divide-y divide-gray-50;
+        #mobile_algolia_search .aa-List {
+          border-top: 1px solid rgba(108, 70, 36, 0.06);
         }
         
-        .aa-Item {
-          @apply cursor-pointer transition-colors duration-150;
+        #mobile_algolia_search .aa-Item {
+          cursor: pointer;
+          transition: background-color 150ms ease;
         }
         
-        .aa-Item[aria-selected="true"] {
-          @apply bg-blue-50;
+        #mobile_algolia_search .aa-Item[aria-selected="true"] {
+          background: #f4ebe4;
         }
         
-        .aa-ItemWrapper {
-          @apply flex items-center px-3 py-2;
+        #mobile_algolia_search .aa-ItemWrapper {
+          display: flex;
+          align-items: center;
+          padding: 0.5rem 0.75rem;
         }
         
-        .aa-ItemContent {
-          @apply flex items-center gap-2 w-full;
+        #mobile_algolia_search .aa-ItemContent {
+          display: flex;
+          width: 100%;
+          align-items: center;
+          gap: 0.5rem;
         }
         
-        .aa-ItemIcon {
-          @apply flex-shrink-0;
+        #mobile_algolia_search .aa-ItemIcon {
+          flex-shrink: 0;
+        }
+
+        #mobile_algolia_search .aa-imageIcon {
+          width: 2rem !important;
+          height: 2rem !important;
         }
         
-        .aa-ItemIcon img {
-          @apply w-8 h-8 object-cover rounded;
+        #mobile_algolia_search .aa-ItemIcon img {
+          width: 2rem;
+          height: 2rem;
+          border-radius: 0.25rem;
+          object-fit: cover;
         }
         
-        .aa-ItemIcon--noPicture {
-          @apply w-8 h-8 bg-gray-200 rounded flex items-center justify-center;
+        #mobile_algolia_search .aa-ItemIcon--noPicture {
+          display: flex;
+          width: 2rem;
+          height: 2rem;
+          align-items: center;
+          justify-content: center;
+          border-radius: 0.25rem;
+          background: #eee5dd;
         }
         
-        .aa-ItemContentBody {
-          @apply flex-1 min-w-0;
+        #mobile_algolia_search .aa-ItemContentBody {
+          min-width: 0;
+          flex: 1;
         }
         
-        .aa-ItemContentTitle {
-          @apply font-medium text-gray-900 truncate text-sm;
+        #mobile_algolia_search .aa-ItemContentTitle {
+          overflow: hidden;
+          color: #2a1a10;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 0.875rem;
+          font-weight: 500;
         }
         
-        .aa-ItemContentDescription {
-          @apply text-xs text-gray-500;
+        #mobile_algolia_search .aa-ItemContentDescription {
+          color: #6b625b;
+          font-size: 0.75rem;
         }
         
         /* Hide default Algolia styles that conflict with DaisyUI */
-        .aa-InputWrapperPrefix,
-        .aa-InputWrapperSuffix,
-        .aa-LoadingIndicator,
-        .aa-ClearButton {
-          @apply hidden;
+        #mobile_algolia_search .aa-InputWrapperSuffix,
+        #mobile_algolia_search .aa-LoadingIndicator,
+        #mobile_algolia_search .aa-ClearButton {
+          display: none;
         }
         
         /* Ensure proper text rendering (not HTML) */
-        .aa-ItemContentTitle,
-        .aa-ItemContentDescription,
-        .aa-SourceHeaderTitle {
+        #mobile_algolia_search .aa-ItemContentTitle,
+        #mobile_algolia_search .aa-ItemContentDescription,
+        #mobile_algolia_search .aa-SourceHeaderTitle {
           white-space: normal;
         }
         
         /* Mobile responsive adjustments */
         @media (max-width: 768px) {
-          .aa-Panel {
-            @apply mx-0;
+          #mobile_algolia_search .aa-Panel {
+            margin-left: 0;
+            margin-right: 0;
           }
           
-          .aa-ItemContentTitle {
-            @apply text-xs;
+          #mobile_algolia_search .aa-ItemContentTitle {
+            font-size: 0.75rem;
           }
           
-          .aa-ItemContentDescription {
-            @apply text-xs;
+          #mobile_algolia_search .aa-ItemContentDescription {
+            font-size: 0.75rem;
           }
         }
       `}</style>

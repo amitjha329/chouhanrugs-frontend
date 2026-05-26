@@ -101,7 +101,7 @@ export async function revalidateStorefrontTags(tags: string[]) {
         await revalidateProducts()
     }
 
-    if (tags.some(tag => ['pages', 'site-data', 'sliders', 'footer-content', 'home-banner-section', 'home-product-showcase', 'home-video-section', 'page-additional-home'].includes(tag))) {
+    if (tags.some(tag => ['pages', 'site-data', 'sliders', 'footer-content', 'home-banner-section', 'home-product-showcase', 'home-popular-categories', 'home-video-section', 'page-additional-home'].includes(tag))) {
         await revalidateSiteData()
     }
 

@@ -101,8 +101,8 @@ const NewProductsSection = async () => {
                 </p>
 
                 <h2 className="mt-2 font-serif text-2xl leading-[0.95] text-[#1f1a17] md:text-[4rem] lg:text-[4.5rem]">
-                  New
-                  <br />
+                  New 
+                  <br className='hidden sm:block' />
                   Products
                 </h2>
 

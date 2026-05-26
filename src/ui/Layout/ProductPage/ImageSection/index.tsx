@@ -27,12 +27,14 @@ const ThumbnailImage = memo(function ThumbnailImage({
     index,
     productName,
     isSelected,
+    quality,
     onHover
 }: {
     image: string
     index: number
     productName: string
     isSelected: boolean
+    quality: number
     onHover: (index: number) => void
 }) {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -63,7 +65,7 @@ const ThumbnailImage = memo(function ThumbnailImage({
                     "!relative h-full w-full object-cover transition-opacity duration-300",
                     isLoaded ? "opacity-100" : "opacity-0"
                 )}
-                quality={imageQuality.thumbnail}
+                quality={quality}
                 loading={index < 3 ? "eager" : "lazy"}
                 sizes={productImageSizes.thumbnail}
                 placeholder="blur"
@@ -548,6 +550,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                                     index={index}
                                     productName={productName}
                                     isSelected={index === (selectedImageIndex ?? 0)}
+                                    quality={imageQuality.thumbnail}
                                     onHover={handleThumbnailHover ?? (() => {})}
                                 />
                             ))

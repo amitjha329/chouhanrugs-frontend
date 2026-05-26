@@ -101,7 +101,7 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                 <div className="relative">
                     <button
                         id="slider-prev"
-                        className={clsx("absolute top-1/2 z-30 -translate-y-1/2 rounded-full p-2", { "-left-5": isMobile }, { "-left-12": !isMobile })}
+                        className="absolute left-2 top-1/2 z-30 -translate-y-1/2 rounded-full p-2 md:left-3 2xl:-left-12"
                         aria-label="Previous"
                         onClick={goToPrev}
                         disabled={startIndex === 0}
@@ -112,7 +112,7 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                     </button>
                     <div
                         ref={viewportRef}
-                        className="-mx-1.5 overflow-x-auto scroll-smooth px-1.5 sm:-mx-2 sm:px-2 no-scrollbar"
+                        className="product-carousel-basic-viewport -mx-1.5 overflow-x-auto scroll-smooth px-1.5 sm:-mx-2 sm:px-2"
                     >
                         <div
                             id="slider-track"
@@ -138,7 +138,7 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                     </div>
                     <button
                         id="slider-next"
-                        className={clsx("absolute top-1/2 z-30 -translate-y-1/2 rounded-full p-2", { "-right-5": isMobile }, { "-right-12": !isMobile })}
+                        className="absolute right-2 top-1/2 z-30 -translate-y-1/2 rounded-full p-2 md:right-3 2xl:-right-12"
                         aria-label="Next"
                         onClick={goToNext}
                         disabled={startIndex === maxStartIndex}
@@ -149,6 +149,16 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                     </button>
                 </div>
             </div>
+            <style jsx global>{`
+                .product-carousel-basic-viewport {
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                }
+
+                .product-carousel-basic-viewport::-webkit-scrollbar {
+                    display: none;
+                }
+            `}</style>
         </>
     )
 })

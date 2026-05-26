@@ -10,8 +10,8 @@ import { useTranslations, useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { type Locale } from '@/i18n/routing'
-import slugify from 'slugify'
 import { FiArrowRight, FiStar } from 'react-icons/fi'
+import { productHrefFromUrl } from '@/lib/productRouting'
 
 interface CompoProps extends ProductDataModelWithColorMap {
     className?: string,
@@ -39,13 +39,9 @@ const ProductCardItem = (props: CompoProps) => {
     const t = useTranslations('product')
     const locale = useLocale() as Locale
     const name = resolveLocalizedString(props.productName, locale) || resolveLocalizedString(props.productTitle, locale)
-    const url = resolveLocalizedString(props.productURL, locale)
     const primaryImage = getProductFeaturedImage(props)
     const productVariations = props.variations ?? []
-    const productHref = '/products/' + slugify(url, {
-        lower: true,
-        strict: true
-    })
+    const productHref = productHrefFromUrl(props.productURL, locale)
     const discountValue = Number.parseFloat(String(props.productDiscountPercentage ?? '0'))
     const discountLabel = Number.isFinite(discountValue) && discountValue > 0
         ? `${discountValue}% OFF`
@@ -98,7 +94,7 @@ const ProductCardItem = (props: CompoProps) => {
         leastMSRP = Number(props.productMSRP).toFixed(2);
     }
 
-    if (!primaryImage || !name) return null
+    if (!primaryImage || !name || !productHref) return null
 
     if (layout === 'featuredOverlay') {
         return (

@@ -14,7 +14,7 @@ const FeaturedProducts = async () => {
     const trendingProducts = serializeForClient(await getFeaturedProducts({ limit: 8 }))
     const t = await getTranslations('homepage')
 
-    return trendingProducts.length > 0 ? <div className='fluid_container  ~py-5/14 ~px-5/0'>
+    return trendingProducts.length > 0 ? <div className='fluid_container  ~py-5/14 ~px-3.5/0'>
         <SectionTitle title={t('featuredTitle')} className='text-center py-5' />
         {
             isMobile ? <ProductListHotFeaturedMobile trendingProducts={trendingProducts} /> : <ProductListHotFeatured trendingProducts={trendingProducts} />

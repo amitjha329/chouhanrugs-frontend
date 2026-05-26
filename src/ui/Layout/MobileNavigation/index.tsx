@@ -7,7 +7,7 @@ import AlgoliaMobileSearch from './AlgoliaMobileSearch'
 import { getSession } from '@/lib/auth-server'
 import { getConfigBulk } from '@/lib/services/ConfigService'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
-import { HiOutlineAdjustmentsHorizontal, HiOutlineBars3, HiOutlineUserCircle } from 'react-icons/hi2'
+import { HiOutlineBars3, HiOutlineUserCircle } from 'react-icons/hi2'
 import { getTranslations } from 'next-intl/server'
 import SignOutClient from '@/ui/SignOutClient'
 
@@ -107,13 +107,6 @@ const MobileNavigation = async () => {
                         indexName={algolia.ALGOLIA_INDEX}
                         querySuggestionsIndex={algolia.ALGOLIA_QUERY_INDEX}
                     />
-                    <button
-                        type="button"
-                        aria-label="Open filters"
-                        className="pointer-events-none absolute right-6 top-[4.6rem] z-10 flex h-9 w-9 items-center justify-center text-primary"
-                    >
-                        <HiOutlineAdjustmentsHorizontal className="h-5 w-5" aria-hidden="true" />
-                    </button>
                 </div>
                 {/* Fallback form for when JavaScript is disabled */}
                 <noscript>

@@ -22,7 +22,7 @@ const ProductListHotTrendingMobile = async () => {
     const trendingProducts = serializeForClient(await getHotTrendingProducts({ limit: 8 }))
 
     return (
-        <div className="carousel carousel-center max-w-full space-x-4 p-4 z-30">
+        <div className="carousel carousel-center max-w-full space-x-3 py-4 px-1.5 z-30">
             {
                 trendingProducts
                     .reduce((accumulator: ProductDataModelWithColorMap[][], _, currentIndex, array) => {

@@ -177,7 +177,7 @@ const SideNav = async () => {
                 </Link>
 
                 <div className="mb-4">
-                    <div className="flex h-9 min-w-0 items-center gap-1.5 rounded-lg border border-primary/10 bg-white px-2 text-xs font-semibold">
+                    <div className="flex h-9 min-w-0 items-center gap-1.5 px-2 text-xs font-semibold">
                         <HiOutlineGlobeAlt className="h-4 w-4 shrink-0" aria-hidden="true" />
                         <LocaleSwitcher />
                     </div>

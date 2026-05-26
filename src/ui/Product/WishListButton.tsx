@@ -50,7 +50,7 @@ const WishListButton = ({
         e.currentTarget.click()
     }
     return (
-        <div className={clsx("flex h-8 w-8 items-center justify-center rounded-full bg-white/95 p-0 text-black top-3 absolute z-20 cursor-pointer shadow-sm ring-1 ring-black/5 transition hover:bg-white",
+        <div className={clsx("flex h-9 w-9 items-center justify-center rounded-full bg-white/95 p-0 text-black top-3 absolute z-20 cursor-pointer shadow-sm ring-1 ring-black/5 transition hover:bg-white",
             wishAnimate ? ` ${ProductsCardStyle.active} ${ProductsCardStyle.animate}` : "", ProductsCardStyle.wish_button, className
         )}
             onClick={addToWishlist}
@@ -60,10 +60,10 @@ const WishListButton = ({
             onKeyDown={handleKeyboardToggle}
         >
             <svg
-                className={iconClassName}
-                width="28px"
-                height="22px"
+                className={clsx("h-5 w-5 overflow-visible", iconClassName)}
+                viewBox="0 0 33 24"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
             >
                 <g fill="none" fillRule="evenodd">
                     <path

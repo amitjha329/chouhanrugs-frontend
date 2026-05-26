@@ -18,7 +18,7 @@ const ProductListHotFeatured = async ({ trendingProducts }: { trendingProducts: 
 const ProductListHotFeaturedMobile = async ({ trendingProducts }: { trendingProducts: ProductDataModelWithColorMap[] }) => {
 
     return (
-        <div className="carousel carousel-center max-w-full space-x-4 p-4 z-30">
+        <div className="carousel carousel-center max-w-full space-x-3 py-4 px-1.5 z-30">
             {
                 trendingProducts.length > 0 && trendingProducts
                     .reduce((accumulator: ProductDataModelWithColorMap[][], _, currentIndex, array) => {

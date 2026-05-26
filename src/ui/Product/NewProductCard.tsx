@@ -6,8 +6,8 @@ import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { useLocale } from 'next-intl'
 import { type Locale } from '@/i18n/routing'
-import slugify from 'slugify'
 import { FiArrowRight } from 'react-icons/fi'
+import { productHrefFromUrl } from '@/lib/productRouting'
 
 interface itemProps extends ProductDataModelWithColorMap {
   className?: string
@@ -54,14 +54,13 @@ const getProductPrices = (product: itemProps) => {
 const NewProductCard = (product: itemProps) => {
   const locale = useLocale() as Locale
   const name = resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)
-  const url = resolveLocalizedString(product.productURL, locale)
   const primaryImage = getProductFeaturedImage(product)
   const shouldLoadEager = (product.index ?? 0) < 4
   const { sellingPrice, msrp } = getProductPrices(product)
   const hasDiscount = Number.isFinite(msrp) && Number.isFinite(sellingPrice) && msrp > sellingPrice
-  const productHref = '/products/' + slugify(url, { lower: true, strict: true })
+  const productHref = productHrefFromUrl(product.productURL, locale)
 
-  if (!primaryImage || !name || !Number.isFinite(sellingPrice)) return null
+  if (!primaryImage || !name || !productHref || !Number.isFinite(sellingPrice)) return null
 
   return (
     <article className="group overflow-hidden rounded-xl border border-[#eadfd4] bg-white shadow-[0_10px_30px_rgba(83,53,28,0.06)] transition duration-200 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_16px_36px_rgba(83,53,28,0.12)]">

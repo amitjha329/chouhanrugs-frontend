@@ -2,7 +2,6 @@ import React from 'react'
 import ProductCardItem from '@/ui/Product/ProductCardItem'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import Image from 'next/image'
-import slugify from 'slugify'
 import { Link } from '@/i18n/navigation'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
@@ -11,6 +10,7 @@ import { useLocale } from 'next-intl'
 import { FiArrowRight, FiStar } from 'react-icons/fi'
 import WishListButton from '@/ui/Product/WishListButton'
 import { blurPlaceholders, imageQuality } from '@/utils/imageOptimization'
+import { productHrefFromUrl } from '@/lib/productRouting'
 
 const getProductPrice = (product: ProductDataModelWithColorMap) => {
     const productVariations = product.variations ?? []
@@ -71,12 +71,8 @@ const CenterFeaturedProductCard = ({
 }) => {
     const locale = useLocale() as Locale
     const name = resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)
-    const url = resolveLocalizedString(product.productURL, locale)
     const primaryImage = getProductFeaturedImage(product)
-    const productHref = '/products/' + slugify(url, {
-        lower: true,
-        strict: true,
-    })
+    const productHref = productHrefFromUrl(product.productURL, locale)
     const sellingPrice = getProductPrice(product)
     const msrp = getProductMsrp(product)
     const discountValue = Number.parseFloat(String(product.productDiscountPercentage ?? '0'))
@@ -86,7 +82,7 @@ const CenterFeaturedProductCard = ({
     const reviewAverage = Number(product.productReviews?.average ?? 0)
     const reviewCount = Number(product.productReviews?.totalReviews ?? 0)
 
-    if (!primaryImage || !name) return null
+    if (!primaryImage || !name || !productHref) return null
 
     return (
         <article className="group relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#eadfd6] bg-white p-2 shadow-[0_12px_30px_rgba(83,53,28,0.12)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(83,53,28,0.16)]">

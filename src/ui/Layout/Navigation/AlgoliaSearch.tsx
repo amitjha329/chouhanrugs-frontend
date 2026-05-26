@@ -138,71 +138,191 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
     }, [appId, apiKey, indexName, querySuggestionsIndex, locale])
 
     return (
-        <div className="w-full mx-auto">
+        <div className="w-full mx-auto" id="desktop_algolia_search">
             <div ref={containerRef} />
             <style jsx global>{`
-        .aa-Form {
-          @apply join w-full;
+        #desktop_algolia_search .aa-Form {
+          position: relative;
+          display: flex;
+          width: 100%;
+          height: 3.25rem;
+          align-items: center;
+          overflow: visible;
+          border: 1px solid rgba(108, 70, 36, 0.16);
+          border-radius: 1rem;
+          background: #fffdf9;
+          box-shadow: 0 12px 28px rgba(69, 42, 22, 0.08);
         }
-        .aa-InputWrapperPrefix {
-          @apply btn btn-ghost join-item;
+
+        #desktop_algolia_search .aa-Form:focus-within {
+          border-color: rgba(108, 70, 36, 0.38);
+          background: #ffffff;
+          box-shadow: 0 16px 36px rgba(69, 42, 22, 0.12);
         }
-        .aa-InputWrapper {
-          @apply join-item w-full;
+
+        #desktop_algolia_search .aa-InputWrapper {
+          position: relative;
+          width: 100%;
         }
-        .aa-Input {
-          @apply input input-bordered w-full join-item focus:outline-none focus:ring-2 focus:ring-accent;
+
+        #desktop_algolia_search .aa-Input {
+          width: 100%;
+          height: 3rem;
+          border: 0;
+          border-radius: 1rem;
+          background: transparent;
+          padding: 0 1rem 0 3.5rem;
+          color: #2a1a10;
+          font-size: 0.95rem;
+          font-weight: 500;
+          outline: none;
+          box-shadow: none;
         }
-        .aa-InputWrapperSuffix {
-          @apply btn btn-outline btn-accent join-item;
+
+        #desktop_algolia_search .aa-Input::placeholder {
+          color: #8f857c;
+          opacity: 1;
         }
-        .aa-SubmitButton {
-          @apply btn btn-outline btn-accent join-item flex items-center justify-center;
+
+        #desktop_algolia_search .aa-InputWrapperPrefix {
+          position: absolute;
+          left: 0.7rem;
+          top: 50%;
+          z-index: 10;
+          display: flex;
+          width: 2.15rem;
+          height: 2.15rem;
+          align-items: center;
+          justify-content: center;
+          transform: translateY(-50%);
+          border-radius: 999px;
+          background: #f4ebe4;
+          color: #6c4624;
         }
-        .aa-SubmitIcon {
-          @apply w-5 h-5;
+
+        #desktop_algolia_search .aa-SubmitButton {
+          display: flex;
+          width: 100%;
+          height: 100%;
+          align-items: center;
+          justify-content: center;
+          border: 0;
+          background: transparent;
+          color: inherit;
+          padding: 0;
         }
-        .aa-Panel {
-          @apply absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-80 overflow-y-auto z-50;
+
+        #desktop_algolia_search .aa-SubmitIcon {
+          width: 1.2rem;
+          height: 1.2rem;
+          color: currentColor;
         }
-        .aa-PanelLayout {
-          @apply divide-y divide-gray-100;
+
+        #desktop_algolia_search .aa-InputWrapperSuffix,
+        #desktop_algolia_search .aa-LoadingIndicator,
+        #desktop_algolia_search .aa-ClearButton {
+          display: none;
         }
-        .aa-Source {
-          @apply py-2;
+
+        #desktop_algolia_search .aa-Panel {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          z-index: 50;
+          margin-top: 0.5rem;
+          max-height: 20rem;
+          overflow-y: auto;
+          border: 1px solid rgba(108, 70, 36, 0.1);
+          border-radius: 1rem;
+          background: #fffdf9;
+          box-shadow: 0 18px 40px rgba(69, 42, 22, 0.16);
         }
-        .aa-SourceHeaderTitle {
-          @apply px-3 py-2 text-xs font-semibold text-gray-500 uppercase border-b;
+
+        #desktop_algolia_search .aa-PanelLayout {
+          overflow: hidden;
         }
-        .aa-List {
-          @apply divide-y divide-gray-100;
+
+        #desktop_algolia_search .aa-Source {
+          padding: 0.35rem 0;
         }
-        .aa-Item {
-          @apply cursor-pointer transition-colors duration-150;
+
+        #desktop_algolia_search .aa-SourceHeaderTitle {
+          padding: 0.55rem 0.85rem;
+          border-bottom: 1px solid rgba(108, 70, 36, 0.08);
+          background: #f8f3ee;
+          color: #6b625b;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
         }
-        .aa-Item[aria-selected="true"] {
-          @apply bg-gray-50;
+
+        #desktop_algolia_search .aa-List {
+          border-top: 1px solid rgba(108, 70, 36, 0.06);
         }
-        .aa-ItemWrapper {
-          @apply flex items-center gap-3 px-3 py-2;
+
+        #desktop_algolia_search .aa-Item {
+          cursor: pointer;
+          transition: background-color 150ms ease;
         }
-        .aa-ItemContent {
-          @apply flex items-center gap-3 w-full;
+
+        #desktop_algolia_search .aa-Item[aria-selected="true"] {
+          background: #f4ebe4;
         }
-        .aa-ItemIcon img {
-          @apply w-10 h-10 object-cover rounded;
+
+        #desktop_algolia_search .aa-ItemWrapper {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.6rem 0.85rem;
         }
-        .aa-ItemIcon--noPicture {
-          @apply w-10 h-10 bg-gray-200 rounded flex items-center justify-center;
+
+        #desktop_algolia_search .aa-ItemContent {
+          display: flex;
+          width: 100%;
+          align-items: center;
+          gap: 0.75rem;
         }
-        .aa-ItemContentBody {
-          @apply flex-1 min-w-0;
+
+        #desktop_algolia_search .aa-imageIcon {
+          width: 2.75rem !important;
+          height: 2.75rem !important;
         }
-        .aa-ItemContentTitle {
-          @apply font-medium text-gray-900 truncate;
+
+        #desktop_algolia_search .aa-ItemIcon img {
+          width: 2.75rem;
+          height: 2.75rem;
+          border-radius: 0.45rem;
+          object-fit: cover;
         }
-        .aa-ItemContentDescription {
-          @apply text-sm text-gray-500;
+
+        #desktop_algolia_search .aa-ItemIcon--noPicture {
+          display: flex;
+          width: 2.75rem;
+          height: 2.75rem;
+          align-items: center;
+          justify-content: center;
+          border-radius: 0.45rem;
+          background: #eee5dd;
+        }
+
+        #desktop_algolia_search .aa-ItemContentBody {
+          min-width: 0;
+          flex: 1;
+        }
+
+        #desktop_algolia_search .aa-ItemContentTitle {
+          overflow: hidden;
+          color: #2a1a10;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 0.92rem;
+          font-weight: 600;
+        }
+
+        #desktop_algolia_search .aa-ItemContentDescription {
+          color: #6b625b;
+          font-size: 0.8rem;
         }
       `}</style>
         </div>
