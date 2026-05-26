@@ -58,6 +58,16 @@ const RecentlyViewedSidebar = () => {
         return () => window.removeEventListener('recently-viewed-updated', handler)
     }, [refreshProducts])
 
+    useEffect(() => {
+        const openRecentlyViewed = () => {
+            refreshProducts()
+            setIsOpen(true)
+        }
+
+        window.addEventListener('recently-viewed:open', openRecentlyViewed)
+        return () => window.removeEventListener('recently-viewed:open', openRecentlyViewed)
+    }, [refreshProducts])
+
     const handleClear = () => {
         clearRecentlyViewed()
         setProducts([])
@@ -80,7 +90,7 @@ const RecentlyViewedSidebar = () => {
             <button
                 data-floating-action="true"
                 onClick={() => setIsOpen(true)}
-                className="fixed ~bottom-24/6 right-[5.5rem] z-[9997] translate-y-0 rounded-full bg-secondary p-4 text-secondary-content shadow-lg transition-all duration-300 ease-out will-change-transform hover:scale-110 hover:shadow-xl"
+                className="fixed ~bottom-24/6 right-[5.5rem] z-[9997] hidden translate-y-0 rounded-full bg-secondary p-4 text-secondary-content shadow-lg transition-all duration-300 ease-out will-change-transform hover:scale-110 hover:shadow-xl md:block"
                 aria-label="Recently viewed products"
             >
                 <HiClock size={24} />

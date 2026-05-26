@@ -8,7 +8,7 @@ import RangeSlider from '../RangeSlider'
 import SizeSelector from '../SizeSelector'
 import ColorSelector from '../ColorSelector'
 import FilterAccordion from '../FilterAccordion'
-import { ClearRefinements, HierarchicalMenu, RefinementList, ToggleRefinement } from 'react-instantsearch'
+import { ClearRefinements, RefinementList, ToggleRefinement } from 'react-instantsearch'
 import Currency from '@/types/Currency'
 
 const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }: {
@@ -35,20 +35,12 @@ const FilterBottomSheet = ({ filterSheetOpen, toggleOpenCallback, userCurrency }
                 </div>
                 <div className="p-3 flex flex-col justify-start flex-grow overflow-y-auto">
                     <Container showAsAccordion accordionLable='Categories'>
-                        <HierarchicalMenu attributes={[
-                            "hierarchicalCategories.lvl0",
-                            "hierarchicalCategories.lvl1",
-                            "hierarchicalCategories.lvl2",
-                            "hierarchicalCategories.lvl3",
-                        ]} separator=" > " showMoreLimit={100} limit={10} showMore classNames={{
-                            list: "space-y-1",
-                            childList: "ml-4 mt-1 space-y-1 border-l border-base-200 pl-3",
-                            item: "text-sm",
-                            selectedItem: "font-semibold text-primary",
-                            link: "flex items-center justify-between rounded px-2 py-2 hover:bg-secondary",
-                            label: "capitalize",
-                            count: "ml-2 rounded-full bg-base-200 px-2 py-0.5 text-xs text-base-content/60",
-                            showMore: "border flex w-full p-3 justify-between items-center text-left text-sm font-normal text-primary hover:bg-secondary",
+                        <RefinementList attribute="categoryHierarchy" showMoreLimit={100} limit={10} showMore classNames={{
+                            checkbox: "checkbox",
+                            label: "label cursor-pointer",
+                            labelText: "label-text capitalize",
+                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-secondary",
+                            count: "color-[grey]"
                         }} />
                     </Container>
                     <Container showAsAccordion accordionLable='Price'>

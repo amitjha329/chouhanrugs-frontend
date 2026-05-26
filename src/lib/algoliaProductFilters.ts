@@ -19,6 +19,7 @@ export const PRODUCT_SEARCH_ATTRIBUTES = [
     "productTitle",
     "productURL",
     "productCategory",
+    "categoryHierarchy",
     "hierarchicalCategories",
     "productBrand",
     "productBaseColor",
@@ -48,13 +49,13 @@ export function buildProductAlgoliaParams(options: ProductAlgoliaSearchOptions) 
     const filters: string[] = [];
     const facetFilters: string[][] = [];
 
-    if (decodedCategoryPath) {
-        const categoryLevel = decodedCategoryPath.split(" > ").filter(Boolean).length - 1;
-        filters.push(`hierarchicalCategories.lvl${Math.max(categoryLevel, 0)}:${quote(decodedCategoryPath)}`);
-    } else if (decodedCategory) {
+    if (decodedCategory) {
         filters.push(decodedCategory === "Rugs & Runners"
             ? `(productCategory:${quote("Hemp Rugs")} OR productCategory:${quote("Wool Jute Kilim Rugs")} OR productCategory:${quote("Braided Jute Rug")})`
-            : `productCategory:${quote(decodedCategory)}`);
+            : `categoryHierarchy:${quote(decodedCategory)}`);
+    } else if (decodedCategoryPath) {
+        const categoryLevel = decodedCategoryPath.split(" > ").filter(Boolean).length - 1;
+        filters.push(`hierarchicalCategories.lvl${Math.max(categoryLevel, 0)}:${quote(decodedCategoryPath)}`);
     }
 
     const color = decodeValue(options.searchParams?.color);

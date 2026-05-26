@@ -89,7 +89,7 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel }) => {
                     const description = resolveLocalizedString(image.desc as any, locale) || 'Crafted for comfort. Made to impress.'
 
                     return (
-                        <div key={`${imageSrc}-${index}`} className="relative mx-4 h-[200px] overflow-hidden rounded-2xl md:mx-0 md:h-[540px] md:rounded-none lg:h-[620px]">
+                        <div key={`${imageSrc}-${index}`} className="relative h-[250px] overflow-hidden mx-0 md:h-[540px] rounded-none lg:h-[620px]">
                             <Image
                                 src={imageSrc || banner_2.src}
                                 alt={`Hero banner ${index + 1}`}
@@ -97,7 +97,7 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel }) => {
                                 loading={isFirstSlide ? "eager" : "lazy"}
                                 fill
                                 sizes="100vw"
-                                className="object-cover"
+                                className="object-fill"
                             />
                             {/* <div className="absolute inset-0 bg-gradient-to-r from-[#fff8ef]/90 via-[#fff8ef]/45 to-transparent md:bg-gradient-to-b md:from-black/15 md:via-black/30 md:to-black/45" />
                             <div className="absolute inset-x-6 top-8 mx-auto flex max-w-4xl flex-col items-start text-left text-primary md:inset-x-4 md:top-[18%] md:items-center md:text-center md:text-white">

@@ -9,6 +9,7 @@ import { getNewProducts } from '@/backend/serverActions/getNewProducts'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { ProductList } from './ProductList'
+import newArrivalsImage from './new-arrivals.webp'
 
 const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjZGMUYwIi8+PC9zdmc+"
 
@@ -69,15 +70,15 @@ const NewProductsSection = async () => {
               prefetch={false}
               className="relative block h-[260px] overflow-hidden sm:h-[320px] lg:h-auto lg:min-h-[460px]"
             >
-              {heroImage ? (
+              {newArrivalsImage ? (
                 <Image
-                  src={heroImage}
+                  src={newArrivalsImage}
                   alt={heroName || 'New arrivals at Chouhan Rugs'}
                   fill
                   priority
                   placeholder="blur"
-                  blurDataURL={blurDataURL}
-                  className="object-cover"
+                  blurDataURL={newArrivalsImage.blurDataURL || blurDataURL}
+                  className="object-fill"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               ) : null}

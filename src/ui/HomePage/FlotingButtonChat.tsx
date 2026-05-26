@@ -1,7 +1,7 @@
 'use client'
 import SiteDataModel from "@/types/SiteDataModel";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEnvelope, FaWhatsapp } from "react-icons/fa";
 import { HiOutlineChatBubbleLeftRight, HiXMark } from "react-icons/hi2";
 import { useGoogleAdsConfig } from "@/components/GoogleAdsProvider";
@@ -10,6 +10,12 @@ import { trackWhatsAppLead } from "@/lib/gtagConversion";
 const FloatingButtonChat = ({ siteData }: { className?: string, siteData: SiteDataModel }) => {
     const googleAdsConfig = useGoogleAdsConfig();
     const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        const toggleContactOptions = () => setIsOpen((current) => !current)
+        window.addEventListener('mobile-contact:toggle', toggleContactOptions)
+        return () => window.removeEventListener('mobile-contact:toggle', toggleContactOptions)
+    }, [])
 
     return (
         <div
@@ -20,7 +26,7 @@ const FloatingButtonChat = ({ siteData }: { className?: string, siteData: SiteDa
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
-                    rounded-full p-4 shadow-lg transition-all duration-300 
+                    hidden rounded-full p-4 shadow-lg transition-all duration-300 md:block
                     hover:scale-110 hover:shadow-xl
                     ${isOpen 
                         ? 'bg-base-300 text-base-content rotate-0' 
