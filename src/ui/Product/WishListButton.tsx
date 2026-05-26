@@ -60,7 +60,7 @@ const WishListButton = ({
             onKeyDown={handleKeyboardToggle}
         >
             <svg
-                className={clsx("h-5 w-5 overflow-visible", iconClassName)}
+                className={clsx("h-6 w-6 overflow-visible", iconClassName)}
                 viewBox="0 0 33 24"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
