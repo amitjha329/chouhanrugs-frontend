@@ -15,6 +15,7 @@ import TrackProductView from '@/ui/RecentlyViewed/TrackProductView'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage, getProductGalleryImages } from '@/lib/getProductFeaturedImage'
 import { locales, type Locale } from '@/i18n/routing'
+import { productAlternates, productCanonicalUrl, resolveProductSeoTitle } from '@/lib/seoCatalog'
 import ProductCraftStorySection from '@/ui/Layout/ProductPage/ProductCraftStorySection'
 import ProductReviewsSection from '@/ui/Layout/ProductPage/Reviews'
 import { getApprovedProductReviews } from '@/backend/serverActions/getApprovedProductReviews'
@@ -33,10 +34,10 @@ export async function generateMetadata(props: { params: Promise<{ productId: str
     const data = await getProductWithSlug(params.productId)
     if (data == undefined) return {}
     const locale = params.locale as Locale
-    const productDisplayName = resolveLocalizedString(data.productTitle, locale) || resolveLocalizedString(data.productName, locale)
-    const name = resolveLocalizedString(data.metaTitle, locale) || productDisplayName
+    const name = resolveProductSeoTitle(data, locale)
     const desc = resolveLocalizedString(data.metaDescription, locale) || resolveLocalizedString(data.productDescriptionShort, locale)
     const dataAdditional = await getSiteData()
+    const productImages = getProductGalleryImages(data)
     return {
         title: name,
         description: desc,
@@ -47,7 +48,7 @@ export async function generateMetadata(props: { params: Promise<{ productId: str
             siteName: "Chouhan Rugs",
             phoneNumbers: dataAdditional.contact_details.phone,
             emails: dataAdditional.contact_details.email,
-            images: getProductGalleryImages(data).map((image: string) => {
+            images: productImages.map((image: string) => {
                 return { url: image }
             })
         },
@@ -55,10 +56,11 @@ export async function generateMetadata(props: { params: Promise<{ productId: str
             title: name,
             description: desc,
             card: "summary",
-            images: dataAdditional.logoSrc,
+            images: productImages[0] || dataAdditional.logoSrc,
         },
         alternates: {
-            canonical: `${dataAdditional.url}products/${params.productId}`
+            canonical: productCanonicalUrl(dataAdditional.url, data, locale),
+            languages: productAlternates(dataAdditional.url, data),
         }
     }
 }

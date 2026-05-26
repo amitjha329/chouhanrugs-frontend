@@ -1,6 +1,7 @@
 import getProductListForLLMS from "@/backend/serverActions/getProductList";
 import { LocalizedField, resolveLocalizedString } from "@/lib/resolveLocalized";
 import { type Locale } from "@/i18n/routing";
+import { getProductFeaturedImage } from "@/lib/getProductFeaturedImage";
 
 // export const runtime = 'edge';
 
@@ -38,6 +39,8 @@ function stripHtml(html: string): string {
 interface ProductEntry {
     productName: LocalizedField<string>;
     productTitle?: LocalizedField<string>;
+    metaTitle?: LocalizedField<string>;
+    metaDescription?: LocalizedField<string>;
     productURL: LocalizedField<string>;
     productDescriptionShort: LocalizedField<string>;
     productDescriptionLong: LocalizedField<string>;
@@ -48,6 +51,14 @@ interface ProductEntry {
     productBaseColor: string;
     highlights: LocalizedField<string[]>;
     productStockQuantity: number;
+    productFeaturedImage?: string;
+    images?: string[];
+    productBrand?: string;
+    sku?: string;
+    gtin?: string;
+    itemCode?: string;
+    productStatus?: string;
+    visibility?: string;
     updatedOn: number;
 }
 
@@ -99,28 +110,41 @@ export async function GET(request: Request): Promise<Response> {
     ];
 
     for (const p of products) {
-        const locale: Locale = 'en-IN'
+        const locale: Locale = 'en-US'
         const shortDesc = stripHtml(resolveLocalizedString(p.productDescriptionShort, locale));
         const longDesc = stripHtml(resolveLocalizedString(p.productDescriptionLong, locale));
-        const description = longDesc || shortDesc || 'No description available.';
+        const metaDesc = stripHtml(resolveLocalizedString(p.metaDescription, locale));
+        const description = metaDesc || longDesc || shortDesc || 'No description available.';
+        const title =
+            resolveLocalizedString(p.metaTitle, locale) ||
+            resolveLocalizedString(p.productTitle, locale) ||
+            resolveLocalizedString(p.productName, locale);
+        const slug = resolveLocalizedString(p.productURL, locale);
         const price =
             p.productSellingPrice != null
-                ? `₹${p.productSellingPrice.toLocaleString('en-IN')}`
+                ? `$${Number(p.productSellingPrice).toLocaleString('en-US')}`
                 : '';
         const msrp =
             p.productMSRP != null
-                ? ` (MRP ₹${p.productMSRP.toLocaleString('en-IN')})`
+                ? ` (MSRP $${Number(p.productMSRP).toLocaleString('en-US')})`
                 : '';
 
         lines.push(
-            `## ${resolveLocalizedString(p.productName, locale) || resolveLocalizedString(p.productTitle, locale)}`,
+            `## ${title}`,
             '',
-            `- URL: /products/${encodeURIComponent(resolveLocalizedString(p.productURL, locale))}`,
+            `- URL: /products/${encodeURIComponent(slug)}`,
+            `- Featured Image: ${getProductFeaturedImage(p) || '—'}`,
             `- Category: ${p.productCategory ?? 'Uncategorized'}`,
+            `- Brand: ${p.productBrand || 'Chouhan Rugs'}`,
             `- Price: ${price}${msrp}`,
+            `- SKU: ${p.sku || p.itemCode || '—'}`,
+            `- GTIN: ${p.gtin || '—'}`,
             `- Color: ${p.productBaseColor ?? '—'}`,
             `- Tags: ${(p.tags ?? []).join(', ') || '—'}`,
             `- In Stock: ${(p.productStockQuantity ?? 0) > 0 ? 'Yes' : 'No'}`,
+            `- Status: ${p.productStatus || 'Published'}`,
+            `- Visibility: ${p.visibility || 'visible'}`,
+            `- Updated: ${p.updatedOn ? new Date(p.updatedOn).toISOString() : '—'}`,
             '',
             description,
             '',

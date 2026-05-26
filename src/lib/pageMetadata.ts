@@ -1,6 +1,7 @@
 import getPageData from "@/backend/serverActions/getPageData";
 import getSiteData from "@/backend/serverActions/getSiteData";
 import { type Locale } from "@/i18n/routing";
+import { localizedAbsoluteUrl, localizedLanguages } from "@/lib/seoCatalog";
 import { resolveLocalizedString } from "@/lib/resolveLocalized";
 import type { Metadata } from "next";
 
@@ -20,12 +21,6 @@ const stripHtml = (value?: string) =>
         ?.replace(/<[^>]*>/g, " ")
         .replace(/\s+/g, " ")
         .trim() ?? "";
-
-const joinUrl = (baseUrl: string, path: string) => {
-    const cleanBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-    const cleanPath = path.replace(/^\/+/, "");
-    return `${cleanBase}${cleanPath}`;
-};
 
 export async function getStaticPageMetadata({
     pageKey,
@@ -57,7 +52,8 @@ export async function getStaticPageMetadata({
             follow: true,
         },
         alternates: {
-            canonical: joinUrl(siteData.url, path),
+            canonical: localizedAbsoluteUrl(siteData.url, path, locale),
+            languages: localizedLanguages(siteData.url, () => path),
         },
         openGraph: {
             title,

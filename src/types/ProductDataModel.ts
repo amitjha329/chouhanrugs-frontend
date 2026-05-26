@@ -65,6 +65,15 @@ export interface ProductDataModel {
     variationWarning?: LocalizedField<string>;
     itemCode?: string;
     certifications?: string[];
+
+    // Merchant Center overrides
+    merchantGoogleProductCategory?: string;
+    merchantMaterial?: string;
+    merchantColor?: string;
+    merchantSize?: string;
+    merchantGtin?: string;
+    merchantMpn?: string;
+    merchantExcluded?: boolean;
 }
 
 export interface ProductDataModelWithColorMap extends ProductDataModel {

@@ -1,34 +1,49 @@
-import { ProductDataModel } from "../types/ProductDataModel";
-import SiteDataModel from "../types/SiteDataModel";
-import { resolveLocalizedString } from "@/lib/resolveLocalized";
+import type { ProductDataModel } from "../types/ProductDataModel";
+import type SiteDataModel from "../types/SiteDataModel";
 import { type Locale } from "@/i18n/routing";
+import {
+    localizedAbsoluteUrl,
+    productCanonicalUrl,
+    resolveProductSeoTitle,
+    safeJsonLd,
+} from "@/lib/seoCatalog";
 
-export default function generateProductBreadCrumbs(productData: ProductDataModel, siteData: SiteDataModel, locale: Locale = 'en-US') {
-  const name = (resolveLocalizedString(productData.productTitle, locale) || resolveLocalizedString(productData.productName, locale)).replace(/"/g, '\\"')
-  return {
-    __html: `{
-          "@context": "https://schema.org/",
-          "@type": "BreadcrumbList",
-          "itemListElement": [{
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "${siteData.url}/"
-          },{
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Products",
-            "item": "${siteData.url}/products/"
-          },{
-            "@type": "ListItem",
-            "position": 3,
-            "name": "${productData.productCategory}",
-            "item": "${siteData.url}/products/category/${productData.productCategory}"
-          },{
-            "@type": "ListItem",
-            "position": 4,
-            "name": "${name}"
-          }]
-        }
-        `};
+export default function generateProductBreadCrumbs(
+    productData: ProductDataModel,
+    siteData: SiteDataModel,
+    locale: Locale = "en-US",
+) {
+    const baseUrl = siteData.url || "https://chouhanrugs.com";
+    const categorySlug = encodeURIComponent(productData.productCategory || "products");
+
+    return safeJsonLd({
+        "@context": "https://schema.org/",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: localizedAbsoluteUrl(baseUrl, "/", locale),
+            },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "Products",
+                item: localizedAbsoluteUrl(baseUrl, "/products", locale),
+            },
+            {
+                "@type": "ListItem",
+                position: 3,
+                name: productData.productCategory || "Category",
+                item: localizedAbsoluteUrl(baseUrl, `/products/category/${categorySlug}`, locale),
+            },
+            {
+                "@type": "ListItem",
+                position: 4,
+                name: resolveProductSeoTitle(productData, locale),
+                item: productCanonicalUrl(baseUrl, productData, locale),
+            },
+        ],
+    });
 }

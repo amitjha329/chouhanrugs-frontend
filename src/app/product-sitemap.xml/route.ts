@@ -1,46 +1,53 @@
-import clientPromise from "@/lib/clientPromise";
-import { resolveLocalizedString } from "@/lib/resolveLocalized";
-import { ProductDataModel } from "@/types/ProductDataModel";
-import { NextRequest } from "next/server";
+import { locales, routing, type Locale } from "@/i18n/routing";
+import { getAllProducts } from "@/lib/catalog";
+import { getConfig } from "@/lib/services/ConfigService";
+import { getProductGalleryImages } from "@/lib/getProductFeaturedImage";
+import {
+    absoluteUrl,
+    escapeXml,
+    productCanonicalUrl,
+} from "@/lib/seoCatalog";
 
-function generateSiteMap(posts: ProductDataModel[]) {
-    return `<?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-     ${posts.map(({ productURL, images, updatedOn }) => {
-        const url = resolveLocalizedString(productURL, 'en-IN');
-        return `
-        <url>
-            <loc>${`https://chouhanrugs.com/products/${encodeURIComponent(url)}`}</loc>
-            <lastmod>${new Date(updatedOn).toISOString()}</lastmod>
-        </url>
-     `;
-    })
-            .join('')}
-   </urlset>
- `;
+export async function GET() {
+    const [baseUrl, products] = await Promise.all([
+        getConfig("FRONTEND_URL", "https://chouhanrugs.com"),
+        getAllProducts(),
+    ]);
 
-    /**
-     * ${images.map(img => `
-                   <image:image>
-                   <image:loc>${encodeURI(img)}</image:loc>
-                   </image:image>
-               `).join('')
-               }
-     */
-}
+    const defaultLocale = routing.defaultLocale;
+    const urls = products.map((product) => {
+        const alternates = locales
+            .map((locale: Locale) => {
+                const href = productCanonicalUrl(baseUrl, product, locale);
+                return `<xhtml:link rel="alternate" hreflang="${locale}" href="${escapeXml(href)}" />`;
+            })
+            .join("");
 
-export async function GET(req: NextRequest) {
-    const mongoClient = await clientPromise
-    const db = mongoClient.db(process.env.MONGODB_DB)
-    const productsCollection = db.collection('products')
-    try {
-        const blogList = await productsCollection.find({}).sort("updatedOn", "desc").toArray()
-        return new Response(generateSiteMap(blogList as unknown as ProductDataModel[]), {
-            headers: {
-                'Content-Type': "text/xml"
-            }
-        })
-    } catch (err) {
-        console.log(err)
-    }
+        const loc = productCanonicalUrl(baseUrl, product, defaultLocale);
+        const images = getProductGalleryImages(product)
+            .map((image) => absoluteUrl(baseUrl, image))
+            .filter(Boolean)
+            .map((image) => `<image:image><image:loc>${escapeXml(image)}</image:loc></image:image>`)
+            .join("");
+
+        return `<url>
+            <loc>${escapeXml(loc)}</loc>
+            <lastmod>${new Date(product.updatedOn).toISOString()}</lastmod>
+            ${images}
+            ${alternates}
+            <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(productCanonicalUrl(baseUrl, product, defaultLocale))}" />
+        </url>`;
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${urls.join("\n")}
+</urlset>`;
+
+    return new Response(xml, {
+        headers: {
+            "Content-Type": "application/xml; charset=utf-8",
+            "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        },
+    });
 }

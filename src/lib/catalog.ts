@@ -20,6 +20,12 @@ async function db() {
     return client.db(process.env.MONGODB_DB);
 }
 
+const publicProductFilter = {
+    productActive: true,
+    productStatus: { $nin: ['Draft', 'Archived'] },
+    visibility: { $nin: ['hidden', 'Hidden'] },
+};
+
 // ─── Products ───────────────────────────────────────────────────────────────
 
 /** Fetch every active product (sorted newest-first). */
@@ -27,7 +33,7 @@ export async function getAllProducts(): Promise<ProductDataModel[]> {
     const database = await db();
     const docs = await database
         .collection('products')
-        .find({ productActive: true })
+        .find(publicProductFilter)
         .sort({ updatedOn: -1 })
         .toArray();
     return docs as unknown as ProductDataModel[];
@@ -41,6 +47,7 @@ export async function getProductBySlug(
     const doc = await database
         .collection('products')
         .findOne({
+            ...publicProductFilter,
             $or: [
                 { productURL: slug },
                 ...locales.map(locale => ({ [`productURL.${locale}`]: slug })),

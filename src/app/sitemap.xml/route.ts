@@ -2,6 +2,8 @@ import { getActiveCategories, getAllBlogPosts, getAllProducts } from '@/lib/cata
 import { getConfig } from '@/lib/services/ConfigService';
 import { resolveLocalizedString } from '@/lib/resolveLocalized';
 import { locales, localizePathname, routing, type Locale } from '@/i18n/routing';
+import { absoluteUrl } from '@/lib/seoCatalog';
+import { getProductGalleryImages } from '@/lib/getProductFeaturedImage';
 
 type LocalizedPathBuilder = (locale: Locale) => string;
 
@@ -23,7 +25,7 @@ function absolute(baseUrl: string, path: string, locale: Locale) {
     return `${baseUrl}${withLocale(path, locale)}`;
 }
 
-function localizedUrl(baseUrl: string, pathForLocale: LocalizedPathBuilder, lastModified?: Date) {
+function localizedUrl(baseUrl: string, pathForLocale: LocalizedPathBuilder, lastModified?: Date, images: string[] = []) {
     const defaultPath = pathForLocale(routing.defaultLocale);
     const alternates = locales
         .map(locale => {
@@ -35,6 +37,7 @@ function localizedUrl(baseUrl: string, pathForLocale: LocalizedPathBuilder, last
     return `<url>
         <loc>${escapeXml(absolute(baseUrl, defaultPath, routing.defaultLocale))}</loc>
         ${lastModified ? `<lastmod>${lastModified.toISOString()}</lastmod>` : ''}
+        ${images.map(image => `<image:image><image:loc>${escapeXml(absoluteUrl(baseUrl, image))}</image:loc></image:image>`).join('')}
         ${alternates}
         <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(absolute(baseUrl, defaultPath, routing.defaultLocale))}" />
     </url>`;
@@ -72,6 +75,7 @@ export async function GET() {
             baseUrl,
             locale => `/products/${encodeURIComponent(resolveLocalizedString(product.productURL, locale))}`,
             new Date(product.updatedOn),
+            getProductGalleryImages(product),
         ),
     );
 
@@ -84,7 +88,7 @@ export async function GET() {
     );
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${[...staticPages, ...categoryPages, ...productPages, ...blogPages].join('\n')}
 </urlset>`;
 

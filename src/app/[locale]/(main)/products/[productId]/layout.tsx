@@ -36,7 +36,7 @@ const ProductLayout = async (
                 productObj && <>
                     <script
                         type="application/ld+json"
-                        dangerouslySetInnerHTML={generateProductJsonLd(productObj, locale)}
+                        dangerouslySetInnerHTML={generateProductJsonLd(productObj, locale, siteData.url)}
                         key="product-jsonld"></script>
                     <script
                         type="application/ld+json"
