@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import SideBarSectionLayout from './Filter/SideBarSectionLayout'
 import RangeSlider from './Filter/RangeSlider'
 import { FaAngleDown } from 'react-icons/fa'
-import { ClearRefinements, CurrentRefinements, RefinementList, ToggleRefinement } from 'react-instantsearch'
+import { ClearRefinements, CurrentRefinements, HierarchicalMenu, RefinementList, ToggleRefinement } from 'react-instantsearch'
 import FilterBottomSheet from './Filter/Mobile/FilterBottomSheet'
 import Currency from '@/types/Currency'
 
@@ -55,13 +55,20 @@ const StructureListing = ({ children, userCurrency }: {
                         root: "bg-secondary p-5 mb-5 flex items-center justify-between"
                     }} />
                     <SideBarSectionLayout title="Categories">
-                        {/* <CheckBoxSelector dataArray={categories} checkHandler={handleCatCheck} selectedItem={selectedCats} /> */}
-                        <RefinementList attribute="productCategory" showMoreLimit={100} limit={5} showMore classNames={{
-                            checkbox: "checkbox",
-                            label: "label cursor-pointer",
-                            labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
-                            count: "color-[grey]"
+                        <HierarchicalMenu attributes={[
+                            "hierarchicalCategories.lvl0",
+                            "hierarchicalCategories.lvl1",
+                            "hierarchicalCategories.lvl2",
+                            "hierarchicalCategories.lvl3",
+                        ]} separator=" > " showMoreLimit={100} limit={10} showMore classNames={{
+                            list: "space-y-1",
+                            childList: "ml-4 mt-1 space-y-1 border-l border-base-200 pl-3",
+                            item: "text-sm",
+                            selectedItem: "font-semibold text-primary",
+                            link: "flex items-center justify-between rounded px-2 py-2 hover:bg-accent",
+                            label: "capitalize",
+                            count: "ml-2 rounded-full bg-base-200 px-2 py-0.5 text-xs text-base-content/60",
+                            showMore: "border flex w-full p-3 justify-between items-center text-left text-sm font-normal text-primary hover:bg-accent",
                         }} />
                     </SideBarSectionLayout>
                     <SideBarSectionLayout title="Price">

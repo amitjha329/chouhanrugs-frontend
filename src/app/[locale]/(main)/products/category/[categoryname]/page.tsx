@@ -51,13 +51,16 @@ export async function generateMetadata(props: { params: Promise<{ categoryname: 
 const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: string }> }) => {
     const {categoryname} = await props.params;
     const category = await getCategoriesWithName(decodeURIComponent(categoryname))
+    const categoryAncestors = category.parent?.split(">").filter(Boolean) ?? []
+    const categoryPath = [...categoryAncestors, category.name].join(" > ")
     const promotedProducts = await getProductPromoted(category.name)
     const initialProducts = await getInitialAlgoliaProducts({
         categoryParam: category.name,
+        categoryPath,
     })
     return (
         <>
-            <ProductList categoryParam={category.name} predefinedProducts={initialProducts.length ? initialProducts : promotedProducts} />
+            <ProductList categoryParam={category.name} categoryPath={categoryPath} predefinedProducts={initialProducts.length ? initialProducts : promotedProducts} />
         </>
     )
 }

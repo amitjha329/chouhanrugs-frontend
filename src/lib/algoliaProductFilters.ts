@@ -9,6 +9,7 @@ type ProductSearchParams = {
 export type ProductAlgoliaSearchOptions = {
     searchQuery?: string;
     categoryParam?: string;
+    categoryPath?: string;
     searchParams?: ProductSearchParams;
 };
 
@@ -18,6 +19,7 @@ export const PRODUCT_SEARCH_ATTRIBUTES = [
     "productTitle",
     "productURL",
     "productCategory",
+    "hierarchicalCategories",
     "productBrand",
     "productBaseColor",
     "productSellingPrice",
@@ -42,10 +44,14 @@ const quote = (value: string) => `"${value.replace(/\\/g, "\\\\").replace(/"/g, 
 
 export function buildProductAlgoliaParams(options: ProductAlgoliaSearchOptions) {
     const decodedCategory = decodeValue(options.categoryParam);
+    const decodedCategoryPath = decodeValue(options.categoryPath);
     const filters: string[] = [];
     const facetFilters: string[][] = [];
 
-    if (decodedCategory) {
+    if (decodedCategoryPath) {
+        const categoryLevel = decodedCategoryPath.split(" > ").filter(Boolean).length - 1;
+        filters.push(`hierarchicalCategories.lvl${Math.max(categoryLevel, 0)}:${quote(decodedCategoryPath)}`);
+    } else if (decodedCategory) {
         filters.push(decodedCategory === "Rugs & Runners"
             ? `(productCategory:${quote("Hemp Rugs")} OR productCategory:${quote("Wool Jute Kilim Rugs")} OR productCategory:${quote("Braided Jute Rug")})`
             : `productCategory:${quote(decodedCategory)}`);
