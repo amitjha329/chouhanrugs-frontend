@@ -240,8 +240,8 @@ const ProductCardItem = (props: CompoProps) => {
                                     : 'flex min-w-0 items-center gap-1 text-[10px] font-medium leading-4 text-[#5b4030] sm:text-[11px]'
                             )}>
                                 <FiStar className={clsx(density === 'compact' ? 'h-3 w-3 shrink-0 fill-[#6b360f] text-[#6b360f]' : 'h-3.5 w-3.5 shrink-0 fill-[#6b360f] text-[#6b360f]')} aria-hidden="true" />
-                                <span>{reviewAverage > 0 ? reviewAverage.toFixed(1) : '4.8'}</span>
-                                <span className="text-[#7d7169]">({reviewCount > 0 ? reviewCount : 32})</span>
+                                <span>{reviewAverage.toFixed(1)}</span>
+                                <span className="text-[#7d7169]">({reviewCount})</span>
                             </div>
                         ) : (
                             <span />

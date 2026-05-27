@@ -63,7 +63,7 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
                             />
                         ))}
                     </div>
-                    <span className="ml-2">{reviewCount > 0 ? `${reviewAverage.toFixed(1)} · ${reviewCount} review${reviewCount === 1 ? '' : 's'}` : t('reviewCount')}</span>
+                    <span className="ml-2">{`${reviewAverage.toFixed(1)} · ${reviewCount} review${reviewCount === 1 ? '' : 's'}`}</span>
                     <span className="mx-2">/</span>
                     <a href="#reviews">Write A Review</a>
                 </div>

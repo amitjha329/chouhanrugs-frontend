@@ -400,10 +400,10 @@ function ProductCard({ product, index, locale }: { product: ProductDataModel; in
                         <div className="flex items-center gap-1.5 mb-2">
                             <div className="flex items-center text-amber-500">
                                 {Array.from({ length: 5 }).map((_, i) => (
-                                    <StarIcon key={i} className="w-3.5 h-3.5" filled={i < Math.floor(product.productReviews.average)} />
+                                    <StarIcon key={i} className="w-3.5 h-3.5" filled={i < Math.floor(Number(product.productReviews.average ?? 0))} />
                                 ))}
                             </div>
-                            <span className="text-xs text-gray-400">({product.productReviews.totalReviews})</span>
+                            <span className="text-xs text-gray-400">({Number(product.productReviews.totalReviews ?? 0)})</span>
                         </div>
                     )}
                     <h3 className="font-semibold text-gray-900 text-sm lg:text-base leading-snug min-h-[2.5rem] line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-2">
