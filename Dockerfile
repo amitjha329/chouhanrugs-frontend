@@ -32,8 +32,8 @@ ARG MONGODB="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mong
 ARG MONGODB_DB="ecom"
 ARG AUTH_URL="https://chouhan.yashjha.dev"
 ARG NEXTAUTH_SECRET="{O^:,b!\"$8qBET_vk%;IP$Tl3`ut3!'"
-ARG GOOGLE_CLIENT_ID="1004242814906-pqq7eoi3932lu1304g5jo9b8jcpkg4r8.apps.googleusercontent.com"
-ARG GOOGLE_CLIENT_SECRET="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"
+ARG GOOGLE_CLIENT_ID="476122679196-medhsv91qlt525140k67il7nuj24sfhq.apps.googleusercontent.com"
+ARG GOOGLE_CLIENT_SECRET="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"
 ARG CONFIG_ENCRYPTION_KEY="0ad0f37af22acfa5cd6466e58e0ff70597eac90ff542c3adeb2a68c296b986e2"
 ARG BETTER_AUTH_SECRET="37cde01351a74e3840fc7155de4807416cad8bfaa832131ea6457e7e76d5f140"
 
@@ -93,8 +93,8 @@ ENV MONGODB="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mong
 ENV MONGODB_DB="ecom"
 ENV AUTH_URL="https://chouhan.yashjha.dev"
 ENV NEXTAUTH_SECRET="{O^:,b!\"$8qBET_vk%;IP$Tl3`ut3!'"
-ENV GOOGLE_CLIENT_ID="1004242814906-pqq7eoi3932lu1304g5jo9b8jcpkg4r8.apps.googleusercontent.com"
-ENV GOOGLE_CLIENT_SECRET="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"
+ENV GOOGLE_CLIENT_ID="476122679196-medhsv91qlt525140k67il7nuj24sfhq.apps.googleusercontent.com"
+ENV GOOGLE_CLIENT_SECRET="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"
 ENV CONFIG_ENCRYPTION_KEY="0ad0f37af22acfa5cd6466e58e0ff70597eac90ff542c3adeb2a68c296b986e2"
 ENV BETTER_AUTH_SECRET="37cde01351a74e3840fc7155de4807416cad8bfaa832131ea6457e7e76d5f140"
 
