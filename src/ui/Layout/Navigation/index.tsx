@@ -7,6 +7,7 @@ import LazyAlgoliaSearch from './LazyAlgoliaSearch'
 // import SearchComp from './SearchComp'
 import { FaSearch } from 'react-icons/fa'
 import { getConfigBulk } from '@/lib/services/ConfigService'
+import Script from 'next/script'
 
 // Skeleton for header while auth loads
 function HeaderSkeleton() {
@@ -71,8 +72,7 @@ const Navigation = async () => {
             <Suspense fallback={<CategoryMenuSkeleton />}>
                 <CategoryMenu />
             </Suspense>
-            {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-            <script id='searchButtonHandler' src='/searchButtonHandler.js' defer></script>
+            <Script id='searchButtonHandler' src='/searchButtonHandler.js' strategy="afterInteractive" />
         </>
     )
 }

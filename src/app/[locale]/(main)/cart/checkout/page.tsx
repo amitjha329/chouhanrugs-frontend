@@ -8,7 +8,6 @@ import getSiteData from '@/backend/serverActions/getSiteData'
 import getStripePublicKey from '@/backend/serverActions/getStripePublicKey'
 import { generateClientToken } from '@/backend/serverActions/paypal'
 import MainSection from '@/ui/Cart/Checkout/MainSection'
-import Script from 'next/script'
 import getCurrencyList from '@/backend/serverActions/getCurrencyList'
 import getUserCartitems from '@/backend/serverActions/getUserCartitems'
 import dynamic from 'next/dynamic'
@@ -46,7 +45,6 @@ const CheckoutPage = async (
 
     return (
         <>
-            <Script src="https://checkout.razorpay.com/v1/checkout.js" />
             {
                 paypalData.activation && !searchParams?.redirect_status ? <PaypalContextProvider client_token={await generateClientToken()} key_id={paypalData.key_id}>
                     <MainSection siteInfo={siteInfo} payOpts={payOpts} queryParams={searchParams} stripeKey={stripeKey} session={session} shippingList={shippingList} userCurrency={{

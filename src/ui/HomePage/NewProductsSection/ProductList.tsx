@@ -81,6 +81,7 @@ const CenterFeaturedProductCard = ({
         : null
     const reviewAverage = Number(product.productReviews?.average ?? 0)
     const reviewCount = Number(product.productReviews?.totalReviews ?? 0)
+    const hasReviews = reviewCount > 0
 
     if (!primaryImage || !name || !productHref) return null
 
@@ -140,13 +141,17 @@ const CenterFeaturedProductCard = ({
                         </div>
 
                         <div className="mt-8 flex items-center justify-between gap-6">
-                            <div className="flex min-w-0 items-center gap-2 text-[17px] font-medium leading-6 text-[#5b4030]">
-                                <FiStar className="h-6 w-6 shrink-0 fill-[#6b360f] text-[#6b360f]" aria-hidden="true" />
-                                <span>{reviewAverage.toFixed(1)}</span>
-                                <span className="text-[#7d7169]">({reviewCount})</span>
-                            </div>
+                            {hasReviews ? (
+                                <>
+                                    <div className="flex min-w-0 items-center gap-2 text-[17px] font-medium leading-6 text-[#5b4030]">
+                                        <FiStar className="h-6 w-6 shrink-0 fill-[#6b360f] text-[#6b360f]" aria-hidden="true" />
+                                        <span>{reviewAverage.toFixed(1)}</span>
+                                        <span className="text-[#7d7169]">({reviewCount})</span>
+                                    </div>
 
-                            <span className="h-10 w-px bg-[#eadfd6]" aria-hidden="true" />
+                                    <span className="h-10 w-px bg-[#eadfd6]" aria-hidden="true" />
+                                </>
+                            ) : <span />}
 
                             <span className="inline-flex min-w-[144px] items-center justify-center gap-2 rounded-full bg-[#7a431d] px-7 py-3.5 text-[20px] font-bold leading-6 text-white shadow-[0_8px_18px_rgba(83,53,28,0.18)] transition group-hover:bg-[#4d2a12]">
                                 View

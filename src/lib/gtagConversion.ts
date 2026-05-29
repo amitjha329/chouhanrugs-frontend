@@ -2,6 +2,7 @@ import GoogleAdsConfigDataModel from '@/types/GoogleAdsConfigDataModel'
 import { ProductDataModel } from '@/types/ProductDataModel'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import { hasCookieConsent } from '@/lib/cookieConsent'
 
 declare global {
     interface Window {
@@ -37,6 +38,8 @@ type PurchasePayload = {
 
 function dispatchEvent(name: string, params?: Record<string, any>) {
     if (typeof window === 'undefined') return
+    if (!hasCookieConsent('analytics') && !hasCookieConsent('marketing')) return
+
     try {
         if (typeof window.gtag === 'function') {
             window.gtag('event', name, params ?? {})
@@ -54,6 +57,7 @@ function dispatchEvent(name: string, params?: Record<string, any>) {
 }
 
 function fireConversion(conversionId?: string, label?: string, params?: Record<string, any>) {
+    if (!hasCookieConsent('marketing')) return
     if (!conversionId || !label) return
     dispatchEvent('conversion', {
         send_to: `${conversionId}/${label}`,

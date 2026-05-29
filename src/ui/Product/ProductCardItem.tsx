@@ -48,6 +48,7 @@ const ProductCardItem = (props: CompoProps) => {
         : null
     const reviewAverage = Number(props.productReviews?.average ?? 0)
     const reviewCount = Number(props.productReviews?.totalReviews ?? 0)
+    const hasReviews = reviewCount > 0
 
     // Load first 4 images eagerly, rest lazy
     const shouldLoadEager = (props.index ?? 0) < 4
@@ -233,7 +234,7 @@ const ProductCardItem = (props: CompoProps) => {
                         )}
                     </div>
                     <div className={clsx(density === 'compact' ? 'mt-2 flex items-center justify-between gap-2' : 'mt-2.5 flex items-center justify-between gap-2')}>
-                        {showRating ? (
+                        {showRating && hasReviews ? (
                             <div className={clsx(
                                 density === 'compact'
                                     ? 'flex min-w-0 items-center gap-1 text-[9px] font-medium leading-3 text-[#5b4030] sm:text-[10px]'

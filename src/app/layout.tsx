@@ -13,12 +13,13 @@ import PurchaseNotification from '@/ui/PurchaseNotification'
 import GoogleAdsProvider from '@/components/GoogleAdsProvider'
 import RecentlyViewedSidebar from '@/ui/RecentlyViewed'
 import { getNewProducts } from '@/backend/serverActions/getNewProducts'
-import Script from 'next/script'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { routing, type Locale } from '@/i18n/routing'
 import { getTranslations as getStorefrontTranslations } from '@/backend/serverActions/getTranslations'
 import { cacheLife, cacheTag } from 'next/cache'
+import CookieConsentProvider from '@/components/CookieConsentProvider'
+import ConsentManagedScripts from '@/components/ConsentManagedScripts'
 
 // Optimized font loading: Only load weights actually used in the app
 // Removed: 100, 200, 300, 800, 900 (rarely used)
@@ -98,44 +99,7 @@ const RootEnhancements = async ({ children }: { children: ReactNode }) => {
                 }}
                 key="org-jsonld"
             />
-                {/* GTM uses lazyOnload to minimize main thread blocking during page load */}
-                <Script
-                    id="gtm-script"
-                    strategy="lazyOnload"
-                    dangerouslySetInnerHTML={{
-                        __html: `
-                    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${googleTagData.code}');`
-                    }}
-                />
-                <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${googleTagData.code}`}
-                    height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe></noscript>
-                {/* Google Ads gtag.js - loaded alongside GTM for conversion tracking */}
-                {googleAdsConfig.gtagId && (
-                    <>
-                        <Script
-                            id="gtag-js"
-                            strategy="afterInteractive"
-                            src={`https://www.googletagmanager.com/gtag/js?id=${googleAdsConfig.gtagId}`}
-                        />
-                        <Script
-                            id="gtag-init"
-                            strategy="afterInteractive"
-                            dangerouslySetInnerHTML={{
-                                __html: `
-                                    window.dataLayer = window.dataLayer || [];
-                                    window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
-                                    gtag('js', new Date());
-                                    gtag('config', '${googleAdsConfig.gtagId}');
-                                    ${googleAdsConfig.code ? `gtag('config', '${googleAdsConfig.code}');` : ''}
-                                `
-                            }}
-                        />
-                    </>
-                )}
+                <ConsentManagedScripts gtmId={googleTagData.code} googleAdsConfig={googleAdsConfig} />
                 <GoogleAdsProvider config={googleAdsConfig}>
                 <div id="notification-container" className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none" />
                 <NextTopLoader
@@ -156,22 +120,18 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             <head>
                 {/* Preconnect to critical third-party origins for faster resource loading */}
                 <link rel="preconnect" href="https://cdn.chouhanrugs.com" />
-                <link rel="preconnect" href="https://www.googletagmanager.com" />
-                <link rel="preconnect" href="https://www.google-analytics.com" />
-                <link rel="preconnect" href="https://www.googleadservices.com" />
                 <link rel="dns-prefetch" href="https://cdn.chouhanrugs.com" />
-                <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-                <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-                <link rel="dns-prefetch" href="https://www.googleadservices.com" />
             </head>
             <body className={clsx(poppins.className, poppins.variable)}>
-                <Suspense fallback={null}>
-                    <RootEnhancements>{children}</RootEnhancements>
-                </Suspense>
-                {/* GlobalPopupWrapper checks request headers, so it must stay outside the cached shell. */}
-                <Suspense fallback={null}>
-                    <GlobalPopupWrapper />
-                </Suspense>
+                <CookieConsentProvider>
+                    <Suspense fallback={null}>
+                        <RootEnhancements>{children}</RootEnhancements>
+                    </Suspense>
+                    {/* GlobalPopupWrapper checks request headers, so it must stay outside the cached shell. */}
+                    <Suspense fallback={null}>
+                        <GlobalPopupWrapper />
+                    </Suspense>
+                </CookieConsentProvider>
             </body>
         </html>
     )

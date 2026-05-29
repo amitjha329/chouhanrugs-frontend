@@ -70,7 +70,7 @@ const AboutJuteRugsPage = () => {
                             </h1>
                         </Link>
                         <div className="mt-6 text-lg leading-8 text-gray-600">
-                            Chouhan Rugs <Link href="/pillow-and-cushion-covers"><h2 className='inline'>jute pillows and cushion covers</h2></Link> are emerging as quick go-to solution for eco-conscious people in an era when sustainability and design have collided. Jute is &quot;golden fiber&quot; also known for its resilience and texture, as well as its environmentally favorable qualities.
+                            Chouhan Rugs <Link href="/pillow-and-cushion-covers"><span className='font-semibold text-gray-900 underline'>jute pillows and cushion covers</span></Link> are emerging as quick go-to solution for eco-conscious people in an era when sustainability and design have collided. Jute is &quot;golden fiber&quot; also known for its resilience and texture, as well as its environmentally favorable qualities.
                         </div>
                         <div className="mt-10 flex items-center justify-center gap-x-6">
                             <Link href="/products/category/cushion-pillow" className="text-sm border hover:border-primary border-gray-400 font-semibold leading-6 text-gray-900 p-5">
@@ -148,7 +148,7 @@ const AboutJuteRugsPage = () => {
                                         <span>
                                             <strong className="font-semibold text-gray-900">Renewable and biodegradable:</strong> Jute is an incredibly sustainable material, with a rapid growth cycle that reaches maturity in approximately 120 days. This quick turnaround makes it a highly renewable resource, ensuring a steady supply without exhausting natural resources.
 
-                                            Moreover, products made from jute are biodegradable. This means that when these items are discarded, they naturally decompose and return to the earth, rather than persisting as environmental waste. This characteristic of jute products significantly reduces their environmental footprint and makes them a preferred choice for those seeking to minimize waste and promote sustainability. <Link href="/pillow-and-cushion-covers"><h2 className='inline'>Buy Online Jute Pillow Covers</h2></Link> with Chouhan Rugs, India.
+                                            Moreover, products made from jute are biodegradable. This means that when these items are discarded, they naturally decompose and return to the earth, rather than persisting as environmental waste. This characteristic of jute products significantly reduces their environmental footprint and makes them a preferred choice for those seeking to minimize waste and promote sustainability. <Link href="/pillow-and-cushion-covers"><span className='font-semibold text-gray-900 underline'>Buy Online Jute Pillow Covers</span></Link> with Chouhan Rugs, India.
                                         </span>
                                     </li>
                                     <li className="flex gap-x-3">
@@ -160,7 +160,7 @@ const AboutJuteRugsPage = () => {
                                     <li className="flex gap-x-3">
                                         {/* <ServerIcon className="mt-1 h-5 w-5 flex-none text-indigo-600" aria-hidden="true" /> */}
                                         <span>
-                                            <strong className="font-semibold text-gray-900">Carbon Footprint Reduction:</strong> The jute plant plays a significant role in mitigating the effects of climate change. During its growth phase, the plant acts as a natural carbon sink, absorbing carbon dioxide from the atmosphere. This process helps in reducing the overall concentration of greenhouse gases, which are major contributors to global warming and climate change. By absorbing these gases, jute plants help in creating a healthier and more balanced environment. Therefore, cultivating jute and using jute products like <Link href="/pillow-and-cushion-covers"><h2 className='inline'>hand made jute cushion covers</h2></Link> not only provides us with a valuable resource but also contributes to the global efforts towards achieving environmental sustainability.
+                                            <strong className="font-semibold text-gray-900">Carbon Footprint Reduction:</strong> The jute plant plays a significant role in mitigating the effects of climate change. During its growth phase, the plant acts as a natural carbon sink, absorbing carbon dioxide from the atmosphere. This process helps in reducing the overall concentration of greenhouse gases, which are major contributors to global warming and climate change. By absorbing these gases, jute plants help in creating a healthier and more balanced environment. Therefore, cultivating jute and using jute products like <Link href="/pillow-and-cushion-covers"><span className='font-semibold text-gray-900 underline'>hand made jute cushion covers</span></Link> not only provides us with a valuable resource but also contributes to the global efforts towards achieving environmental sustainability.
                                         </span>
                                     </li>
                                 </ul>
@@ -176,7 +176,7 @@ const AboutJuteRugsPage = () => {
                         <div className="lg:pl-4">
                             <div className="lg:max-w-lg">
                                 <p className="text-base font-semibold leading-7 text-primary">Some of the</p>
-                                <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Cons and Pros of Jute Pillows</h1>
+                                <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Cons and Pros of Jute Pillows</h2>
                                 <div>
                                     We using ancient looms, craftspeople weave jute strands into complex patterns to create the cloth for the covers. This phase demands both technical knowledge and creative sensitivity. To guarantee that each jute pillow and cushion cover achieves the highest standards of workmanship, from color consistency to overall quality, stringent quality control systems are in place.
                                 </div>
@@ -215,7 +215,7 @@ const AboutJuteRugsPage = () => {
                                         <span>
                                             <strong className="font-semibold text-gray-900">Texture and Comfort:</strong> Jute coverings are more than just a functional addition to your space; they bring a unique aesthetic appeal that can transform the ambiance of any room. The distinct texture of jute adds a touch of warmth and comfort to your decor, creating an inviting and cozy atmosphere that is perfect for relaxation.
 
-                                            The natural, earthy tones of jute can complement a variety of interior design styles, from rustic to modern. Its rich texture can add depth and interest to your space, making it feel more like a <Link href="/pillow-and-cushion-covers"><h3 className='inline'>premium quality jute Cushion cover</h3></Link>. Whether you&apos;re curling up with a good book or hosting friends for a casual get-together, jute coverings can make your space feel more welcoming and comfortable.
+                                            The natural, earthy tones of jute can complement a variety of interior design styles, from rustic to modern. Its rich texture can add depth and interest to your space, making it feel more like a <Link href="/pillow-and-cushion-covers"><span className='font-semibold text-gray-900 underline'>premium quality jute Cushion cover</span></Link>. Whether you&apos;re curling up with a good book or hosting friends for a casual get-together, jute coverings can make your space feel more welcoming and comfortable.
                                         </span>
                                     </li>
                                     <li className="flex gap-x-3">

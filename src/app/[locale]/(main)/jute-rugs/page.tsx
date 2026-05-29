@@ -70,7 +70,7 @@ const AboutJuteRugsPage = () => {
                             </h1>
                         </Link>
                         <div className="mt-6 text-lg leading-8 text-gray-600">
-                            We are Chouhan rugs a <Link href="/jute-rugs"><h2 className='inline font-semibold'>Hand Made Jute Rugs Store</h2></Link> known for our best quality jute rugs in this we will be sharing with you everything you need to know about the manufacturing of jute rugs. As a jute rug manufacturing company, we are excited to share with you the intricate process of creating our beautiful and sustainable rugs.
+                            We are Chouhan rugs a <Link href="/jute-rugs"><span className='font-semibold text-gray-900 underline'>Hand Made Jute Rugs Store</span></Link> known for our best quality jute rugs in this we will be sharing with you everything you need to know about the manufacturing of jute rugs. As a jute rug manufacturing company, we are excited to share with you the intricate process of creating our beautiful and sustainable rugs.
                         </div>
                         <div className="mt-10 flex items-center justify-center gap-x-6">
                             <Link href="/products/category/rugs-runners" className="text-sm border hover:border-primary border-gray-400 font-semibold leading-6 text-gray-900 p-5">
@@ -170,7 +170,7 @@ const AboutJuteRugsPage = () => {
                                     <li className="flex gap-x-3">
                                         {/* <ServerIcon className="mt-1 h-5 w-5 flex-none text-indigo-600" aria-hidden="true" /> */}
                                         <span>
-                                            <strong className="font-semibold text-gray-900">Finishing:</strong> The final stage involves finishing the rugs to give them a polished and professional look. This includes trimming any loose threads, adding fringes, and applying a non-slip backing. After all the processing our customers can <Link href="/jute-rugs"><h3 className='inline font-semibold'>buy jute rugs</h3></Link> from our website.
+                                            <strong className="font-semibold text-gray-900">Finishing:</strong> The final stage involves finishing the rugs to give them a polished and professional look. This includes trimming any loose threads, adding fringes, and applying a non-slip backing. After all the processing our customers can <Link href="/jute-rugs"><span className='font-semibold text-gray-900 underline'>buy jute rugs</span></Link> from our website.
                                         </span>
                                     </li>
                                 </ul>
@@ -186,9 +186,9 @@ const AboutJuteRugsPage = () => {
                         <div className="lg:pl-4">
                             <div className="lg:max-w-lg">
                                 <p className="text-base font-semibold leading-7 text-primary">Machinery Used In</p>
-                                <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Manufacturing of jute products</h1>
+                                <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Manufacturing of jute products</h2>
                                 <div>
-                                    As a jute rug manufacturing company and <Link href="/jute-rugs"><h2 className='inline font-semibold'>Popular Jute Rugs Seller</h2></Link>, we use various types of machinery to carry out different operations involved in the production process. Here are some of the key machines we use:
+                                    As a jute rug manufacturing company and <Link href="/jute-rugs"><span className='font-semibold text-gray-900 underline'>Popular Jute Rugs Seller</span></Link>, we use various types of machinery to carry out different operations involved in the production process. Here are some of the key machines we use:
                                 </div>
                             </div>
                         </div>
@@ -246,7 +246,7 @@ const AboutJuteRugsPage = () => {
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our Products</h2>
                         <div className="mt-4 text-gray-500">
-                            We are proud of our reputation as one of the leading manufacturer of <Link href="/products/category/rugs-runners">premium quality jute rugs</Link>, jute baskets, <Link href="/products/category/bags">jute bags</Link> and much more, we look forward to continuing to serve our customers with the same level of excellence and commitment that has made us successful as the best seller of <h3 className='inline font-semibold'>Printed jute Rugs online</h3>.
+                            We are proud of our reputation as one of the leading manufacturer of <Link href="/products/category/rugs-runners">premium quality jute rugs</Link>, jute baskets, <Link href="/products/category/bags">jute bags</Link> and much more, we look forward to continuing to serve our customers with the same level of excellence and commitment that has made us successful as the best seller of <span className='font-semibold text-gray-900 underline'>Printed jute Rugs online</span>.
                         </div>
 
                         <dl className="mt-16 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:gap-x-8">

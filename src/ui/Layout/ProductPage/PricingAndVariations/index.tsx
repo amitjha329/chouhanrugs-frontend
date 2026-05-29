@@ -30,6 +30,7 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
     const category = product.productCategory?.trim() || 'Rug'
     const reviewAverage = Number(product.productReviews?.average ?? 0)
     const reviewCount = Number(product.productReviews?.totalReviews ?? 0)
+    const hasReviews = reviewCount > 0
     return (
         <aside className='lg:sticky lg:top-24'>
             <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-[0_16px_48px_rgba(37,30,20,0.07)]">
@@ -52,20 +53,26 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
                     </h1>
                 </div>
                 <div className="mb-3 mt-3 flex items-center text-[11px] text-neutral-500">
-                    <div className="rating rating-sm pointer-events-none">
-                        {Array.from({ length: 5 }).map((_, index) => (
-                            <input
-                                key={index}
-                                type="radio"
-                                name="rating-7"
-                                className="mask mask-star-2 bg-orange-400"
-                                defaultChecked={index === Math.max(0, Math.min(4, Math.round(reviewAverage || 0) - 1))}
-                            />
-                        ))}
-                    </div>
-                    <span className="ml-2">{`${reviewAverage.toFixed(1)} · ${reviewCount} review${reviewCount === 1 ? '' : 's'}`}</span>
-                    <span className="mx-2">/</span>
-                    <a href="#reviews">Write A Review</a>
+                    {hasReviews ? (
+                        <>
+                            <div className="rating rating-sm pointer-events-none">
+                                {Array.from({ length: 5 }).map((_, index) => (
+                                    <input
+                                        key={index}
+                                        type="radio"
+                                        name="rating-7"
+                                        className="mask mask-star-2 bg-orange-400"
+                                        defaultChecked={index === Math.max(0, Math.min(4, Math.round(reviewAverage || 0) - 1))}
+                                    />
+                                ))}
+                            </div>
+                            <span className="ml-2">{`${reviewAverage.toFixed(1)} · ${reviewCount} review${reviewCount === 1 ? '' : 's'}`}</span>
+                            <span className="mx-2">/</span>
+                            <a href="#reviews">Write A Review</a>
+                        </>
+                    ) : (
+                        <a href="#reviews">Be the first to review.</a>
+                    )}
                 </div>
                 <PriceAndVariationClient product={product} siteData={siteData} />
                 <p className="border-t border-neutral-200 pt-3 text-[13px] leading-5 text-neutral-600">

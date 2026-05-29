@@ -151,7 +151,7 @@ const SideNav = async () => {
     return (
         <div
             id="mobile_menu_overlay"
-            className='pointer-events-none fixed inset-0 z-[10000] h-screen w-screen overflow-hidden bg-black/55 opacity-0 !text-primary transition-opacity duration-300 ease-out'
+            className='pointer-events-none fixed inset-0 z-[10000] h-screen max-h-full w-screen overflow-hidden bg-black/55 opacity-0 !text-primary transition-opacity duration-300 ease-out'
             aria-hidden="true"
         >
             <aside
@@ -200,16 +200,16 @@ const SideNav = async () => {
                 <div className="my-4 border-t border-primary/10 pt-4">
                     <div className="mb-2 flex items-center justify-between text-sm font-semibold text-primary">
                         <span>Shop by Categories</span>
-                        <HiOutlineChevronRight className="h-5 w-5 -rotate-90" aria-hidden="true" />
+                        {/* <HiOutlineChevronRight className="h-5 w-5 -rotate-90" aria-hidden="true" /> */}
                     </div>
                     <div className="space-y-1.5">
                         {categoryGroups.map((group, index) => (
-                            <details key={group.root._id ?? group.root.name} className="rounded-lg bg-white" open={index === 0}>
+                            <details key={group.root._id ?? group.root.name} className="rounded-lg bg-white" open={false}>
                                 <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-2.5 text-sm font-semibold marker:hidden">
                                     <Link href={toCategoryHref(group.root)} className="flex-1">
                                         {group.root.name}
                                     </Link>
-                                    <HiOutlineChevronRight className="h-5 w-5 transition-transform group-open:rotate-90" aria-hidden="true" />
+                                    {group.items.length > 0 && (<HiOutlineChevronRight className="h-5 w-5 transition-transform group-open:rotate-90" aria-hidden="true" />)}
                                 </summary>
                                 {group.items.length > 0 && (
                                     <ul className="space-y-1 px-7 pb-2 text-xs leading-5 text-base-content/80">
@@ -237,7 +237,8 @@ const SideNav = async () => {
                     <Link href="/track-order" className="flex items-center justify-between py-2 font-semibold"><span className="flex items-center gap-3"><FiPackage />Track Order</span><HiOutlineChevronRight /></Link>
                     <Link href="/contact-us" className="flex items-center justify-between py-2 font-semibold"><span className="flex items-center gap-3"><FiPhone />Contact Us</span><HiOutlineChevronRight /></Link>
                     <Link href="/about-us" className="flex items-center justify-between py-2 font-semibold"><span className="flex items-center gap-3"><FiInfo />About Us</span><HiOutlineChevronRight /></Link>
-                    <Link href="/policies" className="flex items-center justify-between py-2 font-semibold"><span className="flex items-center gap-3"><FiHelpCircle />FAQs</span><HiOutlineChevronRight /></Link>
+                    <Link href="/terms" className="flex items-center justify-between py-2 font-semibold"><span className="flex items-center gap-3"><FiHelpCircle />Terms</span><HiOutlineChevronRight /></Link>
+                    <Link href="/policies" className="flex items-center justify-between py-2 font-semibold"><span className="flex items-center gap-3"><FiHelpCircle />Policies</span><HiOutlineChevronRight /></Link>
                     {session?.user && <SignoutButton />}
                 </div>
 

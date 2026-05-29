@@ -1,5 +1,6 @@
 'use client'
 import { useReportWebVitals } from 'next/web-vitals'
+import { hasCookieConsent } from '@/lib/cookieConsent'
 
 declare global {
     interface Window {
@@ -9,6 +10,8 @@ declare global {
 
 export default function WebVitals() {
     useReportWebVitals((metric) => {
+        if (!hasCookieConsent('analytics')) return
+
         window.gtag?.('event', metric.name, {
             value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value), // values must be integers
             event_label: metric.id, // id unique to current page load

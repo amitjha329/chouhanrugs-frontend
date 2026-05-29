@@ -18,6 +18,8 @@ const ProductReviewsSection = ({
     eligibility: ReviewEligibility
     locale: string
 }) => {
+    const hasReviews = summary.totalReviews > 0
+
     return (
         <section id="reviews" className="fluid_container pb-12 pt-4 sm:pb-16">
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_380px]">
@@ -31,22 +33,28 @@ const ProductReviewsSection = ({
                             </p>
                         </div>
                         <div className="min-w-[170px] rounded-3xl border border-[#eadfd5] bg-white px-4 py-4 text-center">
-                            <div className="text-3xl font-semibold text-[#231814]">{summary.average > 0 ? summary.average.toFixed(1) : "0.0"}</div>
-                            <div className="mt-2 flex items-center justify-center gap-1 text-[#d78936]">
-                                {Array.from({ length: 5 }).map((_, index) => (
-                                    <HiStar key={index} className={`h-4 w-4 ${index < Math.round(summary.average) ? "fill-current" : "text-[#e5d6ca]"}`} />
-                                ))}
-                            </div>
-                            <p className="mt-2 text-xs uppercase tracking-[0.14em] text-[#8b786d]">
-                                {summary.totalReviews} published review{summary.totalReviews === 1 ? "" : "s"}
-                            </p>
+                            {hasReviews ? (
+                                <>
+                                    <div className="text-3xl font-semibold text-[#231814]">{summary.average.toFixed(1)}</div>
+                                    <div className="mt-2 flex items-center justify-center gap-1 text-[#d78936]">
+                                        {Array.from({ length: 5 }).map((_, index) => (
+                                            <HiStar key={index} className={`h-4 w-4 ${index < Math.round(summary.average) ? "fill-current" : "text-[#e5d6ca]"}`} />
+                                        ))}
+                                    </div>
+                                    <p className="mt-2 text-xs uppercase tracking-[0.14em] text-[#8b786d]">
+                                        {summary.totalReviews} published review{summary.totalReviews === 1 ? "" : "s"}
+                                    </p>
+                                </>
+                            ) : (
+                                <p className="text-sm font-semibold leading-6 text-[#231814]">Be the first to review.</p>
+                            )}
                         </div>
                     </div>
 
                     <div className="mt-5 space-y-4">
                         {reviews.length === 0 ? (
                             <div className="rounded-2xl border border-dashed border-[#e3d6ca] bg-[#fbf8f4] px-5 py-8 text-sm text-[#6e6056]">
-                                No published reviews yet. Verified customers can submit the first review for this product.
+                                Be the first to review.
                             </div>
                         ) : reviews.map(review => (
                             <article key={String(review._id)} className="rounded-3xl border border-[#ece1d7] bg-white p-4 shadow-[0_10px_28px_rgba(53,39,24,0.04)]">
@@ -111,4 +119,3 @@ const ProductReviewsSection = ({
 }
 
 export default ProductReviewsSection
-

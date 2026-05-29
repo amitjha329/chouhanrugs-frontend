@@ -1,20 +1,21 @@
+'use client'
+
 import React from 'react'
 import { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CartDataModel from '@/types/CartDataModel'
 import GoToCheckoutBtn from './GoToCheckoutBtn'
 import { HiOutlineReceiptPercent, HiOutlineShieldCheck } from 'react-icons/hi2'
-import { getTranslations } from 'next-intl/server'
+import { useTranslations } from 'next-intl'
 
-const CartTotalSection = async ({ cartItems }: { cartItems: CartDataModel[] }) => {
-    const t = await getTranslations('cart')
-    const userCurrency = null
+const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
+    const t = useTranslations('cart')
 
     const calculateProductPrice = (item: CartDataModel): number => {
         var priceInitial = 0
         if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
-            const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode!);
-            const variationPrice = Number(item.cartProduct[0].variations[variationindex].variationPrice);
-            const variationDiscount = Number(item.cartProduct[0].variations.find(variation => variation.variationCode === item.variationCode)?.variationDiscount ?? 0);
+            const variation = item.cartProduct[0].variations.find(ff => ff.variationCode == item.variationCode!);
+            const variationPrice = Number(variation?.variationPrice ?? item.cartProduct[0]?.productSellingPrice ?? 0);
+            const variationDiscount = Number(variation?.variationDiscount ?? 0);
             priceInitial = variationPrice - (variationPrice * (variationDiscount / 100));
         } else if (item.variationCode == "customSize") {
             switch (item.customSize?.shape) {

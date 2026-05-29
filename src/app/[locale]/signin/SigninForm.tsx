@@ -19,19 +19,22 @@ const SigninForm = ({ siteTitle }: propTypes) => {
     const [isOTPForm, setIsOTPForm] = useState<boolean>(false)
     const [code, setCode] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isResending, setIsResending] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const [notice, setNotice] = useState<string>('');
 
     const callbackURL = () => window.location.protocol + "//" + window.location.host + (searchParams.get('cb') ?? '/')
 
-    const handleSignInUsingEmail = useCallback(async () => {
-        if (isLoading) return;
+    const sendEmailOtp = useCallback(async ({ resend = false }: { resend?: boolean } = {}) => {
+        if (isLoading || isResending) return;
         if (!email || !email.includes('@')) {
             setError(t('invalidEmail'));
             return;
         }
 
-        setIsLoading(true);
+        resend ? setIsResending(true) : setIsLoading(true);
         setError('');
+        setNotice('');
 
         try {
             const { error: otpError } = await authClient.emailOtp.sendVerificationOtp({
@@ -46,17 +49,27 @@ const SigninForm = ({ siteTitle }: propTypes) => {
             }
 
             setIsOTPForm(true);
+            setCode('');
             setError('');
+            setNotice(resend ? t('otpResent') : '');
         } catch (err) {
             setError(t('errorSendingOTP'));
             console.error('Error sending OTP:', err);
         } finally {
-            setIsLoading(false);
+            resend ? setIsResending(false) : setIsLoading(false);
         }
-    }, [email, isLoading, t]);
+    }, [email, isLoading, isResending, t]);
+
+    const handleSignInUsingEmail = useCallback(async () => {
+        await sendEmailOtp();
+    }, [sendEmailOtp]);
+
+    const handleResendOtp = useCallback(async () => {
+        await sendEmailOtp({ resend: true });
+    }, [sendEmailOtp]);
 
     const onReady = useCallback(async () => {
-        if (isLoading) return;
+        if (isLoading || isResending) return;
         if (!code || code.length !== 6) {
             setError(t('invalidOTP'));
             return;
@@ -64,6 +77,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
 
         setIsLoading(true);
         setError('');
+        setNotice('');
 
         try {
             const { data, error: signInError } = await authClient.signIn.emailOtp({
@@ -85,7 +99,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
             console.error('Error during sign-in:', err);
             setIsLoading(false);
         }
-    }, [code, email, isLoading, searchParams, t]);
+    }, [code, email, isLoading, isResending, searchParams, t]);
 
     const onKeyPress = useCallback(
         (e: KeyboardEvent) => {
@@ -175,6 +189,7 @@ const SigninForm = ({ siteTitle }: propTypes) => {
             {isOTPForm && (
                 <div>
                     {error && <p className="mb-4 text-sm font-semibold text-error/80">{error}</p>}
+                    {notice && <p className="mb-4 text-sm font-semibold text-success/80">{notice}</p>}
                     <label className="block text-sm font-semibold text-base-content" htmlFor="signin-otp">
                         Verification code
                     </label>
@@ -187,24 +202,36 @@ const SigninForm = ({ siteTitle }: propTypes) => {
                         placeholder={t('otpPlaceholder')}
                         onChange={e => setCode(e.currentTarget.value)}
                         onKeyDown={onKeyPress}
-                        disabled={isLoading}
+                        disabled={isLoading || isResending}
                     />
                     <button
                         className="mt-5 flex h-14 w-full items-center justify-center rounded-2xl bg-primary px-5 text-base font-semibold text-primary-content shadow-lg shadow-primary/20 transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-60"
                         onClick={() => onReady()}
-                        disabled={isLoading}
+                        disabled={isLoading || isResending}
                     >
                         <span>{isLoading ? t('verifying') : t('verify')}</span>
                         <FiArrowRight className="ml-3 h-5 w-5" aria-hidden="true" />
                     </button>
+                    <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-base-content/60">
+                        <span>{t('didNotReceiveOTP')}</span>
+                        <button
+                            type="button"
+                            className="font-semibold text-primary transition hover:text-secondary disabled:cursor-not-allowed disabled:opacity-60"
+                            onClick={handleResendOtp}
+                            disabled={isLoading || isResending}
+                        >
+                            {isResending ? t('resendingOTP') : t('resendOTP')}
+                        </button>
+                    </div>
                     <button
                         className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-secondary"
                         onClick={() => {
                             setIsOTPForm(false);
                             setCode('');
                             setError('');
+                            setNotice('');
                         }}
-                        disabled={isLoading}
+                        disabled={isLoading || isResending}
                     >
                         <FiArrowLeft className="h-4 w-4" aria-hidden="true" />
                         {t('backToEmail')}

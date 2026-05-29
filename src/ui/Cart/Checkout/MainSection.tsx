@@ -45,6 +45,7 @@ import { trackPurchase } from '@/lib/gtagConversion'
 import { useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import Script from 'next/script'
 
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
@@ -571,12 +572,18 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     }, [cart])
 
     useEffect(() => {
-        stripeKey && setStripePromise(loadStripe(stripeKey))
-    }, [stripeKey])
+        if (paymentMethod?.partner === "STRIPE" && stripeKey) {
+            setStripePromise(loadStripe(stripeKey))
+            return
+        }
+
+        setStripePromise(undefined)
+        setStripeClientSecret(null)
+    }, [paymentMethod?.partner, stripeKey])
 
     useEffect(() => {
-        stripePromise && orderTotal && orderTotal > 0 && generateStripePaymentIntent(orderTotal, userCurrency?.currency ?? "").then(result => { setStripeClientSecret(result) }).catch(e => console.log(e))
-    }, [stripePromise, orderTotal, userCurrency])
+        paymentMethod?.partner === "STRIPE" && stripePromise && orderTotal && orderTotal > 0 && generateStripePaymentIntent(orderTotal, userCurrency?.currency ?? "").then(result => { setStripeClientSecret(result) }).catch(e => console.log(e))
+    }, [paymentMethod?.partner, stripePromise, orderTotal, userCurrency])
 
     useEffect(() => {
         if (addresses.length > 0) {
@@ -620,6 +627,9 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
 
     return (
         !Array.isArray(queryParams?.redirect_status) && stringEmptyOrNull(queryParams?.redirect_status) ? <>
+            {paymentMethod?.partner === "RAZORPAY" && (
+                <Script id="razorpay-checkout" src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
+            )}
             <div className="min-h-screen bg-gradient-to-b from-base-200/50 to-base-100">
                 <div className="container max-w-7xl py-6 sm:py-10 mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Page Header */}

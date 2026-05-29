@@ -29,6 +29,15 @@ const GtagEvent = async ({ orderId, orderValue, currency, items }: propTypes) =>
             __html: `
                 (function() {
                     if (typeof window === 'undefined') return;
+                    try {
+                        var consent = JSON.parse(window.localStorage.getItem('chouhanrugs_cookie_consent_v1') || 'null');
+                        if (!consent || !consent.preferences || consent.preferences.marketing !== true) {
+                            return;
+                        }
+                    } catch (error) {
+                        return;
+                    }
+
                     var transactionKey = 'chouhanrugs_purchase_tracked_${orderId}';
                     if (window.sessionStorage && window.sessionStorage.getItem(transactionKey) === 'true') {
                         return;
