@@ -7,6 +7,7 @@ import getProductPromoted from '@/backend/serverActions/getProductPromoted';
 import { type Locale } from '@/i18n/routing';
 import { getInitialAlgoliaProducts } from '@/lib/algoliaProducts';
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog';
+import CategorySeoBlock from '@/ui/Category/CategorySeoBlock';
 
 function stripHtml(value?: string) {
     return String(value ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
@@ -49,7 +50,7 @@ export async function generateMetadata(props: { params: Promise<{ categoryname: 
 }
 
 const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: string }> }) => {
-    const {categoryname} = await props.params;
+    const { categoryname } = await props.params;
     const category = await getCategoriesWithName(decodeURIComponent(categoryname))
     const categoryAncestors = category.parent?.split(">").filter(Boolean) ?? []
     const categoryPath = [...categoryAncestors, category.name].join(" > ")
@@ -59,9 +60,10 @@ const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: s
         categoryPath,
     })
     return (
-        <>
-            <ProductList categoryParam={category.name} categoryPath={categoryPath} predefinedProducts={initialProducts.length ? initialProducts : promotedProducts} />
-        </>
+        <div className="lg:basis-5/6 w-full flex flex-col gap-6">
+            <CategorySeoBlock category={category} />
+            <ProductList className="w-full" categoryParam={category.name} categoryPath={categoryPath} predefinedProducts={initialProducts.length ? initialProducts : promotedProducts} />
+        </div>
     )
 }
 

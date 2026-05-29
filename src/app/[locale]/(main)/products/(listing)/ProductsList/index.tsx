@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Configure, Pagination, useHits, useInstantSearch, useSearchBox } from 'react-instantsearch'
 import { buildProductAlgoliaParams, PRODUCT_SEARCH_ATTRIBUTES } from '@/lib/algoliaProductFilters'
 
-const ProductList = ({ searchQuery, searchParams, categoryParam, categoryPath, predefinedProducts = [] }: { searchQuery?: string, categoryParam?: string, categoryPath?: string, searchParams?: { [key: string]: string | undefined }, predefinedProducts?: ProductDataModelWithColorMap[] }) => {
+const ProductList = ({ className = "lg:basis-5/6 mx-auto", searchQuery, searchParams, categoryParam, categoryPath, predefinedProducts = [] }: { className?: string, searchQuery?: string, categoryParam?: string, categoryPath?: string, searchParams?: { [key: string]: string | undefined }, predefinedProducts?: ProductDataModelWithColorMap[] }) => {
     const { items: hits } = useHits({
     })
     const { status } = useInstantSearch()
@@ -35,7 +35,7 @@ const ProductList = ({ searchQuery, searchParams, categoryParam, categoryPath, p
         : (hits as unknown as ProductDataModelWithColorMap[])
 
     return (
-        (<div className="lg:basis-5/6 mx-auto">
+        (<div className={className}>
             <Configure
                 filters={algoliaParams.filters}
                 facetFilters={algoliaParams.facetFilters}

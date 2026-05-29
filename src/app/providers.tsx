@@ -30,7 +30,7 @@ export function PaypalContextProvider({ children, key_id, client_token }: Readon
     </PayPalScriptProvider>
 }
 
-export function AlgoliaSearchProvider({ APPID, KEY, INDEX, children }: Readonly<{ children: React.ReactNode, APPID: string, KEY: string, INDEX: string }>) {
+export function AlgoliaSearchProvider({ APPID, KEY, INDEX, children, initialUiState }: Readonly<{ children: React.ReactNode, APPID: string, KEY: string, INDEX: string, initialUiState?: Record<string, unknown> }>) {
     const searchClient = useMemo(() => algoliasearch(APPID, KEY), [APPID, KEY])
-    return <InstantSearch searchClient={searchClient} indexName={INDEX} stalledSearchDelay={250} future={{ preserveSharedStateOnUnmount: true }}  >{children}</InstantSearch>
+    return <InstantSearch searchClient={searchClient} indexName={INDEX} stalledSearchDelay={250} initialUiState={initialUiState} future={{ preserveSharedStateOnUnmount: true }}  >{children}</InstantSearch>
 }

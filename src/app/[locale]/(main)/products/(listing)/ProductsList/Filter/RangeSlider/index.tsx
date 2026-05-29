@@ -18,10 +18,6 @@ const RangeSlider = ({ userCurrency }: { userCurrency: Currency }) => {
         setValue([from, to]);
     }, [from, to]);
 
-    useEffect(() => {
-        console.log(range)
-    }, [range]);
-
     if (min === undefined || max === undefined) {
         return null;
     }
@@ -36,19 +32,19 @@ const RangeSlider = ({ userCurrency }: { userCurrency: Currency }) => {
             onChange={setValue}
             onChangeEnd={(val) => refine([val[0], val[1]])}
             isDisabled={!canRefine}
-            className="grid grid-cols-[1fr_auto] flex-col items-center gap-2 w-64"
+            className="grid w-full grid-cols-[1fr_auto] flex-col items-center gap-3"
         >
-            <Label>Price</Label>
-            <SliderOutput className="text-sm text-gray-500 font-medium">
+            <Label className="text-sm font-semibold text-[#2c211a]">Price Range</Label>
+            <SliderOutput className="text-sm font-semibold text-[#6c4624]">
                 {({ state }) =>
                     state.values.map((_, i) => `${userCurrency?.currencySymbol} ` + (Number(state.getThumbValueLabel(i)) * (userCurrency?.exchangeRates ?? 1) << 0)).join(' - ')}
             </SliderOutput>
-            <SliderTrack className="group col-span-2 h-6 flex items-center">
+            <SliderTrack className="group col-span-2 flex h-8 items-center">
                 {({ state, isDisabled }) =>
                     <>
-                        <div className={clsx("rounded-full w-full h-[6px]", { "bg-gray-100 dark:bg-zinc-800 forced-colors:bg-[GrayText]": isDisabled }, { "bg-gray-300 dark:bg-zinc-500 forced-colors:bg-[ButtonBorder]": !isDisabled })} />
+                        <div className={clsx("h-[5px] w-full rounded-full", { "bg-[#eee6dd] forced-colors:bg-[GrayText]": isDisabled }, { "bg-[#dccfc4] forced-colors:bg-[ButtonBorder]": !isDisabled })} />
                         {state.values.map((_, i) => (
-                            <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} className={({ isDragging, isDisabled }) => clsx("w-6 h-6 mt-6 rounded-full bg-gray-50 dark:bg-zinc-900 border-2 border-gray-700 dark:border-gray-300", { "border-gray-300 dark:border-zinc-700 forced-colors:border-[GrayText]": isDisabled }, { "bg-gray-700 dark:bg-gray-300 forced-colors:bg-[ButtonBorder]": isDragging })} />
+                            <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} className={({ isDragging, isDisabled }) => clsx("mt-8 h-6 w-6 rounded-full border-2 border-[#6c4624] bg-white shadow-[0_4px_12px_rgba(108,70,36,0.22)] outline-none ring-offset-2 transition-transform focus-visible:ring-2 focus-visible:ring-[#6c4624]/35", { "border-[#cdb9a7] forced-colors:border-[GrayText]": isDisabled }, { "scale-110 bg-[#f4ebe4] forced-colors:bg-[ButtonBorder]": isDragging })} />
                         ))}
                     </>}
             </SliderTrack>

@@ -84,12 +84,12 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel }) => {
                 slides.map((image, index) => {
                     const isFirstSlide = index === 0
                     const imageSrc = typeof image.src === 'string' ? image.src : image.src.toString()
-                    const heading = resolveLocalizedString(image.heading as any, locale) || 'Elegant Rugs'
-                    const eyebrow = resolveLocalizedString(image.title as any, locale) || 'Sophisticated designs for every space'
-                    const description = resolveLocalizedString(image.desc as any, locale) || 'Crafted for comfort. Made to impress.'
+                    // const heading = resolveLocalizedString(image.heading as any, locale) || 'Elegant Rugs'
+                    // const eyebrow = resolveLocalizedString(image.title as any, locale) || 'Sophisticated designs for every space'
+                    // const description = resolveLocalizedString(image.desc as any, locale) || 'Crafted for comfort. Made to impress.'
 
                     return (
-                        <div key={`${imageSrc}-${index}`} className="relative h-[250px] overflow-hidden mx-0 md:h-[540px] rounded-none lg:h-[620px]">
+                        <div key={`${imageSrc}-${index}`} className="relative h-[250px] overflow-hidden mx-0 md:h-[540px] rounded-none lg:h-[720px]">
                             <Image
                                 src={imageSrc || banner_2.src}
                                 alt={`Hero banner ${index + 1}`}

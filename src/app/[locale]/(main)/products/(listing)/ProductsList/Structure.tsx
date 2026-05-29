@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import SideBarSectionLayout from './Filter/SideBarSectionLayout'
 import RangeSlider from './Filter/RangeSlider'
 import { FaAngleDown } from 'react-icons/fa'
-import { ClearRefinements, CurrentRefinements, RefinementList, ToggleRefinement } from 'react-instantsearch'
+import { ClearRefinements, CurrentRefinements, HierarchicalMenu, RefinementList, ToggleRefinement } from 'react-instantsearch'
 import FilterBottomSheet from './Filter/Mobile/FilterBottomSheet'
 import Currency from '@/types/Currency'
 
@@ -19,6 +19,14 @@ const StructureListing = ({ children, userCurrency }: {
     const filterBottomSheetToggle = () => {
         setFilterSheetOpen(!filterSheetOpen)
     }
+
+    const hierarchicalCategoryAttributes = [
+        'hierarchicalCategories.lvl0',
+        'hierarchicalCategories.lvl1',
+        'hierarchicalCategories.lvl2',
+        'hierarchicalCategories.lvl3',
+    ]
+
     return (
         <>
             <div className="flex md:hidden justify-between border">
@@ -55,12 +63,15 @@ const StructureListing = ({ children, userCurrency }: {
                         root: "bg-secondary p-5 mb-5 flex items-center justify-between"
                     }} />
                     <SideBarSectionLayout title="Categories">
-                        <RefinementList attribute="categoryHierarchy" showMoreLimit={100} limit={10} showMore classNames={{
-                            checkbox: "checkbox",
-                            label: "label cursor-pointer",
-                            labelText: "label-text capitalize",
-                            showMore: "border flex w-full p-4 justify-between items-center text-left text-md font-normal text-primary hover:bg-accent",
-                            count: "color-[grey]"
+                        <HierarchicalMenu attributes={hierarchicalCategoryAttributes} limit={100} classNames={{
+                            list: "space-y-1",
+                            childList: "ml-4 mt-1 space-y-1 border-l border-primary/10 pl-3",
+                            item: "rounded-md",
+                            selectedItem: "bg-secondary text-primary",
+                            parentItem: "font-medium",
+                            link: "flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm capitalize text-gray-700 hover:bg-secondary",
+                            label: "truncate",
+                            count: "rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-500"
                         }} />
                     </SideBarSectionLayout>
                     <SideBarSectionLayout title="Price">
