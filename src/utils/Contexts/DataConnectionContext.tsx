@@ -1,9 +1,10 @@
 'use client'
-import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import getUserAllWishlist from '@/backend/serverActions/getUserAllWishlist'
 import getUserCartItemCount from '@/backend/serverActions/getUserCartItemCount'
 import DataContextDataModel from '@/types/DataContextDataModel'
 import { useSession } from '@/lib/auth-client'
+import syncLocalCartToUser from '@/utils/syncLocalCartToUser'
 
 /**
  * This Method Initializes the Socket Connection to the Server and accepts domain name for websocket connection.
@@ -18,6 +19,7 @@ export const webSocketInitializer = async (basePath: string) => {
 const DataConnectionContext = createContext<DataContextDataModel>({
     mainSocket: undefined,
     cartCount: undefined,
+    cartSyncing: false,
     wishlistItems: [],
     refreshWishList: () => { },
     refreshCartItems: () => { }
@@ -25,10 +27,13 @@ const DataConnectionContext = createContext<DataContextDataModel>({
 
 const DataConnectionContextProvider = ({ children }: { children: ReactNode }) => {
     const [cartCount, setCartCount] = useState<number>()
+    const [cartSyncing, setCartSyncing] = useState(false)
     const [mainSocket, setMainSocket] = useState<WebSocket>()
     const [wishlistItems, setWishlistitems] = useState<string[]>([])
+    const syncedUserRef = useRef<string | null>(null)
     const { data: sessionData } = useSession()
     const session = sessionData
+    const userId = session?.user?.id
 
     // Helper to get local cart count
     const getLocalCartCount = () => {
@@ -44,29 +49,45 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
         return 0
     }
 
-    const refreshWishList = () => {
-        getUserAllWishlist(session?.user?.id ?? '', false).then(result => {
+    const refreshWishList = useCallback(() => {
+        getUserAllWishlist(userId ?? '', false).then(result => {
             setWishlistitems(result?.itemIds ?? [])
         }).catch(err => console.log(err))
-    }
+    }, [userId])
 
-    const refreshCartItems = () => {
-        if (session?.user) {
-            getUserCartItemCount(session.user.id).then(result => {
+    const refreshCartItems = useCallback(() => {
+        if (userId) {
+            getUserCartItemCount(userId).then(result => {
                 setCartCount(result.cartItemCount)
             }).catch(err => console.log(err))
         } else {
             setCartCount(getLocalCartCount())
         }
-    }
+    }, [userId])
 
     useEffect(() => {
-        // On mount or session change, update cart count from server or localStorage
-        if (session?.user) {
-            getUserCartItemCount(session.user.id).then(result => {
-                setCartCount(result.cartItemCount)
-            }).catch(err => console.log(err))
+        if (userId) {
+            const localCartCount = getLocalCartCount()
+            if (localCartCount > 0 && syncedUserRef.current !== userId) {
+                syncedUserRef.current = userId
+                setCartSyncing(true)
+                setCartCount(localCartCount)
+                syncLocalCartToUser(userId)
+                    .then(() => getUserCartItemCount(userId))
+                    .then(result => setCartCount(result.cartItemCount))
+                    .catch(err => {
+                        console.log(err)
+                        setCartCount(getLocalCartCount())
+                    })
+                    .finally(() => setCartSyncing(false))
+            } else {
+                getUserCartItemCount(userId).then(result => {
+                    setCartCount(result.cartItemCount)
+                }).catch(err => console.log(err))
+            }
         } else {
+            syncedUserRef.current = null
+            setCartSyncing(false)
             setCartCount(getLocalCartCount())
         }
         (!mainSocket || mainSocket.readyState !== WebSocket.OPEN) && webSocketInitializer(window.location.host).then((result) => {
@@ -99,20 +120,31 @@ const DataConnectionContextProvider = ({ children }: { children: ReactNode }) =>
 
     useEffect(() => {
         // Listen for local cart changes (add/remove) while logged out
+        const handleStorage = () => {
+            if (!session?.user) setCartCount(getLocalCartCount())
+        }
+        const handleLocalCartUpdated = () => {
+            if (!session?.user) setCartCount(getLocalCartCount())
+        }
+
         if (!session?.user) {
-            const handleStorage = () => setCartCount(getLocalCartCount())
             window.addEventListener('storage', handleStorage)
-            return () => window.removeEventListener('storage', handleStorage)
+            window.addEventListener('local-cart-updated', handleLocalCartUpdated)
+            return () => {
+                window.removeEventListener('storage', handleStorage)
+                window.removeEventListener('local-cart-updated', handleLocalCartUpdated)
+            }
         }
     }, [session])
 
     const value = useMemo(() => ({
         mainSocket,
         cartCount,
+        cartSyncing,
         wishlistItems,
         refreshCartItems,
         refreshWishList
-    }), [cartCount, mainSocket, wishlistItems])
+    }), [cartCount, cartSyncing, mainSocket, refreshCartItems, refreshWishList, wishlistItems])
 
     return <DataConnectionContext.Provider value={value}>
         {children}

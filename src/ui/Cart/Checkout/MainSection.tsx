@@ -35,7 +35,6 @@ import generateRazorPayOrder from '@/backend/serverActions/generateRazorPayOrder
 import validateCoupon from '@/backend/serverActions/validateCoupon'
 import generateStripePaymentIntent from '@/backend/serverActions/generateStripePaymentIntent'
 import CartItemClient from '../CartItemClient'
-import syncLocalCartToUser from '@/utils/syncLocalCartToUser'
 import CartItem from '../CartItem'
 import updateUserAddress from '@/backend/serverActions/updateUserAddress'
 import deleteUserAddress from '@/backend/serverActions/deleteUserAddress'
@@ -66,7 +65,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null)
     const router = useRouter()
     const t = useTranslations('checkout')
-    const { cartCount } = useDataConnectionContext()
+    const { cartCount, cartSyncing, refreshCartItems } = useDataConnectionContext()
     const googleAdsConfig = useGoogleAdsConfig()
     const [cart, setCart] = useState<CartDataModel[]>([])
     const [addresses, setaddress] = useState<UserAddressDataModel[]>([])
@@ -87,7 +86,6 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         couponData: CouponDataModel
     }>()
     const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayDataModel | null>()
-    const [syncingLocalCart, setSyncingLocalCart] = useState(false)
 
     const currentTax = useMemo(() => {
         // return taxation.find(item => item.ISO === userCurrency?.ISO) ?? { taxRate: 0 }
@@ -501,8 +499,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     }
 
     useEffect(() => {
-        cartCount && cartCount == 0 && router.push("/")
-    }, [cartCount])
+        !cartLoading && !cartSyncing && cartCount === 0 && router.push("/")
+    }, [cartCount, cartLoading, cartSyncing, router])
 
     const stripeVerifyAndFinalize = async () => {
 
@@ -591,37 +589,17 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         }
     }, [addresses])
 
-    // Sync local cart to user cart on first mount if needed
     useEffect(() => {
-        if (typeof window !== 'undefined' && session?.user?.id) {
-            const localCartRaw = localStorage.getItem('pending_cart')
-            if (localCartRaw) {
-                setSyncingLocalCart(true)
-                syncLocalCartToUser(session.user.id, async (userId: string, productId: string, quantity: number, variationCode: string, onSuccess?: () => void, onError?: (err: any) => void) => {
-                    try {
-                        const res = await fetch('/api/user/addtocart', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ productId, userId, quantity, variationCode })
-                        });
-                        if (res.ok) {
-                            if (onSuccess) onSuccess();
-                        } else {
-                            if (onError) onError(await res.text());
-                        }
-                    } catch (err) {
-                        if (onError) onError(err);
-                    }
-                }).then(() => {
-                    setSyncingLocalCart(false)
-                    // Optionally, refresh cart after sync
-                    getUserCartitems(session.user.id).then(cartRes => setCart(cartRes.filter(it => it.cartProduct.length > 0)))
-                })
-            }
+        if (!cartSyncing && session?.user?.id) {
+            getUserCartitems(session.user.id).then(cartRes => {
+                setCart(cartRes.filter(it => it.cartProduct.length > 0))
+                setcartLoading(false)
+                refreshCartItems()
+            }).catch(err => console.log(err))
         }
-    }, [session?.user?.id])
+    }, [cartSyncing, refreshCartItems, session?.user?.id])
 
-    if (syncingLocalCart) {
+    if (cartSyncing) {
         return <Loader />
     }
 

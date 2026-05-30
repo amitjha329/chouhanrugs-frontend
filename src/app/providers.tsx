@@ -7,7 +7,7 @@ import DataConnectionContextProvider from "@/utils/Contexts/DataConnectionContex
 import ProductContext from "@/utils/Contexts/ProductContext"
 import { PayPalScriptProvider } from "@paypal/react-paypal-js"
 import { liteClient as algoliasearch } from "algoliasearch/lite";
-import { InstantSearch } from "react-instantsearch-core";
+import { InstantSearch } from "react-instantsearch";
 import { useMemo } from "react";
 
 

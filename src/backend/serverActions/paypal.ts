@@ -5,14 +5,25 @@ import PayPalAccessToken from '@/types/PayPalAccessToken';
 import { PayPalOrder } from '@/types/PayPalOrder';
 import { PayPalOrderCapture } from '@/types/PayPalOrderCapture';
 import fetch, { Response } from 'node-fetch';
-import { getConfig } from '@/lib/services/ConfigService';
+import { getConfigBulk } from '@/lib/services/ConfigService';
+
+const DEFAULT_PAYPAL_API_BASE = 'https://api-m.paypal.com'
+const PAYPAL_API_CONFIG_KEYS = ['PayPal_API', 'PAYPAL_API', 'PAYPAL_API_BASE']
 
 async function getPayPalApiBase(): Promise<string> {
-    const base = await getConfig('PayPal_API')
+    const config = await getConfigBulk(PAYPAL_API_CONFIG_KEYS)
+    const base = config.PayPal_API
+        || config.PAYPAL_API
+        || config.PAYPAL_API_BASE
+        || process.env.PayPal_API
+        || process.env.PAYPAL_API
+        || process.env.PAYPAL_API_BASE
+        || DEFAULT_PAYPAL_API_BASE
+
     if (!base) {
         throw new Error('PayPal API base URL is not configured')
     }
-    return base
+    return base.trim().replace(/\/+$/, '')
 }
 
 // call the create order method
@@ -66,6 +77,9 @@ export async function generateAccessToken(): Promise<string> {
     const db = await clientPromise
     const collection = db.db(process.env.MONGODB_DB).collection("paymentGateway")
     const paypalData = await collection.findOne({ partner: "PAYPAL" })
+    if (!paypalData?.key_id || !paypalData?.key_secret) {
+        throw new Error('PayPal credentials are not configured')
+    }
     const auth = Buffer.from(paypalData?.key_id + ':' + paypalData?.key_secret).toString('base64');
     const response = await fetch(`${base}/v1/oauth2/token`, {
         method: 'post',

@@ -327,6 +327,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                             pendingCart.push(newItem);
                                         }
                                         localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
+                                        window.dispatchEvent(new Event('local-cart-updated'));
                                         setActionLoading(false);
                                         onPageNotifications('success', 'Item added to cart.').then(() => {
                                             window.location.href = "/cart/checkout";
@@ -389,6 +390,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
                                             pendingCart.push(newItem);
                                         }
                                         localStorage.setItem('pending_cart', JSON.stringify(pendingCart));
+                                        window.dispatchEvent(new Event('local-cart-updated'));
                                         setActionLoading(false);
                                         onPageNotifications('success', 'Item added to cart.').then(() => {
                                             window.location.reload();

@@ -17,12 +17,12 @@ const PayMethodItem = ({ pgList, selected, setSelected, currency }: {
     useEffect(() => {
         if (pgList.length > 0 && !selected) {
             if (currency?.currency === "INR") {
-                setSelected(pgList.find(item => item.partner === "RZP"))
+                setSelected(pgList.find(item => item.partner === "RZP") ?? pgList[0])
             } else {
-                setSelected(pgList.find(item => item.partner === "PAYPAL"))
+                setSelected(pgList.find(item => item.partner === "PAYPAL") ?? pgList.find(item => item.partner !== "RZP") ?? pgList[0])
             }
         }
-    }, [pgList])
+    }, [currency?.currency, pgList, selected, setSelected])
     
     return (
         <RadioGroup value={selected} onChange={setSelected}>

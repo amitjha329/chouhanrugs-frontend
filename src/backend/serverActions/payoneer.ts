@@ -87,12 +87,16 @@ export async function initiatePayoneerPayment(orderData: {
 
         const division = config.key_id // Division/Store Code
         const apiToken = config.key_secret // API Token
-        const payoneerEnv = await getConfig('PAYONEER_ENV')
+        const configuredPayoneerEnv = (await getConfig(
+            'PAYONEER_ENV',
+            process.env.PAYONEER_ENV || process.env.NEXT_PUBLIC_PAYONEER_ENV || ''
+        )).trim()
+        const payoneerEnv = configuredPayoneerEnv || (process.env.NODE_ENV === 'production' ? '' : 'sandbox')
 
         if (!payoneerEnv) {
             return {
                 success: false,
-                error: "Payoneer environment is not configured"
+                error: "Payoneer environment is not configured. Set PAYONEER_ENV in app_config or PAYONEER_ENV/NEXT_PUBLIC_PAYONEER_ENV in the environment."
             }
         }
 

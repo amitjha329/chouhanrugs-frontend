@@ -38,6 +38,7 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
             variation: item.variationCode,
             customSize: item.customSize
         }))))
+        window.dispatchEvent(new Event('local-cart-updated'))
     }
 
     // Calculate price for each item (mimic logic from MainSection)

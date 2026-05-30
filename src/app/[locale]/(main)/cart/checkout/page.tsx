@@ -15,6 +15,17 @@ import { connection } from 'next/server'
 
 const GuestMainSection = dynamic(() => import('@/ui/Cart/Checkout/GuestMainSection'))
 
+const defaultUserCurrency = {
+    _id: "",
+    active: true,
+    currency: "USD",
+    exchangeRates: 1,
+    ISO: "US",
+    country: "US",
+    currencySymbol: "$",
+    default: true
+}
+
 const CheckoutPage = async (
     props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 ) => {
@@ -31,42 +42,25 @@ const CheckoutPage = async (
 
     // Render guest section if not logged in
     if (!session || !session.user) {
-        return <GuestMainSection userCurrency={{
-            _id: "",
-            active: true,
-            currency: "USD",
-            exchangeRates: 1,
-            ISO: "US",
-            country: "US",
-            currencySymbol: "$",
-            default: true
-        }} />
+        return <GuestMainSection userCurrency={defaultUserCurrency} />
     }
+
+    const shouldLoadPayPal = Boolean(paypalData.activation && paypalData.key_id && !searchParams?.redirect_status)
+    const paypalClientToken = shouldLoadPayPal
+        ? await generateClientToken().catch((error) => {
+            console.error('[CheckoutPage] PayPal client token generation failed. PayPal checkout is disabled for this render.', error)
+            return null
+        })
+        : null
+    const availablePayOpts = paypalClientToken ? payOpts : payOpts.filter((item) => item.partner !== 'PAYPAL')
+    const mainSection = <MainSection siteInfo={siteInfo} payOpts={availablePayOpts} queryParams={searchParams} stripeKey={stripeKey} session={session} shippingList={shippingList} userCurrency={defaultUserCurrency} />
 
     return (
         <>
             {
-                paypalData.activation && !searchParams?.redirect_status ? <PaypalContextProvider client_token={await generateClientToken()} key_id={paypalData.key_id}>
-                    <MainSection siteInfo={siteInfo} payOpts={payOpts} queryParams={searchParams} stripeKey={stripeKey} session={session} shippingList={shippingList} userCurrency={{
-                        _id: "",
-                        active: true,
-                        currency: "USD",
-                        exchangeRates: 1,
-                        ISO: "US",
-                        country: "US",
-                        currencySymbol: "$",
-                        default: true
-                    }} />
-                </PaypalContextProvider> : <MainSection siteInfo={siteInfo} payOpts={payOpts} queryParams={searchParams} stripeKey={stripeKey} session={session} shippingList={shippingList} userCurrency={{
-                    _id: "",
-                    active: true,
-                    currency: "USD",
-                    exchangeRates: 1,
-                    ISO: "US",
-                    country: "US",
-                    currencySymbol: "$",
-                    default: true
-                }} />
+                paypalClientToken ? <PaypalContextProvider client_token={paypalClientToken} key_id={paypalData.key_id}>
+                    {mainSection}
+                </PaypalContextProvider> : mainSection
             }
         </>
     )

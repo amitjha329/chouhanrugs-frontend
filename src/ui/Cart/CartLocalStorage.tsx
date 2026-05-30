@@ -34,6 +34,7 @@ const CartLocalStorage = () => {
     const syncCart = (newCart: any[]) => {
         setCart(newCart);
         localStorage.setItem('pending_cart', JSON.stringify(newCart));
+        window.dispatchEvent(new Event('local-cart-updated'));
     };
 
     useEffect(() => {

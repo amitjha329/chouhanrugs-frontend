@@ -3,8 +3,63 @@ import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import Loader from '@/ui/Loader'
 import ProductCardItem from '@/ui/Product/ProductCardItem'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Configure, Pagination, useHits, useInstantSearch, useSearchBox } from 'react-instantsearch'
+import { Configure, useHits, useInstantSearch, usePagination, useSearchBox } from 'react-instantsearch'
 import { buildProductAlgoliaParams, PRODUCT_SEARCH_ATTRIBUTES } from '@/lib/algoliaProductFilters'
+
+const ProductPagination = () => {
+    const {
+        pages,
+        currentRefinement,
+        nbPages,
+        isFirstPage,
+        isLastPage,
+        refine,
+    } = usePagination({
+        padding: 2,
+    })
+
+    if (nbPages <= 1) {
+        return null
+    }
+
+    return (
+        <nav aria-label="Product pagination" className="mt-6 flex items-center justify-end gap-2">
+            <button
+                type="button"
+                aria-label="Previous page"
+                className="btn max-sm:btn-sm btn-outline btn-primary"
+                disabled={isFirstPage}
+                onClick={() => refine(currentRefinement - 1)}
+            >
+                Prev
+            </button>
+            <div className="join">
+                {pages.map((page) => (
+                    <button
+                        key={page}
+                        type="button"
+                        aria-label={`Page ${page + 1}`}
+                        aria-current={page === currentRefinement ? 'page' : undefined}
+                        className={`btn max-sm:btn-sm btn-outline btn-primary join-item ${page === currentRefinement ? 'btn-disabled' : ''}`}
+                        disabled={page === currentRefinement}
+                        onClick={() => refine(page)}
+                    >
+                        {page + 1}
+                    </button>
+                ))}
+            </div>
+            <button
+                type="button"
+                aria-label="Next page"
+                className="btn max-sm:btn-sm btn-outline btn-primary"
+                disabled={isLastPage}
+                onClick={() => refine(currentRefinement + 1)}
+            >
+                Next
+            </button>
+        </nav>
+    )
+}
 
 const ProductList = ({ className = "lg:basis-5/6 mx-auto", searchQuery, searchParams, categoryParam, categoryPath, predefinedProducts = [] }: { className?: string, searchQuery?: string, categoryParam?: string, categoryPath?: string, searchParams?: { [key: string]: string | undefined }, predefinedProducts?: ProductDataModelWithColorMap[] }) => {
     const { items: hits } = useHits({
@@ -67,12 +122,7 @@ const ProductList = ({ className = "lg:basis-5/6 mx-auto", searchQuery, searchPa
             {
                 status == "stalled" && !shouldShowPredefinedProducts && <Loader />
             }
-            {hits.length > 0 && <Pagination classNames={{
-                root: "flex",
-                list: "flex flex-row join ml-auto",
-                link: "btn max-sm:btn-sm btn-outline btn-primary join-item",
-                selectedItem: "btn-disabled"
-            }} padding={2} />}
+            {hits.length > 0 && <ProductPagination />}
             {/* <div ref={ref} className='w-full flex items-center justify-center'>{onScreenIntersection && isLoading && <PuffLoader />}</div> */}
         </div>)
     );
