@@ -3,11 +3,64 @@
 import React, { useState } from 'react'
 import SideBarSectionLayout from './Filter/SideBarSectionLayout'
 import RangeSlider from './Filter/RangeSlider'
-import { FaAngleDown } from 'react-icons/fa'
-import { ClearRefinements, CurrentRefinements, RefinementList, ToggleRefinement, useHierarchicalMenu, useInstantSearch } from 'react-instantsearch'
+import { FiFilter } from 'react-icons/fi'
+import { ClearRefinements, CurrentRefinements, RefinementList, ToggleRefinement, useCurrentRefinements, useHierarchicalMenu, useInstantSearch } from 'react-instantsearch'
 import FilterBottomSheet from './Filter/Mobile/FilterBottomSheet'
 import Currency from '@/types/Currency'
 import CategoriesDataModel from '@/types/CategoriesDataModel'
+
+const MobileListingToolbar = ({ onOpen }: { onOpen: () => void }) => {
+    const { items } = useCurrentRefinements()
+    const activeFilterCount = items.length
+    const hasAppliedFilters = activeFilterCount > 0
+
+    return (
+        <div className="container mx-auto px-3 pb-2 pt-4 sm:px-0 md:hidden">
+            <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={onOpen}
+                        className="inline-flex min-h-[46px] items-center gap-2.5 rounded-full border border-[#eadfd5] bg-white px-4 py-3 text-[#3f2a1b] shadow-[0_8px_18px_rgba(79,52,28,0.06)] transition active:scale-[0.99]"
+                    >
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f7efe5] text-[#6c4624]">
+                            <FiFilter className="h-4 w-4" aria-hidden="true" />
+                        </span>
+                        <span className="text-sm font-semibold">Filters</span>
+                        {hasAppliedFilters && (
+                            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#5b3315] px-1.5 text-[11px] font-bold leading-none text-white">
+                                {activeFilterCount}
+                            </span>
+                        )}
+                    </button>
+                </div>
+
+                {hasAppliedFilters && (
+                    <div className="flex items-start gap-2 overflow-hidden">
+                        <CurrentRefinements
+                            classNames={{
+                                root: 'min-w-0 flex-1 overflow-x-auto no-scrollbar',
+                                list: 'flex items-center gap-2 pr-1',
+                                item: 'flex min-w-max items-center gap-1.5 rounded-full border border-[#eadfd5] bg-[#f6eee5] px-3 py-2 text-[12px] font-medium text-[#4b3322] shadow-[0_4px_10px_rgba(79,52,28,0.04)]',
+                                label: 'hidden',
+                                category: 'flex items-center gap-1.5',
+                                categoryLabel: 'leading-none',
+                                delete: 'inline-flex h-4 w-4 items-center justify-center rounded-full text-[11px] leading-none text-[#7a4a1d]',
+                            }}
+                        />
+                        <ClearRefinements
+                            translations={{ resetButtonText: 'Clear All' }}
+                            classNames={{
+                                button: 'shrink-0 rounded-full px-1 py-2 text-[12px] font-semibold text-[#6c4624] underline decoration-[#c7ab93] underline-offset-4',
+                                disabledButton: 'hidden',
+                            }}
+                        />
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}
 
 const StructureListing = ({ children, userCurrency, categories = [] }: {
     children: React.ReactNode,
@@ -26,19 +79,7 @@ const StructureListing = ({ children, userCurrency, categories = [] }: {
 
     return (
         <>
-            <div className="flex md:hidden justify-between border">
-                <CurrentRefinements classNames={{
-                    item: "text-primary rounded-full bg-secondary px-3 py-1 mr-1 min-w-max text-xs",
-                    list: "flex p-4",
-                    root: "overflow-x-scroll no-scrollbar",
-                    delete: "border border-black rounded-full text-xs ml-2 w-5 h-5"
-                }} />
-                {/* <SelectedFilters allColors={allColors} allSizes={allSizes} brandList={brandList} categories={categories} selectedBrands={selectedBrands} selectedColors={selectedColors} selectedSizes={selectedSizes} allPatterns={allPatterns} allShapes={allShapes} selectedPatterns={selectedPatterns} selectedShapes={selectedShapes} /> */}
-                <div className="flex p-4 items-center pl-3 border-l radial-click" onClick={filterBottomSheetToggle}>
-                    <span className="text-gray-700">Filter</span>
-                    <FaAngleDown className="ml-2 h-5 w-5" />
-                </div>
-            </div>
+            <MobileListingToolbar onOpen={filterBottomSheetToggle} />
             <div className="container flex flex-row mx-auto ~py-5/10 px-3 sm:px-0 gap-x-4 no-scrollbar items-start">
                 <div className="basis-1/6 hidden lg:block flex-grow-0 sticky bottom-0">
                     <div className="flex bg-secondary p-5 mb-5 items-center justify-between">
