@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
     // WebP avoids the heavier first-request AVIF encoding cost for remote Firebase assets.
     formats: ['image/webp'],
     // Optimize device sizes for common breakpoints
-    deviceSizes: [360, 420, 640, 750, 828, 1080, 1200, 1600],
+    deviceSizes: [360, 420, 640, 750, 828, 1080, 1200, 1600,1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     // Product image URLs are effectively immutable; cache transformed variants aggressively.
     minimumCacheTTL: 604800,
