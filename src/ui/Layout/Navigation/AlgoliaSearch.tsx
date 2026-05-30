@@ -116,7 +116,7 @@ const AlgoliaSearch: React.FC<AlgoliaSearchProps> = ({
                   <div class="aa-ItemWrapper">
                     <div class="aa-ItemContent">
                       <div class="aa-ItemIcon aa-ItemIcon--picture aa-ItemIcon--alignTop aa-imageIcon">
-                      <img src="${productImage}" alt="${productName}"/>
+                      <img src="${productImage}" alt="${productName}" loading="lazy" decoding="async" fetchpriority="low"/>
                       </div>
                       <div class="aa-ItemContentBody">
                         <div class="aa-ItemContentTitle">

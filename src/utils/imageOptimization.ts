@@ -31,6 +31,36 @@ export const toBase64 = (str: string) =>
     ? Buffer.from(str).toString('base64')
     : window.btoa(str)
 
+type ImageSourceLike = string | { src?: string } | null | undefined
+
+const FIREBASE_STORAGE_HOSTS = new Set([
+  'firebasestorage.googleapis.com',
+  'storage.googleapis.com',
+])
+
+export const resolveImageSrc = (src: ImageSourceLike): string => {
+  if (typeof src === 'string') return src
+  if (src && typeof src === 'object' && typeof src.src === 'string') return src.src
+  return ''
+}
+
+export const isFirebaseStorageUrl = (src: ImageSourceLike): boolean => {
+  const resolvedSrc = resolveImageSrc(src)
+
+  if (!resolvedSrc || resolvedSrc.startsWith('/') || resolvedSrc.startsWith('data:') || resolvedSrc.startsWith('blob:')) {
+    return false
+  }
+
+  try {
+    const url = new URL(resolvedSrc)
+    return FIREBASE_STORAGE_HOSTS.has(url.hostname) || url.hostname.endsWith('.firebasestorage.app')
+  } catch {
+    return false
+  }
+}
+
+export const shouldBypassNextImageOptimization = (src: ImageSourceLike): boolean => isFirebaseStorageUrl(src)
+
 /**
  * Generate a shimmer blur data URL for Next.js Image placeholder
  * @param width - Width of the shimmer effect
@@ -76,13 +106,13 @@ export const getGradientPlaceholder = (startColor: string = 'f3f4f6', endColor: 
  */
 export const productImageSizes = {
   // Main product image
-  main: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px",
+  main: "(max-width: 640px) 92vw, (max-width: 1024px) 56vw, 720px",
   // Product card/grid image
-  card: "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px",
+  card: "(max-width: 640px) 44vw, (max-width: 1024px) 31vw, 280px",
   // Thumbnail image
   thumbnail: "80px",
   // Gallery image
-  gallery: "(max-width: 640px) 100vw, (max-width: 1024px) 75vw, 800px",
+  gallery: "(max-width: 640px) 95vw, (max-width: 1024px) 72vw, 960px",
 }
 
 /**
@@ -90,10 +120,10 @@ export const productImageSizes = {
  * These should match your next.config.ts qualities array
  */
 export const imageQuality = {
-  thumbnail: 10,
-  preview: 60,
-  standard: 75,
-  high: 85,
+  thumbnail: 40,
+  preview: 55,
+  standard: 70,
+  high: 82,
   maximum: 90,
 }
 
@@ -120,6 +150,9 @@ export default {
   getShimmerBlurDataURL,
   getColorPlaceholder,
   getGradientPlaceholder,
+  resolveImageSrc,
+  isFirebaseStorageUrl,
+  shouldBypassNextImageOptimization,
   productImageSizes,
   imageQuality,
   blurPlaceholders,

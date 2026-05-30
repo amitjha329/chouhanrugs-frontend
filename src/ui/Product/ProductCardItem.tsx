@@ -5,7 +5,7 @@ import { Link } from '@/i18n/navigation'
 import React from 'react'
 import WishListButton from './WishListButton'
 import ProductsCardStyle from './WishlistButton.module.scss'
-import { blurPlaceholders, productImageSizes, imageQuality } from '@/utils/imageOptimization'
+import { blurPlaceholders, productImageSizes, imageQuality, shouldBypassNextImageOptimization } from '@/utils/imageOptimization'
 import { useTranslations, useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
@@ -56,6 +56,7 @@ const ProductCardItem = (props: CompoProps) => {
     const layout = props.layout ?? 'default'
     const showRating = props.showRating ?? true
     const fillHeight = props.fillHeight ?? false
+    const bypassImageOptimization = shouldBypassNextImageOptimization(primaryImage)
 
     // Calculate least selling price (after discount) among all variations and the main product
     let leastSellingPrice: string;
@@ -108,11 +109,13 @@ const ProductCardItem = (props: CompoProps) => {
                             alt={name}
                             className="!absolute inset-0 !h-full !w-full object-fill transition duration-700 group-hover:scale-[1.04]"
                             fill
+                            unoptimized={bypassImageOptimization}
                             placeholder="blur"
                             blurDataURL={blurPlaceholders.warmNeutral}
                             loading={shouldLoadEager ? "eager" : "lazy"}
+                            fetchPriority={shouldLoadEager ? 'high' : 'auto'}
                             sizes={props.imageSizes ?? "(max-width: 1024px) 100vw, 30vw"}
-                            quality={imageQuality.standard}
+                            quality={imageQuality.preview}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#1d150f]/88 via-[#1d150f]/15 to-transparent" />
                         {discountLabel && (
@@ -161,11 +164,13 @@ const ProductCardItem = (props: CompoProps) => {
                             alt={name}
                             className="!absolute inset-0 !h-full !w-full object-fill transition duration-500 group-hover:scale-[1.035]"
                             fill
+                            unoptimized={bypassImageOptimization}
                             placeholder="blur"
                             blurDataURL={blurPlaceholders.warmNeutral}
                             loading={shouldLoadEager ? "eager" : "lazy"}
+                            fetchPriority={shouldLoadEager ? 'high' : 'auto'}
                             sizes={props.imageSizes ?? productImageSizes.card}
-                            quality={imageQuality.standard}
+                            quality={imageQuality.preview}
                         />
                     ) : (
                         <Image
@@ -174,11 +179,13 @@ const ProductCardItem = (props: CompoProps) => {
                             className="!relative !h-full !w-full object-fill transition duration-500 group-hover:scale-[1.035]"
                             width={400}
                             height={400}
+                            unoptimized={bypassImageOptimization}
                             placeholder="blur"
                             blurDataURL={blurPlaceholders.warmNeutral}
                             loading={shouldLoadEager ? "eager" : "lazy"}
+                            fetchPriority={shouldLoadEager ? 'high' : 'auto'}
                             sizes={props.imageSizes ?? productImageSizes.card}
-                            quality={imageQuality.standard}
+                            quality={imageQuality.preview}
                         />
                     )}
                     {discountLabel && (

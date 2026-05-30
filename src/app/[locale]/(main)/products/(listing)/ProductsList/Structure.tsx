@@ -15,20 +15,20 @@ const MobileListingToolbar = ({ onOpen }: { onOpen: () => void }) => {
     const hasAppliedFilters = activeFilterCount > 0
 
     return (
-        <div className="container mx-auto px-3 pb-2 pt-4 sm:px-0 md:hidden">
-            <div className="space-y-3">
-                <div className="flex items-center gap-3">
+        <div className="container mx-auto px-3 pb-1 pt-3 sm:px-0 md:hidden">
+            <div className="space-y-2">
+                <div className="flex items-center gap-2">
                     <button
                         type="button"
                         onClick={onOpen}
-                        className="inline-flex min-h-[46px] items-center gap-2.5 rounded-full border border-[#eadfd5] bg-white px-4 py-3 text-[#3f2a1b] shadow-[0_8px_18px_rgba(79,52,28,0.06)] transition active:scale-[0.99]"
+                        className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#eadfd5] bg-white px-3 py-2.5 text-[#3f2a1b] shadow-[0_6px_14px_rgba(79,52,28,0.06)] transition active:scale-[0.99]"
                     >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f7efe5] text-[#6c4624]">
-                            <FiFilter className="h-4 w-4" aria-hidden="true" />
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f7efe5] text-[#6c4624]">
+                            <FiFilter className="h-3.5 w-3.5" aria-hidden="true" />
                         </span>
-                        <span className="text-sm font-semibold">Filters</span>
+                        <span className="text-[13px] font-semibold leading-none">Filters</span>
                         {hasAppliedFilters && (
-                            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#5b3315] px-1.5 text-[11px] font-bold leading-none text-white">
+                            <span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#5b3315] px-1.5 text-[10px] font-bold leading-none text-white">
                                 {activeFilterCount}
                             </span>
                         )}
@@ -41,17 +41,17 @@ const MobileListingToolbar = ({ onOpen }: { onOpen: () => void }) => {
                             classNames={{
                                 root: 'min-w-0 flex-1 overflow-x-auto no-scrollbar',
                                 list: 'flex items-center gap-2 pr-1',
-                                item: 'flex min-w-max items-center gap-1.5 rounded-full border border-[#eadfd5] bg-[#f6eee5] px-3 py-2 text-[12px] font-medium text-[#4b3322] shadow-[0_4px_10px_rgba(79,52,28,0.04)]',
+                                item: 'flex min-w-max items-center gap-1 rounded-full border border-[#eadfd5] bg-[#f6eee5] px-2.5 py-1.5 text-[11px] font-medium text-[#4b3322] shadow-[0_3px_8px_rgba(79,52,28,0.04)]',
                                 label: 'hidden',
-                                category: 'flex items-center gap-1.5',
+                                category: 'flex items-center gap-1',
                                 categoryLabel: 'leading-none',
-                                delete: 'inline-flex h-4 w-4 items-center justify-center rounded-full text-[11px] leading-none text-[#7a4a1d]',
+                                delete: 'inline-flex h-3.5 w-3.5 items-center justify-center rounded-full text-[10px] leading-none text-[#7a4a1d]',
                             }}
                         />
                         <ClearRefinements
                             translations={{ resetButtonText: 'Clear All' }}
                             classNames={{
-                                button: 'shrink-0 rounded-full px-1 py-2 text-[12px] font-semibold text-[#6c4624] underline decoration-[#c7ab93] underline-offset-4',
+                                button: 'shrink-0 rounded-full px-1 py-1.5 text-[11px] font-semibold text-[#6c4624] underline decoration-[#c7ab93] underline-offset-4',
                                 disabledButton: 'hidden',
                             }}
                         />
@@ -203,20 +203,28 @@ const CategoryTreeItem = ({ node, selectedPath, onSelect }: {
     selectedPath?: string,
     onSelect: (path: string) => void,
 }) => {
-    const selected = selectedPath === node.path
+    const isSelected = selectedPath === node.path
+    const isInSelectedBranch = Boolean(selectedPath && selectedPath.startsWith(`${node.path} > `))
 
     return (
         <div>
             <button
                 type="button"
                 onClick={() => onSelect(node.path)}
-                className={`flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm capitalize hover:bg-secondary ${selected ? 'bg-secondary text-primary' : 'text-gray-700'}`}
+                className={`flex w-full items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left text-sm capitalize transition-colors ${isSelected
+                    ? 'border-[#b98454] bg-[#6c4624] text-white shadow-[0_10px_20px_rgba(108,70,36,0.16)]'
+                    : isInSelectedBranch
+                        ? 'border-[#ead7c2] bg-[#fbf4ec] text-[#6c4624]'
+                        : 'border-transparent text-gray-700 hover:bg-secondary'}`}
                 style={{ paddingLeft: `${12 + node.level * 14}px` }}
             >
-                <span className="truncate">{node.name}</span>
+                <span className="truncate font-medium">{node.name}</span>
+                {(isSelected || isInSelectedBranch) && (
+                    <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${isSelected ? 'bg-white' : 'bg-[#b98454]'}`} />
+                )}
             </button>
             {node.children.length > 0 && (
-                <div className="mt-1 space-y-1 border-l border-primary/10">
+                <div className={`mt-1 space-y-1 border-l pl-1 ${isSelected || isInSelectedBranch ? 'border-[#d8b28f]' : 'border-primary/10'}`}>
                     {node.children.map((child) => (
                         <CategoryTreeItem key={child.path} node={child} selectedPath={selectedPath} onSelect={onSelect} />
                     ))}

@@ -18,16 +18,15 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    // Optimized quality array - fewer options means better caching
-    // 75 is default, 85 for high quality, 50 for thumbnails
-    qualities: [10, 40, 50, 60, 75, 85, 90, 95, 100],
-    // AVIF has better compression than WebP (20% smaller)
-    formats: ['image/avif', 'image/webp'],
+    // Keep common Next.js defaults and existing app usages to avoid broken static image requests.
+    qualities: [40, 50, 55, 60, 70, 75, 82, 85, 90, 100],
+    // WebP avoids the heavier first-request AVIF encoding cost for remote Firebase assets.
+    formats: ['image/webp'],
     // Optimize device sizes for common breakpoints
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    deviceSizes: [360, 420, 640, 750, 828, 1080, 1200, 1600],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
-    // Cache images longer (4 hours default -> 24 hours)
-    minimumCacheTTL: 86400,
+    // Product image URLs are effectively immutable; cache transformed variants aggressively.
+    minimumCacheTTL: 604800,
 
     remotePatterns: [
       { protocol: 'https', hostname: '**.googleusercontent.com' },

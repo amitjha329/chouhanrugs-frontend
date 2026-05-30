@@ -3,7 +3,7 @@
 import Image, { ImageProps } from 'next/image'
 import React, { useState, useCallback, memo } from 'react'
 import clsx from 'clsx'
-import { blurPlaceholders, imageQuality, productImageSizes } from '@/utils/imageOptimization'
+import { blurPlaceholders, imageQuality, productImageSizes, shouldBypassNextImageOptimization } from '@/utils/imageOptimization'
 
 type ImageVariant = 'main' | 'card' | 'thumbnail' | 'gallery'
 
@@ -52,6 +52,7 @@ const ProductImage = memo(function ProductImage({
 }: ProductImageProps) {
     const [isLoaded, setIsLoaded] = useState(false)
     const [hasError, setHasError] = useState(false)
+    const bypassOptimization = shouldBypassNextImageOptimization(props.src as string | { src?: string } | null | undefined)
 
     // Get default settings based on variant
     const getVariantSettings = useCallback(() => {
@@ -157,6 +158,7 @@ const ProductImage = memo(function ProductImage({
                     isLoaded ? "opacity-100" : "opacity-0",
                     className
                 )}
+                unoptimized={props.unoptimized ?? bypassOptimization}
                 sizes={props.sizes || settings.sizes}
                 quality={props.quality || settings.quality}
                 loading={props.loading || settings.loading}

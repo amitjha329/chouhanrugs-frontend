@@ -13,7 +13,7 @@ import { useSession } from '@/lib/auth-client'
 import { useRouter } from "next/navigation"
 import { FaHeart } from "react-icons/fa"
 import { IoClose, IoChevronBack, IoChevronForward, IoChevronUp, IoChevronDown } from "react-icons/io5"
-import { blurPlaceholders, imageQuality, productImageSizes } from "@/utils/imageOptimization"
+import { blurPlaceholders, imageQuality, productImageSizes, shouldBypassNextImageOptimization } from "@/utils/imageOptimization"
 import { useLocale } from 'next-intl'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
@@ -38,6 +38,7 @@ const ThumbnailImage = memo(function ThumbnailImage({
     onHover: (index: number) => void
 }) {
     const [isLoaded, setIsLoaded] = useState(false)
+    const bypassOptimization = shouldBypassNextImageOptimization(image)
 
     return (
         <div
@@ -63,6 +64,7 @@ const ThumbnailImage = memo(function ThumbnailImage({
                 alt={`${productName} - Image ${index + 1}`}
                 height={92}
                 width={92}
+                unoptimized={bypassOptimization}
                 className={clsx(
                     "!relative h-full w-full object-cover transition-opacity duration-300",
                     isLoaded ? "opacity-100" : "opacity-0"
@@ -131,6 +133,7 @@ const MobileGallery = memo(function MobileGallery({
     const containerRef = useRef<HTMLDivElement>(null)
     
     const currentImage = images[currentIndex]
+    const bypassCurrentImageOptimization = shouldBypassNextImageOptimization(currentImage)
     
     // Reset zoom and position when changing images
     useEffect(() => {
@@ -273,10 +276,13 @@ const MobileGallery = memo(function MobileGallery({
                         src={currentImage}
                         alt={`${productName} - Image ${currentIndex + 1}`}
                         fill
+                        unoptimized={bypassCurrentImageOptimization}
                         className="object-contain"
                         quality={imageQuality.high}
                         sizes="100vw"
                         priority
+                        placeholder="blur"
+                        blurDataURL={blurPlaceholders.warmNeutral}
                     />
                 </div>
                 
@@ -321,9 +327,12 @@ const MobileGallery = memo(function MobileGallery({
                                 src={img}
                                 alt={`Thumbnail ${idx + 1}`}
                                 fill
+                                unoptimized={shouldBypassNextImageOptimization(img)}
                                 quality={imageQuality.thumbnail}
                                 className="object-cover"
                                 sizes="64px"
+                                placeholder="blur"
+                                blurDataURL={blurPlaceholders.warmNeutral}
                             />
                         </button>
                     ))}
@@ -362,6 +371,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
     const containerRef = useRef<HTMLDivElement>(null)
     const thumbnailCarouselRef = useRef<HTMLDivElement>(null)
     const selectedImage = images?.[selectedImageIndex ?? 0] ?? images?.[0] ?? ""
+    const bypassSelectedImageOptimization = useMemo(() => shouldBypassNextImageOptimization(selectedImage), [selectedImage])
     
     // Zoom state - position relative to viewport for magnifier placement
     const [isZooming, setIsZooming] = useState(false)
@@ -384,8 +394,10 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
 
     // Memoize zoom background URL for high-res zoom
     const zoomBackgroundUrl = useMemo(() => 
-        `/_next/image?url=${encodeURIComponent(selectedImage)}&w=1920&q=${imageQuality.high}`,
-        [selectedImage]
+        bypassSelectedImageOptimization
+            ? selectedImage
+            : `/_next/image?url=${encodeURIComponent(selectedImage)}&w=1920&q=${imageQuality.high}`,
+        [bypassSelectedImageOptimization, selectedImage]
     )
 
     // Handle mouse move for zoom - calculate positions relative to section
@@ -586,6 +598,7 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                         src={selectedImage}
                         alt={productName}
                         data-main-image
+                        unoptimized={bypassSelectedImageOptimization}
                         className={clsx(
                             "!relative h-full w-full object-contain transition-opacity duration-300",
                             mainImageLoaded ? "opacity-100" : "opacity-0"
