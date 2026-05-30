@@ -75,7 +75,7 @@ const PriceAndVariation = async ({ product }: { product: returnProps }) => {
                     )}
                 </div>
                 <PriceAndVariationClient product={product} siteData={siteData} />
-                <p className="border-t border-neutral-200 pt-3 text-[13px] leading-5 text-neutral-600">
+                <p className="border-neutral-200 pt-3 text-[13px] leading-5 text-neutral-600">
                     {shortDesc}
                 </p>
                 <div className="grid gap-x-4 gap-y-2 border-b border-neutral-200 py-5 text-[11px] text-neutral-700 grid-cols-2">

@@ -145,7 +145,7 @@ const PriceAndVariationClient = ({ product, siteData }: { product: VariationExtr
     // Accessibility: set aria attributes for selects and buttons
     return (
         <>
-            <div className="mb-3 flex items-end gap-2 border-y border-neutral-200 py-3">
+            <div className="mb-3 flex items-end gap-2 border-neutral-200 py-3">
                 {priceLoading ? (
                     <div className="skeleton h-7 w-28 rounded" style={{ minWidth: 112 }} aria-busy="true" aria-live="polite" />
                 ) : (
