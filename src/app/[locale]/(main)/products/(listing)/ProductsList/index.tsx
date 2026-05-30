@@ -16,9 +16,7 @@ const ProductList = ({ className = "lg:basis-5/6 mx-auto", searchQuery, searchPa
     const algoliaParams = useMemo(() => buildProductAlgoliaParams({
         searchQuery,
         searchParams,
-        categoryParam,
-        categoryPath,
-    }), [searchQuery, searchParams, categoryParam, categoryPath])
+    }), [searchQuery, searchParams])
 
     useEffect(() => {
         refine(searchQuery ?? "")

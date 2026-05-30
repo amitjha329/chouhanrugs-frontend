@@ -4,13 +4,15 @@ import React, { useState } from 'react'
 import SideBarSectionLayout from './Filter/SideBarSectionLayout'
 import RangeSlider from './Filter/RangeSlider'
 import { FaAngleDown } from 'react-icons/fa'
-import { ClearRefinements, CurrentRefinements, HierarchicalMenu, RefinementList, ToggleRefinement } from 'react-instantsearch'
+import { ClearRefinements, CurrentRefinements, RefinementList, ToggleRefinement, useHierarchicalMenu, useInstantSearch } from 'react-instantsearch'
 import FilterBottomSheet from './Filter/Mobile/FilterBottomSheet'
 import Currency from '@/types/Currency'
+import CategoriesDataModel from '@/types/CategoriesDataModel'
 
-const StructureListing = ({ children, userCurrency }: {
+const StructureListing = ({ children, userCurrency, categories = [] }: {
     children: React.ReactNode,
-    userCurrency: Currency
+    userCurrency: Currency,
+    categories?: CategoriesDataModel[]
 }) => {
     const [filterSheetOpen, setFilterSheetOpen] = useState(false)
 
@@ -20,12 +22,7 @@ const StructureListing = ({ children, userCurrency }: {
         setFilterSheetOpen(!filterSheetOpen)
     }
 
-    const hierarchicalCategoryAttributes = [
-        'hierarchicalCategories.lvl0',
-        'hierarchicalCategories.lvl1',
-        'hierarchicalCategories.lvl2',
-        'hierarchicalCategories.lvl3',
-    ]
+    const categoryTree = buildCategoryTree(categories)
 
     return (
         <>
@@ -63,16 +60,7 @@ const StructureListing = ({ children, userCurrency }: {
                         root: "bg-secondary p-5 mb-5 flex items-center justify-between"
                     }} />
                     <SideBarSectionLayout title="Categories">
-                        <HierarchicalMenu attributes={hierarchicalCategoryAttributes} limit={100} classNames={{
-                            list: "space-y-1",
-                            childList: "ml-4 mt-1 space-y-1 border-l border-primary/10 pl-3",
-                            item: "rounded-md",
-                            selectedItem: "bg-secondary text-primary",
-                            parentItem: "font-medium",
-                            link: "flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm capitalize text-gray-700 hover:bg-secondary",
-                            label: "truncate",
-                            count: "rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold text-gray-500"
-                        }} />
+                        <CategoryTreeFilter categoryTree={categoryTree} />
                     </SideBarSectionLayout>
                     <SideBarSectionLayout title="Price">
                         <RangeSlider userCurrency={userCurrency} />
@@ -139,9 +127,102 @@ const StructureListing = ({ children, userCurrency }: {
                 </div>
                 {children}
             </div>
-            <FilterBottomSheet filterSheetOpen={filterSheetOpen} toggleOpenCallback={filterBottomSheetToggle} userCurrency={userCurrency} />
+            <FilterBottomSheet filterSheetOpen={filterSheetOpen} toggleOpenCallback={filterBottomSheetToggle} userCurrency={userCurrency} categoryTree={categoryTree} />
         </>
     )
+}
+
+const hierarchicalCategoryAttributes = [
+    'hierarchicalCategories.lvl0',
+    'hierarchicalCategories.lvl1',
+    'hierarchicalCategories.lvl2',
+    'hierarchicalCategories.lvl3',
+]
+
+const CategoryTreeFilter = ({ categoryTree }: { categoryTree: CategoryTreeNode[] }) => {
+    const { refine } = useHierarchicalMenu({
+        attributes: hierarchicalCategoryAttributes,
+        limit: 100,
+        showParentLevel: true,
+    })
+    const { indexUiState } = useInstantSearch()
+    const selectedPath = indexUiState?.hierarchicalMenu?.['hierarchicalCategories.lvl0']?.[0]
+
+    return (
+        <div className="space-y-1">
+            {categoryTree.map((node) => (
+                <CategoryTreeItem key={node.path} node={node} selectedPath={selectedPath} onSelect={refine} />
+            ))}
+        </div>
+    )
+}
+
+const CategoryTreeItem = ({ node, selectedPath, onSelect }: {
+    node: CategoryTreeNode,
+    selectedPath?: string,
+    onSelect: (path: string) => void,
+}) => {
+    const selected = selectedPath === node.path
+
+    return (
+        <div>
+            <button
+                type="button"
+                onClick={() => onSelect(node.path)}
+                className={`flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm capitalize hover:bg-secondary ${selected ? 'bg-secondary text-primary' : 'text-gray-700'}`}
+                style={{ paddingLeft: `${12 + node.level * 14}px` }}
+            >
+                <span className="truncate">{node.name}</span>
+            </button>
+            {node.children.length > 0 && (
+                <div className="mt-1 space-y-1 border-l border-primary/10">
+                    {node.children.map((child) => (
+                        <CategoryTreeItem key={child.path} node={child} selectedPath={selectedPath} onSelect={onSelect} />
+                    ))}
+                </div>
+            )}
+        </div>
+    )
+}
+
+export type CategoryTreeNode = {
+    name: string,
+    path: string,
+    level: number,
+    children: CategoryTreeNode[],
+}
+
+export const buildCategoryTree = (categories: CategoriesDataModel[] = []): CategoryTreeNode[] => {
+    const nodes = categories
+        .filter((category) => category?.active !== false && category?.name)
+        .map((category) => {
+            const ancestors = category.parent?.split('>').filter(Boolean) ?? []
+            const path = [...ancestors, category.name].join(' > ')
+            const parentPath = ancestors.join(' > ')
+
+            return {
+                name: category.name,
+                path,
+                parentPath,
+                level: ancestors.length,
+                children: [],
+            }
+        })
+        .sort((a, b) => a.name.localeCompare(b.name))
+
+    const byParent = new Map<string, CategoryTreeNode[]>()
+
+    nodes.forEach((node) => {
+        const key = node.parentPath || '__root__'
+        byParent.set(key, [...(byParent.get(key) ?? []), node])
+    })
+
+    const attachChildren = (node: CategoryTreeNode): CategoryTreeNode => ({
+        ...node,
+        children: (byParent.get(node.path) ?? []).map(attachChildren),
+    })
+
+    return (byParent.get('__root__') ?? []).map(attachChildren)
 }
 
 export default StructureListing

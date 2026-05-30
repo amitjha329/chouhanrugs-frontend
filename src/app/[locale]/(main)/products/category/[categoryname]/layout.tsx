@@ -5,11 +5,13 @@ import getCategoriesWithName from '@/backend/serverActions/getCategoriesWithName
 import { DEFAULT_USD_CURRENCY } from '@/lib/defaultCurrency'
 import { getPublicAlgoliaConfig } from '@/lib/algoliaConfig'
 import BreadCrumbs from '@/ui/BreadCrumbs'
+import getCategoriesList from '@/backend/serverActions/getCategoriesList'
 
 const ProductListingLayout = async ({ children, params }: { children: React.ReactNode, params: Promise<{ categoryname: string }> }) => {
     const { categoryname } = await params;
     const category = await getCategoriesWithName(decodeURIComponent(categoryname));
     const algolia = await getPublicAlgoliaConfig()
+    const categories = await getCategoriesList()
     const categoryAncestors = category.parent?.split(">").filter(Boolean) ?? []
     const categoryPath = [...categoryAncestors, category.name].join(" > ")
     const initialUiState = categoryPath ? {
@@ -32,7 +34,7 @@ const ProductListingLayout = async ({ children, params }: { children: React.Reac
                 <BreadCrumbs crumbs={crumbs} />
             </div>
             <AlgoliaSearchProvider APPID={algolia.ALGOLIA_APPID} KEY={algolia.ALGOLIA_KEY_CLIENT} INDEX={algolia.ALGOLIA_INDEX} initialUiState={initialUiState}>
-                <StructureListing userCurrency={DEFAULT_USD_CURRENCY}>
+                <StructureListing userCurrency={DEFAULT_USD_CURRENCY} categories={categories}>
                     {children}
                 </StructureListing>
             </AlgoliaSearchProvider>
