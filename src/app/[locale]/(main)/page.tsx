@@ -19,6 +19,7 @@ import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog'
 import { getLocale } from "next-intl/server";
+import { serializeProductCardList } from '@/lib/productCardSerialization'
 
 // Lazy load below-the-fold sections to reduce initial DOM size
 const ShopByRoom = dynamic(() => import('@/ui/HomePage/ShopByRoom'), { ssr: true })
@@ -75,7 +76,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 
 // Wrapper component for Best Sellers section with its own data fetching
 async function BestSellersSection({ isMobile }: { isMobile: boolean }) {
-  const products = serializeForClient(await getNewProductsTopSelling({ limit: 10 }))
+  const products = serializeProductCardList(serializeForClient(await getNewProductsTopSelling({ limit: 10 })))
   return <ProductCarouselBasic products={products} sectionHeading='Best Sellers' isMobile={isMobile} />
 }
 

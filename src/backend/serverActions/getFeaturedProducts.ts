@@ -49,8 +49,11 @@ async function fetchFeaturedProducts(limit: number): Promise<ProductDataModelWit
             {
                 $lookup: {
                     from: "colors",
-                    localField: "allColors",
-                    foreignField: "name",
+                    let: { colorNames: "$allColors" },
+                    pipeline: [
+                        { $match: { $expr: { $in: ["$name", "$$colorNames"] } } },
+                        { $addFields: { _id: { $toString: "$_id" } } }
+                    ],
                     as: "colorMap"
                 }
             },

@@ -8,6 +8,7 @@ import { type Locale } from '@/i18n/routing';
 import { getInitialAlgoliaProducts } from '@/lib/algoliaProducts';
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog';
 import CategorySeoBlock from '@/ui/Category/CategorySeoBlock';
+import { serializeProductCardList } from '@/lib/productCardSerialization';
 
 function stripHtml(value?: string) {
     return String(value ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
@@ -59,10 +60,12 @@ const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: s
         categoryParam: category.name,
         categoryPath,
     })
+    const predefinedProducts = initialProducts.length ? initialProducts : promotedProducts
+
     return (
         <div className="lg:basis-5/6 w-full flex flex-col gap-6">
             <CategorySeoBlock category={category} />
-            <ProductList className="w-full" categoryParam={category.name} categoryPath={categoryPath} predefinedProducts={initialProducts.length ? initialProducts : promotedProducts} />
+            <ProductList className="w-full" categoryParam={category.name} categoryPath={categoryPath} predefinedProducts={serializeProductCardList(predefinedProducts)} />
         </div>
     )
 }

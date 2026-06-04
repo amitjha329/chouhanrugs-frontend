@@ -27,7 +27,7 @@ const ProductListHotTrendingMobile = async ({ trendingProducts }: { trendingProd
                     }, []).map(product => {
                         return <div key={product[0]._id!.toString()} className='min-w-44 max-w-44 space-y-4'>
                             <ProductCardItem {...product[0]} />
-                            <ProductCardItem {...product[1]} />
+                            {product.length > 1 && <ProductCardItem {...product[1]} />}
                         </div>
                     })
             }

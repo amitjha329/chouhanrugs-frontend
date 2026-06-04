@@ -21,6 +21,7 @@ import ProductReviewsSection from '@/ui/Layout/ProductPage/Reviews'
 import { getApprovedProductReviews } from '@/backend/serverActions/getApprovedProductReviews'
 import getProductReviewEligibility from '@/backend/serverActions/getProductReviewEligibility'
 import { getSession } from '@/lib/auth-server'
+import { serializeProductCardList } from '@/lib/productCardSerialization'
 
 const PRODUCT_BUILD_PLACEHOLDER = '__product_build_placeholder__'
 
@@ -70,7 +71,7 @@ export async function generateMetadata(props: { params: Promise<{ productId: str
  * Wrapped in Suspense for streaming - loads independently of main content.
  */
 async function RelatedProductsSection({ product, isMobile }: { product: ProductDataModel, isMobile: boolean }) {
-    const relatedProducts = serializeForClient(await getRelatedProducts(product))
+    const relatedProducts = serializeProductCardList(serializeForClient(await getRelatedProducts(product)))
     if (!relatedProducts || relatedProducts.length === 0) return null
     return <ProductCarouselBasic products={relatedProducts} sectionHeading='Related Products' isMobile={isMobile} />
 }

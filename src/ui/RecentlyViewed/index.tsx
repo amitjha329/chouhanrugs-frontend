@@ -25,8 +25,13 @@ class RecentlyViewedErrorBoundary extends Component<{ children: ReactNode }, { c
 }
 
 const RecentlyViewedSidebar = () => {
+    const [hasMounted, setHasMounted] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [products, setProducts] = useState<RecentlyViewedProduct[]>([])
+
+    useEffect(() => {
+        setHasMounted(true)
+    }, [])
 
     // Refresh the list every time the sidebar opens
     const refreshProducts = useCallback(() => {
@@ -83,6 +88,8 @@ const RecentlyViewedSidebar = () => {
         const days = Math.floor(hours / 24)
         return `${days}d ago`
     }
+
+    if (!hasMounted) return null
 
     return (
         <>

@@ -4,9 +4,10 @@ import React from 'react'
 import { ProductListHotFeatured, ProductListHotFeaturedMobile } from './ProductList'
 import { getFeaturedProducts } from '@/backend/serverActions/getFeaturedProducts'
 import { getTranslations } from 'next-intl/server'
+import { serializeProductCardList } from '@/lib/productCardSerialization'
 
 const FeaturedProducts = async () => {
-    const trendingProducts = serializeForClient(await getFeaturedProducts({ limit: 8 }))
+    const trendingProducts = serializeProductCardList(serializeForClient(await getFeaturedProducts({ limit: 8 })))
     const t = await getTranslations('homepage')
 
     return trendingProducts.length > 0 ? <div className='fluid_container  ~py-5/14 ~px-3.5/0'>

@@ -10,6 +10,7 @@ import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { ProductList } from './ProductList'
 import newArrivalsImage from './new-arrivals.webp'
+import { serializeProductCardList } from '@/lib/productCardSerialization'
 
 const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjZGMUYwIi8+PC9zdmc+"
 
@@ -165,7 +166,7 @@ const NewProductsSection = async () => {
           </Link>
         </div>
 
-        <ProductList products={products} />
+        <ProductList products={serializeProductCardList(products)} />
       </div>
     </section>
   )

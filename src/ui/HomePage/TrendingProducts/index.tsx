@@ -4,13 +4,14 @@ import { ProductListHotTrending, ProductListHotTrendingMobile } from './ProductL
 import { getTranslations } from 'next-intl/server'
 import { getHotTrendingProducts } from '@/backend/serverActions/getHotTrendingProducts'
 import { serializeForClient } from '@/utils/serializeForClient'
+import { serializeProductCardList } from '@/lib/productCardSerialization'
 
 const TrendingProducts = async () => {
     const [t, trendingProducts] = await Promise.all([
         getTranslations('homepage'),
         getHotTrendingProducts({ limit: 8 }),
     ])
-    const products = serializeForClient(trendingProducts)
+    const products = serializeProductCardList(serializeForClient(trendingProducts))
 
     return (
         <div className='fluid_container  ~py-5/14 ~px-3.5/0'>

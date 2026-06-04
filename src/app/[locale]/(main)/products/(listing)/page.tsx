@@ -5,6 +5,7 @@ import { connection } from 'next/server'
 import React from 'react'
 import ProductList from './ProductsList'
 import { getInitialAlgoliaProducts } from '@/lib/algoliaProducts'
+import { serializeProductCardList } from '@/lib/productCardSerialization'
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     await connection()
@@ -27,7 +28,7 @@ const ProductsListPage = async (props: { searchParams: Promise<{ [key: string]: 
         searchParams,
     })
     return (
-        <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} predefinedProducts={initialProducts} />
+        <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} predefinedProducts={serializeProductCardList(initialProducts)} />
     )
 }
 
