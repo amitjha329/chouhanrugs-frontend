@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     // Keep common Next.js defaults and existing app usages to avoid broken static image requests.
-    qualities: [40, 50, 55, 60, 70, 75, 82, 85, 90, 100],
+    qualities: [10, 20, 30, 40, 50, 55, 60, 70, 75, 82, 85, 90, 100],
     // WebP avoids the heavier first-request AVIF encoding cost for remote Firebase assets.
     formats: ['image/webp'],
     // Optimize device sizes for common breakpoints
