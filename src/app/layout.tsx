@@ -40,14 +40,14 @@ export const metadata: Metadata = {
 
 }
 
-const RootEnhancements = async ({ children }: { children: ReactNode }) => {
+const RootEnhancements = async ({ googleAdsConfig }: { googleAdsConfig: Awaited<ReturnType<typeof getGoogleAdsConfig>> }) => {
     "use cache"
 
     cacheLife("hours")
     cacheTag("root-enhancements")
 
     const locale = routing.defaultLocale as Locale
-    const [siteData, googleTagData, googleAdsConfig, notifProducts, messages] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getGoogleAdsConfig(), getNewProducts({ limit: 15 }), getStorefrontTranslations(locale)])
+    const [siteData, googleTagData, notifProducts, messages] = await Promise.all([getSiteData(), getAnalyticsData("GTM"), getNewProducts({ limit: 15 }), getStorefrontTranslations(locale)])
     const notificationMessages = (messages.notification ?? {}) as Record<string, string | ((values?: Record<string, unknown>) => string)>
     const t = (key: string, values?: Record<string, unknown>) => {
         const value = notificationMessages[key]
@@ -67,7 +67,6 @@ const RootEnhancements = async ({ children }: { children: ReactNode }) => {
 
         return Object.entries(values).reduce((text, [name, replacement]) => text.replaceAll(`{${name}}`, String(replacement)), withPlurals)
     }
-    const dir = locale === 'ar' ? 'rtl' : 'ltr'
     const purchaseProducts = notifProducts
         .map(p => {
             const name = resolveLocalizedString(p.productName, locale) || resolveLocalizedString(p.productTitle, locale)
@@ -117,38 +116,42 @@ const RootEnhancements = async ({ children }: { children: ReactNode }) => {
                 }}
                 key="org-jsonld"
             />
-                <ConsentManagedScripts gtmId={googleTagData.code} googleAdsConfig={googleAdsConfig} />
-                <GoogleAdsProvider config={googleAdsConfig}>
-                <div id="notification-container" className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none" />
-                <NextTopLoader
-                    color='#6c4624'
-                    zIndex={1600} />
-                {children}
-                <FloatingButtonChat siteData={siteData} />
-                <RecentlyViewedSidebar />
-                <PurchaseNotification products={purchaseProducts} translations={notificationTranslations} />
-                </GoogleAdsProvider>
+            <ConsentManagedScripts gtmId={googleTagData.code} googleAdsConfig={googleAdsConfig} />
+            <FloatingButtonChat siteData={siteData} />
+            <RecentlyViewedSidebar />
+            <PurchaseNotification products={purchaseProducts} translations={notificationTranslations} />
         </>
     )
 }
 
-const RootLayout = ({ children }: { children: ReactNode }) => {
+const RootLayout = async ({ children }: { children: ReactNode }) => {
+    const googleAdsConfig = await getGoogleAdsConfig()
+
     return (
-        <html lang={routing.defaultLocale} dir="ltr">
+        <html lang={routing.defaultLocale} dir={routing.defaultLocale === 'ar' ? 'rtl' : 'ltr'}>
             <head>
                 {/* Preconnect to critical third-party origins for faster resource loading */}
                 <link rel="preconnect" href="https://cdn.chouhanrugs.com" />
                 <link rel="dns-prefetch" href="https://cdn.chouhanrugs.com" />
+                <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
+                <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com" />
             </head>
             <body className={clsx(poppins.className, poppins.variable)}>
                 <CookieConsentProvider>
-                    <Suspense fallback={null}>
-                        <RootEnhancements>{children}</RootEnhancements>
-                    </Suspense>
-                    {/* GlobalPopupWrapper checks request headers, so it must stay outside the cached shell. */}
-                    <Suspense fallback={null}>
-                        <GlobalPopupWrapper />
-                    </Suspense>
+                    <GoogleAdsProvider config={googleAdsConfig}>
+                        <div id="notification-container" className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none" />
+                        <NextTopLoader
+                            color='#6c4624'
+                            zIndex={1600} />
+                        {children}
+                        <Suspense fallback={null}>
+                            <RootEnhancements googleAdsConfig={googleAdsConfig} />
+                        </Suspense>
+                        {/* GlobalPopupWrapper checks request headers, so it must stay outside the cached shell. */}
+                        <Suspense fallback={null}>
+                            <GlobalPopupWrapper />
+                        </Suspense>
+                    </GoogleAdsProvider>
                 </CookieConsentProvider>
             </body>
         </html>

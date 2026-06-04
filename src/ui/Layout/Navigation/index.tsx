@@ -13,7 +13,9 @@ const Navigation = async () => {
     const algolia = await getConfigBulk(['ALGOLIA_APPID', 'ALGOLIA_KEY_CLIENT', 'ALGOLIA_INDEX', 'ALGOLIA_QUERY_INDEX'])
     return (
         <>
-            <PageLinks />
+            <Suspense fallback={null}>
+                <PageLinks />
+            </Suspense>
             {/* Header uses auth() which requires Suspense with cacheComponents */}
             <Suspense fallback={null}>
                 <Header />

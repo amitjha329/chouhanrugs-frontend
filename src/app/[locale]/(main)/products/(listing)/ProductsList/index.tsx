@@ -1,6 +1,5 @@
 'use client'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
-import Loader from '@/ui/Loader'
 import ProductCardItem from '@/ui/Product/ProductCardItem'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Configure, useHits, useInstantSearch, usePagination, useSearchBox } from 'react-instantsearch'
@@ -120,7 +119,11 @@ const ProductList = ({ className = "lg:basis-5/6 mx-auto", searchQuery, searchPa
                 </div>
             }
             {
-                status == "stalled" && !shouldShowPredefinedProducts && <Loader />
+                // status == "stalled" && !shouldShowPredefinedProducts && (
+                //     <div className='w-full py-8 flex items-center justify-center'>
+                //         <span className="loading loading-dots loading-md text-primary" aria-label="Loading products" />
+                //     </div>
+                // )
             }
             {hits.length > 0 && <ProductPagination />}
             {/* <div ref={ref} className='w-full flex items-center justify-center'>{onScreenIntersection && isLoading && <PuffLoader />}</div> */}

@@ -2,7 +2,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 /**
  * Locale layout — wraps all pages under `/[locale]/...` with
@@ -12,7 +12,7 @@ import React from 'react';
  * next-intl middleware rewrites every request to include the locale
  * segment, then this layout validates and loads the matching messages.
  */
-export default async function LocaleLayout({
+async function LocaleLayoutContent({
     children,
     params,
 }: {
@@ -32,5 +32,19 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
             {children}
         </NextIntlClientProvider>
+    );
+}
+
+export default function LocaleLayout({
+    children,
+    params,
+}: {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+}) {
+    return (
+        <Suspense fallback={null}>
+            <LocaleLayoutContent params={params}>{children}</LocaleLayoutContent>
+        </Suspense>
     );
 }
