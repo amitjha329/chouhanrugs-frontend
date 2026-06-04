@@ -16,16 +16,19 @@ export default async function getAvailablePaymentOptions(): Promise<PaymentGatew
         const returnArr: PaymentGatewayDataModel[] = []
         result.forEach(item => {
             const tempdata = converter.fromWithNoFieldChange<PaymentGatewayDataModel>(item)
-            const hasRequiredCredentials = Boolean(tempdata.key_id?.trim() && tempdata.key_secret?.trim())
+            const hasRequiredCredentials = tempdata.partner === "PAYONEER"
+                ? Boolean(tempdata.key_id?.trim() && tempdata.api_username?.trim() && tempdata.key_secret?.trim())
+                : Boolean(tempdata.key_id?.trim() && tempdata.key_secret?.trim())
 
             if (!hasRequiredCredentials) {
                 console.warn(`[getAvailablePaymentOptions] Skipping active gateway ${tempdata.partner} because required credentials are missing`)
                 return
             }
 
-            const { key_secret, webhook_secret, updatedOn, ...data } = tempdata
+            const { api_username, key_secret, webhook_secret, updatedOn, ...data } = tempdata
             returnArr.push({
                 ...data,
+                api_username: "",
                 key_secret: "",
                 webhook_secret: "",
                 updatedOn: 0

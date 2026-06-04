@@ -78,7 +78,7 @@ export async function initiatePayoneerPayment(orderData: {
             activation: true
         })
 
-        if (!config || !config.key_id || !config.key_secret) {
+        if (!config || !config.key_id || !config.api_username || !config.key_secret) {
             return {
                 success: false,
                 error: "Payoneer is not configured or inactive"
@@ -87,6 +87,7 @@ export async function initiatePayoneerPayment(orderData: {
 
         const merchantCode = String(config.key_id).trim()
         const division = String(config.division || config.key_id).trim()
+        const apiUsername = String(config.api_username).trim()
         const apiToken = String(config.key_secret).trim()
         const configuredPayoneerEnv = (await getConfig(
             'PAYONEER_ENV',
@@ -110,12 +111,7 @@ export async function initiatePayoneerPayment(orderData: {
             ? 'https://api.sandbox.oscato.com'
             : 'https://api.live.oscato.com'
 
-        // IMPORTANT: The division field in the payload should be your Store/Division Code
-        // The key_id for authentication should be your Merchant Code (API Username)
-        // If getting 401 errors, verify:
-        // 1. key_id in database = Merchant Code (for auth)
-        // 2. division in payload = Store/Division Code
-        // 3. Headers use versioned content-type (see below)
+        // IMPORTANT: Merchant Code is sent in the payload, while API Username + API Token are used for Basic Auth.
 
         // Construct the LIST session request according to Payoneer documentation
         const country = await getCountriesByName({
@@ -190,10 +186,11 @@ export async function initiatePayoneerPayment(orderData: {
         console.log('📦 Payoneer Payload:', JSON.stringify(payload, null, 2));
 
         // Make API request with Basic Auth
-        const authHeader = 'Basic ' + Buffer.from(`${merchantCode}:${apiToken}`).toString('base64')
+        const authHeader = 'Basic ' + Buffer.from(`${apiUsername}:${apiToken}`).toString('base64')
 
         console.log('🔐 Payoneer Authentication Debug:', {
             merchantCode,
+            apiUsername,
             division,
             apiTokenLength: apiToken?.length || 0,
             apiTokenFirst4: apiToken?.substring(0, 4) || 'missing',
@@ -225,7 +222,7 @@ export async function initiatePayoneerPayment(orderData: {
             if (response.status === 401) {
                 return {
                     success: false,
-                    error: `Authentication failed. Please verify:\n1. key_id (${merchantCode}) is your Merchant Code\n2. key_secret is correct API Token\n3. Credentials match the environment (${payoneerEnv})`
+                    error: `Authentication failed. Please verify:\n1. key_id (${merchantCode}) is your Merchant Code\n2. api_username (${apiUsername}) is your API Username\n3. key_secret is the correct API Token\n4. Credentials match the environment (${payoneerEnv})`
                 }
             }
 

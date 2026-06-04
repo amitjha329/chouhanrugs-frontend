@@ -14,7 +14,7 @@ export default async function getPaymentGatewayData(partner: "RZP" | "STRIPE" | 
         if (result != null)
             return converter.fromWithNoFieldChange<PaymentGatewayDataModel>(result)
         else {
-            return { activation: false, _id: "", key_id: "", key_secret: "", updatedOn: 0, partner }
+            return { activation: false, _id: "", key_id: "", api_username: "", key_secret: "", updatedOn: 0, partner }
         }
     } catch (err) {
         console.log(err)
