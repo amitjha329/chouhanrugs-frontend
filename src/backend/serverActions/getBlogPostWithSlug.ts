@@ -7,7 +7,7 @@ import { locales } from '@/i18n/routing'
 export default async function getBlogPostWithSlug(slug: string): Promise<BlogDataModel> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("blogs")
     cacheTag(`blog-${slug}`)
 

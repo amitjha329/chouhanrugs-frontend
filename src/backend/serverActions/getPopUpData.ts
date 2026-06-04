@@ -5,7 +5,7 @@ import { cacheLife, cacheTag } from "next/cache";
 const getPopUpData = async (): Promise<PopUpDataModel | null> => {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("site-data");
     cacheTag("popup-data");
 

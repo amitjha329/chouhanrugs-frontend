@@ -1,7 +1,6 @@
 import React from 'react'
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
-import { headers } from 'next/headers'
 import { getLocale, getTranslations } from 'next-intl/server'
 import cushion_pop from '../../../../static_assets/cushion_popular.webp'
 import rugs_pop from '../../../../static_assets/rugs_pop.webp'
@@ -9,7 +8,6 @@ import bags_pop from '../../../../static_assets/bags_pop.webp'
 import { getHomePagePopularCategories } from '@/backend/serverActions/getHomePagePopularCategories'
 import { type Locale } from '@/i18n/routing'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
-import getDevice from '@/utils/getDevice'
 import SectionTitle from '@/ui/SectionTitle'
 
 type PopularCategory = {
@@ -70,15 +68,21 @@ function normalizeCategoryHref(link?: string) {
     return `/products/category/${link}`
 }
 
+function getMobileSpanClass(span: number) {
+    return span === 4 ? 'col-span-4' : 'col-span-2'
+}
+
+function getDesktopSpanClass(span: number) {
+    return span === 2 ? 'md:col-span-2' : 'md:col-span-1'
+}
+
 const OurPopularCategories = async () => {
-    const [header, t, tCommon, loc, dynamicSection] = await Promise.all([
-        headers(),
+    const [t, tCommon, loc, dynamicSection] = await Promise.all([
         getTranslations('homepage'),
         getTranslations('common'),
         getLocale(),
         getHomePagePopularCategories(),
     ])
-    const isMobile = getDevice({ headers: header }) == "mobile"
     const locale = loc as Locale
 
     const popularCategories = dynamicSection?.items?.length
@@ -104,25 +108,23 @@ const OurPopularCategories = async () => {
                     const imageProps = typeof category.image === 'string' ? {} : { placeholder: 'blur' as const }
 
                     return (
-                        (<div key={category.title + category.href} className={`col-span-${category.lgspan} min-h-60 ${(isMobile && category.span === 2) || (!isMobile && category.lgspan === 1) ? "bg-accent" : "bg-secondary/50"} card card-body relative overflow-hidden flex flex-col gap-5 items-start w-full ${isMobile && "p-5"}`} style={{
-                            ...(isMobile && { gridColumn: `span ${category.span} / span ${category.span}` })
-                        }}>
+                        (<div key={category.title + category.href} className={`${getMobileSpanClass(category.span)} ${getDesktopSpanClass(category.lgspan)} min-h-60 ${category.lgspan === 1 ? "md:bg-accent" : "md:bg-secondary/50"} ${category.span === 2 ? "bg-accent" : "bg-secondary/50"} card card-body relative overflow-hidden flex flex-col gap-5 items-start w-full p-5 md:p-8`}>
                             <Image
                                 src={category.image}
                                 alt={category.title}
                                 height={400}
                                 width={400}
-                                className={`absolute z-10 ${!isMobile ? category.lgspan == 2 ? "-bottom-40 -right-40" : "-bottom-28 -right-28" : category.span == 2 ? "-bottom-16 -right-16" : "-bottom-28 -right-28"} opacity-50`}
+                                className={`absolute z-10 ${category.span == 2 ? "-bottom-16 -right-16" : "-bottom-28 -right-28"} ${category.lgspan == 2 ? "md:-bottom-40 md:-right-40" : "md:-bottom-28 md:-right-28"} opacity-50`}
                                 loading="lazy"
                                 {...imageProps}
                             />
                             <h2 className='~text-base/2xl font-semibold z-20'>
                                 {category.title}
                             </h2>
-                            {(!isMobile || (isMobile && category.span === 4)) && <div className='text-xs z-20 max-w-xl'>
+                            <div className={`text-xs z-20 max-w-xl ${category.span === 4 ? "block" : "hidden md:block"}`}>
                                 {category.desc}
-                            </div>}
-                            <Link href={category.href} className={`btn z-20 ${isMobile && "btn-sm"}`}>
+                            </div>
+                            <Link href={category.href} className="btn btn-sm md:btn-md z-20">
                                 {tCommon('viewAll')}
                             </Link>
                         </div>)

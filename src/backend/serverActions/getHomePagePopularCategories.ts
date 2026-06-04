@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 async function fetchHomePagePopularCategories(): Promise<HomePagePopularCategoriesModel | null> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("home-popular-categories");
     cacheTag("page-additional-home");
 

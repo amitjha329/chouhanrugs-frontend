@@ -6,7 +6,7 @@ import AnalyticsAndVerificationDataModel from "@/types/AnalyticsAndVerificationD
 async function fetchAnalyticsData(type: "GTM" | "GOOGLE_VER" | "BING"): Promise<AnalyticsAndVerificationDataModel> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("analytics");
     cacheTag(`analytics-${type}`);
 

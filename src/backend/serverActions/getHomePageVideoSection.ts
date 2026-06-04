@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 async function fetchHomePageVideoSection(): Promise<HomePageVideoSectionModel | null> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("home-video-section");
     cacheTag("page-additional-home");
 

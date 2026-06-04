@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 async function fetchNewProductsTopSelling(limit: number): Promise<ProductDataModel[]> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("products");
     cacheTag("top-selling-products");
 

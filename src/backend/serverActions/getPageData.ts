@@ -5,7 +5,7 @@ import PageMetaDataModel from "@/types/PageMetaDataModel";
 async function fetchPageData(pageType: string): Promise<PageMetaDataModel> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("pages");
     cacheTag(`page-${pageType}`);
 

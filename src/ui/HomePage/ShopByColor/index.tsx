@@ -1,13 +1,9 @@
 import SectionTitle from '@/ui/SectionTitle'
-import getDevice from '@/utils/getDevice'
 import React from 'react'
 import { ColorList } from './ColorList'
-import { headers } from 'next/headers';
 import { getTranslations } from 'next-intl/server'
 
 const ShopByColor = async () => {
-    const header = await headers()
-    const isMobile = getDevice({ headers: header }) == "mobile"
     const t = await getTranslations('homepage')
     return (
         <section className='bg-[#fbfaf7] ~px-5/0 ~py-8/14'>
@@ -18,7 +14,7 @@ const ShopByColor = async () => {
                         Start with a palette. We surface a fresh set of colors on each visit so the collection feels easier to scan.
                     </p>
                 </div>
-                <ColorList limit={isMobile ? 8 : 12} />
+                <ColorList limit={12} />
             </div>
         </section>
     )

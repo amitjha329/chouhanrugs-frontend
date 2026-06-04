@@ -1,11 +1,15 @@
-import { connection } from "next/server";
+import { cacheLife, cacheTag } from "next/cache";
 import { getStorefrontDb } from "@/lib/mongodb";
 import CategoriesDataModel from "@/types/CategoriesDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 export async function getCategoriesTop(): Promise<CategoriesDataModel[]> {
+    "use cache";
+
+    cacheLife("hours");
+    cacheTag("categories");
+
     try {
-        await connection();
         const db = await getStorefrontDb();
         const categories = await db.collection("categories").find({  active: true }).toArray();
 

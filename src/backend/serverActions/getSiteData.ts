@@ -5,7 +5,7 @@ import SiteDataModel from "@/types/SiteDataModel"
 async function fetchSiteData(): Promise<SiteDataModel> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("site-data")
 
     try {

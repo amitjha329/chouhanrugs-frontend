@@ -6,7 +6,7 @@ async function fetchDynamicPageBySlug(slug: string): Promise<PageMetaDataModel |
     "use cache";
 
     const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("pages");
     cacheTag(`page-${cleanSlug}`);
 

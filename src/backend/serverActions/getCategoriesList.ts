@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 export default async function getCategoriesList(): Promise<CategoriesDataModel[]> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("categories")
 
     const filter = { active: true }

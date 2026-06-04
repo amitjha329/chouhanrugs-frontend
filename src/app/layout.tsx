@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 const RootEnhancements = async ({ children }: { children: ReactNode }) => {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("root-enhancements")
 
     const locale = routing.defaultLocale as Locale

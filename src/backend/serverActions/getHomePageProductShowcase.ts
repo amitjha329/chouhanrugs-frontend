@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 async function fetchHomePageProductShowcase(): Promise<HomePageProductShowcaseModel | null> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("home-product-showcase");
     cacheTag("page-additional-home");
 

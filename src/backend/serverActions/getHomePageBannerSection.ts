@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 async function fetchHomePageBannerSection(): Promise<HomePageBannerSectionModel | null> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("home-banner-section");
     cacheTag("page-additional-home");
 

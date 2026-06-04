@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next'
-import { getConfig } from '@/lib/services/ConfigService'
 
-export default async function robots(): Promise<MetadataRoute.Robots> {
-  const baseUrl = await getConfig('FRONTEND_URL', 'https://chouhanrugs.com')
+export default function robots(): MetadataRoute.Robots {
+  const baseUrl = (process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.FRONTEND_URL || 'https://chouhanrugs.com').replace(/\/$/, '')
+
   return {
     rules: {
       userAgent: '*',

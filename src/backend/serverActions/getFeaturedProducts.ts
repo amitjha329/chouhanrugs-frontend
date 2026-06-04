@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 async function fetchFeaturedProducts(limit: number): Promise<ProductDataModelWithColorMap[]> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("products");
     cacheTag("featured-products");
 

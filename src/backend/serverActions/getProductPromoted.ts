@@ -1,8 +1,15 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { getStorefrontDb } from "@/lib/mongodb";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 export default async function getProductPromoted(category: string): Promise<ProductDataModel[]> {
+    "use cache";
+
+    cacheLife("hours");
+    cacheTag("products");
+    cacheTag("promoted-products");
+
     try {
         const db = await getStorefrontDb();
 

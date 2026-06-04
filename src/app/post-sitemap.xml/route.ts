@@ -1,6 +1,6 @@
 import clientPromise from "@/lib/clientPromise";
 import BlogDataModel from "@/types/BlogDataModel";
-import { NextRequest } from "next/server";
+import { connection, NextRequest } from "next/server";
 
 function generateSiteMap(posts: BlogDataModel[]) {
     return `<?xml version="1.0" encoding="UTF-8"?>
@@ -22,6 +22,8 @@ function generateSiteMap(posts: BlogDataModel[]) {
 }
 
 export async function GET(req: NextRequest) {
+    await connection()
+
     const mongoClient = await clientPromise
     const db = mongoClient.db(process.env.MONGODB_DB)
     const blogsCollection = db.collection('blogs')
@@ -29,7 +31,8 @@ export async function GET(req: NextRequest) {
         const blogList = await blogsCollection.find({}).sort("updatedOn", "desc").toArray()
         return new Response(generateSiteMap(blogList as unknown as BlogDataModel[]), {
             headers: {
-                'Content-Type': "text/xml"
+                'Content-Type': "text/xml",
+                "Cache-Control": "public, max-age=3600, s-maxage=86400",
             }
         })
     } catch (err) {

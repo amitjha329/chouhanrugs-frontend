@@ -6,7 +6,7 @@ import TermsAndPoliciesDataModel from "@/types/TermsAndPoliciesDataModel"
 export default async function getPoliciesData(): Promise<TermsAndPoliciesDataModel> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("pages")
     cacheTag("page-policies")
 

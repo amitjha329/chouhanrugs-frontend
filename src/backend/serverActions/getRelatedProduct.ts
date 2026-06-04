@@ -6,7 +6,7 @@ import { cacheLife, cacheTag } from "next/cache";
 async function getRelatedProductsInternal(categoryId: string, excludeProductId: string): Promise<ProductDataModel[]> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("products");
     cacheTag("related-products");
 

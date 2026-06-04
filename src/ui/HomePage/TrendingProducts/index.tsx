@@ -1,21 +1,26 @@
 import SectionTitle from '@/ui/SectionTitle'
-import getDevice from '@/utils/getDevice'
-import { headers } from 'next/headers'
 import React from 'react'
 import { ProductListHotTrending, ProductListHotTrendingMobile } from './ProductList'
 import { getTranslations } from 'next-intl/server'
+import { getHotTrendingProducts } from '@/backend/serverActions/getHotTrendingProducts'
+import { serializeForClient } from '@/utils/serializeForClient'
 
 const TrendingProducts = async () => {
-    const header = await headers()
-    const isMobile = getDevice({ headers: header }) == "mobile"
-    const t = await getTranslations('homepage')
+    const [t, trendingProducts] = await Promise.all([
+        getTranslations('homepage'),
+        getHotTrendingProducts({ limit: 8 }),
+    ])
+    const products = serializeForClient(trendingProducts)
 
     return (
         <div className='fluid_container  ~py-5/14 ~px-3.5/0'>
             <SectionTitle title={t('trendingTitle')} className='text-center py-5' />
-            {
-                isMobile ? <ProductListHotTrendingMobile /> : <ProductListHotTrending />
-            }
+            <div className="hidden md:block">
+                <ProductListHotTrending trendingProducts={products} />
+            </div>
+            <div className="md:hidden">
+                <ProductListHotTrendingMobile trendingProducts={products} />
+            </div>
         </div>
     )
 }

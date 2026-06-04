@@ -12,9 +12,7 @@ import getSiteData from '@/backend/serverActions/getSiteData'
 import getAnalyticsData from '@/backend/serverActions/getAnalyticsData'
 import { getPageFooterContent } from '@/backend/serverActions/getFooterContent'
 import getSlider from '@/backend/serverActions/getSlider'
-import { headers } from 'next/headers'
 import { serializeForClient } from '@/utils/serializeForClient'
-import getDevice from '@/utils/getDevice'
 import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
 import LazySection from '@/ui/LazySection'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
@@ -88,7 +86,7 @@ async function BestSellersSection({ isMobile }: { isMobile: boolean }) {
 }
 
 // Wrapper component for Hero with slider data
-async function HeroWithSlider({ sliderId, isMobile }: { sliderId: number, isMobile: boolean }) {
+async function HeroWithSlider({ sliderId }: { sliderId: number }) {
   const sliderData = await getSlider(sliderId)
   return <HeroSection slider={sliderData} />
 }
@@ -105,18 +103,14 @@ async function FooterSEOContent() {
 }
 
 const HomePage = async () => {
-  // Single headers() call for device detection - passed down to children
-  const header = await headers()
-  const isMobile = getDevice({ headers: header }) == "mobile"
-  
   // Fetch only what's needed for initial render
   const homePageData = await getPageData("home")
   
   return (
     <>
       {/* Hero Section - Critical above-fold content */}
-      <Suspense fallback={<HeroSkeleton isMobile={isMobile} />}>
-        <HeroWithSlider sliderId={homePageData.sliderId ?? 1} isMobile={isMobile} />
+      <Suspense fallback={<HeroSkeleton isMobile={false} />}>
+        <HeroWithSlider sliderId={homePageData.sliderId ?? 1} />
       </Suspense>
       
       {/* New Products Section */}
@@ -197,7 +191,7 @@ const HomePage = async () => {
       {/* Best Sellers Carousel - Uses content-visibility for perf */}
       <LazySection minHeight="400px">
         <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
-          <BestSellersSection isMobile={isMobile} />
+          <BestSellersSection isMobile={false} />
         </Suspense>
       </LazySection>
       

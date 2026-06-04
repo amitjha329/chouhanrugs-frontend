@@ -5,7 +5,7 @@ import converter from "@/utils/mongoObjectConversionUtility"
 async function fetchPageFooterContent(page: string): Promise<FooterContentDataModel | undefined> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("footer-content")
     cacheTag(`footer-${page}`)
 

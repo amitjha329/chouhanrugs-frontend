@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility"
 export default async function getBlogPostsList(): Promise<BlogDataModel[]> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("blogs")
 
     const mongoClient = await clientPromise

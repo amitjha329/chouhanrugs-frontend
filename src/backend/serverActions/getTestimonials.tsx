@@ -1,8 +1,13 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { getStorefrontDb } from "@/lib/mongodb";
-import SizeDataModel from "@/types/SizeDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
 export async function getTestimonials(): Promise<TestimonialDataModel[]> {
+    "use cache";
+
+    cacheLife("hours");
+    cacheTag("testimonials");
+
     try {
         const db = await getStorefrontDb();
         const colors = await db.collection("testimonials").find({}).toArray();

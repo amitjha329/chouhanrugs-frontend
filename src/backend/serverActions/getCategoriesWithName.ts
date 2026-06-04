@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 export default async function getCategoriesWithName(name: string): Promise<CategoriesDataModel> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("categories")
     cacheTag(`category-${name}`)
 

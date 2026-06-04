@@ -1,6 +1,5 @@
 import { locales, routing, type Locale } from "@/i18n/routing";
 import { getAllProducts } from "@/lib/catalog";
-import { getConfig } from "@/lib/services/ConfigService";
 import { getProductGalleryImages } from "@/lib/getProductFeaturedImage";
 import {
     absoluteUrl,
@@ -8,10 +7,13 @@ import {
     escapeXml,
     productCanonicalUrl,
 } from "@/lib/seoCatalog";
+import { connection } from "next/server";
 
 export async function GET() {
+    await connection();
+
     const [baseUrl, products] = await Promise.all([
-        getConfig("FRONTEND_URL", "https://chouhanrugs.com"),
+        Promise.resolve(process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.FRONTEND_URL || "https://chouhanrugs.com"),
         getAllProducts(),
     ]);
     const siteUrl = cleanBaseUrl(baseUrl);

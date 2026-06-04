@@ -15,7 +15,7 @@ interface ProductWithSizeandColorData extends ProductDataModel{
 async function getProductWithSlugInternal(slug: string): Promise< ProductWithSizeandColorData| undefined> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("products");
     cacheTag(`product-${slug}`);
 

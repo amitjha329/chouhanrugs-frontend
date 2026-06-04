@@ -32,7 +32,7 @@ async function getCollection() {
 export async function getConfig(key: string, defaultValue: string = ''): Promise<string> {
     'use cache'
 
-    cacheLife('seconds')
+    cacheLife('hours')
     cacheTag('app-config')
     cacheTag(`app-config-${key}`)
 
@@ -68,7 +68,7 @@ export async function getConfig(key: string, defaultValue: string = ''): Promise
 export async function getConfigBulk(keys: string[]): Promise<Record<string, string>> {
     'use cache'
 
-    cacheLife('seconds')
+    cacheLife('hours')
     cacheTag('app-config')
     keys.forEach((key) => cacheTag(`app-config-${key}`))
 

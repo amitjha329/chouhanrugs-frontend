@@ -6,7 +6,7 @@ import converter from "@/utils/mongoObjectConversionUtility";
 async function fetchHotTrendingProducts(limit: number): Promise<ProductDataModelWithColorMap[]> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("products");
     cacheTag("hot-trending-products");
 

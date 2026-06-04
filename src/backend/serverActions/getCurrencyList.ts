@@ -5,7 +5,7 @@ import Currency from "@/types/Currency"
 export default async function getCurrencyList(): Promise<Currency[]> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("currencies")
 
     try {

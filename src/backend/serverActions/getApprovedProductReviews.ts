@@ -6,7 +6,7 @@ import { ReviewDataModel } from "@/types/ReviewDataModel"
 async function getApprovedProductReviewsInternal(productId: string) {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag(`product-reviews-${productId}`)
 
     const db = await getStorefrontDb()
@@ -37,4 +37,3 @@ async function getApprovedProductReviewsInternal(productId: string) {
 }
 
 export const getApprovedProductReviews = getApprovedProductReviewsInternal
-

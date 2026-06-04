@@ -14,8 +14,20 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
     sectionHeading: string, 
     isMobile: boolean 
 }) {
+    const [isCompact, setIsCompact] = useState(isMobile);
+
+    useEffect(() => {
+        const query = window.matchMedia('(max-width: 767px)');
+        const syncViewport = () => setIsCompact(query.matches);
+
+        syncViewport();
+        query.addEventListener('change', syncViewport);
+
+        return () => query.removeEventListener('change', syncViewport);
+    }, []);
+
     // Responsive visible count
-    const visibleCount = isMobile ? 2 : 5;
+    const visibleCount = isCompact ? 2 : 5;
     const total = products.length;
     const [startIndex, setStartIndex] = useState(0);
     const maxStartIndex = total > visibleCount ? total - visibleCount : 0;
@@ -77,12 +89,12 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
     };
 
     const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
-        if (!isMobile) return;
+        if (!isCompact) return;
         touchStartX.current = e.touches[0].clientX;
     };
 
     const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
-        if (!isMobile || touchStartX.current === null) return;
+        if (!isCompact || touchStartX.current === null) return;
         const deltaX = e.changedTouches[0].clientX - touchStartX.current;
         touchStartX.current = null;
 
@@ -128,7 +140,7 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                                     }}
                                     className={clsx(
                                         "carousel-item flex-shrink-0 scroll-ml-1.5 sm:scroll-ml-2",
-                                        isMobile ? "basis-[calc((100%_-_0.75rem)/2)]" : "basis-[calc((100%_-_4rem)/5)]"
+                                        isCompact ? "basis-[calc((100%_-_0.75rem)/2)]" : "basis-[calc((100%_-_4rem)/5)]"
                                     )}
                                 >
                                     <ProductCardItem {...product} index={index} />

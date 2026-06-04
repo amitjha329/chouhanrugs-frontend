@@ -9,7 +9,7 @@ const COLLECTION = 'translations'
 async function fetchTranslations(locale: Locale): Promise<Record<string, unknown>> {
     'use cache'
 
-    cacheLife('seconds')
+    cacheLife('hours')
     cacheTag('translations')
     cacheTag(`translations-${locale}`)
 

@@ -20,7 +20,7 @@ const DEFAULT_CONFIG: GoogleAdsConfigDataModel = {
 async function fetchGoogleAdsConfig(): Promise<GoogleAdsConfigDataModel> {
     "use cache";
 
-    cacheLife("seconds");
+    cacheLife("hours");
     cacheTag("analytics");
     cacheTag("analytics-GOOGLE_ADS");
 

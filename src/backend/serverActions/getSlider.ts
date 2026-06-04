@@ -5,7 +5,7 @@ import SliderDataModel from "@/types/SliderDataModel"
 async function fetchSlider(slideId: number): Promise<SliderDataModel> {
     "use cache"
 
-    cacheLife("seconds")
+    cacheLife("hours")
     cacheTag("sliders")
     cacheTag(`slider-${slideId}`)
 

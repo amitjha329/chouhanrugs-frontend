@@ -27,6 +27,7 @@ const protectedRoutes = ['/user', '/order']
 const AUTO_LOCALE_COOKIE = 'cr_auto_locale'
 const AUTO_LOCALE_MAX_AGE = 60 * 60 * 24 * 30
 const COUNTRY_LOOKUP_TIMEOUT_MS = 750
+const IPINFO_LITE_API_BASE = 'https://api.ipinfo.io/lite'
 
 const arabicCountryCodes = new Set([
     'AE', 'BH', 'DZ', 'EG', 'IQ', 'JO', 'KW', 'LB', 'LY', 'MA',
@@ -73,6 +74,10 @@ function localeForCountry(countryCode: string | undefined, acceptLanguage: strin
     return 'en-US'
 }
 
+function getIpInfoApiToken(): string {
+    return process.env.IPINFO_API_TOKEN ?? process.env.IP_LOOKUP_API_TOKEN ?? ''
+}
+
 async function detectLocaleFromCountry(req: NextRequest): Promise<Locale> {
     const cookieLocale = req.cookies.get(AUTO_LOCALE_COOKIE)?.value
     if (isLocale(cookieLocale)) {
@@ -84,8 +89,17 @@ async function detectLocaleFromCountry(req: NextRequest): Promise<Locale> {
         return routing.defaultLocale
     }
 
+    const ipInfoApiToken = getIpInfoApiToken()
+    if (!ipInfoApiToken) {
+        return routing.defaultLocale
+    }
+
     try {
-        const response = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=country,countryCode,query`, {
+        const response = await fetch(`${IPINFO_LITE_API_BASE}/${encodeURIComponent(ip)}`, {
+            headers: {
+                Authorization: `Bearer ${ipInfoApiToken}`,
+                Accept: 'application/json',
+            },
             signal: AbortSignal.timeout(COUNTRY_LOOKUP_TIMEOUT_MS),
             cache: 'no-store',
         })
@@ -94,8 +108,8 @@ async function detectLocaleFromCountry(req: NextRequest): Promise<Locale> {
             return routing.defaultLocale
         }
 
-        const data = await response.json() as { countryCode?: string }
-        return localeForCountry(data.countryCode, req.headers.get('accept-language'))
+        const data = await response.json() as { country_code?: string }
+        return localeForCountry(data.country_code, req.headers.get('accept-language'))
     } catch {
         return routing.defaultLocale
     }
