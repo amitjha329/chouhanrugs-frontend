@@ -38,6 +38,18 @@ const ThumbnailImage = memo(function ThumbnailImage({
     onHover: (index: number) => void
 }) {
     const [isLoaded, setIsLoaded] = useState(false)
+    const [hasError, setHasError] = useState(false)
+
+    useEffect(() => {
+        setIsLoaded(false)
+        setHasError(false)
+
+        const timeout = window.setTimeout(() => {
+            setIsLoaded(true)
+        }, 5000)
+
+        return () => window.clearTimeout(timeout)
+    }, [image])
 
     return (
         <div
@@ -58,6 +70,11 @@ const ThumbnailImage = memo(function ThumbnailImage({
                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-primary" />
                 </div>
             )}
+            {hasError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-[10px] font-medium text-gray-400">
+                    Image
+                </div>
+            )}
             <Image
                 src={image}
                 alt={`${productName} - Image ${index + 1}`}
@@ -65,7 +82,7 @@ const ThumbnailImage = memo(function ThumbnailImage({
                 width={92}
                 className={clsx(
                     "!relative h-full w-full object-cover transition-opacity duration-300",
-                    isLoaded ? "opacity-100" : "opacity-0"
+                    isLoaded && !hasError ? "opacity-100" : "opacity-0"
                 )}
                 quality={quality}
                 loading={index < 3 ? "eager" : "lazy"}
@@ -73,6 +90,10 @@ const ThumbnailImage = memo(function ThumbnailImage({
                 placeholder="blur"
                 blurDataURL={blurPlaceholders.warmNeutral}
                 onLoad={() => setIsLoaded(true)}
+                onError={() => {
+                    setHasError(true)
+                    setIsLoaded(true)
+                }}
             />
             {isSelected && (
                 <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full border border-white bg-primary shadow-sm" />
@@ -127,6 +148,7 @@ const MobileGallery = memo(function MobileGallery({
     const [scale, setScale] = useState(1)
     const [position, setPosition] = useState({ x: 0, y: 0 })
     const [isDragging, setIsDragging] = useState(false)
+    const [imageFailed, setImageFailed] = useState(false)
     const lastTouchRef = useRef<{ x: number; y: number; dist: number } | null>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     
@@ -136,6 +158,7 @@ const MobileGallery = memo(function MobileGallery({
     useEffect(() => {
         setScale(1)
         setPosition({ x: 0, y: 0 })
+        setImageFailed(false)
     }, [currentIndex])
     
     // Prevent body scroll when gallery is open
@@ -269,18 +292,26 @@ const MobileGallery = memo(function MobileGallery({
                         transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
                     }}
                 >
-                    <Image
-                        src={currentImage}
-                        alt={`${productName} - Image ${currentIndex + 1}`}
-                        fill
-                        unoptimized
-                        className="object-contain"
-                        quality={imageQuality.high}
-                        sizes="100vw"
-                        priority
-                        placeholder="blur"
-                        blurDataURL={blurPlaceholders.warmNeutral}
-                    />
+                    {imageFailed ? (
+                        <div className="px-6 text-center text-sm font-medium text-white/70">
+                            Image could not be loaded.
+                        </div>
+                    ) : (
+                        <Image
+                            src={currentImage}
+                            alt={`${productName} - Image ${currentIndex + 1}`}
+                            fill
+                            unoptimized
+                            className="object-contain"
+                            quality={imageQuality.high}
+                            sizes="100vw"
+                            loading="eager"
+                            fetchPriority="high"
+                            placeholder="blur"
+                            blurDataURL={blurPlaceholders.warmNeutral}
+                            onError={() => setImageFailed(true)}
+                        />
+                    )}
                 </div>
                 
                 {/* Navigation arrows - only show when not zoomed */}
@@ -459,14 +490,23 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
 
     // Track main image loading state for progressive loading
     const [mainImageLoaded, setMainImageLoaded] = useState(false)
+    const [mainImageFailed, setMainImageFailed] = useState(false)
     const [imagesInitialized, setImagesInitialized] = useState(false)
     const [mainImageAspectRatio, setMainImageAspectRatio] = useState(1)
 
     // Reset loading states when images change
     React.useEffect(() => {
         setMainImageLoaded(false)
+        setMainImageFailed(false)
         const timer = setTimeout(() => setImagesInitialized(true), 50)
-        return () => clearTimeout(timer)
+        const loadingTimeout = setTimeout(() => {
+            setMainImageLoaded(true)
+        }, 7000)
+
+        return () => {
+            clearTimeout(timer)
+            clearTimeout(loadingTimeout)
+        }
     }, [selectedImage])
 
     // Preload next/previous images for smoother navigation
@@ -583,14 +623,20 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                 >
                     {/* Skeleton placeholder while image loads */}
                     {!mainImageLoaded && <MainImageSkeleton />}
+                    {mainImageFailed && (
+                        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-100 px-6 text-center text-sm font-medium text-gray-500">
+                            Image could not be loaded.
+                        </div>
+                    )}
 
                     <Image
+                        key={selectedImage}
                         src={selectedImage}
                         alt={productName}
                         data-main-image
                         className={clsx(
                             "!relative h-full w-full object-contain transition-opacity duration-300",
-                            mainImageLoaded ? "opacity-100" : "opacity-0"
+                            mainImageLoaded && !mainImageFailed ? "opacity-100" : "opacity-0"
                         )}
                         loading="eager"
                         sizes={productImageSizes.main}
@@ -604,6 +650,11 @@ const ImageSection = ({ className, mobile }: { mobile: boolean, className?: stri
                             if (image.naturalWidth > 0 && image.naturalHeight > 0) {
                                 setMainImageAspectRatio(image.naturalWidth / image.naturalHeight)
                             }
+                            setMainImageLoaded(true)
+                            setMainImageFailed(false)
+                        }}
+                        onError={() => {
+                            setMainImageFailed(true)
                             setMainImageLoaded(true)
                         }}
                         fetchPriority="high"

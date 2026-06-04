@@ -82,7 +82,7 @@ const ProductImage = memo(function ProductImage({
             default:
                 return {
                     sizes: productImageSizes.card,
-                    quality: imageQuality.standard,
+                    quality: imageQuality.preview,
                     loading: 'lazy' as const,
                     fetchPriority: 'auto' as const,
                 }

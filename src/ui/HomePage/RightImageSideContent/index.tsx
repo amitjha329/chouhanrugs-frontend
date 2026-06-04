@@ -25,7 +25,7 @@ const RightImageSideContent = async () => {
     return (
         <div
             className="~h-[16rem]/[40rem] relative bg-fixed bg-cover bg-center overflow-hidden"
-            style={{ backgroundImage: `url(/_next/image?url=${encodeURIComponent(data.backgroundImage)}&w=1920&q=${imageQuality.standard})` }}
+            style={{ backgroundImage: `url(/_next/image?url=${encodeURIComponent(data.backgroundImage)}&w=1920&q=${imageQuality.high})` }}
         >
             {/* <div className="flex flex-row justify-center pt-44 w-[calc(100%-2rem)] max-w-5xl absolute -top-40 left-1/2 -translate-x-1/2 rounded-full bg-secondary/80 pb-6">
                 <div className="flex flex-col items-center justify-center gap-y-2 gap-x-5 px-6 text-center">

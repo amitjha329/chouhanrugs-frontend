@@ -159,7 +159,7 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress, locale }: { o
                                 <Image 
                                     className="object-cover group-hover:scale-105 transition-transform duration-300" 
                                     sizes="(max-width: 640px) 80px, 96px" 
-                                    quality={imageQuality.standard} 
+                                    quality={imageQuality.thumbnail} 
                                     src={getProductFeaturedImage(product)} 
                                     alt={resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)} 
                                     fill 

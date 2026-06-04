@@ -1,8 +1,8 @@
 import NextImage, { type ImageProps } from 'next/image'
-import { imageQuality } from '@/utils/imageOptimization'
+import { qualityForImageSize } from '@/utils/imageOptimization'
 
 const OptimizedImage = ({ quality, ...props }: ImageProps) => (
-    <NextImage quality={quality ?? imageQuality.standard} {...props} />
+    <NextImage quality={quality ?? qualityForImageSize(props)} {...props} />
 )
 
 export default OptimizedImage

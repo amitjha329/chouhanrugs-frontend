@@ -3,7 +3,6 @@ import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import { trackAddToCartWithDetails } from '@/lib/gtagConversion'
 import { useGoogleAdsConfig } from '@/components/GoogleAdsProvider'
 import { getProductGalleryImages } from '@/lib/getProductFeaturedImage'
-import { imageQuality } from '@/utils/imageOptimization'
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 const ProductDataContext = createContext<Partial<{
@@ -158,16 +157,6 @@ const ProductContext = ({ children, product }: { children: React.ReactNode, prod
         if (y >= 0.01 * rect.height) yperc += 0.15 * yperc
         setZoomPosition({ x: xperc - 9, y: yperc - 9 })
     }
-
-    // Optimization: Preload images for instant switching (browser cache)
-    useEffect(() => {
-        if (!images || images.length === 0) return;
-        images.forEach((img) => {
-            const url = `/_next/image?url=${encodeURIComponent(img)}&w=1920&q=${imageQuality.high}`;
-            const preload = new window.Image();
-            preload.src = url;
-        });
-    }, [images]);
 
     // Optimization: Reset zoomPosition on mouse leave for accessibility and performance
     const handleImageMouseLeave = () => {

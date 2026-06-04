@@ -113,7 +113,7 @@ const ProductCardItem = (props: CompoProps) => {
                             loading={shouldLoadEager ? "eager" : "lazy"}
                             fetchPriority={shouldLoadEager ? 'high' : 'auto'}
                             sizes={props.imageSizes ?? "(max-width: 1024px) 100vw, 30vw"}
-                            quality={imageQuality.preview}
+                            quality={imageQuality.standard}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#1d150f]/88 via-[#1d150f]/15 to-transparent" />
                         {discountLabel && (
@@ -167,7 +167,7 @@ const ProductCardItem = (props: CompoProps) => {
                             loading={shouldLoadEager ? "eager" : "lazy"}
                             fetchPriority={shouldLoadEager ? 'high' : 'auto'}
                             sizes={props.imageSizes ?? productImageSizes.card}
-                            quality={imageQuality.preview}
+                            quality={imageQuality.standard}
                         />
                     ) : (
                         <Image

@@ -56,7 +56,7 @@ const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurre
                         <Image
                             height={128}
                             width={128}
-                            quality={imageQuality.standard}
+                            quality={imageQuality.preview}
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                             src={getProductFeaturedImage(item.cartProduct[0])}
                             alt={name}

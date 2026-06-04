@@ -86,15 +86,77 @@ export const productImageSizes = {
 }
 
 /**
- * Quality presets for different use cases
- * These should match your next.config.ts qualities array
+ * Quality presets by rendered image size.
+ * Width selection comes from the `sizes` prop; quality stays intentionally low
+ * because larger rendered dimensions preserve enough visual detail.
+ * These values must match next.config.ts images.qualities.
  */
 export const imageQuality = {
-  thumbnail: 20,
-  preview: 30,
-  standard: 70,
-  high: 82,
-  maximum: 90,
+  thumbnail: 10,
+  preview: 20,
+  standard: 30,
+  high: 50,
+  maximum: 50,
+}
+
+const numericSize = (value: unknown): number | undefined => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value !== 'string') return undefined
+
+  const parsed = Number.parseFloat(value)
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
+const largestPixelSizeFromSizes = (sizes: string): number | undefined => {
+  const pixelValues = Array.from(sizes.matchAll(/(\d+(?:\.\d+)?)px/g))
+    .map((match) => Number.parseFloat(match[1]))
+    .filter(Number.isFinite)
+
+  return pixelValues.length > 0 ? Math.max(...pixelValues) : undefined
+}
+
+const largestViewportWidthFromSizes = (sizes: string): number | undefined => {
+  const viewportValues = Array.from(sizes.matchAll(/(\d+(?:\.\d+)?)vw/g))
+    .map((match) => Number.parseFloat(match[1]))
+    .filter(Number.isFinite)
+
+  return viewportValues.length > 0 ? Math.max(...viewportValues) : undefined
+}
+
+export const qualityForImageSize = (input: {
+  width?: unknown
+  height?: unknown
+  sizes?: string
+}): number => {
+  const width = numericSize(input.width)
+  const height = numericSize(input.height)
+  const maxFixedSize = Math.max(width ?? 0, height ?? 0)
+
+  if (maxFixedSize > 0) {
+    if (maxFixedSize <= 96) return imageQuality.thumbnail
+    if (maxFixedSize <= 256) return imageQuality.preview
+    if (maxFixedSize <= 640) return imageQuality.standard
+    return imageQuality.high
+  }
+
+  if (input.sizes) {
+    const pixelSize = largestPixelSizeFromSizes(input.sizes)
+    if (pixelSize !== undefined) {
+      if (pixelSize <= 96) return imageQuality.thumbnail
+      if (pixelSize <= 256) return imageQuality.preview
+      if (pixelSize <= 640) return imageQuality.standard
+      return imageQuality.high
+    }
+
+    const viewportWidth = largestViewportWidthFromSizes(input.sizes)
+    if (viewportWidth !== undefined) {
+      if (viewportWidth <= 25) return imageQuality.preview
+      if (viewportWidth <= 60) return imageQuality.standard
+      return imageQuality.high
+    }
+  }
+
+  return imageQuality.standard
 }
 
 /**
@@ -122,5 +184,6 @@ export default {
   getGradientPlaceholder,
   productImageSizes,
   imageQuality,
+  qualityForImageSize,
   blurPlaceholders,
 }
