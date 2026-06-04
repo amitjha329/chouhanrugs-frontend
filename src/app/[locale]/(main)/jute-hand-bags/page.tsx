@@ -24,6 +24,7 @@ import { getLocale, getTranslations } from "next-intl/server"
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { type Locale } from '@/i18n/routing'
+import { localizedAbsoluteUrl, localizedLanguages, safeJsonLd } from '@/lib/seoCatalog'
 
 /* ------------------------------------------------------------------ */
 /*  Metadata                                                          */
@@ -60,7 +61,8 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
             images: image_1.src,
         },
         alternates: {
-            canonical: `${dataAdditional.url}jute-hand-bags`,
+            canonical: localizedAbsoluteUrl(dataAdditional.url, "/jute-hand-bags", locale),
+            languages: localizedLanguages(dataAdditional.url, () => "/jute-hand-bags"),
         },
     }
 }
@@ -441,6 +443,22 @@ const JuteHandBagsPage = async () => {
     const locale = loc as Locale
     return (
         <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={safeJsonLd({
+                    "@context": "https://schema.org",
+                    "@type": "FAQPage",
+                    mainEntity: faqs.map(faq => ({
+                        "@type": "Question",
+                        name: faq.question,
+                        acceptedAnswer: {
+                            "@type": "Answer",
+                            text: faq.answer,
+                        },
+                    })),
+                })}
+                key="jute-hand-bags-faq-jsonld"
+            />
             {/* ====================================================== */}
             {/*  1. HERO SECTION — Ken Burns bg + staggered text       */}
             {/* ====================================================== */}

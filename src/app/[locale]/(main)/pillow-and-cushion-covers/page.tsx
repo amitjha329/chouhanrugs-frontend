@@ -12,6 +12,7 @@ import getSiteData from '@/backend/serverActions/getSiteData'
 import getPageData from '@/backend/serverActions/getPageData'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog'
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale: loc } = await props.params
@@ -41,7 +42,8 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
             images: image_1.src,
         },
         alternates: {
-            canonical: `${dataAdditional.url}pillow-and-cushion-covers`
+            canonical: localizedAbsoluteUrl(dataAdditional.url, "/pillow-and-cushion-covers", locale),
+            languages: localizedLanguages(dataAdditional.url, () => "/pillow-and-cushion-covers"),
         }
     }
 }

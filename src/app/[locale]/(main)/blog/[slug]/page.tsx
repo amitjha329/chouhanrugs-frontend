@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog'
 
 type Props = {
     params: Promise<{ slug: string, locale: string }>;
@@ -20,6 +21,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const title = resolveLocalizedString(data.title, locale)
     const description = resolveLocalizedString(data.description, locale)
     const keywords = resolveLocalizedString(data.keywords, locale)
+    const path = `/blog/${encodeURIComponent(resolveLocalizedString(data.slug, locale) || params.slug)}`
     return {
         title,
         description,
@@ -43,9 +45,14 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
         },
         authors: {
             name: data.author.name,
-        }, alternates: {
-            canonical: `${dataAdditional.url}blog/${params.slug}`
-        }
+        },
+        alternates: {
+            canonical: localizedAbsoluteUrl(dataAdditional.url, path, locale),
+            languages: localizedLanguages(dataAdditional.url, blogLocale => {
+                const slug = resolveLocalizedString(data.slug, blogLocale) || params.slug
+                return `/blog/${encodeURIComponent(slug)}`
+            }),
+        },
     }
 }
 

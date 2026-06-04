@@ -1,3 +1,5 @@
+import { cleanBaseUrl, isLocalhostUrl } from "@/lib/seoCatalog";
+
 /**
  * GET /llms.txt
  *
@@ -11,7 +13,7 @@
  * route decoupled from direct MongoDB access.
  */
 export async function GET(request: Request): Promise<Response> {
-    const origin = new URL(request.url).origin;
+    const origin = cleanBaseUrl(new URL(request.url).origin);
 
     // Fetch site metadata through the existing server-rendered endpoint
     // Falls back to static defaults if the internal fetch fails.
@@ -32,7 +34,10 @@ export async function GET(request: Request): Promise<Response> {
             const data = await res.json();
             siteName = data.title ?? siteName;
             siteDescription = data.description ?? siteDescription;
-            siteUrl = data.url ?? siteUrl;
+            const configuredSiteUrl = data.url;
+            siteUrl = configuredSiteUrl && !isLocalhostUrl(configuredSiteUrl)
+                ? cleanBaseUrl(configuredSiteUrl)
+                : origin;
             contactEmail = data.contact_details?.email ?? '';
             contactPhone = data.contact_details?.phone ?? '';
         }

@@ -19,6 +19,7 @@ import FeaturedProducts from '@/ui/HomePage/FeaturedProducts'
 import LazySection from '@/ui/LazySection'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
+import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog'
 import {
   HeroSkeleton,
   ProductGridSkeleton,
@@ -74,7 +75,8 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
       ...(!stringEmptyOrNull(googleVerification.code)) && { google: googleVerification.code },
     },
     alternates: {
-      canonical: dataAdditional.url
+      canonical: localizedAbsoluteUrl(dataAdditional.url, "/", locale),
+      languages: localizedLanguages(dataAdditional.url, () => "/"),
     }
   }
 }

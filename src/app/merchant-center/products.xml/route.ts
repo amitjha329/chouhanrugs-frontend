@@ -5,6 +5,7 @@ import {
     DEFAULT_GOOGLE_PRODUCT_CATEGORY,
     DEFAULT_MERCHANT_COUNTRY,
     DEFAULT_MERCHANT_CURRENCY,
+    cleanBaseUrl,
     escapeXml,
     getProductImages,
     getVariationSellingPrice,
@@ -125,7 +126,7 @@ export async function GET() {
     ]);
 
     const config: MerchantConfig = {
-        baseUrl: configValues.FRONTEND_URL || "https://chouhanrugs.com",
+        baseUrl: cleanBaseUrl(configValues.FRONTEND_URL || "https://chouhanrugs.com"),
         locale: routing.defaultLocale,
     targetCountry: configValues.MERCHANT_TARGET_COUNTRY || DEFAULT_MERCHANT_COUNTRY,
         currency: configValues.MERCHANT_CURRENCY || DEFAULT_MERCHANT_CURRENCY,

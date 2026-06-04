@@ -1,7 +1,10 @@
 import getDynamicPageBySlug from "@/backend/serverActions/getDynamicPageBySlug";
+import getSiteData from "@/backend/serverActions/getSiteData";
 import { getLocaleFromPathname, type Locale } from "@/i18n/routing";
 import { resolveLocalizedString } from "@/lib/resolveLocalized";
+import { absoluteUrl, localizedAbsoluteUrl, localizedLanguages, normalizedPath } from "@/lib/seoCatalog";
 import DynamicPageRenderer from "@/ui/DynamicPages/DynamicPageRenderer";
+import generateFaqJsonLd, { extractFaqItems } from "@/utils/generateFaqJsonLd";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -52,7 +55,10 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
     }
 
     const locale = normalized.locale;
-    const page = await getDynamicPageBySlug(normalized.slug.join("/"));
+    const [page, siteData] = await Promise.all([
+        getDynamicPageBySlug(normalized.slug.join("/")),
+        getSiteData(),
+    ]);
 
     if (!page) {
         return {};
@@ -67,7 +73,8 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
     const keywords = rootKeywords || resolveLocalizedString(page.pageKeywords, locale);
     const robotsIndex = rootProps?.robotsIndex !== false;
     const robotsFollow = rootProps?.robotsFollow !== false;
-    const canonical = String(rootProps?.canonicalOverride ?? "") || `/${page.slug ?? page.page}`;
+    const canonicalPath = normalizedPath(String(rootProps?.canonicalOverride ?? "") || `/${page.slug ?? page.page}`);
+    const socialImage = String(rootProps?.socialImage ?? "").trim();
 
     return {
         title,
@@ -78,12 +85,13 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
             follow: robotsFollow,
         },
         alternates: {
-            canonical,
+            canonical: localizedAbsoluteUrl(siteData.url, canonicalPath, locale),
+            languages: localizedLanguages(siteData.url, () => canonicalPath),
         },
         openGraph: {
             title: String(rootProps?.socialTitle ?? title),
             description: String(rootProps?.socialDescription ?? description),
-            images: rootProps?.socialImage ? [String(rootProps.socialImage)] : undefined,
+            images: socialImage ? [absoluteUrl(siteData.url, socialImage)] : undefined,
         },
     };
 }
@@ -106,5 +114,18 @@ export default async function DynamicPage(props: DynamicPageProps) {
         notFound();
     }
 
-    return <DynamicPageRenderer data={page.data} />;
+    const faqItems = extractFaqItems(page.data);
+
+    return (
+        <>
+            {faqItems.length ? (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={generateFaqJsonLd(faqItems)}
+                    key="dynamic-page-faq-jsonld"
+                />
+            ) : null}
+            <DynamicPageRenderer data={page.data} />
+        </>
+    );
 }

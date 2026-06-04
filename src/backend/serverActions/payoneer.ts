@@ -85,23 +85,28 @@ export async function initiatePayoneerPayment(orderData: {
             }
         }
 
-        const division = config.key_id // Division/Store Code
-        const apiToken = config.key_secret // API Token
+        const merchantCode = String(config.key_id).trim()
+        const division = String(config.division || config.key_id).trim()
+        const apiToken = String(config.key_secret).trim()
         const configuredPayoneerEnv = (await getConfig(
             'PAYONEER_ENV',
             process.env.PAYONEER_ENV || process.env.NEXT_PUBLIC_PAYONEER_ENV || ''
         )).trim()
-        const payoneerEnv = configuredPayoneerEnv || (process.env.NODE_ENV === 'production' ? '' : 'sandbox')
+        const payoneerEnv = configuredPayoneerEnv || (process.env.NODE_ENV === 'production' ? 'live' : 'sandbox')
 
-        if (!payoneerEnv) {
+        const normalizedPayoneerEnv = payoneerEnv.toLowerCase()
+        const isSandboxEnv = ['sandbox', 'test'].includes(normalizedPayoneerEnv)
+        const isLiveEnv = ['live', 'production', 'prod'].includes(normalizedPayoneerEnv)
+
+        if (!isSandboxEnv && !isLiveEnv) {
             return {
                 success: false,
-                error: "Payoneer environment is not configured. Set PAYONEER_ENV in app_config or PAYONEER_ENV/NEXT_PUBLIC_PAYONEER_ENV in the environment."
+                error: `Unsupported Payoneer environment "${payoneerEnv}". Use "sandbox", "test", "live", or "production".`
             }
         }
 
         // Determine API endpoint based on environment
-        const baseUrl = payoneerEnv.toLowerCase() === 'sandbox'
+        const baseUrl = isSandboxEnv
             ? 'https://api.sandbox.oscato.com'
             : 'https://api.live.oscato.com'
 
@@ -185,10 +190,11 @@ export async function initiatePayoneerPayment(orderData: {
         console.log('📦 Payoneer Payload:', JSON.stringify(payload, null, 2));
 
         // Make API request with Basic Auth
-        const authHeader = 'Basic ' + Buffer.from(`VLXYUTYX:${apiToken}`).toString('base64')
+        const authHeader = 'Basic ' + Buffer.from(`${merchantCode}:${apiToken}`).toString('base64')
 
         console.log('🔐 Payoneer Authentication Debug:', {
-            merchantCode: division,
+            merchantCode,
+            division,
             apiTokenLength: apiToken?.length || 0,
             apiTokenFirst4: apiToken?.substring(0, 4) || 'missing',
             authHeaderLength: authHeader.length,
@@ -219,7 +225,7 @@ export async function initiatePayoneerPayment(orderData: {
             if (response.status === 401) {
                 return {
                     success: false,
-                    error: `Authentication failed. Please verify:\n1. key_id (${division}) is your Merchant Code\n2. key_secret is correct API Token\n3. Credentials match the environment (${payoneerEnv})`
+                    error: `Authentication failed. Please verify:\n1. key_id (${merchantCode}) is your Merchant Code\n2. key_secret is correct API Token\n3. Credentials match the environment (${payoneerEnv})`
                 }
             }
 

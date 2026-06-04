@@ -4,6 +4,7 @@ import { getConfig } from "@/lib/services/ConfigService";
 import { getProductGalleryImages } from "@/lib/getProductFeaturedImage";
 import {
     absoluteUrl,
+    cleanBaseUrl,
     escapeXml,
     productCanonicalUrl,
 } from "@/lib/seoCatalog";
@@ -13,19 +14,20 @@ export async function GET() {
         getConfig("FRONTEND_URL", "https://chouhanrugs.com"),
         getAllProducts(),
     ]);
+    const siteUrl = cleanBaseUrl(baseUrl);
 
     const defaultLocale = routing.defaultLocale;
     const urls = products.map((product) => {
         const alternates = locales
             .map((locale: Locale) => {
-                const href = productCanonicalUrl(baseUrl, product, locale);
+                const href = productCanonicalUrl(siteUrl, product, locale);
                 return `<xhtml:link rel="alternate" hreflang="${locale}" href="${escapeXml(href)}" />`;
             })
             .join("");
 
-        const loc = productCanonicalUrl(baseUrl, product, defaultLocale);
+        const loc = productCanonicalUrl(siteUrl, product, defaultLocale);
         const images = getProductGalleryImages(product)
-            .map((image) => absoluteUrl(baseUrl, image))
+            .map((image) => absoluteUrl(siteUrl, image))
             .filter(Boolean)
             .map((image) => `<image:image><image:loc>${escapeXml(image)}</image:loc></image:image>`)
             .join("");
@@ -35,7 +37,7 @@ export async function GET() {
             <lastmod>${new Date(product.updatedOn).toISOString()}</lastmod>
             ${images}
             ${alternates}
-            <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(productCanonicalUrl(baseUrl, product, defaultLocale))}" />
+            <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(productCanonicalUrl(siteUrl, product, defaultLocale))}" />
         </url>`;
     });
 

@@ -2,7 +2,7 @@ import { getActiveCategories, getAllBlogPosts, getAllProducts } from '@/lib/cata
 import { getConfig } from '@/lib/services/ConfigService';
 import { resolveLocalizedString } from '@/lib/resolveLocalized';
 import { locales, localizePathname, routing, type Locale } from '@/i18n/routing';
-import { absoluteUrl } from '@/lib/seoCatalog';
+import { absoluteUrl, cleanBaseUrl } from '@/lib/seoCatalog';
 import { getProductGalleryImages } from '@/lib/getProductFeaturedImage';
 
 type LocalizedPathBuilder = (locale: Locale) => string;
@@ -22,7 +22,7 @@ function withLocale(path: string, locale: Locale) {
 }
 
 function absolute(baseUrl: string, path: string, locale: Locale) {
-    return `${baseUrl}${withLocale(path, locale)}`;
+    return `${cleanBaseUrl(baseUrl)}${withLocale(path, locale)}`;
 }
 
 function localizedUrl(baseUrl: string, pathForLocale: LocalizedPathBuilder, lastModified?: Date, images: string[] = []) {
@@ -44,7 +44,7 @@ function localizedUrl(baseUrl: string, pathForLocale: LocalizedPathBuilder, last
 }
 
 export async function GET() {
-    const baseUrl = await getConfig('FRONTEND_URL', 'https://chouhanrugs.com');
+    const baseUrl = cleanBaseUrl(await getConfig('FRONTEND_URL', 'https://chouhanrugs.com'));
     const [products, blogs, categories] = await Promise.all([
         getAllProducts(),
         getAllBlogPosts(),

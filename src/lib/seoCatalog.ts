@@ -37,6 +37,15 @@ export function safeJsonLd(value: unknown) {
     };
 }
 
+export function isLocalhostUrl(value?: string): boolean {
+    try {
+        const url = new URL(String(value ?? ""));
+        return ["localhost", "127.0.0.1", "0.0.0.0"].includes(url.hostname);
+    } catch {
+        return false;
+    }
+}
+
 export function cleanBaseUrl(baseUrl: string): string {
     return String(baseUrl || "https://chouhanrugs.com").replace(/\/+$/, "");
 }
@@ -47,8 +56,22 @@ export function absoluteUrl(baseUrl: string, url: string): string {
     return `${cleanBaseUrl(baseUrl)}/${url.replace(/^\/+/, "")}`;
 }
 
+export function normalizedPath(path: string): string {
+    const cleanPath = String(path || "/").trim();
+    if (/^https?:\/\//i.test(cleanPath)) {
+        try {
+            const url = new URL(cleanPath);
+            return `${url.pathname}${url.search}${url.hash}` || "/";
+        } catch {
+            return "/";
+        }
+    }
+    const withoutQuery = cleanPath.split(/[?#]/)[0] || "/";
+    return withoutQuery.startsWith("/") ? withoutQuery : `/${withoutQuery}`;
+}
+
 export function localizedAbsoluteUrl(baseUrl: string, path: string, locale: Locale): string {
-    return absoluteUrl(baseUrl, localizePathname(path, locale));
+    return absoluteUrl(baseUrl, localizePathname(normalizedPath(path), locale));
 }
 
 export function localizedLanguages(
