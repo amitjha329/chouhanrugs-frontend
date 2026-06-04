@@ -1,6 +1,6 @@
 'use client'
 import { useDataConnectionContext } from '@/utils/Contexts/DataConnectionContext'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import React, { useEffect } from 'react'
 
 const HeaderCartItem = ({ icon, text, id }: { icon: string, text: string, id?: string }) => {

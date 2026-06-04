@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import defaultCraftImage from '../../../../static_assets/about_some_more_1.webp'
 import { ProductCraftSection } from '@/types/SiteDataModel'
 

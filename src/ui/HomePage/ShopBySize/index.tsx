@@ -1,5 +1,5 @@
 import { getSizesList } from '@/backend/serverActions/getSizesList'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import Link from 'next/link'
 import React from 'react'
 import SizeItems from './SizeItems'

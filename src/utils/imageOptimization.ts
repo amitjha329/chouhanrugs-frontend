@@ -31,36 +31,6 @@ export const toBase64 = (str: string) =>
     ? Buffer.from(str).toString('base64')
     : window.btoa(str)
 
-type ImageSourceLike = string | { src?: string } | null | undefined
-
-const FIREBASE_STORAGE_HOSTS = new Set([
-  'firebasestorage.googleapis.com',
-  'storage.googleapis.com',
-])
-
-export const resolveImageSrc = (src: ImageSourceLike): string => {
-  if (typeof src === 'string') return src
-  if (src && typeof src === 'object' && typeof src.src === 'string') return src.src
-  return ''
-}
-
-export const isFirebaseStorageUrl = (src: ImageSourceLike): boolean => {
-  const resolvedSrc = resolveImageSrc(src)
-
-  if (!resolvedSrc || resolvedSrc.startsWith('/') || resolvedSrc.startsWith('data:') || resolvedSrc.startsWith('blob:')) {
-    return false
-  }
-
-  try {
-    const url = new URL(resolvedSrc)
-    return FIREBASE_STORAGE_HOSTS.has(url.hostname) || url.hostname.endsWith('.firebasestorage.app')
-  } catch {
-    return false
-  }
-}
-
-export const shouldBypassNextImageOptimization = (src: ImageSourceLike): boolean => isFirebaseStorageUrl(src)
-
 /**
  * Generate a shimmer blur data URL for Next.js Image placeholder
  * @param width - Width of the shimmer effect
@@ -150,9 +120,6 @@ export default {
   getShimmerBlurDataURL,
   getColorPlaceholder,
   getGradientPlaceholder,
-  resolveImageSrc,
-  isFirebaseStorageUrl,
-  shouldBypassNextImageOptimization,
   productImageSizes,
   imageQuality,
   blurPlaceholders,

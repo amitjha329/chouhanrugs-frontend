@@ -1,5 +1,5 @@
 'use client'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import React, { FormEventHandler, useEffect, useState } from 'react'
 import { useSession } from '@/lib/auth-client'
 import { useTranslations } from 'next-intl'

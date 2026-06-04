@@ -1,5 +1,5 @@
 import { getCategoriesTop } from '@/backend/serverActions/getCategoriesTop'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import Link from 'next/link'
 import React from 'react'
 

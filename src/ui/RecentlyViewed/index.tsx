@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect, useCallback, Component, ErrorInfo, ReactNode } from 'react'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import Link from 'next/link'
 import { HiClock, HiXMark, HiTrash } from 'react-icons/hi2'
 import { getRecentlyViewed, clearRecentlyViewed, RecentlyViewedProduct } from '@/lib/recentlyViewed'

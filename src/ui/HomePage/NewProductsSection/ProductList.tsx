@@ -1,7 +1,7 @@
 import React from 'react'
 import ProductCardItem from '@/ui/Product/ProductCardItem'
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import { Link } from '@/i18n/navigation'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'

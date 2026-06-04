@@ -1,7 +1,7 @@
 import React from 'react'
 import OrderProcessItem from './OrderProcessItem'
 import clsx from 'clsx'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import order_Process_side from '../../../../static_assets/cardboard-boxes.webp'
 import SectionTitle from '@/ui/SectionTitle'
 

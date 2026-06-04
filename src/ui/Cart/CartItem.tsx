@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import { BsExclamation } from 'react-icons/bs'
 import { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CartDataModel from '@/types/CartDataModel'

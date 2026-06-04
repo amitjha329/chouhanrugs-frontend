@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import slugify from 'slugify'
 import { FiArrowRight, FiAward, FiFeather, FiShield, FiTruck } from 'react-icons/fi'
 import { getLocale, getTranslations } from 'next-intl/server'

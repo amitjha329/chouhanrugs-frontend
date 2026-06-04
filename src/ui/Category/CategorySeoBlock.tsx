@@ -1,5 +1,5 @@
 import CategoriesDataModel from '@/types/CategoriesDataModel'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import { FaLeaf } from 'react-icons/fa6'
 import { FiGrid, FiShield, FiHome } from 'react-icons/fi'
 import { headers } from 'next/headers'

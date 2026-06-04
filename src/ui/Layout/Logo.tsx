@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { Reem_Kufi_Ink } from 'next/font/google'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import Link from 'next/link'
 import React from 'react'
 

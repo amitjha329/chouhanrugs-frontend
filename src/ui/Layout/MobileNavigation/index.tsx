@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import React from 'react'
 import Logo from '../Logo'
 import { Link } from '@/i18n/navigation'

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import Link from 'next/link'
 import PopUpDataModel from '@/types/PopUpDataModel'
 import { IoMdClose } from 'react-icons/io'

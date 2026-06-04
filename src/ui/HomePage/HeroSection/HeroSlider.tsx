@@ -1,5 +1,5 @@
 "use client"
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import React from 'react'
 import Carousel from 'react-multi-carousel'
 import "react-multi-carousel/lib/styles.css";
@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { type Locale } from '@/i18n/routing';
 import { resolveLocalizedString } from '@/lib/resolveLocalized';
+import { imageQuality } from '@/utils/imageOptimization';
 
 const HeroArrow = ({ onClick, direction }: { onClick?: () => void, direction: 'left' | 'right' }) => (
     <button
@@ -98,7 +99,7 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel }) => {
                                 fill
                                 sizes="100vw"
                                 className="object-fill"
-                                quality={30}
+                                quality={imageQuality.preview}
                             />
                             {/* <div className="absolute inset-0 bg-gradient-to-r from-[#fff8ef]/90 via-[#fff8ef]/45 to-transparent md:bg-gradient-to-b md:from-black/15 md:via-black/30 md:to-black/45" />
                             <div className="absolute inset-x-6 top-8 mx-auto flex max-w-4xl flex-col items-start text-left text-primary md:inset-x-4 md:top-[18%] md:items-center md:text-center md:text-white">

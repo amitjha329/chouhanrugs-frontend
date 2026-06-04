@@ -1,6 +1,6 @@
 import React from 'react'
 import "react-multi-carousel/lib/styles.css";
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import HeroSLider from './HeroSlider';
 import CategoriesInHero from './CategoriesInHero';
 import SliderDataModel from '@/types/SliderDataModel';

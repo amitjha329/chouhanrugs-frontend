@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from '@/ui/components/OptimizedImage';
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";

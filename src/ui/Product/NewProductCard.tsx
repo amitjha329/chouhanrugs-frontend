@@ -1,5 +1,5 @@
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import { Link } from '@/i18n/navigation'
 import React from 'react'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
@@ -8,7 +8,7 @@ import { useLocale } from 'next-intl'
 import { type Locale } from '@/i18n/routing'
 import { FiArrowRight } from 'react-icons/fi'
 import { productHrefFromUrl } from '@/lib/productRouting'
-import { imageQuality, shouldBypassNextImageOptimization } from '@/utils/imageOptimization'
+import { imageQuality } from '@/utils/imageOptimization'
 
 interface itemProps extends ProductDataModelWithColorMap {
   className?: string
@@ -60,8 +60,6 @@ const NewProductCard = (product: itemProps) => {
   const { sellingPrice, msrp } = getProductPrices(product)
   const hasDiscount = Number.isFinite(msrp) && Number.isFinite(sellingPrice) && msrp > sellingPrice
   const productHref = productHrefFromUrl(product.productURL, locale)
-  const bypassImageOptimization = shouldBypassNextImageOptimization(primaryImage)
-
   if (!primaryImage || !name || !productHref || !Number.isFinite(sellingPrice)) return null
 
   return (
@@ -72,7 +70,6 @@ const NewProductCard = (product: itemProps) => {
             src={primaryImage}
             alt={name}
             fill
-            unoptimized={bypassImageOptimization}
             className="object-fill transition duration-500 group-hover:scale-[1.035]"
             loading={shouldLoadEager ? 'eager' : 'lazy'}
             fetchPriority={shouldLoadEager ? 'high' : 'auto'}

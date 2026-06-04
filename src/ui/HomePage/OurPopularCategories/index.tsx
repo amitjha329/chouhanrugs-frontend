@@ -1,5 +1,6 @@
 import React from 'react'
-import Image, { type StaticImageData } from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
+import type { StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { getLocale, getTranslations } from 'next-intl/server'
 import cushion_pop from '../../../../static_assets/cushion_popular.webp'

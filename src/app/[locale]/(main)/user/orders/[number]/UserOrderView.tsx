@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import Link from 'next/link'
 import { randomInt } from 'crypto'
 import OrderDataModel from '@/types/OrderDataModel'
@@ -11,6 +11,7 @@ import { HiOutlineCube, HiOutlineTruck, HiOutlineCheckCircle, HiOutlineXCircle, 
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { type Locale } from '@/i18n/routing'
+import { imageQuality } from '@/utils/imageOptimization'
 
 // Status configuration for different order states
 const statusConfig = {
@@ -158,7 +159,7 @@ const UserOrderView = ({ orderItem, productsList, shippingAddress, locale }: { o
                                 <Image 
                                     className="object-cover group-hover:scale-105 transition-transform duration-300" 
                                     sizes="(max-width: 640px) 80px, 96px" 
-                                    quality={60} 
+                                    quality={imageQuality.standard} 
                                     src={getProductFeaturedImage(product)} 
                                     alt={resolveLocalizedString(product.productName, locale) || resolveLocalizedString(product.productTitle, locale)} 
                                     fill 

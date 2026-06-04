@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import React from 'react'
 
 const OrderProcessItem = ({

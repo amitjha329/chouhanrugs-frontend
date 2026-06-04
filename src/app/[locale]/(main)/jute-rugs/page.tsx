@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import Link from 'next/link'
 import { Metadata } from 'next'
 import image_1 from "./images/jute-rugs-india-chouhanrugs.webp"

@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 import React from 'react'
-import Image from 'next/image'
+import Image from '@/ui/components/OptimizedImage'
 import { BsExclamation } from 'react-icons/bs'
 import { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CartDataModel from '@/types/CartDataModel'
@@ -12,6 +12,7 @@ import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage } from '@/lib/getProductFeaturedImage'
 import { useLocale } from 'next-intl'
 import { type Locale } from '@/i18n/routing'
+import { imageQuality } from '@/utils/imageOptimization'
 
 const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurrency: Currency }) => {
     const locale = useLocale() as Locale
@@ -55,7 +56,7 @@ const CartItemClient = ({ item, userCurrency }: { item: CartDataModel, userCurre
                         <Image
                             height={128}
                             width={128}
-                            quality={75}
+                            quality={imageQuality.standard}
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                             src={getProductFeaturedImage(item.cartProduct[0])}
                             alt={name}
