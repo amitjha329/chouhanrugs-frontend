@@ -82,13 +82,14 @@ const CenterFeaturedProductCard = ({
     const reviewAverage = Number(product.productReviews?.average ?? 0)
     const reviewCount = Number(product.productReviews?.totalReviews ?? 0)
     const hasReviews = reviewCount > 0
+    const serializedProductId = product._id ? String(product._id) : undefined
 
     if (!primaryImage || !name || !productHref) return null
 
     return (
         <article className="group relative flex h-full min-h-0 flex-col overflow-hidden rounded-[14px] border border-[#eadfd6] bg-white p-2 shadow-[0_12px_30px_rgba(83,53,28,0.12)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(83,53,28,0.16)]">
             <WishListButton
-                productDetails={product}
+                productDetails={{ _id: serializedProductId, objectID: product.objectID }}
                 className="!right-4 !top-4 !h-12 !w-12 !bg-white !shadow-[0_5px_18px_rgba(83,53,28,0.14)] !ring-[#eadfd6]"
                 iconClassName="!h-[30px] !w-[34px]"
             />

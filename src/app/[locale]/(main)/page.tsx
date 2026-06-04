@@ -85,6 +85,12 @@ async function HeroWithSlider({ sliderId }: { sliderId: number }) {
   return <HeroSection slider={sliderData} />
 }
 
+// Keep home page shell rendering while hero config loads.
+async function HomeHeroSection() {
+  const homePageData = await getPageData("home")
+  return <HeroWithSlider sliderId={homePageData.sliderId ?? 1} />
+}
+
 // Wrapper component for footer SEO content
 async function FooterSEOContent() {
   const footerContent = await getPageFooterContent("home")
@@ -96,15 +102,21 @@ async function FooterSEOContent() {
   )
 }
 
-const HomePage = async () => {
-  // Fetch only what's needed for initial render
-  const homePageData = await getPageData("home")
-  
+const HomeHeroFallback = () => (
+  <section className="bg-[#fbf7ef] pb-8 md:pb-10" aria-hidden="true">
+    <div className="aspect-video w-full bg-[#f4ecdf]" />
+    <div className="fluid_container relative z-10 mt-6 px-4 md:-mt-8 md:px-0">
+      <div className="h-20 rounded-2xl border border-primary/20 bg-secondary/10 md:h-24" />
+    </div>
+  </section>
+)
+
+const HomePage = () => {
   return (
     <>
       {/* Hero Section - Critical above-fold content */}
-      <Suspense fallback={null}>
-        <HeroWithSlider sliderId={homePageData.sliderId ?? 1} />
+      <Suspense fallback={<HomeHeroFallback />}>
+        <HomeHeroSection />
       </Suspense>
       
       {/* New Products Section */}

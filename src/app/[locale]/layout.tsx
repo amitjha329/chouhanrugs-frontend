@@ -4,6 +4,10 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import React, { Suspense } from 'react';
 
+const LocaleLayoutFallback = () => (
+    <div className="min-h-screen w-screen bg-[#fbf7ef]" aria-hidden="true" />
+)
+
 /**
  * Locale layout — wraps all pages under `/[locale]/...` with
  * NextIntlClientProvider so that `useTranslations()` works in Client
@@ -43,7 +47,7 @@ export default function LocaleLayout({
     params: Promise<{ locale: string }>;
 }) {
     return (
-        <Suspense fallback={null}>
+        <Suspense fallback={<LocaleLayoutFallback />}>
             <LocaleLayoutContent params={params}>{children}</LocaleLayoutContent>
         </Suspense>
     );

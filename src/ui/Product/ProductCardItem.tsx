@@ -49,6 +49,7 @@ const ProductCardItem = (props: CompoProps) => {
     const reviewAverage = Number(props.productReviews?.average ?? 0)
     const reviewCount = Number(props.productReviews?.totalReviews ?? 0)
     const hasReviews = reviewCount > 0
+    const serializedProductId = props._id ? String(props._id) : undefined
 
     // Load first 4 images eagerly, rest lazy
     const shouldLoadEager = (props.index ?? 0) < 4
@@ -100,7 +101,7 @@ const ProductCardItem = (props: CompoProps) => {
     if (layout === 'featuredOverlay') {
         return (
             <div className={clsx('group relative w-full overflow-hidden rounded-[28px] border border-[#eadfd6] bg-white text-left shadow-[0_12px_30px_rgba(83,53,28,0.08)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(83,53,28,0.14)]', props.className, ProductsCardStyle.product_card)}>
-                <WishListButton productDetails={props} />
+                <WishListButton productDetails={{ _id: serializedProductId, objectID: props.objectID }} />
                 <Link href={productHref} className="block h-full" prefetch={false}>
                     <div className={clsx('relative min-h-[380px] overflow-hidden md:min-h-[460px]', props.imageWrapperClassName)}>
                         <Image
@@ -145,7 +146,7 @@ const ProductCardItem = (props: CompoProps) => {
 
     return (
         <div className={clsx('group relative w-full overflow-hidden rounded-xl border border-[#eadfd6] bg-white text-left shadow-[0_8px_24px_rgba(83,53,28,0.06)] transition duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-[0_14px_30px_rgba(83,53,28,0.12)]', fillHeight && 'h-full', props.className, ProductsCardStyle.product_card)}>
-            <WishListButton productDetails={props} />
+            <WishListButton productDetails={{ _id: serializedProductId, objectID: props.objectID }} />
             <Link href={productHref} className={clsx('block', fillHeight && 'flex h-full flex-col')} prefetch={false}>
                 <div className={clsx(
                     'relative overflow-hidden bg-[#f8f1ea]',

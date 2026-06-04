@@ -2,7 +2,6 @@
 import React, { KeyboardEventHandler, MouseEventHandler, useState } from 'react'
 import ProductsCardStyle from './WishlistButton.module.scss'
 import clsx from 'clsx'
-import { ProductDataModel } from '@/types/ProductDataModel'
 import onPageNotifications from '@/utils/onPageNotifications'
 import deleteProductFromWishlist from '@/backend/serverActions/deleteProductFromWishlist'
 import { useDataConnectionContext } from '@/utils/Contexts/DataConnectionContext'
@@ -16,7 +15,7 @@ const WishListButton = ({
     className,
     iconClassName,
 }: {
-    productDetails: ProductDataModel
+    productDetails: { _id?: string; objectID?: string }
     className?: string
     iconClassName?: string
 }) => {
@@ -24,6 +23,7 @@ const WishListButton = ({
     const { wishlistItems, refreshWishList } = useDataConnectionContext()
     const { data: session } = useSession()
     const router = useRouter()
+    const productId = productDetails._id ?? productDetails.objectID ?? ""
 
     const addToWishlist: MouseEventHandler<HTMLDivElement> = (e) => {
         e.preventDefault()
@@ -31,12 +31,16 @@ const WishListButton = ({
             router.push("/signin?cb=" + encodeURIComponent(window.location.pathname))
             return
         }
-        !wishlistItems.includes((productDetails._id ?? productDetails.objectID).toString() ?? "") ? addProductToWishlist(productDetails._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {
+        if (!productId) {
+            onPageNotifications("error", "Product id is missing").catch(e => console.log(e))
+            return
+        }
+        !wishlistItems.includes(productId) ? addProductToWishlist(productId, (session?.user as { id: string }).id).then(res => {
             res.ack ? onPageNotifications("success", "Added To Wishlist").catch(e => console.log(e)) : res.ack && onPageNotifications("error", "Failed Adding To Wishlist").catch(e => console.log(e))
         }).catch(err => {
             onPageNotifications("error", "Failed Adding To Wishlist").catch(e => console.log(e))
             console.log(err)
-        }).finally(() => { refreshWishList() }) : deleteProductFromWishlist(productDetails._id?.toString() ?? "", (session?.user as { id: string }).id).then(res => {
+        }).finally(() => { refreshWishList() }) : deleteProductFromWishlist(productId, (session?.user as { id: string }).id).then(res => {
             res.ack ? onPageNotifications("success", "Removed From Wishlist").catch(e => console.log(e)) : res.ack && onPageNotifications("error", "Failed Removing From Wishlist").catch(e => console.log(e))
         }).catch(err => {
             onPageNotifications("error", "Failed Removing From Wishlist").catch(e => console.log(e))
