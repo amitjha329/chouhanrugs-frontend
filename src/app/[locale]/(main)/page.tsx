@@ -18,12 +18,6 @@ import LazySection from '@/ui/LazySection'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog'
-import {
-  HeroSkeleton,
-  ProductGridSkeleton,
-  SectionTitleSkeleton,
-  CategorySkeleton
-} from './loading'
 import { getLocale } from "next-intl/server";
 
 // Lazy load below-the-fold sections to reduce initial DOM size
@@ -37,7 +31,7 @@ const HomePageVideoSection = dynamic(() => import('@/ui/HomePage/HomePageVideoSe
 const OurPopularCategories = dynamic(() => import('@/ui/HomePage/OurPopularCategories'), { ssr: true })
 const ShopBySize = dynamic(() => import('@/ui/HomePage/ShopBySize'), { ssr: true })
 
-const DynamicTestimonials = dynamic(() => import('@/ui/Testimonials'), { loading: () => <div className="min-h-[200px] flex items-center justify-center">Loading testimonials...</div> })
+const DynamicTestimonials = dynamic(() => import('@/ui/Testimonials'), { loading: () => null })
 const DynamicAboveFooterSEOContet = dynamic(() => import('@/ui/HomePage/AboveFooterSEOContet'))
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -109,29 +103,29 @@ const HomePage = async () => {
   return (
     <>
       {/* Hero Section - Critical above-fold content */}
-      <Suspense fallback={<HeroSkeleton isMobile={false} />}>
+      <Suspense fallback={null}>
         <HeroWithSlider sliderId={homePageData.sliderId ?? 1} />
       </Suspense>
       
       {/* New Products Section */}
-      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+      <Suspense fallback={null}>
         <NewProductsSection />
       </Suspense>
 
       {/* Shop by Color - Uses content-visibility for perf */}
       <LazySection minHeight="300px">
-        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+        <Suspense fallback={null}>
           <ShopByColor />
         </Suspense>
       </LazySection>
       
       {/* Featured Products */}
-      <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+      <Suspense fallback={null}>
         <FeaturedProducts />
       </Suspense>
 
       {/* Right-image banner - DB-backed optional section */}
-      <Suspense fallback={<div className="min-h-[400px] animate-pulse bg-gray-100" />}>
+      <Suspense fallback={null}>
         <RightImageSideContent />
       </Suspense>
       
@@ -140,42 +134,42 @@ const HomePage = async () => {
       
       {/* Popular Categories - Uses content-visibility for perf */}
       <LazySection minHeight="300px">
-        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+        <Suspense fallback={null}>
           <OurPopularCategories />
         </Suspense>
       </LazySection>
       
       {/* Trending Products - Uses content-visibility for perf */}
       <LazySection minHeight="500px">
-        <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <Suspense fallback={null}>
           <TrendingProducts />
         </Suspense>
       </LazySection>
       
       {/* Jute Hand Bags Showcase - Below trending products */}
       <LazySection minHeight="500px">
-        <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <Suspense fallback={null}>
           <JuteHandBagsShowcase />
         </Suspense>
       </LazySection>
 
       {/* Dynamic product showcase - DB-backed optional section */}
       <LazySection minHeight="500px">
-        <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <Suspense fallback={null}>
           <DynamicProductShowcase />
         </Suspense>
       </LazySection>
 
       {/* Home video banner - DB-backed optional section */}
       <LazySection minHeight="400px">
-        <Suspense fallback={<div className="min-h-[400px] animate-pulse bg-gray-100" />}>
+        <Suspense fallback={null}>
           <HomePageVideoSection />
         </Suspense>
       </LazySection>
       
       {/* Shop by Size - Uses content-visibility for perf */}
       <LazySection minHeight="600px">
-        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+        <Suspense fallback={null}>
           <ShopBySize />
         </Suspense>
       </LazySection>
@@ -183,14 +177,14 @@ const HomePage = async () => {
       
       {/* Shop by Room - Uses content-visibility for perf */}
       <LazySection minHeight="500px">
-        <Suspense fallback={<><SectionTitleSkeleton /><CategorySkeleton /></>}>
+        <Suspense fallback={null}>
           <ShopByRoom />
         </Suspense>
       </LazySection>
       
       {/* Best Sellers Carousel - Uses content-visibility for perf */}
       <LazySection minHeight="400px">
-        <Suspense fallback={<><SectionTitleSkeleton /><ProductGridSkeleton /></>}>
+        <Suspense fallback={null}>
           <BestSellersSection isMobile={false} />
         </Suspense>
       </LazySection>
@@ -199,7 +193,7 @@ const HomePage = async () => {
       <DynamicTestimonials />
       
       {/* SEO Footer Content */}
-      <Suspense fallback={<div className="container mx-auto pb-5 animate-pulse"><div className="h-20 bg-gray-200 rounded" /></div>}>
+      <Suspense fallback={null}>
         <FooterSEOContent />
       </Suspense>
     </>

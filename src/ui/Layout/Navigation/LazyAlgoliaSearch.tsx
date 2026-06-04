@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 const AlgoliaSearch = dynamic(() => import('./AlgoliaSearch'), {
     ssr: false,
-    loading: () => <div className="h-12 w-full animate-pulse rounded bg-gray-100" />,
+    loading: () => null,
 })
 
 type Props = {

@@ -2,7 +2,7 @@
 
 import Image from '@/ui/components/OptimizedImage'
 import Link from "next/link"
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -91,15 +91,16 @@ const INTERVAL_MAX = 22000       // max 22s between popups
 const INITIAL_DELAY = 7000       // first popup after 7s
 
 export default function PurchaseNotification({ products, translations }: { products: NotificationProduct[], translations: NotificationTranslations }) {
+    const validProducts = useMemo(() => products.filter(product => product.name && product.url), [products])
     const [notification, setNotification] = useState<Notification | null>(null)
     const [visible, setVisible] = useState(false)
     const [dismissed, setDismissed] = useState(false)
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const showNotification = useCallback(() => {
-        if (dismissed || products.length === 0) return
+        if (dismissed || validProducts.length === 0 || translations.timeAgoOptions.length === 0) return
         const timeAgo = pickRandom(translations.timeAgoOptions)
-        const notif = generateNotification(products, timeAgo)
+        const notif = generateNotification(validProducts, timeAgo)
         setNotification(notif)
         setVisible(true)
 
@@ -107,7 +108,7 @@ export default function PurchaseNotification({ products, translations }: { produ
         timerRef.current = setTimeout(() => {
             setVisible(false)
         }, SHOW_DURATION)
-    }, [dismissed, products, translations.timeAgoOptions])
+    }, [dismissed, validProducts, translations.timeAgoOptions])
 
     useEffect(() => {
         // Initial delay before first notification
@@ -208,7 +209,7 @@ export default function PurchaseNotification({ products, translations }: { produ
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-green-500">
                             <path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
                         </svg>
-                        <span className="text-[10px] font-medium text-green-600 sm:text-[11px]">Verified Purchase</span>
+                        <span className="text-[10px] font-medium text-green-600 sm:text-[11px]">{translations.verifiedPurchase}</span>
                     </div>
                 </div>
             </div>

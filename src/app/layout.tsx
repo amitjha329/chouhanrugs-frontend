@@ -54,14 +54,32 @@ const RootEnhancements = async ({ children }: { children: ReactNode }) => {
         if (typeof value === 'function') return value(values)
         if (typeof value !== 'string') return key
         if (!values) return value
-        return Object.entries(values).reduce((text, [name, replacement]) => text.replace(`{${name}}`, String(replacement)), value)
+
+        const withPlurals = value.replace(
+            /\{(\w+),\s*plural,\s*one\s*\{([^{}]*)\}\s*other\s*\{([^{}]*)\}\s*\}/g,
+            (_match, name: string, one: string, other: string) => {
+                const rawCount = values[name]
+                const count = typeof rawCount === 'number' ? rawCount : Number(rawCount)
+                const template = count === 1 ? one : other
+                return template.replace(/#/g, Number.isFinite(count) ? String(count) : String(rawCount ?? ''))
+            }
+        )
+
+        return Object.entries(values).reduce((text, [name, replacement]) => text.replaceAll(`{${name}}`, String(replacement)), withPlurals)
     }
     const dir = locale === 'ar' ? 'rtl' : 'ltr'
-    const purchaseProducts = notifProducts.map(p => ({
-        name: resolveLocalizedString(p.productName, locale) || resolveLocalizedString(p.productTitle, locale),
-        url: `/products/${resolveLocalizedString(p.productURL, locale)}`,
-        image: getProductFeaturedImage(p),
-    }))
+    const purchaseProducts = notifProducts
+        .map(p => {
+            const name = resolveLocalizedString(p.productName, locale) || resolveLocalizedString(p.productTitle, locale)
+            const slug = resolveLocalizedString(p.productURL, locale)
+
+            return {
+                name,
+                url: slug ? `/products/${slug}` : '',
+                image: getProductFeaturedImage(p),
+            }
+        })
+        .filter(product => product.name && product.url)
     const MINUTE_OPTIONS = [1, 2, 3, 5, 8, 12, 15, 20, 25, 32, 45]
     const HOUR_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
     const DAY_OPTIONS = [2, 3, 4, 5, 6]
