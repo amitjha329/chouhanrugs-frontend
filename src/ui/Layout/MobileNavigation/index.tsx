@@ -70,7 +70,7 @@ const MobileNavigation = async () => {
                             <LocaleSwitcher />
                         </div>
                         {session?.user ? (
-                            <div className="dropdown dropdown-end">
+                            <div className="dropdown dropdown-end relative z-[10030]">
                                 <button
                                     type="button"
                                     tabIndex={0}
@@ -82,7 +82,7 @@ const MobileNavigation = async () => {
                                 </button>
                                 <ul
                                     tabIndex={0}
-                                    className="dropdown-content menu menu-sm z-[70] mt-2 w-44 rounded-xl border border-primary/10 bg-[#fffaf5] p-2 text-sm font-semibold text-base-content shadow-xl"
+                                    className="dropdown-content menu menu-sm z-[10040] mt-2 w-44 rounded-xl border border-primary/10 bg-[#fffaf5] p-2 text-sm font-semibold text-base-content shadow-xl"
                                 >
                                     <li><Link href="/user/profile">{t('myProfile')}</Link></li>
                                     <li><Link href="/user/orders">{t('orders')}</Link></li>
@@ -100,7 +100,7 @@ const MobileNavigation = async () => {
                     </div>
                 </div>
 
-                <div className='pt-3'>
+                <div className='relative z-0 pt-3'>
                     <AlgoliaMobileSearch
                         appId={algolia.ALGOLIA_APPID}
                         apiKey={algolia.ALGOLIA_KEY_CLIENT}

@@ -106,8 +106,8 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
     }
 
     return (
-        <main className="min-h-screen bg-[#fbfaf7]">
-            <div className="fluid_container mx-auto px-4 py-5 md:px-0 md:py-8">
+        <main className="min-h-screen bg-base-100">
+            <div className="fluid_container mx-auto px-3 py-4 sm:px-5 sm:py-6 md:px-0 md:py-8">
                 <div className="mb-5">
                     <Link href="/cart" className="mb-2 inline-flex items-center gap-2 text-xs font-semibold text-primary">
                         <HiArrowLeft className="h-4 w-4" />
@@ -120,7 +120,7 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
                     <p className="mt-1 text-sm text-base-content/60">Review your cart, then sign in to choose delivery and payment.</p>
                 </div>
 
-                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
                     <section className="space-y-3">
                         {cart.length > 0 ? cart.map((item) => (
                             <CartLineItem
@@ -166,11 +166,11 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
                                             type="text"
                                             id="guest-coupon"
                                             placeholder="Enter code"
-                                            className={clsx('input input-bordered input-sm flex-1 bg-base-200/50', couponApplied && 'border-success', couponError && 'border-error')}
+                                            className={clsx('h-9 min-w-0 flex-1 rounded-md border border-primary/10 bg-base-100 px-3 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10', couponApplied && 'border-success', couponError && 'border-error')}
                                             value={couponCode}
                                             onChange={event => setCouponCode(event.target.value)}
                                         />
-                                        <button className="btn btn-primary btn-sm" onClick={applyCoupon}>Apply</button>
+                                        <button className="rounded-md bg-primary px-3 text-sm font-semibold text-primary-content transition hover:bg-primary/90" onClick={applyCoupon}>Apply</button>
                                     </div>
                                     {couponApplied && <p className="text-xs text-success">Coupon applied: -{userCurrency?.currencySymbol}{deductable.toFixed(2)}</p>}
                                     {couponError && <p className="text-xs text-error">{couponError}</p>}
@@ -182,7 +182,7 @@ const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
                                     </div>
                                 </div>
                                 <button
-                                    className="btn btn-primary w-full gap-2"
+                                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-content transition hover:bg-primary/90 disabled:opacity-50"
                                     disabled={cart.length === 0}
                                     onClick={() => router.push('/signin?cb=/cart/checkout')}
                                 >

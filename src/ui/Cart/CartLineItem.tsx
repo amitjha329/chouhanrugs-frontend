@@ -30,6 +30,10 @@ const Chip = ({ children }: { children: React.ReactNode }) => (
     </span>
 )
 
+const UpdatingDot = () => (
+    <span className="h-2 w-2 animate-pulse rounded-full bg-primary" aria-label="Updating" />
+)
+
 const CartLineItem = ({
     item,
     userCurrency = fallbackCurrency,
@@ -60,7 +64,7 @@ const CartLineItem = ({
                     <p className="text-xs text-base-content/60">Remove this item to continue.</p>
                 </div>
                 {onRemove && (
-                    <button className="btn btn-ghost btn-sm text-error" onClick={onRemove} disabled={isUpdating}>
+                    <button className="rounded-md border border-error/15 px-3 py-2 text-sm font-semibold text-error transition hover:bg-error/5 disabled:opacity-50" onClick={onRemove} disabled={isUpdating}>
                         <HiOutlineTrash className="h-4 w-4" />
                     </button>
                 )}
@@ -69,8 +73,8 @@ const CartLineItem = ({
     }
 
     return (
-        <article className="grid gap-3 rounded-lg border border-primary/10 bg-base-100 p-3 shadow-sm transition hover:border-primary/25 sm:grid-cols-[112px_minmax(0,1fr)] sm:p-4">
-            <Link href={`/products/${productUrl}`} prefetch={false} className="relative aspect-square overflow-hidden rounded-md bg-base-200">
+        <article className="grid gap-3 rounded-lg border border-primary/10 bg-base-100 p-3 shadow-sm transition hover:border-primary/25 sm:grid-cols-[104px_minmax(0,1fr)] sm:p-4 md:grid-cols-[112px_minmax(0,1fr)]">
+            <Link href={`/products/${productUrl}`} prefetch={false} className="relative aspect-[4/3] overflow-hidden rounded-md bg-base-200 sm:aspect-square">
                 <Image
                     src={getProductFeaturedImage(product)}
                     alt={name}
@@ -90,7 +94,7 @@ const CartLineItem = ({
                         {product.productBrand && <p className="mt-1 text-xs text-base-content/50">{product.productBrand}</p>}
                     </div>
                     {onRemove && (
-                        <button className="btn btn-ghost btn-xs h-8 min-h-8 w-8 rounded-full p-0 text-error hover:bg-error/10" onClick={onRemove} disabled={isUpdating} aria-label="Remove item">
+                        <button className="flex h-8 w-8 items-center justify-center rounded-md text-error transition hover:bg-error/10 disabled:opacity-50" onClick={onRemove} disabled={isUpdating} aria-label="Remove item">
                             <HiOutlineTrash className="h-4 w-4" />
                         </button>
                     )}
@@ -114,13 +118,13 @@ const CartLineItem = ({
                     <div>
                         <p className="text-[11px] uppercase tracking-wide text-base-content/45">Quantity</p>
                         <div className="mt-1 inline-flex overflow-hidden rounded-md border border-base-300 bg-base-100">
-                            <button className="flex h-9 w-9 items-center justify-center text-base-content/70 transition hover:bg-base-200 disabled:opacity-40" onClick={() => onQuantityChange?.(-1)} disabled={isUpdating} aria-label="Decrease quantity">
+                            <button className="flex h-9 w-9 items-center justify-center text-base-content/70 transition hover:bg-primary/5 hover:text-primary disabled:opacity-40" onClick={() => onQuantityChange?.(-1)} disabled={isUpdating} aria-label="Decrease quantity">
                                 <HiMinus className="h-4 w-4" />
                             </button>
                             <div className="flex h-9 min-w-11 items-center justify-center border-x border-base-300 px-3 text-sm font-semibold">
-                                {isUpdating ? <span className="loading loading-spinner loading-xs" /> : item.quantity}
+                                {isUpdating ? <UpdatingDot /> : item.quantity}
                             </div>
-                            <button className="flex h-9 w-9 items-center justify-center text-base-content/70 transition hover:bg-base-200 disabled:opacity-40" onClick={() => onQuantityChange?.(1)} disabled={isUpdating || item.quantity >= 10} aria-label="Increase quantity">
+                            <button className="flex h-9 w-9 items-center justify-center text-base-content/70 transition hover:bg-primary/5 hover:text-primary disabled:opacity-40" onClick={() => onQuantityChange?.(1)} disabled={isUpdating || item.quantity >= 10} aria-label="Increase quantity">
                                 <HiPlus className="h-4 w-4" />
                             </button>
                         </div>

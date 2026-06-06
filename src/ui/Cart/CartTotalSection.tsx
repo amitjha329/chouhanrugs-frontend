@@ -29,38 +29,38 @@ const CartTotalSection = ({ cartItems, userCurrency = defaultCurrency }: { cartI
     let cartTotal = subTotal
 
     return (
-        <div className="bg-base-100 rounded-2xl border border-base-300/50 overflow-hidden">
+        <div className="overflow-hidden rounded-lg border border-primary/10 bg-base-100">
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
-                <h2 className="font-semibold text-lg text-base-content flex items-center gap-2">
-                    <HiOutlineReceiptPercent className="w-5 h-5 text-primary" />
+            <div className="border-b border-primary/10 bg-primary/5 px-4 py-3 sm:px-5">
+                <h2 className="flex items-center gap-2 text-base font-semibold text-base-content">
+                    <HiOutlineReceiptPercent className="h-5 w-5 text-primary" />
                     {t('orderSummary')}
                 </h2>
             </div>
 
             {/* Summary Details */}
-            <div className="p-6 space-y-4">
-                <div className="flex justify-between items-center text-base-content/70">
+            <div className="space-y-4 p-4 sm:p-5">
+                <div className="flex items-center justify-between gap-3 text-sm text-base-content/70">
                     <span>{t('subtotalItems', { count: cartItems.length })}</span>
-                    <span className="font-medium text-base-content">{userCurrency.currencySymbol} {subTotal.toFixed(2)}</span>
+                    <span className="shrink-0 font-medium text-base-content">{userCurrency.currencySymbol} {subTotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center text-base-content/70">
+                <div className="flex items-center justify-between gap-3 text-sm text-base-content/70">
                     <span>{t('shipping')}</span>
-                    <span className="text-success font-medium">{t('calculatedAtCheckout')}</span>
+                    <span className="shrink-0 text-right font-medium text-success">{t('calculatedAtCheckout')}</span>
                 </div>
                 
-                <div className="border-t border-base-300/50 pt-4 mt-4">
-                    <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-base-content">{t('estimatedTotal')}</span>
-                        <span className="text-xl font-bold text-primary">{userCurrency.currencySymbol} {cartTotal.toFixed(2)}</span>
+                <div className="mt-4 border-t border-primary/10 pt-4">
+                    <div className="flex items-center justify-between gap-3">
+                        <span className="font-semibold text-base-content">{t('estimatedTotal')}</span>
+                        <span className="shrink-0 text-xl font-bold text-primary">{userCurrency.currencySymbol} {cartTotal.toFixed(2)}</span>
                     </div>
                 </div>
 
                 <GoToCheckoutBtn isDisabled={cartItems && cartItems.length == 0} />
 
                 {/* Security Badge */}
-                <div className="flex items-center justify-center gap-2 pt-4 text-xs text-base-content/60">
-                    <HiOutlineShieldCheck className="w-4 h-4 text-success" />
+                <div className="flex items-center justify-center gap-2 pt-4 text-center text-xs text-base-content/60">
+                    <HiOutlineShieldCheck className="h-4 w-4 shrink-0 text-success" />
                     <span>{t('secureCheckoutSSL')}</span>
                 </div>
             </div>

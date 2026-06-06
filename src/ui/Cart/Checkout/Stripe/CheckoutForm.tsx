@@ -80,7 +80,12 @@ export default function CheckoutForm({ clientSecret, shippingId }: { clientSecre
     setIsLoading(false);
   };
   return (
-    <form id="payment-form" onSubmit={handleSubmit} className="card card-body mt-5 shadow-lg bg-base-100 border border-base-300">
+    <form id="payment-form" onSubmit={handleSubmit} className="mt-4 rounded-lg border border-primary/10 bg-base-100 p-4">
+      <div className="mb-4">
+        <h3 className="text-base font-semibold text-base-content">Card payment</h3>
+        <p className="mt-1 text-xs text-base-content/55">Complete the secure Stripe payment form.</p>
+      </div>
+      <div className="space-y-4">
       <LinkAuthenticationElement
         id="link-authentication-element"
         onChange={(e) => setEmail(e.value.email)}
@@ -89,13 +94,14 @@ export default function CheckoutForm({ clientSecret, shippingId }: { clientSecre
       <PaymentElement id="payment-element" options={{
         layout: "tabs", defaultValues: { billingDetails: { email: session?.user?.email ?? "", name: session?.user?.name ?? "" } }
       }} />
-      <button disabled={isLoading || !stripe || !elements} id="submit" className="btn btn-primary text-primary-content">
+      <button disabled={isLoading || !stripe || !elements} id="submit" className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-content transition hover:bg-primary/90 disabled:opacity-60">
         <span id="button-text">
-          {isLoading ? <div className="loading loading-spinner loading-sm"></div> : "Pay now"}
+          {isLoading ? <span className="inline-flex items-center gap-2"><span className="h-2 w-2 animate-pulse rounded-full bg-primary-content" />Processing</span> : "Pay now"}
         </span>
       </button>
+      </div>
       {/* Show any error or success messages */}
-      {message && <div id="payment-message" className={`mt-3 p-3 rounded-lg text-sm ${
+      {message && <div id="payment-message" className={`mt-3 rounded-md border p-3 text-sm ${
         message.includes("succeeded") ? "bg-success/10 text-success border border-success/20" : 
         message.includes("processing") ? "bg-info/10 text-info border border-info/20" :
         "bg-error/10 text-error border border-error/20"

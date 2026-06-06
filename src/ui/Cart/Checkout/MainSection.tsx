@@ -29,7 +29,6 @@ import ShippingSelector from './ShippingSelector'
 import Currency from '@/types/Currency'
 import { useDataConnectionContext } from '@/utils/Contexts/DataConnectionContext'
 import verifyRazorpayPayment from '@/backend/serverActions/verifyRazorpayPayment'
-import Loader from '@/ui/Loader'
 import saveOrderAfterPay from '@/backend/serverActions/saveOrderAfterPay'
 import generateRazorPayOrder from '@/backend/serverActions/generateRazorPayOrder'
 import validateCoupon from '@/backend/serverActions/validateCoupon'
@@ -50,6 +49,13 @@ import Script from 'next/script'
 // Lazy load heavy payment components
 const LazyCheckoutForm = lazy(() => import('./Stripe/CheckoutForm'))
 const LazyPayPalButtons = lazy(() => import('@paypal/react-paypal-js').then(mod => ({ default: mod.PayPalButtons })))
+
+const InlineProgress = ({ label }: { label: string }) => (
+    <div className="flex min-h-20 items-center justify-center rounded-md border border-primary/10 bg-primary/5 px-4 py-5 text-sm font-medium text-primary">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+        <span className="ml-2">{label}</span>
+    </div>
+)
 
 var calledStripeFinal = 0
 const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shippingList, userCurrency }: {
@@ -646,7 +652,13 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
     }, [cartSyncing, refreshCartItems, session?.user?.id])
 
     if (cartSyncing) {
-        return <Loader />
+        return (
+            <div className="min-h-[50vh] bg-base-100 px-4 py-6 sm:px-6">
+                <div className="mx-auto max-w-3xl">
+                    <InlineProgress label="Syncing cart" />
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -654,30 +666,28 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
             {paymentMethod?.partner === "RAZORPAY" && (
                 <Script id="razorpay-checkout" src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
             )}
-            <div className="min-h-screen bg-gradient-to-b from-base-200/50 to-base-100">
-                <div className="container max-w-7xl py-6 sm:py-10 mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-base-100">
+                <div className="container mx-auto max-w-7xl px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8">
                     {/* Page Header */}
-                    <div className="mb-8">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-base-content">{t('title')}</h1>
-                        <p className="text-base-content/60 mt-1">{t('completeOrder')}</p>
+                    <div className="mb-4 sm:mb-6">
+                        <h1 className="text-xl font-semibold text-base-content sm:text-2xl">{t('title')}</h1>
+                        <p className="mt-1 text-sm text-base-content/60">{t('completeOrder')}</p>
                     </div>
 
-                    <div className="flex flex-col lg:flex-row gap-8">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
                         {/* Main Content - Left Side */}
-                        <div className="flex-1 space-y-6">
+                        <div className="min-w-0 flex-1 space-y-4 sm:space-y-5">
                             {/* Delivery Address Section */}
-                            <div className="bg-base-100 rounded-2xl shadow-sm border border-base-300/50 overflow-hidden">
-                                <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
+                            <div className="bg-base-100 rounded-lg shadow-sm border border-primary/10 overflow-hidden">
+                                <div className="border-b border-primary/10 bg-primary/5 px-4 py-3 sm:px-5">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">1</div>
-                                        <h2 className="text-lg font-semibold text-base-content">{t('deliveryAddress')}</h2>
+                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-content">1</div>
+                                        <h2 className="min-w-0 text-base font-semibold text-base-content">{t('deliveryAddress')}</h2>
                                     </div>
                                 </div>
-                                <div className="p-6">
+                                <div className="p-3 sm:p-5">
                                     {addressLoading && (
-                                        <div className="h-24 flex items-center justify-center">
-                                            <span className="loading loading-spinner loading-lg text-primary"></span>
-                                        </div>
+                                        <InlineProgress label="Loading addresses" />
                                     )}
                                     {addresses.length > 0 && !addAddress && (
                                         <>
@@ -689,20 +699,20 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                                 onDeleteAddress={handleDeleteAddress}
                                             />
                                             <button 
-                                                className="mt-4 w-full flex items-center justify-center gap-2 py-4 px-5 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 text-primary font-medium transition-all duration-200" 
+                                                className="mt-3 flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-primary/30 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary/5" 
                                                 onClick={_ => handleAddAddressToggle(true)}
                                             >
-                                                <BsPlus className="w-6 h-6" />
+                                                <BsPlus className="h-5 w-5" />
                                                 {t('addNewAddress')}
                                             </button>
                                         </>
                                     )}
                                     {!addAddress && addresses.length === 0 && !addressLoading && (
                                         <button 
-                                            className="w-full flex items-center justify-center gap-2 py-6 px-5 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 text-primary font-medium transition-all duration-200" 
+                                            className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-primary/30 px-4 py-5 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary/5" 
                                             onClick={_ => handleAddAddressToggle(true)}
                                         >
-                                            <BsPlus className="w-6 h-6" />
+                                            <BsPlus className="h-5 w-5" />
                                             {t('addNewAddress')}
                                         </button>
                                     )}
@@ -717,34 +727,32 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                             </div>
 
                             {/* Payment Options Section */}
-                            <div className="bg-base-100 rounded-2xl shadow-sm border border-base-300/50 overflow-hidden">
-                                <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
+                            <div className="bg-base-100 rounded-lg shadow-sm border border-primary/10 overflow-hidden">
+                                <div className="border-b border-primary/10 bg-primary/5 px-4 py-3 sm:px-5">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">2</div>
-                                        <h2 className="text-lg font-semibold text-base-content">{t('paymentMethod')}</h2>
+                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-content">2</div>
+                                        <h2 className="min-w-0 text-base font-semibold text-base-content">{t('paymentMethod')}</h2>
                                     </div>
                                 </div>
-                                <div className="p-6">
+                                <div className="p-3 sm:p-5">
                                     {pg && <PayMethodItem pgList={pg} selected={paymentMethod} setSelected={setPaymentMethod} currency={userCurrency} />}
                                 </div>
                             </div>
 
                             {/* Order Items Section */}
-                            <div className="bg-base-100 rounded-2xl shadow-sm border border-base-300/50 overflow-hidden">
-                                <div className="bg-gradient-to-r from-primary/5 to-transparent px-6 py-4 border-b border-base-300/50">
-                                    <div className="flex items-center justify-between">
+                            <div className="bg-base-100 rounded-lg shadow-sm border border-primary/10 overflow-hidden">
+                                <div className="border-b border-primary/10 bg-primary/5 px-4 py-3 sm:px-5">
+                                    <div className="flex items-center justify-between gap-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">3</div>
-                                            <h2 className="text-lg font-semibold text-base-content">{t('reviewItems')}</h2>
+                                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-content">3</div>
+                                            <h2 className="min-w-0 text-base font-semibold text-base-content">{t('reviewItems')}</h2>
                                         </div>
-                                        <span className="text-sm text-base-content/60">{cart.length} {cart.length === 1 ? t('itemsLabel') : t('itemsLabel')}</span>
+                                        <span className="shrink-0 text-xs text-base-content/60 sm:text-sm">{cart.length} {cart.length === 1 ? t('itemsLabel') : t('itemsLabel')}</span>
                                     </div>
                                 </div>
-                                <div className="p-6 space-y-4">
+                                <div className="space-y-3 p-3 sm:p-5">
                                     {cartLoading ? (
-                                        <div className="h-24 flex items-center justify-center">
-                                            <span className="loading loading-spinner loading-lg text-primary"></span>
-                                        </div>
+                                        <InlineProgress label="Loading cart" />
                                     ) : (
                                         cart?.map(item => (
                                             <CartLineItem
@@ -762,10 +770,10 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         </div>
 
                         {/* Order Summary - Right Side (Desktop) */}
-                        <div className="lg:w-[380px] hidden lg:block">
+                        <div className="hidden lg:block lg:w-[380px]">
                             <div className="sticky top-[100px]">
-                                <div className="bg-base-100 rounded-2xl shadow-lg border border-base-300/50 overflow-hidden">
-                                    <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-5">
+                                <div className="bg-base-100 rounded-lg shadow-sm border border-primary/10 overflow-hidden">
+                                    <div className="bg-primary px-6 py-5">
                                         <h2 className="text-xl font-bold text-primary-content">{t('orderSummary')}</h2>
                                     </div>
                                     <div className="p-6 space-y-5">
@@ -778,7 +786,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                         {/* Shipping */}
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium text-base-content/70 uppercase tracking-wide">{t('shippingLabel')}</label>
-                                            <div className="bg-base-200/50 rounded-lg px-4 py-3 text-sm">
+                                            <div className="rounded-md border border-primary/10 bg-primary/5 px-4 py-3 text-sm">
                                                 {!selectedAddress ? (
                                                     <span className="text-base-content/50 italic">{t('selectAddressFirst')}</span>
                                                 ) : currentShipping ? (
@@ -804,7 +812,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                                     type="text"
                                                     placeholder={t('enterCode')}
                                                     className={clsx(
-                                                        "input input-bordered flex-1 bg-base-200/50 focus:bg-base-100",
+                                                        "h-10 min-w-0 flex-1 rounded-md border border-primary/10 bg-base-100 px-3 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10",
                                                         couponData?.couponApplicable && "border-success",
                                                         couponData?.couponApplicable === false && "border-error"
                                                     )}
@@ -812,7 +820,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                                     onChange={e => setCouponCode(e.target.value)}
                                                 />
                                                 <button 
-                                                    className="btn btn-primary px-6"
+                                                    className="h-10 rounded-md bg-primary px-4 text-sm font-semibold text-primary-content transition hover:bg-primary/90 disabled:opacity-60"
                                                     onClick={handleCouponApply}
                                                 >
                                                     {t('apply')}
@@ -866,8 +874,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                         <button 
                                             onClick={processPayment} 
                                             className={clsx(
-                                                "btn btn-primary w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200",
-                                                isPayDisabled && "btn-disabled opacity-50"
+                                                "flex h-12 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-content transition hover:bg-primary/90",
+                                                isPayDisabled && "cursor-not-allowed opacity-50"
                                             )} 
                                             disabled={isPayDisabled}
                                         >
@@ -889,8 +897,8 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
 
                         {/* Order Summary - Mobile (Bottom Sheet Style) */}
                         <div className="lg:hidden">
-                            <div className="bg-base-100 rounded-2xl shadow-lg border border-base-300/50 overflow-hidden">
-                                <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-4">
+                            <div className="bg-base-100 rounded-lg shadow-sm border border-primary/10 overflow-hidden">
+                                <div className="bg-primary px-6 py-4">
                                     <h2 className="text-lg font-bold text-primary-content">{t('orderSummary')}</h2>
                                 </div>
                                 <div className="p-5 space-y-4">
@@ -901,7 +909,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                     </div>
 
                                     {/* Shipping Info */}
-                                    <div className="bg-base-200/50 rounded-lg px-4 py-3 text-sm">
+                                    <div className="rounded-md border border-primary/10 bg-primary/5 px-4 py-3 text-sm">
                                         {!selectedAddress ? (
                                             <span className="text-base-content/50 italic">{t('selectAddressFirst')}</span>
                                         ) : currentShipping ? (
@@ -924,14 +932,14 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                             type="text"
                                             placeholder={t('enterCode')}
                                             className={clsx(
-                                                "input input-bordered input-sm flex-1 bg-base-200/50",
+                                                "h-10 min-w-0 flex-1 rounded-md border border-primary/10 bg-base-100 px-3 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10",
                                                 couponData?.couponApplicable && "border-success",
                                                 couponData?.couponApplicable === false && "border-error"
                                             )}
                                             value={couponCode}
                                             onChange={e => setCouponCode(e.target.value)}
                                         />
-                                        <button className="btn btn-primary btn-sm" onClick={handleCouponApply}>{t('apply')}</button>
+                                        <button className="h-10 rounded-md bg-primary px-4 text-sm font-semibold text-primary-content transition hover:bg-primary/90" onClick={handleCouponApply}>{t('apply')}</button>
                                     </div>
 
                                     <div className="border-t border-base-300 pt-3 space-y-2 text-sm">
@@ -965,7 +973,10 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                         </div>
                                         <button 
                                             onClick={processPayment} 
-                                            className={clsx("btn btn-primary w-full", isPayDisabled && "btn-disabled")} 
+                                            className={clsx(
+                                                "flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-content transition hover:bg-primary/90",
+                                                isPayDisabled && "cursor-not-allowed opacity-50"
+                                            )} 
                                             disabled={isPayDisabled}
                                         >
                                             {isPayDisabled ? t('completeAllSteps') : t('payNow')}
@@ -981,11 +992,11 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                 </div>
             </div>
             <dialog id="paypalModal" className="modal">
-                <div className="modal-box">
+                <div className="w-[calc(100vw-1.5rem)] max-w-md rounded-lg border border-primary/10 bg-base-100 p-4 shadow-sm sm:p-5">
                     {orderTotal > 0 && selectedAddress?._id &&
-                        <Suspense fallback={<div>{t('loadingPayPal')}</div>}>
+                        <Suspense fallback={<InlineProgress label={t('loadingPayPal')} />}>
                             <LazyPayPalButtons
-                                style={{ color: "blue" }}
+                                style={{ color: "gold", shape: "rect", label: "pay" }}
                                 createOrder={() => createOrder(`${orderTotal.toFixed(2)}`, userCurrency?.currency ?? "USD")}
                                 onApprove={async (data: any, actions: any) => {
                                     capturePayment(data.orderID).then(value => {
@@ -1064,10 +1075,10 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur" />
+                        <div className="fixed inset-0 bg-black/35 backdrop-blur-sm" />
                     </TransitionChild>
                     <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                        <div className="flex min-h-full items-center justify-center p-3 text-center sm:p-4">
                             <TransitionChild
                                 as={Fragment}
                                 enter="ease-out duration-300"
@@ -1077,10 +1088,12 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <DialogPanel className="w-full max-w-5xl transform overflow-hidden rounded-2xl bg-base-100 p-7 text-left align-middle shadow-xl transition-all">
-                                    <GrFormClose className="absolute top-3 right-3 h-7 w-7 text-gray-500" onClick={_ => { setShowStripe(false) }} />
+                                <DialogPanel className="relative w-full max-w-3xl transform overflow-hidden rounded-lg border border-primary/10 bg-base-100 p-4 text-left align-middle shadow-sm transition-all sm:p-5">
+                                    <button className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-base-content/55 transition hover:bg-primary/5 hover:text-base-content" onClick={_ => { setShowStripe(false) }} aria-label="Close payment dialog">
+                                        <GrFormClose className="h-6 w-6" />
+                                    </button>
                                     {stripeClientSecret && paymentMethod?.partner == "STRIPE" && stripePromise != null &&
-                                        <Suspense fallback={<div>{t('loadingStripe')}</div>}>
+                                        <Suspense fallback={<InlineProgress label={t('loadingStripe')} />}>
                                             <Elements options={{
                                                 clientSecret: stripeClientSecret ?? "",
                                                 appearance: {
@@ -1101,7 +1114,13 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                     </div>
                 </Dialog>
             </Transition>
-        </> : <Loader />
+        </> : (
+            <div className="min-h-[50vh] bg-base-100 px-4 py-6 sm:px-6">
+                <div className="mx-auto max-w-3xl">
+                    <InlineProgress label={t('loadingStripe')} />
+                </div>
+            </div>
+        )
     )
 }
 

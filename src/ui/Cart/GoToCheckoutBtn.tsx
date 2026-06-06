@@ -17,7 +17,7 @@ const GoToCheckoutBtn = ({ isDisabled }: { isDisabled: boolean }) => {
 
     return (
         <button 
-            className="w-full btn btn-primary btn-lg gap-2 mt-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-200" 
+            className="mt-2 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-content transition hover:bg-primary/90 disabled:opacity-50" 
             onClick={handleClick} 
             disabled={isDisabled}
         >

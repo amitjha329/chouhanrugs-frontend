@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { HiMinus, HiPlus } from 'react-icons/hi2'
 
+const UpdatingDot = () => <span className="h-2 w-2 animate-pulse rounded-full bg-primary" aria-label="Updating" />
+
 const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
     const router = useRouter()
     const [quantity, updateQuantity] = useState(item.quantity)
@@ -66,18 +68,18 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
     }
 
     return (
-        <div className="inline-flex items-center rounded-lg border border-base-300 bg-base-100 overflow-hidden">
+        <div className="inline-flex items-center overflow-hidden rounded-md border border-primary/10 bg-base-100">
             <button
                 onClick={decrementQuantity}
                 disabled={isLoading}
-                className="flex items-center justify-center w-9 h-9 text-base-content/70 hover:bg-base-200 hover:text-base-content transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-9 w-9 items-center justify-center text-base-content/70 transition-colors hover:bg-primary/5 hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="Decrease quantity"
             >
                 <HiMinus className="w-4 h-4" />
             </button>
-            <div className="flex items-center justify-center w-12 h-9 text-sm font-semibold text-base-content border-x border-base-300 bg-base-50">
+            <div className="flex h-9 w-12 items-center justify-center border-x border-primary/10 text-sm font-semibold text-base-content">
                 {isLoading ? (
-                    <span className="loading loading-spinner loading-xs"></span>
+                    <UpdatingDot />
                 ) : (
                     quantity
                 )}
@@ -85,7 +87,7 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
             <button
                 onClick={incrementQuantity}
                 disabled={isLoading || quantity >= 10}
-                className="flex items-center justify-center w-9 h-9 text-base-content/70 hover:bg-base-200 hover:text-base-content transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-9 w-9 items-center justify-center text-base-content/70 transition-colors hover:bg-primary/5 hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="Increase quantity"
             >
                 <HiPlus className="w-4 h-4" />

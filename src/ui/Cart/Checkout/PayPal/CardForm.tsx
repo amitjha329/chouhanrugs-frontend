@@ -7,13 +7,21 @@ import { PayPalButtons, } from "@paypal/react-paypal-js";
 
 const CardForm = ({ amount, onApprove, userCurrency }: { amount: string, onApprove: (data: OnApproveData, actions: OnApproveActions) => Promise<void>, userCurrency: Currency }) => {
     return (
-        <PayPalButtons
-            style={{
-                color: "blue"
-            }}
-            createOrder={() => createOrder(amount, userCurrency?.currency ?? "USD")}
-            onApprove={onApprove}
-        />
+        <div className="rounded-lg border border-primary/10 bg-base-100 p-4">
+            <div className="mb-4">
+                <h3 className="text-base font-semibold text-base-content">PayPal payment</h3>
+                <p className="mt-1 text-xs text-base-content/55">Use PayPal to complete this order securely.</p>
+            </div>
+            <PayPalButtons
+                style={{
+                    color: "gold",
+                    shape: "rect",
+                    label: "pay"
+                }}
+                createOrder={() => createOrder(amount, userCurrency?.currency ?? "USD")}
+                onApprove={onApprove}
+            />
+        </div>
     );
 }
 

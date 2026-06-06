@@ -97,32 +97,18 @@ const UserAddressFormEnhanced = ({
         }
     }
 
+    const inputClass = "h-10 w-full rounded-md border border-primary/10 bg-base-100 px-3 text-sm outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/10"
+    const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-base-content/55"
+
     return (
-        <div className="mt-10 sm:mt-0">
-            <div className="md:grid md:grid-cols-3 rounded-2xl overflow-hidden shadow-xl bg-base-100 border">
-                <div className="hidden md:block md:col-span-1 bg-base-200">
-                    <div className="px-6 py-10">
-                        <h3 className="text-2xl font-bold text-base-content">
-                            {isEditing ? 'Edit Address' : 'Address Information'}
-                        </h3>
-                        <p className="mt-2 text-base text-base-content/70">
-                            {isEditing 
-                                ? 'Update your address information below.' 
-                                : 'Use a permanent address where you can receive mail.'
-                            }
-                        </p>
-                    </div>
-                </div>
-                <div className="md:col-span-2 md:mt-0">
-                    <form onSubmit={handleAddressForm} className="w-full">
-                        <div className="bg-base-100 px-6 py-8 rounded-b-2xl md:rounded-none">
-                            <h2 className="block md:hidden text-center font-semibold mb-6 text-2xl w-full text-base-content">
-                                {isEditing ? 'Edit Address' : 'Address Info'}
-                            </h2>
-                            <hr className="border-base-200 block md:hidden mb-6" />
-                            <div className="grid grid-cols-6 gap-6">
+        <form onSubmit={handleAddressForm} className="rounded-lg border border-primary/10 bg-base-100 p-4 md:p-5">
+            <div className="mb-4">
+                <h3 className="text-base font-semibold text-base-content">{isEditing ? 'Edit address' : 'Add delivery address'}</h3>
+                <p className="mt-1 text-xs text-base-content/55">{isEditing ? 'Update the saved delivery details.' : 'Add the delivery details for this order.'}</p>
+            </div>
+            <div className="grid grid-cols-6 gap-3">
                                 <div className="col-span-6 sm:col-span-3">
-                                    <label htmlFor="first-name" className="block text-base font-medium text-base-content mb-1">
+                                    <label htmlFor="first-name" className={labelClass}>
                                         First name
                                     </label>
                                     <input
@@ -132,12 +118,12 @@ const UserAddressFormEnhanced = ({
                                         autoComplete="given-name"
                                         value={firstName}
                                         onChange={e => setFName(e.target.value)}
-                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
+                                        className={inputClass}
                                         required
                                     />
                                 </div>
                                 <div className="col-span-6 sm:col-span-3">
-                                    <label htmlFor="last-name" className="block text-base font-medium text-base-content mb-1">
+                                    <label htmlFor="last-name" className={labelClass}>
                                         Last name
                                     </label>
                                     <input
@@ -147,12 +133,12 @@ const UserAddressFormEnhanced = ({
                                         autoComplete="family-name"
                                         value={lastName}
                                         onChange={e => setLName(e.target.value)}
-                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
+                                        className={inputClass}
                                         required
                                     />
                                 </div>
                                 <div className="col-span-6 sm:col-span-4">
-                                    <label htmlFor="email-address" className="block text-base font-medium text-base-content mb-1">
+                                    <label htmlFor="email-address" className={labelClass}>
                                         Email address
                                     </label>
                                     <input
@@ -162,19 +148,19 @@ const UserAddressFormEnhanced = ({
                                         autoComplete="email"
                                         value={email}
                                         onChange={e => setemail(e.target.value)}
-                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
+                                        className={inputClass}
                                         required
                                     />
                                 </div>
                                 <div className="col-span-6">
-                                    <label htmlFor="country" className="block text-base font-medium text-base-content mb-1">
+                                    <label htmlFor="country" className={labelClass}>
                                         Country
                                     </label>
                                     <Combobox value={selectedCountry} onChange={v => setselectedCountry(v ? v : countries[0])}>
                                         <div className="relative mt-1">
                                             <div className="relative w-full">
                                                 <ComboboxInput
-                                                    className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100 pr-10"
+                                                    className={`${inputClass} pr-10`}
                                                     displayValue={(country: any) => country.label}
                                                     onChange={(event) => setQuery(event.target.value)}
                                                 />
@@ -189,7 +175,7 @@ const UserAddressFormEnhanced = ({
                                                 leaveTo="opacity-0"
                                                 afterLeave={() => setQuery('')}
                                             >
-                                                <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-xl bg-base-100 py-1 text-base shadow-lg ring-1 ring-base-300 ring-opacity-5 focus:outline-none">
+                                                <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-primary/10 bg-base-100 py-1 text-sm shadow-sm focus:outline-none">
                                                     {filteredCountries.length === 0 && query !== '' ? (
                                                         <div className="relative cursor-default select-none py-2 px-4 text-base-content/70">
                                                             Not a country.
@@ -223,7 +209,7 @@ const UserAddressFormEnhanced = ({
                                     </Combobox>
                                 </div>
                                 <div className="col-span-6">
-                                    <label htmlFor="street-address" className="block text-base font-medium text-base-content mb-1">
+                                    <label htmlFor="street-address" className={labelClass}>
                                         Street address
                                     </label>
                                     <input
@@ -233,12 +219,12 @@ const UserAddressFormEnhanced = ({
                                         autoComplete="street-address"
                                         value={streetAddress}
                                         onChange={e => setstreetAddress(e.target.value)}
-                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
+                                        className={inputClass}
                                         required
                                     />
                                 </div>
                                 <div className="col-span-6 sm:col-span-6 lg:col-span-2">
-                                    <label htmlFor="city" className="block text-base font-medium text-base-content mb-1">
+                                    <label htmlFor="city" className={labelClass}>
                                         City
                                     </label>
                                     <input
@@ -248,12 +234,12 @@ const UserAddressFormEnhanced = ({
                                         autoComplete="address-level2"
                                         value={city}
                                         onChange={e => setcity(e.target.value)}
-                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
+                                        className={inputClass}
                                         required
                                     />
                                 </div>
                                 <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                                    <label htmlFor="region" className="block text-base font-medium text-base-content mb-1">
+                                    <label htmlFor="region" className={labelClass}>
                                         State / Province
                                     </label>
                                     <input
@@ -263,12 +249,12 @@ const UserAddressFormEnhanced = ({
                                         autoComplete="address-level1"
                                         value={state}
                                         onChange={e => setstate(e.target.value)}
-                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
+                                        className={inputClass}
                                         required
                                     />
                                 </div>
                                 <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                                    <label htmlFor="postal-code" className="block text-base font-medium text-base-content mb-1">
+                                    <label htmlFor="postal-code" className={labelClass}>
                                         ZIP / Postal code
                                     </label>
                                     <input
@@ -278,26 +264,25 @@ const UserAddressFormEnhanced = ({
                                         autoComplete="postal-code"
                                         value={zip}
                                         onChange={e => setzip(e.target.value)}
-                                        className="input input-bordered w-full text-base bg-base-200 focus:bg-base-100"
+                                        className={inputClass}
                                         required
                                     />
                                 </div>
                             </div>
-                        </div>
-                        <div className="bg-base-200 px-6 py-4 flex flex-col sm:flex-row justify-end gap-3 rounded-b-2xl md:rounded-none">
+                        <div className="mt-4 flex flex-col justify-end gap-2 border-t border-base-200 pt-4 sm:flex-row">
                             <button
                                 type="button"
                                 onClick={_ => {
                                     addAddressHandler(false)
                                 }}
-                                className="btn btn-outline btn-neutral"
+                                className="rounded-md border border-base-300 px-4 py-2 text-sm font-semibold text-base-content transition hover:bg-base-200"
                                 disabled={isSubmitting}
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                className={`btn btn-primary text-primary-content ${isSubmitting ? 'loading' : ''}`}
+                                className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-content transition hover:bg-primary/90 disabled:opacity-60"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting 
@@ -306,10 +291,7 @@ const UserAddressFormEnhanced = ({
                                 }
                             </button>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        </form>
     )
 }
 
