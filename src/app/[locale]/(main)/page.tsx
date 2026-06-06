@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react'
 import dynamic from 'next/dynamic'
+import Image from '@/ui/components/OptimizedImage'
 import HeroSection from '@/ui/HomePage/HeroSection'
 import NewProductsSection from '@/ui/HomePage/NewProductsSection'
 import OrderProcessSection from '@/ui/HomePage/OrderProcessSection'
@@ -20,6 +21,8 @@ import { type Locale } from '@/i18n/routing'
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog'
 import { getLocale } from "next-intl/server";
 import { serializeProductCardList } from '@/lib/productCardSerialization'
+import bannerFallback from '../../../../static_assets/crbanner-01-01.webp'
+import { imageQuality } from '@/utils/imageOptimization'
 
 // Lazy load below-the-fold sections to reduce initial DOM size
 const ShopByRoom = dynamic(() => import('@/ui/HomePage/ShopByRoom'), { ssr: true })
@@ -105,9 +108,19 @@ async function FooterSEOContent() {
 
 const HomeHeroFallback = () => (
   <section className="bg-[#fbf7ef] pb-8 md:pb-10" aria-hidden="true">
-    <div className="aspect-video w-full bg-[#f4ecdf]" />
+    <div className="relative aspect-video w-full overflow-hidden bg-[#f4ecdf]">
+      <Image
+        src={bannerFallback}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-fill"
+        quality={imageQuality.high}
+      />
+    </div>
     <div className="fluid_container relative z-10 mt-6 px-4 md:-mt-8 md:px-0">
-      <div className="h-20 rounded-2xl border border-primary/20 bg-secondary/10 md:h-24" />
+      <div className="grid grid-cols-4 overflow-hidden rounded-2xl border border-primary bg-secondary/20 shadow-[0_12px_34px_rgba(54,43,30,0.10)] md:h-24" />
     </div>
   </section>
 )

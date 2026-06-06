@@ -33,7 +33,7 @@ const promises = [
     },
 ]
 
-const HeroSection = async ({ slider }: { slider: SliderDataModel }) => {
+const HeroSection = async ({ slider }: { slider: SliderDataModel | null }) => {
     return (
         <section className="bg-[#fbf7ef] pb-8 md:pb-10">
             <div className="relative">

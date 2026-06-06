@@ -2,7 +2,7 @@ import { cacheLife, cacheTag } from "next/cache"
 import clientPromise from "@/lib/clientPromise"
 import SliderDataModel from "@/types/SliderDataModel"
 
-async function fetchSlider(slideId: number): Promise<SliderDataModel> {
+async function fetchSlider(slideId: number): Promise<SliderDataModel | null> {
     "use cache"
 
     cacheLife("hours")
@@ -18,7 +18,7 @@ async function fetchSlider(slideId: number): Promise<SliderDataModel> {
     }
 }
 
-const getSlider = (slideId: number): Promise<SliderDataModel> => {
+const getSlider = (slideId: number): Promise<SliderDataModel | null> => {
     return fetchSlider(slideId)
 }
 

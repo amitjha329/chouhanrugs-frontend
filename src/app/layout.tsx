@@ -2,7 +2,6 @@ import React, { ReactNode, Suspense } from 'react'
 import '@/styles/globals.scss'
 import { Poppins } from 'next/font/google'
 import clsx from 'clsx'
-import NextTopLoader from 'nextjs-toploader'
 import { Metadata, Viewport } from 'next'
 import FloatingButtonChat from '@/ui/HomePage/FlotingButtonChat'
 import getSiteData from '@/backend/serverActions/getSiteData'
@@ -140,9 +139,6 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
                 <CookieConsentProvider>
                     <GoogleAdsProvider config={googleAdsConfig}>
                         <div id="notification-container" className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none" />
-                        <NextTopLoader
-                            color='#6c4624'
-                            zIndex={1600} />
                         {children}
                         <Suspense fallback={null}>
                             <RootEnhancements googleAdsConfig={googleAdsConfig} />

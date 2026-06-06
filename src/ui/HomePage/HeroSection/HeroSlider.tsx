@@ -22,9 +22,9 @@ const HeroArrow = ({ onClick, direction }: { onClick?: () => void, direction: 'l
     </button>
 )
 
-const HeroSLider = ({ slider }: { slider: SliderDataModel }) => {
+const HeroSLider = ({ slider }: { slider: SliderDataModel | null }) => {
     const locale = useLocale() as Locale
-    const slides = slider.images?.length ? slider.images : [{
+    const slides = slider?.images?.length ? slider.images : [{
         src: banner_2.src,
         title: 'Sophisticated designs for every space',
         heading: 'Elegant Rugs',

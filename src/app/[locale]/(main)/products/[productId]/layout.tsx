@@ -8,12 +8,8 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { type Locale } from '@/i18n/routing'
 
-const PRODUCT_BUILD_PLACEHOLDER = '__product_build_placeholder__'
-
-const ProductLayout = async (
-    props: { params: Promise<{ productId: string, locale: string }>, children: React.ReactNode }
-) => {
-    const params = await props.params;
+const ProductLayout = async (props: LayoutProps<'/[locale]/products/[productId]'>) => {
+    const params = await props.params as { productId: string, locale: string }
 
     const {
         productId,
@@ -21,8 +17,6 @@ const ProductLayout = async (
     } = params;
 
     const locale = loc as Locale
-
-    if (productId === PRODUCT_BUILD_PLACEHOLDER) notFound()
 
     const {
         children

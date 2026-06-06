@@ -14,7 +14,7 @@ import { serializeForClient } from '@/utils/serializeForClient'
 import TrackProductView from '@/ui/RecentlyViewed/TrackProductView'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { getProductFeaturedImage, getProductGalleryImages } from '@/lib/getProductFeaturedImage'
-import { locales, type Locale } from '@/i18n/routing'
+import { type Locale } from '@/i18n/routing'
 import { productAlternates, productCanonicalUrl, resolveProductSeoTitle } from '@/lib/seoCatalog'
 import ProductCraftStorySection from '@/ui/Layout/ProductPage/ProductCraftStorySection'
 import ProductReviewsSection from '@/ui/Layout/ProductPage/Reviews'
@@ -23,15 +23,8 @@ import getProductReviewEligibility from '@/backend/serverActions/getProductRevie
 import { getSession } from '@/lib/auth-server'
 import { serializeProductCardList } from '@/lib/productCardSerialization'
 
-const PRODUCT_BUILD_PLACEHOLDER = '__product_build_placeholder__'
-
-export function generateStaticParams() {
-    return locales.map(locale => ({ locale, productId: PRODUCT_BUILD_PLACEHOLDER }))
-}
-
 export async function generateMetadata(props: { params: Promise<{ productId: string, locale: string }> }): Promise<Metadata> {
     const params = await props.params;
-    if (params.productId === PRODUCT_BUILD_PLACEHOLDER) return {}
     const data = await getProductWithSlug(params.productId)
     if (data == undefined) return {}
     const locale = params.locale as Locale
@@ -90,8 +83,6 @@ const ProductPage = async (props: { params: Promise<{ productId: string, locale:
     const {
         productId
     } = params;
-
-    if (productId === PRODUCT_BUILD_PLACEHOLDER) return notFound()
 
     const locale = params.locale as Locale
 
