@@ -34,8 +34,9 @@ import saveOrderAfterPay from '@/backend/serverActions/saveOrderAfterPay'
 import generateRazorPayOrder from '@/backend/serverActions/generateRazorPayOrder'
 import validateCoupon from '@/backend/serverActions/validateCoupon'
 import generateStripePaymentIntent from '@/backend/serverActions/generateStripePaymentIntent'
-import CartItemClient from '../CartItemClient'
-import CartItem from '../CartItem'
+import CartLineItem from '../CartLineItem'
+import deleteProductFromCart from '@/backend/serverActions/deleteProductFromCart'
+import increaseDeacreaseCartItem from '@/backend/serverActions/increaseDeacreaseCartItem'
 import updateUserAddress from '@/backend/serverActions/updateUserAddress'
 import deleteUserAddress from '@/backend/serverActions/deleteUserAddress'
 import { initiatePayoneerPayment, cancelPayoneerOrder } from '@/backend/serverActions/payoneer'
@@ -86,6 +87,7 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         couponData: CouponDataModel
     }>()
     const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayDataModel | null>()
+    const [updatingCartItemId, setUpdatingCartItemId] = useState<string | null>(null)
 
     const currentTax = useMemo(() => {
         // return taxation.find(item => item.ISO === userCurrency?.ISO) ?? { taxRate: 0 }
@@ -136,23 +138,23 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         }, 0) * currentTax.taxRate / 100).toFixed(2)) - deductable
     }, [currentTax, currentShipping, cart, deductable])
     const payEnabled = useMemo(() => {
-        return cartCount != 0 && paymentMethod && paymentMethod.partner != undefined && currentShipping != undefined
-    }, [cartCount, paymentMethod, currentShipping])
+        return cart.length > 0 && paymentMethod && paymentMethod.partner != undefined && currentShipping != undefined
+    }, [cart.length, paymentMethod, currentShipping])
 
     const isPayDisabled = useMemo(() => {
         // Disable if cart is empty, payment method not selected, or shipping not selected/available
         return (
-            cartCount === 0 ||
+            cart.length === 0 ||
             !paymentMethod ||
             !paymentMethod.partner ||
             !currentShipping ||
             !selectedAddress
         );
-    }, [cartCount, paymentMethod, currentShipping, selectedAddress]);
+    }, [cart.length, paymentMethod, currentShipping, selectedAddress]);
 
     // Add a function to get the pay button disabled reason
     const getPayDisabledReason = () => {
-        if (cartCount === 0) return t('emptyCartError');
+        if (cart.length === 0) return t('emptyCartError');
         if (!selectedAddress) return t('selectAddressError');
         if (!currentShipping) return t('deliveryUnavailableError');
         if (!paymentMethod || !paymentMethod.partner) return t('selectPaymentError');
@@ -432,6 +434,50 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
         }
     }
 
+    const handleCheckoutCartRemove = async (item: CartDataModel) => {
+        if (updatingCartItemId) return
+        const previousCart = cart
+        setCart(current => current.filter(cartItem => cartItem._id !== item._id))
+        setUpdatingCartItemId(item._id)
+        try {
+            const result = await deleteProductFromCart(item._id)
+            if (!result?.ack) throw new Error('Cart deletion failed')
+            refreshCartItems()
+            onPageNotifications('success', 'Product removed')
+        } catch {
+            setCart(previousCart)
+            onPageNotifications('error', t('somethingWentWrong'))
+        } finally {
+            setUpdatingCartItemId(null)
+        }
+    }
+
+    const handleCheckoutCartQuantityChange = async (item: CartDataModel, delta: number) => {
+        if (updatingCartItemId) return
+        if (delta < 0 && item.quantity <= 1) {
+            await handleCheckoutCartRemove(item)
+            return
+        }
+        if (delta > 0 && item.quantity >= 10) {
+            onPageNotifications('info', 'Large quantity orders are available through bulk request.')
+            return
+        }
+
+        const previousCart = cart
+        setCart(current => current.map(cartItem => cartItem._id === item._id ? { ...cartItem, quantity: Math.max(1, Math.min(10, cartItem.quantity + delta)) } : cartItem))
+        setUpdatingCartItemId(item._id)
+        try {
+            const result = await increaseDeacreaseCartItem(item._id, delta)
+            if (!result?.ack) throw new Error('Cart quantity update failed')
+            refreshCartItems()
+        } catch {
+            setCart(previousCart)
+            onPageNotifications('error', t('somethingWentWrong'))
+        } finally {
+            setUpdatingCartItemId(null)
+        }
+    }
+
     useEffect(() => { setDeductable(0); setCouponCode("") }, [userCurrency])
 
     const paymentSuccessHandler = async (response: any) => {
@@ -700,7 +746,16 @@ const MainSection = ({ siteInfo, payOpts, stripeKey, queryParams, session, shipp
                                             <span className="loading loading-spinner loading-lg text-primary"></span>
                                         </div>
                                     ) : (
-                                        cart?.map(item => <CartItem item={item} key={item._id} userCurrency={userCurrency} />)
+                                        cart?.map(item => (
+                                            <CartLineItem
+                                                item={item}
+                                                key={item._id}
+                                                userCurrency={userCurrency}
+                                                isUpdating={updatingCartItemId === item._id}
+                                                onQuantityChange={(delta) => handleCheckoutCartQuantityChange(item, delta)}
+                                                onRemove={() => handleCheckoutCartRemove(item)}
+                                            />
+                                        ))
                                     )}
                                 </div>
                             </div>

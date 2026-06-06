@@ -13,7 +13,6 @@ const DeleteFromCartLg = ({ item }: { item: CartDataModel }) => {
         setIsDeleting(true)
         await deleteProductFromCart(id).then((res) => {
             onPageNotifications("success", "Product Deleted")
-            window.location.reload()
         }).catch(err => {
             onPageNotifications("error", "Something Went Wrong.")
             setIsDeleting(false)
@@ -43,7 +42,6 @@ const DeleteFromCartSm = ({ item }: { item: CartDataModel }) => {
         setIsDeleting(true)
         await deleteProductFromCart(id).then((res) => {
             onPageNotifications("success", "Product Deleted")
-            window.location.reload()
         }).catch(err => {
             onPageNotifications("error", "Something Went Wrong.")
             setIsDeleting(false)

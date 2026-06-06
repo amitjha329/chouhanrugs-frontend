@@ -1,325 +1,201 @@
 // @ts-nocheck
 'use client'
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
+
+import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import clsx from 'clsx'
 import CartDataModel from '@/types/CartDataModel'
 import Currency from '@/types/Currency'
-import GuestCartItemClient from './GuestCartItemClient'
 import validateCoupon from '@/backend/serverActions/validateCoupon'
 import onPageNotifications from '@/utils/onPageNotifications'
+import CartLineItem from '../CartLineItem'
+import { getCartItemTotal } from '../cartPricing'
+import { HiArrowLeft, HiOutlineLockClosed, HiOutlineShoppingBag } from 'react-icons/hi2'
 import Link from 'next/link'
+
+const localCartToCartItems = (items: any[]): CartDataModel[] => items.map((item) => ({
+    _id: item.productId,
+    quantity: item.quantity,
+    cartProduct: [item.productData],
+    variationCode: item.variation || '',
+    customSize: item.customSize || null,
+}))
+
+const cartItemsToLocalCart = (items: CartDataModel[]) => items.map((item) => ({
+    productId: item._id,
+    quantity: item.quantity,
+    productData: item.cartProduct[0],
+    variation: item.variationCode,
+    customSize: item.customSize,
+}))
 
 const GuestMainSection = ({ userCurrency }: { userCurrency: Currency }) => {
     const [cart, setCart] = useState<CartDataModel[]>([])
+    const [couponCode, setCouponCode] = useState('')
+    const [deductable, setDeductable] = useState(0)
+    const [couponApplied, setCouponApplied] = useState(false)
+    const [couponError, setCouponError] = useState('')
     const router = useRouter()
 
-    // Load cart from localStorage (pending_cart)
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const localCart = JSON.parse(localStorage.getItem('pending_cart') || '[]')
-            setCart(localCart.map((item: any) => ({
-                _id: item.productId,
-                quantity: item.quantity,
-                cartProduct: [item.productData],
-                variationCode: item.variation || '',
-                customSize: item.customSize || null
-            })))
-        }
+        const localCart = JSON.parse(localStorage.getItem('pending_cart') || '[]')
+        setCart(localCartToCartItems(Array.isArray(localCart) ? localCart : []))
     }, [])
 
-    // Update localStorage and state
-    const syncCart = (newCart: any[]) => {
+    const syncCart = (newCart: CartDataModel[]) => {
         setCart(newCart)
-        localStorage.setItem('pending_cart', JSON.stringify(newCart.map(item => ({
-            productId: item._id,
-            quantity: item.quantity,
-            productData: item.cartProduct[0],
-            variation: item.variationCode,
-            customSize: item.customSize
-        }))))
+        localStorage.setItem('pending_cart', JSON.stringify(cartItemsToLocalCart(newCart)))
         window.dispatchEvent(new Event('local-cart-updated'))
     }
 
-    // Calculate price for each item (mimic logic from MainSection)
-    const calculateProductPrice = useCallback((item: CartDataModel): number => {
-        var priceInitial = 0
-        if (item.variationCode && item.variationCode !== 'customSize') {
-            const variationindex = item.cartProduct[0].variations.findIndex(ff => ff.variationCode == item.variationCode)
-            const variationPrice = Number(item.cartProduct[0].variations[variationindex]?.variationPrice ?? 0)
-            const variationDiscount = Number(item.cartProduct[0].variations[variationindex]?.variationDiscount ?? 0)
-            priceInitial = variationPrice - (variationPrice * (variationDiscount / 100))
-        } else if (item.variationCode === 'customSize') {
-            switch (item.customSize?.shape) {
-                case 'Rectangle':
-                case 'Runner':
-                case 'Square':
-                    priceInitial = item.cartProduct[0].productPriceSqFt * (item.customSize?.dimensions.length ?? 1) * (item.customSize?.dimensions.width ?? 1)
-                    break
-                case 'Round':
-                    priceInitial = item.cartProduct[0].productPriceSqFt * (Math.pow((item.customSize?.dimensions.diameter ?? 1) / 2, 2) * Math.PI)
-                    break
-            }
-        } else {
-            priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0
+    const cartTotal = useMemo(() => (
+        Number(cart.reduce((total, item) => total + getCartItemTotal(item, userCurrency?.exchangeRates ?? 1), 0).toFixed(2))
+    ), [cart, userCurrency])
+
+    const taxRate = userCurrency?.ISO === 'IN' ? 5 : 0
+    const taxation = useMemo(() => Number((cartTotal * (taxRate / 100)).toFixed(2)), [cartTotal, taxRate])
+    const totalCost = useMemo(() => Number((cartTotal + taxation - deductable).toFixed(2)), [cartTotal, taxation, deductable])
+
+    const handleQuantityChange = (item: CartDataModel, delta: number) => {
+        if (delta > 0 && item.quantity >= 10) {
+            onPageNotifications('info', 'Large quantity orders are available through bulk request.')
+            return
         }
-        return priceInitial * item.quantity
-    }, [])
 
-    const cartWithPrices = cart.map((item, idx) => {
-        const pricePerQty = calculateProductPrice({ ...item, quantity: 1 })
-        const totalPrice = calculateProductPrice(item)
-        return { ...item, pricePerQty: pricePerQty.toFixed(2), totalPrice: totalPrice.toFixed(2) }
-    })
+        const nextCart = delta < 0 && item.quantity <= 1
+            ? cart.filter((cartItem) => cartItem._id !== item._id)
+            : cart.map((cartItem) => cartItem._id === item._id ? { ...cartItem, quantity: Math.max(1, Math.min(10, cartItem.quantity + delta)) } : cartItem)
 
-    const cartTotal = useMemo(() => {
-        let subTotal = 0
-        cart.forEach(item => {
-            subTotal += calculateProductPrice(item)
-        })
-        return Number((subTotal * (userCurrency?.exchangeRates ?? 1)).toFixed(2))
-    }, [cart, userCurrency, calculateProductPrice])
+        syncCart(nextCart)
+    }
 
-    // Taxation logic (mimic MainSection)
-    const taxRate = userCurrency?.ISO === 'IN' ? 5 : 0;
-    const taxation = useMemo(() => Number((cartTotal * (taxRate / 100)).toFixed(2)), [cartTotal, taxRate]);
-    const delivery = 'Free';
+    const handleRemove = (item: CartDataModel) => {
+        syncCart(cart.filter((cartItem) => cartItem._id !== item._id))
+    }
 
-    // Coupon logic mimicking MainSection (local only)
-    const [couponCode, setCouponCode] = useState("");
-    const [deductable, setDeductable] = useState(0);
-    const [couponApplied, setCouponApplied] = useState(false);
-    const [couponError, setCouponError] = useState("");
-    const [debouncedCoupon, setDebouncedCoupon] = useState("");
-    const [couponData, setCouponData] = useState();
-
-    useEffect(() => {
-        const handler = setTimeout(() => setDebouncedCoupon(couponCode), 400);
-        return () => clearTimeout(handler);
-    }, [couponCode]);
-
-    // Only validate coupon when debouncedCoupon changes
-    useEffect(() => {
-        if (!debouncedCoupon) return;
-        validateCoupon(debouncedCoupon, cartTotal).then(result => {
-            setCouponData(result)
+    const applyCoupon = () => {
+        if (!couponCode.trim()) return
+        validateCoupon(couponCode, cartTotal).then(result => {
             if (result?.couponApplicable) {
-                setCouponApplied(true);
-                setCouponError("");
-                onPageNotifications("success", "Coupon Applied");
+                setCouponApplied(true)
+                setCouponError('')
+                onPageNotifications('success', 'Coupon applied')
                 switch (result.couponData.type) {
                     case 2:
-                        setDeductable(result.couponData.value * (userCurrency?.exchangeRates ?? 1));
-                        break;
-                    case 1:
-                        const tempDeductable = (cartTotal * (Number(result.couponData.value) / 100)) * (userCurrency?.exchangeRates ?? 1);
-                        setDeductable(tempDeductable > Number(result.couponData.maxValue) * (userCurrency?.exchangeRates ?? 1) ? Number(result.couponData.maxValue) : tempDeductable);
-                        break;
+                        setDeductable(result.couponData.value * (userCurrency?.exchangeRates ?? 1))
+                        break
+                    case 1: {
+                        const tempDeductable = (cartTotal * (Number(result.couponData.value) / 100)) * (userCurrency?.exchangeRates ?? 1)
+                        setDeductable(tempDeductable > Number(result.couponData.maxValue) * (userCurrency?.exchangeRates ?? 1) ? Number(result.couponData.maxValue) : tempDeductable)
+                        break
+                    }
                 }
-            } else {
-                setCouponApplied(false);
-                setDeductable(0);
-                setCouponError("Copon Not Apllicable");
-                onPageNotifications("error", "Copon Not Apllicable");
+                return
             }
-        }).catch(err => {
-            setCouponApplied(false);
-            setDeductable(0);
-            setCouponError("Something Went Wrong");
-            onPageNotifications("error", "Something Went Wrong");
-        })
-    }, [debouncedCoupon, cartTotal, userCurrency]);
 
-    // Reset coupon on currency change
-    useEffect(() => { setDeductable(0); setCouponCode(""); setCouponApplied(false); setCouponError(""); }, [userCurrency]);
-
-    const totalCost = useMemo(() => Number((cartTotal + taxation - deductable).toFixed(2)), [cartTotal, taxation, deductable]);
-
-    // Handlers for quantity and remove
-    const handleQuantityChange = (idx: number, delta: number) => {
-        setCart(prev => {
-            const newCart = prev.map((item, i) => {
-                if (i === idx) {
-                const newQty = item.quantity + delta;
-                // Ensure quantity is between 1 and 10
-                const clampedQty = Math.max(1, Math.min(10, newQty));
-                return { ...item, quantity: clampedQty };
-            }
-                return item
-            })
-            syncCart(newCart)
-            return newCart
-        })
-    }
-    const handleRemove = (idx: number) => {
-        setCart(prev => {
-            const newCart = prev.filter((_, i) => i !== idx)
-            syncCart(newCart)
-            return newCart
+            setCouponApplied(false)
+            setDeductable(0)
+            setCouponError('Coupon not applicable')
+            onPageNotifications('error', 'Coupon not applicable')
+        }).catch(() => {
+            setCouponApplied(false)
+            setDeductable(0)
+            setCouponError('Something went wrong')
+            onPageNotifications('error', 'Something went wrong')
         })
     }
 
     return (
-        <div className="container py-0 sm:py-10 mx-auto">
-            <div className="flex flex-col md:flex-row items-start gap-8">
-                {/* Cart Items Section */}
-                <div className="flex flex-col w-full md:w-2/3 px-4 sm:px-8 md:px-0 md:pl-5">
-                    <Link href="/">
-                        <div className="flex font-semibold text-primary text-sm mt-4 cursor-pointer">
-                            <svg
-                                className="fill-current mr-2 text-primary w-4"
-                                viewBox="0 0 448 512"
-                            >
-                                <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
-                            </svg>
-                            Continue Shopping
-                        </div>
+        <main className="min-h-screen bg-[#fbfaf7]">
+            <div className="fluid_container mx-auto px-4 py-5 md:px-0 md:py-8">
+                <div className="mb-5">
+                    <Link href="/cart" className="mb-2 inline-flex items-center gap-2 text-xs font-semibold text-primary">
+                        <HiArrowLeft className="h-4 w-4" />
+                        Back to cart
                     </Link>
-                    <div className="text-lg font-bold w-full border-b pb-3 mb-10 mt-4 sm:mt-0">Your Cart</div>
-                    {cartWithPrices && cartWithPrices.length > 0 ? (
-                        cartWithPrices.map((item, idx) => (
-                            <GuestCartItemClient
-                                key={item._id + '-' + idx}
+                    <h1 className="flex items-center gap-2 text-2xl font-semibold text-base-content md:text-3xl">
+                        <HiOutlineShoppingBag className="h-7 w-7 text-primary" />
+                        Guest checkout
+                    </h1>
+                    <p className="mt-1 text-sm text-base-content/60">Review your cart, then sign in to choose delivery and payment.</p>
+                </div>
+
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+                    <section className="space-y-3">
+                        {cart.length > 0 ? cart.map((item) => (
+                            <CartLineItem
+                                key={item._id}
                                 item={item}
                                 userCurrency={userCurrency}
-                                onQuantityChange={delta => handleQuantityChange(idx, delta)}
-                                onRemove={() => handleRemove(idx)}
+                                onQuantityChange={(delta) => handleQuantityChange(item, delta)}
+                                onRemove={() => handleRemove(item)}
                             />
-                        ))
-                    ) : (
-                        <div className="flex flex-col items-center justify-center w-full h-64 sm:h-80 bg-base-100 rounded-lg shadow-inner my-8 px-4 sm:px-0">
-                            <svg className="w-12 h-12 sm:w-16 sm:h-16 text-primary mb-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m5-9v9m4-9v9m4-9l2 9" />
-                            </svg>
-                            <h2 className="font-bold text-lg sm:text-2xl text-gray-700 mb-2 text-center">Your cart is empty</h2>
-                            <p className="text-gray-500 mb-4 text-center text-sm sm:text-base">Looks like you haven&apos;t added anything yet.</p>
-                        </div>
-                    )}
-                </div>
-                {/* Order Summary Section - Desktop */}
-                <div className="hidden md:block w-full md:w-1/3 px-0 md:px-10 py-10 sticky bottom-0 top-[170px]">
-                    <div id="summary" className="flex flex-col justify-between bg-gray-200 px-8 pt-10 pb-16 sm:pb-10 rounded-xl">
-                        <h1 className="font-semibold text-2xl border-b border-black pb-8">Order Summary</h1>
-                        <div className="flex justify-between mt-10 mb-5">
-                            <span className="font-semibold text-sm uppercase">Items {cart.length}</span>
-                            <span className="font-semibold text-sm">{userCurrency?.currencySymbol} {cartTotal}</span>
-                        </div>
-                        <div className="border-t border-black mt-8">
-                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                <span>Sub Total</span>
-                                <span>{userCurrency?.currencySymbol} {cartTotal}</span>
+                        )) : (
+                            <div className="rounded-lg border border-primary/10 bg-base-100 p-10 text-center">
+                                <p className="font-semibold text-base-content">Your cart is empty</p>
+                                <p className="mt-1 text-sm text-base-content/60">Add products before starting checkout.</p>
                             </div>
-                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                <span>Delivery</span>
-                                <span>{delivery}</span>
+                        )}
+                    </section>
+
+                    <aside className="lg:sticky lg:top-24 lg:self-start">
+                        <div className="overflow-hidden rounded-lg border border-primary/10 bg-base-100 shadow-sm">
+                            <div className="border-b border-base-200 bg-primary px-5 py-4 text-primary-content">
+                                <h2 className="text-lg font-semibold">Order summary</h2>
+                                <p className="text-xs text-primary-content/75">{cart.length} item{cart.length === 1 ? '' : 's'} in cart</p>
                             </div>
-                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                <span>Taxation</span>
-                                <span>{userCurrency?.currencySymbol} {taxation}</span>
-                            </div>
-                            {/* Coupon section */}
-                            <div className="py-3">
-                                <label htmlFor="guest-coupon" className="font-semibold inline-block mb-2 text-sm uppercase">Promo Code</label>
-                                <div className="join w-full">
-                                    <input
-                                        type="text"
-                                        id="guest-coupon"
-                                        placeholder="Enter your code"
-                                        className={clsx("input input-bordered w-full join-item", { "border-success": couponApplied }, { "border-error": couponError })}
-                                        value={couponCode}
-                                        onChange={e => setCouponCode(e.target.value)}
-                                    />
-                                    <button className="btn btn-active join-item" onClick={() => setCouponCode(couponCode)}>
-                                        Apply
-                                    </button>
+                            <div className="space-y-4 p-5">
+                                <div className="flex justify-between text-sm text-base-content/70">
+                                    <span>Subtotal</span>
+                                    <span>{userCurrency?.currencySymbol} {cartTotal.toFixed(2)}</span>
                                 </div>
-                                {couponApplied && (
-                                    <div className="text-success text-xs mt-1">Coupon Applied: {couponCode.trim().toUpperCase()} (-{userCurrency?.currencySymbol}{deductable.toFixed(2)})</div>
-                                )}
-                                {couponError && (
-                                    <div className="text-error text-xs mt-1">{couponError}</div>
-                                )}
-                            </div>
-                            {couponApplied && (
-                                <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                    <span>Coupon Applied</span>
-                                    <span>-{userCurrency?.currencySymbol}{deductable.toFixed(2)}</span>
+                                <div className="flex justify-between text-sm text-base-content/70">
+                                    <span>Delivery</span>
+                                    <span className="text-success">Free</span>
                                 </div>
-                            )}
-                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                <span>Total cost</span>
-                                <span>{userCurrency?.currencySymbol} {totalCost}</span>
-                            </div>
-                        </div>
-                        <div className="my-8 flex flex-col items-center">
-                            <p className="text-center text-gray-700 mb-4">To proceed to checkout, please log in or create an account.</p>
-                            <button className="btn btn-primary w-full" onClick={() => router.push('/signin?cb=/cart/checkout')}>Log in to Checkout</button>
-                        </div>
-                    </div>
-                </div>
-                {/* Order Summary Section - Mobile */}
-                <div className="block md:hidden w-full px-0 sm:px-10 py-10">
-                    <div id="summary" className="flex flex-col justify-between bg-gray-200 px-4 sm:px-8 pt-10 pb-16 sm:pb-10 rounded-xl">
-                        <h1 className="font-semibold text-2xl border-b border-black pb-8">Order Summary</h1>
-                        <div className="flex justify-between mt-10 mb-5">
-                            <span className="font-semibold text-sm uppercase">Items {cart.length}</span>
-                            <span className="font-semibold text-sm">{userCurrency?.currencySymbol} {cartTotal}</span>
-                        </div>
-                        <div className="border-t border-black mt-8">
-                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                <span>Sub Total</span>
-                                <span>{userCurrency?.currencySymbol} {cartTotal}</span>
-                            </div>
-                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                <span>Delivery</span>
-                                <span>{delivery}</span>
-                            </div>
-                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                <span>Taxation</span>
-                                <span>{userCurrency?.currencySymbol} {taxation}</span>
-                            </div>
-                            {/* Coupon section */}
-                            <div className="py-3">
-                                <label htmlFor="guest-coupon-mobile" className="font-semibold inline-block mb-2 text-sm uppercase">Promo Code</label>
-                                <div className="join w-full">
-                                    <input
-                                        type="text"
-                                        id="guest-coupon-mobile"
-                                        placeholder="Enter your code"
-                                        className={clsx("input input-bordered w-full join-item", { "border-success": couponApplied }, { "border-error": couponError })}
-                                        value={couponCode}
-                                        onChange={e => setCouponCode(e.target.value)}
-                                    />
-                                    <button className="btn btn-active join-item" onClick={() => setCouponCode(couponCode)}>
-                                        Apply
-                                    </button>
-                                </div>
-                                {couponApplied && (
-                                    <div className="text-success text-xs mt-1">Coupon Applied: {couponCode.trim().toUpperCase()} (-{userCurrency?.currencySymbol}{deductable.toFixed(2)})</div>
+                                {taxRate > 0 && (
+                                    <div className="flex justify-between text-sm text-base-content/70">
+                                        <span>Tax ({taxRate}%)</span>
+                                        <span>{userCurrency?.currencySymbol} {taxation.toFixed(2)}</span>
+                                    </div>
                                 )}
-                                {couponError && (
-                                    <div className="text-error text-xs mt-1">{couponError}</div>
-                                )}
-                            </div>
-                            {couponApplied && (
-                                <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                    <span>Coupon Applied</span>
-                                    <span>-{userCurrency?.currencySymbol}{deductable.toFixed(2)}</span>
+                                <div className="space-y-2">
+                                    <label htmlFor="guest-coupon" className="text-xs font-semibold uppercase tracking-wide text-base-content/60">Promo code</label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            id="guest-coupon"
+                                            placeholder="Enter code"
+                                            className={clsx('input input-bordered input-sm flex-1 bg-base-200/50', couponApplied && 'border-success', couponError && 'border-error')}
+                                            value={couponCode}
+                                            onChange={event => setCouponCode(event.target.value)}
+                                        />
+                                        <button className="btn btn-primary btn-sm" onClick={applyCoupon}>Apply</button>
+                                    </div>
+                                    {couponApplied && <p className="text-xs text-success">Coupon applied: -{userCurrency?.currencySymbol}{deductable.toFixed(2)}</p>}
+                                    {couponError && <p className="text-xs text-error">{couponError}</p>}
                                 </div>
-                            )}
-                            <div className="flex font-semibold justify-between py-3 text-sm uppercase">
-                                <span>Total cost</span>
-                                <span>{userCurrency?.currencySymbol} {totalCost}</span>
+                                <div className="border-t border-base-200 pt-4">
+                                    <div className="flex items-center justify-between">
+                                        <span className="font-semibold text-base-content">Total</span>
+                                        <span className="text-2xl font-bold text-primary">{userCurrency?.currencySymbol} {totalCost.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                                <button
+                                    className="btn btn-primary w-full gap-2"
+                                    disabled={cart.length === 0}
+                                    onClick={() => router.push('/signin?cb=/cart/checkout')}
+                                >
+                                    <HiOutlineLockClosed className="h-4 w-4" />
+                                    Log in to checkout
+                                </button>
+                                <p className="text-center text-xs text-base-content/50">Delivery address and payment methods unlock after sign in.</p>
                             </div>
                         </div>
-                        <div className="my-8 flex flex-col items-center">
-                            <p className="text-center text-gray-700 mb-4">To proceed to checkout, please log in or create an account.</p>
-                            <button className="btn btn-primary w-full" onClick={() => router.push('/signin?cb=/cart/checkout')}>Log in to Checkout</button>
-                        </div>
-                    </div>
+                    </aside>
                 </div>
             </div>
-        </div>
+        </main>
     )
 }
 

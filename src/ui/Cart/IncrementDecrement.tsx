@@ -20,7 +20,6 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
             }
             onPageNotifications("success", "Product Deleted")
             router.refresh()
-            window.location.reload()
         }).catch(err => {
             onPageNotifications("error", "Something Went Wrong.")
             setIsLoading(false)
@@ -37,7 +36,6 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
                     throw new Error('Failed to increase quantity')
                 }
                 router.refresh()
-                window.location.reload()
             }).catch(() => {
                 updateQuantity(quantity)
                 setIsLoading(false)
@@ -61,7 +59,6 @@ const IncrementDecrement = ({ item }: { item: CartDataModel, }) => {
                 throw new Error('Failed to decrease quantity')
             }
             router.refresh()
-            window.location.reload()
         }).catch(() => {
             updateQuantity(quantity)
             setIsLoading(false)

@@ -1,43 +1,30 @@
 'use client'
 
 import React from 'react'
-import { stringNotEmptyOrNull } from '@/lib/stringEmptyOrNull'
 import CartDataModel from '@/types/CartDataModel'
 import GoToCheckoutBtn from './GoToCheckoutBtn'
 import { HiOutlineReceiptPercent, HiOutlineShieldCheck } from 'react-icons/hi2'
 import { useTranslations } from 'next-intl'
+import Currency from '@/types/Currency'
+import { getCartItemTotal } from './cartPricing'
 
-const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
+const defaultCurrency: Currency = {
+    _id: '',
+    active: true,
+    country: 'US',
+    currency: 'USD',
+    currencySymbol: '$',
+    default: true,
+    exchangeRates: 1,
+    ISO: 'US',
+}
+
+const CartTotalSection = ({ cartItems, userCurrency = defaultCurrency }: { cartItems: CartDataModel[], userCurrency?: Currency }) => {
     const t = useTranslations('cart')
-
-    const calculateProductPrice = (item: CartDataModel): number => {
-        var priceInitial = 0
-        if (stringNotEmptyOrNull(item.variationCode) && item.variationCode != "customSize") {
-            const variation = item.cartProduct[0].variations.find(ff => ff.variationCode == item.variationCode!);
-            const variationPrice = Number(variation?.variationPrice ?? item.cartProduct[0]?.productSellingPrice ?? 0);
-            const variationDiscount = Number(variation?.variationDiscount ?? 0);
-            priceInitial = variationPrice - (variationPrice * (variationDiscount / 100));
-        } else if (item.variationCode == "customSize") {
-            switch (item.customSize?.shape) {
-                case "Rectangle":
-                case "Runner":
-                case "Square":
-                    priceInitial = item.cartProduct[0].productPriceSqFt * (item.customSize?.dimensions.length ?? 1) * (item.customSize?.dimensions.width ?? 1);
-                    break;
-                case "Round":
-                    priceInitial = item.cartProduct[0].productPriceSqFt * (Math.pow((item.customSize?.dimensions.diameter ?? 1) / 2, 2) * Math.PI);
-                    break;
-            }
-        } else {
-            priceInitial = item.cartProduct[0]?.productSellingPrice ?? 0;
-        }
-
-        return priceInitial * item.quantity
-    }
 
     let subTotal = 0
     cartItems.forEach((item: CartDataModel) => {
-        subTotal = subTotal + calculateProductPrice(item)
+        subTotal = subTotal + getCartItemTotal(item, userCurrency.exchangeRates ?? 1)
     })
     let cartTotal = subTotal
 
@@ -55,7 +42,7 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
             <div className="p-6 space-y-4">
                 <div className="flex justify-between items-center text-base-content/70">
                     <span>{t('subtotalItems', { count: cartItems.length })}</span>
-                    <span className="font-medium text-base-content">$ {subTotal.toFixed(2)}</span>
+                    <span className="font-medium text-base-content">{userCurrency.currencySymbol} {subTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center text-base-content/70">
                     <span>{t('shipping')}</span>
@@ -65,7 +52,7 @@ const CartTotalSection = ({ cartItems }: { cartItems: CartDataModel[] }) => {
                 <div className="border-t border-base-300/50 pt-4 mt-4">
                     <div className="flex justify-between items-center">
                         <span className="text-lg font-semibold text-base-content">{t('estimatedTotal')}</span>
-                        <span className="text-xl font-bold text-primary">$ {cartTotal.toFixed(2)}</span>
+                        <span className="text-xl font-bold text-primary">{userCurrency.currencySymbol} {cartTotal.toFixed(2)}</span>
                     </div>
                 </div>
 
