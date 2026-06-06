@@ -7,8 +7,8 @@ import { getPublicAlgoliaConfig } from '@/lib/algoliaConfig'
 import BreadCrumbs from '@/ui/BreadCrumbs'
 import getCategoriesList from '@/backend/serverActions/getCategoriesList'
 
-const ProductListingLayout = async ({ children, params }: LayoutProps<'/[locale]/products/category/[categoryname]'>) => {
-    const { categoryname } = await params as { categoryname: string }
+const ProductListingLayout = async ({ children, params }: { children: React.ReactNode, params: Promise<{ categoryname: string, locale: string }> }) => {
+    const { categoryname } = await params
     const category = await getCategoriesWithName(decodeURIComponent(categoryname));
     const algolia = await getPublicAlgoliaConfig()
     const categories = await getCategoriesList()

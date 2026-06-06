@@ -106,13 +106,14 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
         }
     };
 
+    if (products.length === 0) return null
+
     return (
         <>
             <div className="fluid_container mx-auto ~px-5/0 ~py-8/14">
                 <SectionTitle title={sectionHeading} className="text-center ~pb-6/10" />
                 <div className="relative">
                     <button
-                        id="slider-prev"
                         className="absolute left-2 top-1/2 z-30 -translate-y-1/2 rounded-full p-2 md:left-3 2xl:-left-12"
                         aria-label="Previous"
                         onClick={goToPrev}
@@ -149,7 +150,6 @@ const ProductCarouselBasic = memo(function ProductCarouselBasic({
                         </div>
                     </div>
                     <button
-                        id="slider-next"
                         className="absolute right-2 top-1/2 z-30 -translate-y-1/2 rounded-full p-2 md:right-3 2xl:-right-12"
                         aria-label="Next"
                         onClick={goToNext}

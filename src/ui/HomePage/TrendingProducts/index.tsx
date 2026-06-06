@@ -13,6 +13,8 @@ const TrendingProducts = async () => {
     ])
     const products = serializeProductCardList(serializeForClient(trendingProducts))
 
+    if (products.length === 0) return null
+
     return (
         <div className='fluid_container  ~py-5/14 ~px-3.5/0'>
             <SectionTitle title={t('trendingTitle')} className='text-center py-5' />

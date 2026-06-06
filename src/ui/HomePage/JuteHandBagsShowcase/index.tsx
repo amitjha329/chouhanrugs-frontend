@@ -9,6 +9,8 @@ import { resolveLocalizedString } from "@/lib/resolveLocalized"
 import { getProductFeaturedImage } from "@/lib/getProductFeaturedImage"
 import { type Locale } from "@/i18n/routing"
 
+const isFinitePrice = (value: number) => Number.isFinite(value) && value >= 0
+
 /* ------------------------------------------------------------------ */
 /*  Mini Product Card (compact for the 50% grid)                      */
 /* ------------------------------------------------------------------ */
@@ -35,20 +37,21 @@ function MiniProductCard({ product, locale }: { product: ProductDataModel; local
     }
     const hasDiscount = msrpPrice > sellingPrice
     const primaryImage = getProductFeaturedImage(product)
+    const productHref = url ? `/products/${url}` : null
+
+    if (!name || !productHref || !primaryImage || !isFinitePrice(sellingPrice)) return null
 
     return (
-        <Link href={`/products/${url}`} prefetch={false} className="h-full">
+        <Link href={productHref} prefetch={false} className="h-full">
             <div className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:-translate-y-1 h-full flex flex-col">
                 <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 flex-shrink-0">
-                    {primaryImage && (
-                        <Image
-                            src={primaryImage}
-                            alt={name}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 768px) 40vw, 15vw"
-                        />
-                    )}
+                    <Image
+                        src={primaryImage}
+                        alt={name}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 40vw, 15vw"
+                    />
                     {hasDiscount && product.productDiscountPercentage && (
                         <span className="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                             {product.productDiscountPercentage}
@@ -61,7 +64,7 @@ function MiniProductCard({ product, locale }: { product: ProductDataModel; local
                     </h3>
                     <div className="flex items-center gap-1.5 mt-auto">
                         <span className="text-primary font-bold text-sm">${sellingPrice.toFixed(2)}</span>
-                        {hasDiscount && (
+                        {hasDiscount && isFinitePrice(msrpPrice) && (
                             <span className="text-gray-400 text-xs line-through">${msrpPrice.toFixed(2)}</span>
                         )}
                     </div>

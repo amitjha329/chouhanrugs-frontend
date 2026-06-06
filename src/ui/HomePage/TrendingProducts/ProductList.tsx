@@ -3,6 +3,8 @@ import ProductCardItem from '@/ui/Product/ProductCardItem'
 import React from 'react'
 
 const ProductListHotTrending = async ({ trendingProducts }: { trendingProducts: ProductDataModelWithColorMap[] }) => {
+    if (trendingProducts.length === 0) return null
+
     return (
         <div className='fluid_conainer grid grid-cols-4 gap-5'>
             {
@@ -15,6 +17,8 @@ const ProductListHotTrending = async ({ trendingProducts }: { trendingProducts: 
 }
 
 const ProductListHotTrendingMobile = async ({ trendingProducts }: { trendingProducts: ProductDataModelWithColorMap[] }) => {
+    if (trendingProducts.length === 0) return null
+
     return (
         <div className="carousel carousel-center max-w-full space-x-3 py-4 px-1.5 z-30">
             {
@@ -24,8 +28,8 @@ const ProductListHotTrendingMobile = async ({ trendingProducts }: { trendingProd
                             accumulator.push(array.slice(currentIndex, currentIndex + 2));
                         }
                         return accumulator;
-                    }, []).map(product => {
-                        return <div key={product[0]._id!.toString()} className='min-w-44 max-w-44 space-y-4'>
+                    }, []).map((product, index) => {
+                        return <div key={product[0]._id?.toString() ?? `trending-group-${index}`} className='min-w-44 max-w-44 space-y-4'>
                             <ProductCardItem {...product[0]} />
                             {product.length > 1 && <ProductCardItem {...product[1]} />}
                         </div>

@@ -8,8 +8,8 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { type Locale } from '@/i18n/routing'
 
-const ProductLayout = async (props: LayoutProps<'/[locale]/products/[productId]'>) => {
-    const params = await props.params as { productId: string, locale: string }
+const ProductLayout = async (props: { params: Promise<{ productId: string, locale: string }>, children: React.ReactNode }) => {
+    const params = await props.params
 
     const {
         productId,

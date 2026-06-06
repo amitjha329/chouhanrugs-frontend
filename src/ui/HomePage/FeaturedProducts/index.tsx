@@ -7,8 +7,11 @@ import { getTranslations } from 'next-intl/server'
 import { serializeProductCardList } from '@/lib/productCardSerialization'
 
 const FeaturedProducts = async () => {
-    const trendingProducts = serializeProductCardList(serializeForClient(await getFeaturedProducts({ limit: 8 })))
-    const t = await getTranslations('homepage')
+    const [featuredProducts, t] = await Promise.all([
+        getFeaturedProducts({ limit: 8 }),
+        getTranslations('homepage'),
+    ])
+    const trendingProducts = serializeProductCardList(serializeForClient(featuredProducts))
 
     return trendingProducts.length > 0 ? <div className='fluid_container  ~py-5/14 ~px-3.5/0'>
         <SectionTitle title={t('featuredTitle')} className='text-center py-5' />
