@@ -9,9 +9,9 @@ function localizedPath(path: string, locale: string) {
     return localizePathname(path, locale as Locale)
 }
 
-function revalidateLocalizedPath(path: string) {
+function revalidateLocalizedPath(path: string, type?: 'layout' | 'page') {
     for (const locale of storefrontLocales) {
-        revalidatePath(localizedPath(path, locale))
+        revalidatePath(localizedPath(path, locale), type)
     }
 }
 
@@ -53,6 +53,8 @@ export async function revalidateProducts() {
     revalidateTag('related-products', 'max')
     revalidateLocalizedPath('/')
     revalidateLocalizedPath('/products')
+    revalidateLocalizedPath('/products/category/[categoryname]', 'page')
+    revalidateLocalizedPath('/products/[productId]', 'page')
     revalidateSitemaps()
 }
 
@@ -72,8 +74,11 @@ export async function revalidateSiteData() {
     revalidateLocalizedPath('/policies')
     revalidateLocalizedPath('/products')
     revalidateLocalizedPath('/products/category')
+    revalidateLocalizedPath('/products/category/[categoryname]', 'page')
+    revalidateLocalizedPath('/products/[productId]', 'page')
     revalidateLocalizedPath('/terms')
     revalidateLocalizedPath('/track-order')
+    revalidateLocalizedPath('/[...slug]', 'page')
     revalidateSitemaps()
 }
 
@@ -95,6 +100,13 @@ export async function revalidateTranslations(locale?: string) {
 export async function revalidateStorefrontTags(tags: string[]) {
     for (const tag of tags) {
         revalidateTag(tag, 'max')
+        // Automatically revalidate path for specific page slug tags
+        if (tag.startsWith('page-')) {
+            const pageSlug = tag.substring(5)
+            if (pageSlug && pageSlug !== 'config' && pageSlug !== 'sitemap') {
+                revalidateLocalizedPath(`/${pageSlug}`)
+            }
+        }
     }
 
     if (tags.some(tag => ['products', 'new-products', 'featured-products', 'hot-trending-products', 'top-selling-products', 'related-products', 'categories'].includes(tag))) {
@@ -108,6 +120,7 @@ export async function revalidateStorefrontTags(tags: string[]) {
     if (tags.includes('blogs')) {
         revalidateTag('blogs', 'max')
         revalidateLocalizedPath('/blog')
+        revalidateLocalizedPath('/blog/[slug]', 'page')
         revalidateSitemaps()
     }
 

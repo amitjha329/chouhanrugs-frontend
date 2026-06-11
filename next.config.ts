@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
       handlebars: 'handlebars/dist/handlebars.js',
     },
   },
+  experimental: {
+    // Disables parallel static generation worker threads
+    workerThreads: false, 
+    // Limits the number of CPUs Next.js will use for the build
+    cpus: 1
+  },
   images: {
     // Keep common Next.js defaults and existing app usages to avoid broken static image requests.
     qualities: [10, 20, 30, 40, 50],

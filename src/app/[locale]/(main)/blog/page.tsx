@@ -18,10 +18,18 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     })
 }
 
-const BlogListPage = async (props: { params: Promise<{ locale: string }> }) => {
+const BlogListPage = async (props: {
+    params: Promise<{ locale: string }>
+    searchParams: Promise<{ page?: string }>
+}) => {
     const { locale: loc } = await props.params
     const locale = loc as Locale
-    const blogList = await getBlogPostsList()
+    const searchParams = await props.searchParams
+    const currentPage = parseInt(searchParams.page ?? '1', 10) || 1
+    const limit = 6
+    const { blogs, totalCount } = await getBlogPostsList(currentPage, limit)
+    const totalPages = Math.ceil(totalCount / limit)
+
     return (
         <section className="bg-white">
             <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
@@ -31,7 +39,7 @@ const BlogListPage = async (props: { params: Promise<{ locale: string }> }) => {
                 </div>
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2">
                     {
-                        Array.isArray(blogList) && blogList.length > 0 && blogList.map(blogItem => {
+                        Array.isArray(blogs) && blogs.length > 0 && blogs.map(blogItem => {
                             const title = resolveLocalizedString(blogItem.title, locale)
                             const slug = resolveLocalizedString(blogItem.slug, locale)
                             const description = resolveLocalizedString(blogItem.description, locale)
@@ -73,7 +81,49 @@ const BlogListPage = async (props: { params: Promise<{ locale: string }> }) => {
                     }
                 </div>
                 {
-                    blogList.length == 0 && <h2 className="mb-4 text-3xl text-center lg:text-7xl tracking-tight font-extrabold w-full opacity-50">No Blogs</h2>
+                    blogs.length == 0 && <h2 className="mb-4 text-3xl text-center lg:text-7xl tracking-tight font-extrabold w-full opacity-50">No Blogs</h2>
+                }
+                {
+                    totalPages > 1 && (
+                        <nav aria-label="Blog pagination" className="mt-12 flex items-center justify-center gap-2">
+                            <Link
+                                href={currentPage > 1 ? `?page=${currentPage - 1}` : '#'}
+                                aria-label="Previous page"
+                                className={`btn max-sm:btn-sm btn-outline btn-primary ${currentPage === 1 ? 'btn-disabled opacity-50 pointer-events-none' : ''}`}
+                                tabIndex={currentPage === 1 ? -1 : undefined}
+                                aria-disabled={currentPage === 1}
+                            >
+                                Prev
+                            </Link>
+                            <div className="join">
+                                {Array.from({ length: totalPages }, (_, idx) => {
+                                    const pageNum = idx + 1
+                                    const isActive = pageNum === currentPage
+                                    return (
+                                        <Link
+                                            key={pageNum}
+                                            href={`?page=${pageNum}`}
+                                            aria-label={`Page ${pageNum}`}
+                                            aria-current={isActive ? 'page' : undefined}
+                                            className={`btn max-sm:btn-sm btn-outline btn-primary join-item ${isActive ? 'btn-active bg-primary text-primary-content pointer-events-none' : ''}`}
+                                            aria-disabled={isActive}
+                                        >
+                                            {pageNum}
+                                        </Link>
+                                    )
+                                })}
+                            </div>
+                            <Link
+                                href={currentPage < totalPages ? `?page=${currentPage + 1}` : '#'}
+                                aria-label="Next page"
+                                className={`btn max-sm:btn-sm btn-outline btn-primary ${currentPage === totalPages ? 'btn-disabled opacity-50 pointer-events-none' : ''}`}
+                                tabIndex={currentPage === totalPages ? -1 : undefined}
+                                aria-disabled={currentPage === totalPages}
+                            >
+                                Next
+                            </Link>
+                        </nav>
+                    )
                 }
             </div>
         </section>
