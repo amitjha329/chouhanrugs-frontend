@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { revalidateTag } from 'next/cache'
+import { revalidateStorefrontTags } from '@/backend/serverActions/revalidateCache'
 
 /**
  * API route for on-demand cache revalidation.
@@ -22,11 +22,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'No tags provided' }, { status: 400 })
         }
 
-        // Revalidate each tag with immediate expiration
-        // { expire: 0 } forces immediate cache invalidation instead of stale-while-revalidate
-        for (const tag of tags) {
-            revalidateTag(tag, { expire: 0 })
-        }
+        // Revalidate tags and their associated pages immediately
+        await revalidateStorefrontTags(tags)
 
         return NextResponse.json({ revalidated: true, tags }, { status: 200 })
     } catch (error) {
