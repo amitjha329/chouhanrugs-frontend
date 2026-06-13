@@ -36,8 +36,12 @@ export async function revalidateCacheByTag(tag: string) {
  * Revalidate cache by path
  * Use this when a specific page needs to be refreshed
  */
-export async function revalidateCacheByPath(path: string) {
-    revalidatePath(path)
+export async function revalidateCacheByPath(path: string, type?: 'page' | 'layout') {
+    if (type) {
+        revalidatePath(path, type)
+    } else {
+        revalidatePath(path)
+    }
 }
 
 /**
