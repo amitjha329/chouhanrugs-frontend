@@ -32,15 +32,8 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 }
 
-type SearchParams = Promise<{ page?: string }>
-
-const BlogListPage = async (props: { searchParams: SearchParams }) => {
-    const searchParams = await props.searchParams
-    const currentPage = Number(searchParams.page || '1')
-    const limit = 6
-    const { blogs, totalCount } = await getBlogPostsList(currentPage, limit)
-    const totalPages = Math.ceil(totalCount / limit)
-
+const BlogListPage = async () => {
+    const blogList = await getBlogPostsList()
     return (
         <section className="bg-white">
             <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
@@ -50,7 +43,7 @@ const BlogListPage = async (props: { searchParams: SearchParams }) => {
                 </div>
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-2">
                     {
-                        Array.isArray(blogs) && blogs.length > 0 && blogs.map(blogItem => {
+                        Array.isArray(blogList) && blogList.length > 0 && blogList.map(blogItem => {
                             return (
                                 <Link href={`/blog/${blogItem.slug}`} key={blogItem._id} >
                                     <div className="bg-white rounded-lg border border-gray-200 shadow-md card card-body">
@@ -75,6 +68,10 @@ const BlogListPage = async (props: { searchParams: SearchParams }) => {
                                             <p className="mb-5 font-light text-current text-clip line-clamp-4">{blogItem.description}</p>
                                             <div className="flex justify-between items-center">
                                                 <div className="flex items-center space-x-4">
+                                                    {/* <img className="w-7 h-7 rounded-full" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png" alt="Jese Leos avatar" />
+                                                    <span className="font-medium dark:text-white">
+                                                        Jese Leos
+                                                    </span> */}
                                                 </div>
                                                 <Link href={`/blog/${blogItem.slug}`} className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline cursor-pointer">
                                                     Read more
@@ -89,35 +86,8 @@ const BlogListPage = async (props: { searchParams: SearchParams }) => {
                     }
                 </div>
                 {
-                    blogs.length == 0 && <h2 className="mb-4 text-3xl text-center lg:text-7xl tracking-tight font-extrabold w-full opacity-50">No Blogs</h2>
+                    blogList.length == 0 && <h2 className="mb-4 text-3xl text-center lg:text-7xl tracking-tight font-extrabold w-full opacity-50">No Blogs</h2>
                 }
-                {totalPages > 1 && (
-                    <div className="flex justify-center mt-12">
-                        <div className="join">
-                            {currentPage > 1 && (
-                                <Link href={`/blog?page=${currentPage - 1}`} className="join-item btn btn-outline btn-sm">
-                                    « Prev
-                                </Link>
-                            )}
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                                <Link
-                                    key={p}
-                                    href={`/blog?page=${p}`}
-                                    className={`join-item btn btn-sm ${
-                                        p === currentPage ? 'btn-active btn-primary' : 'btn-outline'
-                                    }`}
-                                >
-                                    {p}
-                                </Link>
-                            ))}
-                            {currentPage < totalPages && (
-                                <Link href={`/blog?page=${currentPage + 1}`} className="join-item btn btn-outline btn-sm">
-                                    Next »
-                                </Link>
-                            )}
-                        </div>
-                    </div>
-                )}
             </div>
         </section>
     )

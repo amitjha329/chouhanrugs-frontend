@@ -5,36 +5,23 @@ import clientPromise from "@/lib/clientPromise"
 import BlogDataModel from "@/types/BlogDataModel"
 import converter from "@/utils/mongoObjectConversionUtility"
 
-export default async function getBlogPostsList(
-    page: number = 1,
-    limit: number = 6
-): Promise<{ blogs: BlogDataModel[]; totalCount: number }> {
+export default async function getBlogPostsList(): Promise<BlogDataModel[]> {
     return unstable_cache(
         async () => {
             const mongoClient = await clientPromise
             const collectionPartnerIds = mongoClient.db(process.env.MONGODB_DB).collection("blogs")
             try {
-                const query = { draft: { $ne: true } }
-                const totalCount = await collectionPartnerIds.countDocuments(query)
-
-                const skip = (page - 1) * limit
-                const partnerIdsData = await collectionPartnerIds
-                    .find(query)
-                    .sort({ posted: -1, updated: -1 })
-                    .skip(skip)
-                    .limit(limit)
-                    .toArray()
-
-                const blogs = new Array<BlogDataModel>()
+                const partnerIdsData = await collectionPartnerIds.find({}).toArray()
+                const returnData = new Array<BlogDataModel>()
                 partnerIdsData.forEach(item => {
-                    blogs.push(converter.fromWithNoFieldChange<BlogDataModel>(item))
+                    returnData.push(converter.fromWithNoFieldChange<BlogDataModel>(item))
                 })
-                return { blogs, totalCount }
+                return returnData
             } catch (err: any) {
                 throw new Error(err)
             }
         },
-        ['blog-posts-list', String(page), String(limit)],
+        ['blog-posts-list'],
         { tags: ['blogs'], revalidate: 3600 }
     )()
 }
