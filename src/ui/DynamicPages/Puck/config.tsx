@@ -3,6 +3,7 @@ import type { ComponentConfig, Config } from "@measured/puck"
 import Link from "next/link"
 import React from "react"
 import ProductCardItem from "@/ui/Product/ProductCardItem"
+import { getCategoriesForClient, getProductsByCategoryForClient } from "@/backend/serverActions/clientCategoriesAndProducts"
 
 export type RootProps = {
     title: string;
@@ -48,8 +49,7 @@ const CategorySelectorField = {
             let active = true
             const load = async () => {
                 try {
-                    const getCategoriesList = (await import("@/backend/serverActions/getCategoriesList")).default
-                    const data = await getCategoriesList()
+                    const data = await getCategoriesForClient()
                     if (active) {
                         setCategories(data)
                         setLoading(false)
@@ -503,8 +503,7 @@ export const BrowseCategoryList: ComponentConfig<BrowseCategoryListProps> = {
             let active = true
             const load = async () => {
                 try {
-                    const getCategoriesList = (await import("@/backend/serverActions/getCategoriesList")).default
-                    const data = await getCategoriesList()
+                    const data = await getCategoriesForClient()
                     if (active) {
                         setAllCategories(data)
                         setLoading(false)
@@ -634,9 +633,8 @@ export const CategoryProducts: ComponentConfig<CategoryProductsProps> = {
                     return
                 }
                 try {
-                    const { getProductsByCategory } = await import("@/backend/serverActions/getProductsByCategory")
                     const { serializeProductCardList } = await import("@/lib/productCardSerialization")
-                    const rawProducts = await getProductsByCategory(categoryName, limit || 8)
+                    const rawProducts = await getProductsByCategoryForClient(categoryName, limit || 8)
                     if (active) {
                         const serialized = serializeProductCardList(rawProducts as any)
                         setProducts(serialized)
@@ -657,8 +655,7 @@ export const CategoryProducts: ComponentConfig<CategoryProductsProps> = {
             const loadSlug = async () => {
                 if (!categoryName) return
                 try {
-                    const getCategoriesList = (await import("@/backend/serverActions/getCategoriesList")).default
-                    const data = await getCategoriesList()
+                    const data = await getCategoriesForClient()
                     const cat = data.find(c => c.name === categoryName)
                     if (active && cat) {
                         setCategorySlug(cat.slug || "")
