@@ -4,6 +4,8 @@ import { getTranslations } from 'next-intl/server'
 import { type Locale } from '@/i18n/routing'
 import { getStaticPageMetadata } from '@/lib/pageMetadata'
 import type { Metadata } from 'next'
+import getPageData from '@/backend/serverActions/getPageData'
+import FAQSection from '@/ui/FAQSection'
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale: loc } = await props.params
@@ -16,8 +18,14 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
     })
 }
 
-const TrackOrderPage = async () => {
-    const t = await getTranslations('trackOrder')
+const TrackOrderPage = async (props: { params: Promise<{ locale: string }> }) => {
+    const params = await props.params
+    const locale = params.locale as Locale
+    const [t, pageData] = await Promise.all([
+        getTranslations('trackOrder'),
+        getPageData("track-order").catch(() => null),
+    ])
+
     return (
         <>
             <div className="w-full flex flex-col items-center justify-center mt-14 px-10">
@@ -27,6 +35,7 @@ const TrackOrderPage = async () => {
             <div className='w-full flex flex-col items-center justify-center mt-14 px-10 pb-10 gap-5'>
                 <TrackOrderForm />
             </div>
+            <FAQSection faqs={pageData?.faqs} locale={locale} />
         </>
     )
 }

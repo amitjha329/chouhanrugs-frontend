@@ -17,6 +17,8 @@ const HomePageVideoSection = async () => {
     const description = resolveLocalizedString(data.description, locale);
     const autoplay = data.autoplay ?? false;
 
+    const HeadingTag = (data.headingTag || "h2") as any;
+
     return (
         <section className="relative w-full overflow-hidden bg-black">
             <video
@@ -32,9 +34,9 @@ const HomePageVideoSection = async () => {
 
             {heading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 px-6 text-center pointer-events-none">
-                    <h2 className="text-white text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight drop-shadow-lg max-w-3xl">
+                    <HeadingTag className="text-white text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight drop-shadow-lg max-w-3xl">
                         {heading}
-                    </h2>
+                    </HeadingTag>
                     {description && (
                         <p className="mt-4 text-white/80 text-sm sm:text-base max-w-xl leading-relaxed drop-shadow">
                             {description}

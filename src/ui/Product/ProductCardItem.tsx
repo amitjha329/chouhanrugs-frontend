@@ -29,6 +29,7 @@ interface CompoProps extends ProductDataModelWithColorMap {
     ctaLabel?: string
     imageSizes?: string
     fillHeight?: boolean
+    headingTag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span'
 }
 
 /**
@@ -36,6 +37,7 @@ interface CompoProps extends ProductDataModelWithColorMap {
  * Uses Next.js Image with blur placeholder for optimal loading without client-side state
  */
 const ProductCardItem = (props: CompoProps) => {
+    const HeadingTag = props.headingTag ?? 'div'
     const t = useTranslations('product')
     const locale = useLocale() as Locale
     const name = resolveLocalizedString(props.productName, locale) || resolveLocalizedString(props.productTitle, locale)
@@ -124,9 +126,9 @@ const ProductCardItem = (props: CompoProps) => {
                         )}
                         <div className={clsx('absolute inset-x-0 bottom-0 p-5 text-white md:p-7', props.contentWrapperClassName)}>
                             <div className={clsx('text-[12px] font-medium text-white/75 md:text-sm', props.categoryClassName)}>{props.productCategory}</div>
-                            <h2 className={clsx('mt-2 max-w-[15ch] text-[22px] font-semibold leading-[1.08] md:text-[30px]', props.titleClassName)}>
+                            <HeadingTag className={clsx('mt-2 max-w-[15ch] text-[22px] font-semibold leading-[1.08] md:text-[30px]', props.titleClassName)}>
                                 {name}
-                            </h2>
+                            </HeadingTag>
                             <div className={clsx('mt-4 flex flex-wrap items-end gap-x-3 gap-y-1', props.priceClassName)}>
                                 <span className="text-[22px] font-bold md:text-[28px]">${leastSellingPrice}</span>
                                 {Number(leastMSRP) > Number(leastSellingPrice) && (
@@ -220,14 +222,14 @@ const ProductCardItem = (props: CompoProps) => {
                         density === 'compact' ? 'line-clamp-1 text-[10px] font-medium leading-3 text-[#8a7d72]' : 'line-clamp-1 text-[10px] font-medium leading-3 text-[#8a7d72] sm:text-[11px]',
                         props.categoryClassName
                     )}>{props.productCategory}</div>
-                    <h2 className={clsx(
+                    <HeadingTag className={clsx(
                         density === 'compact'
                             ? 'mt-1 line-clamp-2 min-h-[28px] text-[11px] font-semibold leading-[15px] text-[#25170e] sm:text-[12px] sm:leading-4'
                             : 'mt-1 line-clamp-2 min-h-[32px] text-[12px] font-semibold leading-4 text-[#25170e] sm:text-[13px] sm:leading-[18px]',
                         props.titleClassName
                     )}>
                         {name}
-                    </h2>
+                    </HeadingTag>
                     <div className={clsx(
                         density === 'compact' ? 'mt-1.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-1' : 'mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1',
                         props.priceClassName

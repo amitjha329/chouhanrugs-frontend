@@ -10,6 +10,8 @@ import bannerImage from '../../signin/banner.webp'
 import accentRugImage from '@/ui/HomePage/NewProductsSection/new-arrivals.webp'
 import { FaWhatsapp } from 'react-icons/fa6'
 import { FiArrowRight, FiClock, FiEdit3, FiMail, FiMapPin, FiMessageSquare, FiPhoneCall, FiSend, FiShield, FiUser } from 'react-icons/fi'
+import getPageData from '@/backend/serverActions/getPageData'
+import FAQSection from '@/ui/FAQSection'
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale: loc } = await props.params
@@ -91,7 +93,10 @@ const DetailRow = ({ icon: Icon, title, children }: {
     </div>
 )
 
-const ContactUsPage = async () => {
+const ContactUsPage = async (props: { params: Promise<{ locale: string }> }) => {
+    const params = await props.params
+    const locale = params.locale as Locale
+    const pageData = await getPageData("contact us").catch(() => null)
     const siteInfo = await getSiteData()
     const t = await getTranslations('contact')
     const text = (key: string, fallback: string) => {
@@ -370,6 +375,7 @@ const ContactUsPage = async () => {
                     </a>
                 </div>
             </section>
+            <FAQSection faqs={pageData?.faqs} locale={locale} />
         </div>
     )
 }

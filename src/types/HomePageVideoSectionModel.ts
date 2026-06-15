@@ -11,4 +11,5 @@ export type HomePageVideoSectionModel = {
     autoplay?: boolean;
     muted?: boolean;
     loop?: boolean;
+    headingTag?: string;
 };

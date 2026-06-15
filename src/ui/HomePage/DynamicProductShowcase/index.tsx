@@ -95,6 +95,9 @@ const DynamicProductShowcase = async () => {
 
     if (products.length === 0) return null;
 
+    const SectionHeadingTag = (showcaseData.sectionHeadingTag || "h2") as any;
+    const GridHeadingTag = (showcaseData.gridHeadingTag || "h3") as any;
+
     return (
         <section className="~py-10/20 ~px-5/0">
             <div className="container mx-auto">
@@ -115,9 +118,9 @@ const DynamicProductShowcase = async () => {
                             <p className="text-xs uppercase tracking-[0.25em] text-amber-200 font-medium mb-2">
                                 {t("handcraftedCollection")}
                             </p>
-                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
+                            <SectionHeadingTag className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
                                 {sectionHeading}
-                            </h2>
+                            </SectionHeadingTag>
                             {description && (
                                 <p className="text-white/80 text-sm sm:text-base max-w-md leading-relaxed">
                                     {description}
@@ -128,7 +131,7 @@ const DynamicProductShowcase = async () => {
 
                     <div className="flex flex-col">
                         <div className="flex gap-3 flex-row items-center justify-between mb-6">
-                            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">{productGridHeading}</h3>
+                            <GridHeadingTag className="text-lg sm:text-xl font-semibold text-gray-900">{productGridHeading}</GridHeadingTag>
                             <div className="flex items-center gap-3">
                                 {showcaseData.knowMoreHref && (
                                     <Link

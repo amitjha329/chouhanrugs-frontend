@@ -16,6 +16,7 @@ type PageMetaDataModel = {
     data?: Data;
     createdAt?: number;
     updatedAt?: number;
+    faqs?: { question: LocalizedField<string>; answer: LocalizedField<string> }[]
 }
 
 export default PageMetaDataModel

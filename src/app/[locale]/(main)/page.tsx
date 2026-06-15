@@ -23,6 +23,7 @@ import { getLocale } from "next-intl/server";
 import { serializeProductCardList } from '@/lib/productCardSerialization'
 import bannerFallback from '../../../../static_assets/crbanner-01-01.webp'
 import { imageQuality } from '@/utils/imageOptimization'
+import FAQSection from '@/ui/FAQSection'
 
 // Lazy load below-the-fold sections to reduce initial DOM size
 const ShopByRoom = dynamic(() => import('@/ui/HomePage/ShopByRoom'), { ssr: true })
@@ -125,7 +126,11 @@ const HomeHeroFallback = () => (
   </section>
 )
 
-const HomePage = () => {
+const HomePage = async (props: { params: Promise<{ locale: string }> }) => {
+  const { locale: loc } = await props.params
+  const locale = loc as Locale
+  const homePageData = await getPageData("home")
+
   return (
     <>
       {/* Hero Section - Critical above-fold content */}
@@ -217,6 +222,9 @@ const HomePage = () => {
       
       {/* Testimonials */}
       <DynamicTestimonials />
+
+      {/* FAQ Section */}
+      <FAQSection faqs={homePageData?.faqs} locale={locale} />
       
       {/* SEO Footer Content */}
       <Suspense fallback={null}>

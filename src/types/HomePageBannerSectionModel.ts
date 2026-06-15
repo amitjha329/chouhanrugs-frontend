@@ -9,4 +9,5 @@ export type HomePageBannerSectionModel = {
     tagLine?: LocalizedField<string>;
     buttonText?: LocalizedField<string>;
     buttonLink?: string;
+    headingTag?: string;
 };

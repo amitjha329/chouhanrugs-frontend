@@ -14,4 +14,6 @@ export type HomePageProductShowcaseModel = {
     heroLinkHref?: string;
     knowMoreHref?: string;
     browseHref?: string;
+    sectionHeadingTag?: string;
+    gridHeadingTag?: string;
 };

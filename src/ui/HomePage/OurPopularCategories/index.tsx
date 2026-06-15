@@ -101,8 +101,11 @@ const OurPopularCategories = async () => {
         })
         : fallbackCategories
 
+    const sectionHeadingTag = (dynamicSection?.sectionHeadingTag || 'div') as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div';
+    const ItemHeadingTag = (dynamicSection?.itemHeadingTag || 'h2') as any;
+
     return (<>
-        <SectionTitle title={t('ourPopularCategories')} className='text-center pt-10 pb-5' />
+        <SectionTitle title={t('ourPopularCategories')} className='text-center pt-10 pb-5' headingTag={sectionHeadingTag} />
         <div className='grid grid-cols-4 gap-5 fluid_container ~py-5/14 ~px-5/0'>
             {
                 popularCategories.map(category => {
@@ -119,9 +122,9 @@ const OurPopularCategories = async () => {
                                 loading="lazy"
                                 {...imageProps}
                             />
-                            <h2 className='~text-base/2xl font-semibold z-20'>
+                            <ItemHeadingTag className='~text-base/2xl font-semibold z-20'>
                                 {category.title}
-                            </h2>
+                            </ItemHeadingTag>
                             <div className={`text-xs z-20 max-w-xl ${category.span === 4 ? "block" : "hidden md:block"}`}>
                                 {category.desc}
                             </div>

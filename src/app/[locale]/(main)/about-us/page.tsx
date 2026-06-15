@@ -8,6 +8,8 @@ import { type Locale } from '@/i18n/routing'
 import { getStaticPageMetadata } from '@/lib/pageMetadata'
 import type { Metadata } from 'next'
 import React from 'react'
+import getPageData from '@/backend/serverActions/getPageData'
+import FAQSection from '@/ui/FAQSection'
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale: loc } = await props.params
@@ -20,7 +22,11 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
   })
 }
 
-const AboutUsPage = () => {
+const AboutUsPage = async (props: { params: Promise<{ locale: string }> }) => {
+  const { locale: loc } = await props.params
+  const locale = loc as Locale
+  const pageData = await getPageData("about us").catch(() => null)
+
   return (
     <>
       <Intro />
@@ -29,6 +35,7 @@ const AboutUsPage = () => {
       <WhatDoWeProvideSection />
       <SomeMoreDetails />
       <Testimonials />
+      <FAQSection faqs={pageData?.faqs} locale={locale} />
     </>
   )
 }

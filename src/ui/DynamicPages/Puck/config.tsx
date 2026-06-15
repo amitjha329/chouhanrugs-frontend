@@ -133,12 +133,18 @@ export type RichTextProps = {
     body: string;
     align: "left" | "center";
     maxWidth: "narrow" | "wide";
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
 }
 
 export const RichText: ComponentConfig<RichTextProps> = {
     label: "Rich Text",
     fields: {
         title: { type: "text" },
+        headingTag: {
+            type: "select",
+            label: "Title Level",
+            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+        },
         body: richTextField,
         align: {
             type: "radio",
@@ -157,18 +163,22 @@ export const RichText: ComponentConfig<RichTextProps> = {
     },
     defaultProps: {
         title: "Content section",
+        headingTag: "h2",
         body: "Add your content here.",
         align: "left",
         maxWidth: "narrow",
     },
-    render: ({ title, body, align, maxWidth }) => (
-        <section className={`mx-auto px-6 py-14 md:px-10 ${maxWidth === "wide" ? "max-w-6xl" : "max-w-4xl"}`}>
-            <div className={align === "center" ? "text-center" : ""}>
-                {title && <h2 className="mb-5 text-3xl font-semibold text-primary">{title}</h2>}
-                <div className="prose max-w-none text-base leading-7 text-stone-700" dangerouslySetInnerHTML={{ __html: body }} />
-            </div>
-        </section>
-    ),
+    render: ({ title, body, align, maxWidth, headingTag }) => {
+        const Heading = headingTag || "h2";
+        return (
+            <section className={`mx-auto px-6 py-14 md:px-10 ${maxWidth === "wide" ? "max-w-6xl" : "max-w-4xl"}`}>
+                <div className={align === "center" ? "text-center" : ""}>
+                    {title && <Heading className="mb-5 text-3xl font-semibold text-primary">{title}</Heading>}
+                    <div className="prose max-w-none text-base leading-7 text-stone-700" dangerouslySetInnerHTML={{ __html: body }} />
+                </div>
+            </section>
+        )
+    },
 }
 
 export type ImageTextProps = {
@@ -177,12 +187,18 @@ export type ImageTextProps = {
     imageUrl?: string;
     imageAlt?: string;
     imagePosition: "left" | "right";
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
 }
 
 export const ImageText: ComponentConfig<ImageTextProps> = {
     label: "Image + Text",
     fields: {
         title: { type: "text" },
+        headingTag: {
+            type: "select",
+            label: "Title Level",
+            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+        },
         body: richTextField,
         imageUrl: { type: "text", label: "Image URL" },
         imageAlt: { type: "text", label: "Image Alt" },
@@ -196,22 +212,26 @@ export const ImageText: ComponentConfig<ImageTextProps> = {
     },
     defaultProps: {
         title: "A section title",
+        headingTag: "h2",
         body: "Describe the collection, material, process, or offer.",
         imageUrl: "",
         imageAlt: "",
         imagePosition: "right",
     },
-    render: ({ title, body, imageUrl, imageAlt, imagePosition }) => (
-        <section className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-2 md:items-center md:px-10">
-            <div className={imagePosition === "left" ? "md:order-2" : ""}>
-                <h2 className="text-3xl font-semibold text-primary md:text-4xl">{title}</h2>
-                <div className="mt-5 text-base leading-7 text-stone-700" dangerouslySetInnerHTML={{ __html: body }} />
-            </div>
-            <div className="aspect-[4/3] overflow-hidden rounded-lg bg-secondary/30">
-                {imageUrl ? <img src={imageUrl} alt={imageAlt ?? ""} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-sm text-stone-500">Image</div>}
-            </div>
-        </section>
-    ),
+    render: ({ title, body, imageUrl, imageAlt, imagePosition, headingTag }) => {
+        const Heading = headingTag || "h2";
+        return (
+            <section className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-2 md:items-center md:px-10">
+                <div className={imagePosition === "left" ? "md:order-2" : ""}>
+                    <Heading className="text-3xl font-semibold text-primary md:text-4xl">{title}</Heading>
+                    <div className="mt-5 text-base leading-7 text-stone-700" dangerouslySetInnerHTML={{ __html: body }} />
+                </div>
+                <div className="aspect-[4/3] overflow-hidden rounded-lg bg-secondary/30">
+                    {imageUrl ? <img src={imageUrl} alt={imageAlt ?? ""} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-sm text-stone-500">Image</div>}
+                </div>
+            </section>
+        );
+    },
 }
 
 export type FeatureGridProps = {
@@ -220,6 +240,7 @@ export type FeatureGridProps = {
     description?: string;
     columns: "2" | "3" | "4";
     items: { title: string; description: string }[];
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
 }
 
 export const FeatureGrid: ComponentConfig<FeatureGridProps> = {
@@ -227,6 +248,11 @@ export const FeatureGrid: ComponentConfig<FeatureGridProps> = {
     fields: {
         eyebrow: { type: "text" },
         title: { type: "text" },
+        headingTag: {
+            type: "select",
+            label: "Title Level",
+            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+        },
         description: { type: "text" },
         columns: {
             type: "select",
@@ -251,6 +277,7 @@ export const FeatureGrid: ComponentConfig<FeatureGridProps> = {
     defaultProps: {
         eyebrow: "Why choose us",
         title: "Everything needed to choose with confidence",
+        headingTag: "h2",
         description: "Use this section for product benefits, service highlights, or page-level selling points.",
         columns: "3",
         items: [
@@ -259,37 +286,46 @@ export const FeatureGrid: ComponentConfig<FeatureGridProps> = {
             { title: "Export quality", description: "Designed for homes, stores, and trade buyers." },
         ],
     },
-    render: ({ eyebrow, title, description, columns, items }) => (
-        <section className="bg-white px-6 py-16 md:px-10">
-            <div className="mx-auto max-w-7xl">
-                <div className="mb-8 max-w-3xl">
-                    {eyebrow && <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-accent">{eyebrow}</p>}
-                    <h2 className="text-3xl font-semibold text-primary md:text-4xl">{title}</h2>
-                    {description && <p className="mt-4 text-base leading-7 text-stone-600">{description}</p>}
+    render: ({ eyebrow, title, description, columns, items, headingTag }) => {
+        const Heading = headingTag || "h2";
+        return (
+            <section className="bg-white px-6 py-16 md:px-10">
+                <div className="mx-auto max-w-7xl">
+                    <div className="mb-8 max-w-3xl">
+                        {eyebrow && <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-accent">{eyebrow}</p>}
+                        <Heading className="text-3xl font-semibold text-primary md:text-4xl">{title}</Heading>
+                        {description && <p className="mt-4 text-base leading-7 text-stone-600">{description}</p>}
+                    </div>
+                    <div className={`grid gap-5 md:grid-cols-2 ${columns === "4" ? "xl:grid-cols-4" : columns === "2" ? "xl:grid-cols-2" : "xl:grid-cols-3"}`}>
+                        {items.map((item, index) => (
+                            <article key={index} className="rounded-lg border border-stone-200 bg-[#fbfaf8] p-6">
+                                <h3 className="text-lg font-semibold text-stone-950">{item.title}</h3>
+                                <p className="mt-3 text-sm leading-6 text-stone-600">{item.description}</p>
+                            </article>
+                        ))}
+                    </div>
                 </div>
-                <div className={`grid gap-5 md:grid-cols-2 ${columns === "4" ? "xl:grid-cols-4" : columns === "2" ? "xl:grid-cols-2" : "xl:grid-cols-3"}`}>
-                    {items.map((item, index) => (
-                        <article key={index} className="rounded-lg border border-stone-200 bg-[#fbfaf8] p-6">
-                            <h3 className="text-lg font-semibold text-stone-950">{item.title}</h3>
-                            <p className="mt-3 text-sm leading-6 text-stone-600">{item.description}</p>
-                        </article>
-                    ))}
-                </div>
-            </div>
-        </section>
-    ),
+            </section>
+        );
+    },
 }
 
 export type CtaProps = {
     title: string;
     description?: string;
     buttons: Button[];
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
 }
 
 export const Cta: ComponentConfig<CtaProps> = {
     label: "Call To Action",
     fields: {
         title: { type: "text" },
+        headingTag: {
+            type: "select",
+            label: "Title Level",
+            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+        },
         description: { type: "text" },
         buttons: {
             type: "array",
@@ -302,33 +338,43 @@ export const Cta: ComponentConfig<CtaProps> = {
     },
     defaultProps: {
         title: "Ready to find the right rug?",
+        headingTag: "h2",
         description: "Create a focused conversion moment for buyers and trade enquiries.",
         buttons: [{ label: "Explore Collection", href: "/", variant: "secondary" }],
     },
-    render: ({ title, description, buttons }) => (
-        <section className="px-6 py-16 md:px-10">
-            <div className="mx-auto max-w-5xl rounded-lg bg-primary px-6 py-12 text-center text-primary-content md:px-12">
-                <h2 className="text-3xl font-semibold">{title}</h2>
-                {description && <p className="mx-auto mt-4 max-w-2xl text-primary-content/85">{description}</p>}
-                {buttons?.length > 0 && (
-                    <div className="mt-7 flex flex-wrap justify-center gap-3">
-                        {buttons.map(button => <Link key={`${button.label}-${button.href}`} href={button.href} className={`btn rounded ${buttonClass(button.variant)}`}>{button.label}</Link>)}
-                    </div>
-                )}
-            </div>
-        </section>
-    ),
+    render: ({ title, description, buttons, headingTag }) => {
+        const Heading = headingTag || "h2";
+        return (
+            <section className="px-6 py-16 md:px-10">
+                <div className="mx-auto max-w-5xl rounded-lg bg-primary px-6 py-12 text-center text-primary-content md:px-12">
+                    <Heading className="text-3xl font-semibold">{title}</Heading>
+                    {description && <p className="mx-auto mt-4 max-w-2xl text-primary-content/85">{description}</p>}
+                    {buttons?.length > 0 && (
+                        <div className="mt-7 flex flex-wrap justify-center gap-3">
+                            {buttons.map(button => <Link key={`${button.label}-${button.href}`} href={button.href} className={`btn rounded ${buttonClass(button.variant)}`}>{button.label}</Link>)}
+                        </div>
+                    )}
+                </div>
+            </section>
+        );
+    },
 }
 
 export type FaqProps = {
     title: string;
     items: { question: string; answer: string }[];
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
 }
 
 export const Faq: ComponentConfig<FaqProps> = {
     label: "FAQ",
     fields: {
         title: { type: "text" },
+        headingTag: {
+            type: "select",
+            label: "Title Level",
+            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+        },
         items: {
             type: "array",
             min: 1,
@@ -343,21 +389,25 @@ export const Faq: ComponentConfig<FaqProps> = {
     },
     defaultProps: {
         title: "Frequently Asked Questions",
+        headingTag: "h2",
         items: [{ question: "What should visitors know?", answer: "Add a clear answer here." }],
     },
-    render: ({ title, items }) => (
-        <section className="mx-auto max-w-4xl px-6 py-16 md:px-10">
-            <h2 className="mb-6 text-3xl font-semibold text-primary">{title}</h2>
-            <div className="divide-y divide-stone-200 rounded-lg border border-stone-200 bg-white">
-                {items.map((item, index) => (
-                    <details key={index} className="group p-5">
-                        <summary className="cursor-pointer list-none font-semibold text-stone-950">{item.question}</summary>
-                        <p className="mt-3 text-sm leading-6 text-stone-600">{item.answer}</p>
-                    </details>
-                ))}
-            </div>
-        </section>
-    ),
+    render: ({ title, items, headingTag }) => {
+        const Heading = headingTag || "h2";
+        return (
+            <section className="mx-auto max-w-4xl px-6 py-16 md:px-10">
+                <Heading className="mb-6 text-3xl font-semibold text-primary">{title}</Heading>
+                <div className="divide-y divide-stone-200 rounded-lg border border-stone-200 bg-white">
+                    {items.map((item, index) => (
+                        <details key={index} className="group p-5">
+                            <summary className="cursor-pointer list-none font-semibold text-stone-950">{item.question}</summary>
+                            <p className="mt-3 text-sm leading-6 text-stone-600">{item.answer}</p>
+                        </details>
+                    ))}
+                </div>
+            </section>
+        );
+    },
 }
 
 export type PuckProps = {

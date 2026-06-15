@@ -8,6 +8,7 @@ import React from 'react'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
 import { type Locale } from '@/i18n/routing'
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog'
+import FAQSection from '@/ui/FAQSection'
 
 type Props = {
     params: Promise<{ slug: string, locale: string }>;
@@ -122,6 +123,7 @@ const BlogPostPage = async (props: { params: Promise<{ slug: string, locale: str
                     </article>
                 </div>
             </main>
+            <FAQSection faqs={blogData.faqs} locale={locale} />
         </>
     )
 }

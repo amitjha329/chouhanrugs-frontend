@@ -14,4 +14,6 @@ export type HomePagePopularCategoriesModel = {
     page: "home";
     dataType: "popular_categories";
     items?: HomePagePopularCategoryItem[];
+    sectionHeadingTag?: string;
+    itemHeadingTag?: string;
 };

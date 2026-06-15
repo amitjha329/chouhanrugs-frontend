@@ -16,6 +16,7 @@ type BlogDataModel = {
         image?: string
     }
     draft: boolean
+    faqs?: { question: LocalizedField<string>; answer: LocalizedField<string> }[]
 }
 
 export default BlogDataModel
