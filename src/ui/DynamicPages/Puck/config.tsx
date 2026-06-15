@@ -2,6 +2,7 @@
 import type { ComponentConfig, Config } from "@measured/puck"
 import Link from "next/link"
 import React from "react"
+import ProductCardItem from "@/ui/Product/ProductCardItem"
 
 export type RootProps = {
     title: string;
@@ -37,6 +38,49 @@ const richTextField = {
     },
 }
 
+const CategorySelectorField = {
+    type: "custom" as const,
+    render({ value, onChange }: { value?: string; onChange: (value: string) => void }) {
+        const [categories, setCategories] = React.useState<any[]>([])
+        const [loading, setLoading] = React.useState(true)
+
+        React.useEffect(() => {
+            let active = true
+            const load = async () => {
+                try {
+                    const getCategoriesList = (await import("@/backend/serverActions/getCategoriesList")).default
+                    const data = await getCategoriesList()
+                    if (active) {
+                        setCategories(data)
+                        setLoading(false)
+                    }
+                } catch (e) {
+                    console.error(e)
+                    if (active) setLoading(false)
+                }
+            }
+            load()
+            return () => { active = false }
+        }, [])
+
+        return (
+            <select
+                className="select select-bordered w-full"
+                value={value ?? ""}
+                onChange={event => onChange(event.currentTarget.value)}
+                disabled={loading}
+            >
+                <option value="">Select Category...</option>
+                {categories.map(cat => (
+                    <option key={cat._id} value={cat.name}>
+                        {cat.name}
+                    </option>
+                ))}
+            </select>
+        )
+    },
+}
+
 const buttonFields = {
     label: { type: "text" as const },
     href: { type: "text" as const },
@@ -56,13 +100,15 @@ const buttonClass = (variant: Button["variant"] = "primary") => {
     return "btn-primary"
 }
 
+const headingOptions = ["h1", "h2", "h3", "h4", "h5", "h6", "div", "span", "p", "strong"].map(value => ({ label: value.toUpperCase(), value }))
+
 export type HeroProps = {
     eyebrow?: string;
     title: string;
     description?: string;
     imageUrl?: string;
     imageAlt?: string;
-    headingTag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+    headingTag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
     align: "left" | "center";
     buttons: Button[];
 }
@@ -78,7 +124,7 @@ export const Hero: ComponentConfig<HeroProps> = {
         headingTag: {
             type: "select",
             label: "Title Level",
-            options: ["h1", "h2", "h3", "h4", "h5", "h6"].map(value => ({ label: value.toUpperCase(), value })),
+            options: headingOptions,
         },
         align: {
             type: "radio",
@@ -133,7 +179,7 @@ export type RichTextProps = {
     body: string;
     align: "left" | "center";
     maxWidth: "narrow" | "wide";
-    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
 }
 
 export const RichText: ComponentConfig<RichTextProps> = {
@@ -143,7 +189,7 @@ export const RichText: ComponentConfig<RichTextProps> = {
         headingTag: {
             type: "select",
             label: "Title Level",
-            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+            options: headingOptions,
         },
         body: richTextField,
         align: {
@@ -187,7 +233,7 @@ export type ImageTextProps = {
     imageUrl?: string;
     imageAlt?: string;
     imagePosition: "left" | "right";
-    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
 }
 
 export const ImageText: ComponentConfig<ImageTextProps> = {
@@ -197,7 +243,7 @@ export const ImageText: ComponentConfig<ImageTextProps> = {
         headingTag: {
             type: "select",
             label: "Title Level",
-            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+            options: headingOptions,
         },
         body: richTextField,
         imageUrl: { type: "text", label: "Image URL" },
@@ -240,7 +286,7 @@ export type FeatureGridProps = {
     description?: string;
     columns: "2" | "3" | "4";
     items: { title: string; description: string }[];
-    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
 }
 
 export const FeatureGrid: ComponentConfig<FeatureGridProps> = {
@@ -251,7 +297,7 @@ export const FeatureGrid: ComponentConfig<FeatureGridProps> = {
         headingTag: {
             type: "select",
             label: "Title Level",
-            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+            options: headingOptions,
         },
         description: { type: "text" },
         columns: {
@@ -314,7 +360,7 @@ export type CtaProps = {
     title: string;
     description?: string;
     buttons: Button[];
-    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
 }
 
 export const Cta: ComponentConfig<CtaProps> = {
@@ -324,7 +370,7 @@ export const Cta: ComponentConfig<CtaProps> = {
         headingTag: {
             type: "select",
             label: "Title Level",
-            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+            options: headingOptions,
         },
         description: { type: "text" },
         buttons: {
@@ -363,7 +409,7 @@ export const Cta: ComponentConfig<CtaProps> = {
 export type FaqProps = {
     title: string;
     items: { question: string; answer: string }[];
-    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
 }
 
 export const Faq: ComponentConfig<FaqProps> = {
@@ -373,7 +419,7 @@ export const Faq: ComponentConfig<FaqProps> = {
         headingTag: {
             type: "select",
             label: "Title Level",
-            options: ["h1", "h2", "h3", "h4", "h5", "h6", "div"].map(value => ({ label: value.toUpperCase(), value })),
+            options: headingOptions,
         },
         items: {
             type: "array",
@@ -410,6 +456,275 @@ export const Faq: ComponentConfig<FaqProps> = {
     },
 }
 
+export type BrowseCategoryListProps = {
+    eyebrow?: string;
+    title: string;
+    description?: string;
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
+    categoriesList: { categoryName: string; customDescription?: string }[];
+}
+
+export const BrowseCategoryList: ComponentConfig<BrowseCategoryListProps> = {
+    label: "Browse Category List",
+    fields: {
+        eyebrow: { type: "text" },
+        title: { type: "text" },
+        description: { type: "text" },
+        headingTag: {
+            type: "select",
+            label: "Title Level",
+            options: headingOptions,
+        },
+        categoriesList: {
+            type: "array",
+            min: 1,
+            max: 10,
+            getItemSummary: item => item.categoryName || "Category",
+            arrayFields: {
+                categoryName: CategorySelectorField,
+                customDescription: { type: "text", label: "Custom Description (optional)" },
+            },
+            defaultItemProps: { categoryName: "", customDescription: "" },
+        },
+    },
+    defaultProps: {
+        eyebrow: "Browse",
+        title: "Shop By Category",
+        description: "Find the perfect handmade collection for your needs",
+        headingTag: "h2",
+        categoriesList: [{ categoryName: "", customDescription: "" }],
+    },
+    render: ({ eyebrow, title, description, headingTag, categoriesList }) => {
+        const Heading = headingTag || "h2"
+        const [allCategories, setAllCategories] = React.useState<any[]>([])
+        const [loading, setLoading] = React.useState(true)
+
+        React.useEffect(() => {
+            let active = true
+            const load = async () => {
+                try {
+                    const getCategoriesList = (await import("@/backend/serverActions/getCategoriesList")).default
+                    const data = await getCategoriesList()
+                    if (active) {
+                        setAllCategories(data)
+                        setLoading(false)
+                    }
+                } catch (e) {
+                    console.error(e)
+                    if (active) setLoading(false)
+                }
+            }
+            load()
+            return () => { active = false }
+        }, [])
+
+        const resolvedCategories = (categoriesList || []).map(item => {
+            const dbCat = allCategories.find(c => c.name === item.categoryName)
+            return {
+                name: item.categoryName,
+                description: item.customDescription || dbCat?.description || "",
+                image: dbCat?.imgSrc || dbCat?.banner || "",
+                slug: dbCat?.slug || ""
+            }
+        })
+
+        return (
+            <section className="bg-white py-24 sm:py-32">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div className="mx-auto max-w-2xl text-center mb-16">
+                        {eyebrow && (
+                            <p className="text-sm uppercase tracking-[0.3em] text-primary font-semibold mb-3">
+                                {eyebrow}
+                            </p>
+                        )}
+                        <Heading className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+                            {title}
+                        </Heading>
+                        {description && <p className="text-lg text-gray-600">{description}</p>}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {loading ? (
+                            <div className="col-span-full text-center py-10">
+                                <span className="loading loading-spinner loading-md"></span>
+                            </div>
+                        ) : (
+                            resolvedCategories.map((cat, i) => (
+                                <Link
+                                    key={i}
+                                    href={cat.slug ? `/products/category/${cat.slug}` : "/products"}
+                                    className="group relative aspect-[3/4] rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 block"
+                                >
+                                    {cat.image ? (
+                                        <img
+                                            src={cat.image}
+                                            alt={cat.name}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 absolute inset-0"
+                                        />
+                                    ) : (
+                                        <div className="absolute inset-0 bg-stone-200 flex items-center justify-center text-stone-400">
+                                            No Image
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:from-primary/80 group-hover:via-primary/30 transition-all duration-500" />
+                                    <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                                        <h3 className="text-xl font-bold mb-1 group-hover:translate-x-1 transition-transform duration-300">{cat.name}</h3>
+                                        <p className="text-sm text-white/80 group-hover:text-white transition-colors line-clamp-2">{cat.description}</p>
+                                        <div className="mt-3 flex items-center gap-1 text-sm font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                            Explore <span className="inline-block ml-1">→</span>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </section>
+        )
+    },
+}
+
+export type CategoryProductsProps = {
+    eyebrow?: string;
+    title: string;
+    description?: string;
+    categoryName: string;
+    limit: number;
+    headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
+    buttonText?: string;
+    buttonLink?: string;
+}
+
+export const CategoryProducts: ComponentConfig<CategoryProductsProps> = {
+    label: "Category Products Grid",
+    fields: {
+        eyebrow: { type: "text" },
+        title: { type: "text" },
+        description: richTextField,
+        categoryName: CategorySelectorField,
+        limit: { type: "number", label: "Product Limit" },
+        headingTag: {
+            type: "select",
+            label: "Title Level",
+            options: headingOptions,
+        },
+        buttonText: { type: "text", label: "Button Text (optional)" },
+        buttonLink: { type: "text", label: "Button Link (optional)" },
+    },
+    defaultProps: {
+        eyebrow: "The Collection",
+        title: "Handmade Products",
+        description: "Explore our beautiful handcrafted designs.",
+        categoryName: "",
+        limit: 8,
+        headingTag: "h2",
+        buttonText: "",
+        buttonLink: "",
+    },
+    render: ({ eyebrow, title, description, categoryName, limit, headingTag, buttonText, buttonLink }) => {
+        const Heading = headingTag || "h2"
+        const [products, setProducts] = React.useState<any[]>([])
+        const [loading, setLoading] = React.useState(true)
+
+        React.useEffect(() => {
+            let active = true
+            const load = async () => {
+                if (!categoryName) {
+                    setLoading(false)
+                    return
+                }
+                try {
+                    const { getProductsByCategory } = await import("@/backend/serverActions/getProductsByCategory")
+                    const { serializeProductCardList } = await import("@/lib/productCardSerialization")
+                    const rawProducts = await getProductsByCategory(categoryName, limit || 8)
+                    if (active) {
+                        const serialized = serializeProductCardList(rawProducts as any)
+                        setProducts(serialized)
+                        setLoading(false)
+                    }
+                } catch (e) {
+                    console.error(e)
+                    if (active) setLoading(false)
+                }
+            }
+            load()
+            return () => { active = false }
+        }, [categoryName, limit])
+
+        const [categorySlug, setCategorySlug] = React.useState<string>("")
+        React.useEffect(() => {
+            let active = true
+            const loadSlug = async () => {
+                if (!categoryName) return
+                try {
+                    const getCategoriesList = (await import("@/backend/serverActions/getCategoriesList")).default
+                    const data = await getCategoriesList()
+                    const cat = data.find(c => c.name === categoryName)
+                    if (active && cat) {
+                        setCategorySlug(cat.slug || "")
+                    }
+                } catch (e) {
+                    console.error(e)
+                }
+            }
+            loadSlug()
+            return () => { active = false }
+        }, [categoryName])
+
+        const finalButtonLink = buttonLink || (categorySlug ? `/products/category/${categorySlug}` : "/products")
+
+        return (
+            <section className="bg-white py-24 sm:py-32 lg:py-40">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div className="mx-auto max-w-2xl text-center mb-16">
+                        {eyebrow && (
+                            <p className="text-sm uppercase tracking-[0.3em] text-primary font-semibold mb-3">
+                                {eyebrow}
+                            </p>
+                        )}
+                        <Heading className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+                            {title}
+                        </Heading>
+                        {description && <div className="text-lg leading-relaxed text-gray-600" dangerouslySetInnerHTML={{ __html: description }} />}
+                    </div>
+
+                    {loading ? (
+                        <div className="text-center py-20">
+                            <span className="loading loading-spinner loading-md"></span>
+                        </div>
+                    ) : products.length === 0 ? (
+                        <div className="text-center py-20 text-stone-500">
+                            No products found in this category.
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                            {products.map((product, i) => (
+                                <ProductCardItem
+                                    key={product._id || i}
+                                    {...product}
+                                    index={i}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {buttonText && (
+                        <div className="mt-16 text-center">
+                            <Link
+                                href={finalButtonLink}
+                                className="group inline-flex items-center gap-2 bg-primary text-primary-content font-semibold px-10 py-4 rounded-full hover:bg-primary/90 transition-all duration-300 text-sm uppercase tracking-wider hover:shadow-lg hover:shadow-primary/25 hover:scale-105"
+                            >
+                                {buttonText}
+                                <span className="w-4 h-4 transition-transform group-hover:translate-x-1 inline-block">→</span>
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            </section>
+        )
+    }
+}
+
 export type PuckProps = {
     Hero: HeroProps;
     RichText: RichTextProps;
@@ -417,6 +732,8 @@ export type PuckProps = {
     FeatureGrid: FeatureGridProps;
     Cta: CtaProps;
     Faq: FaqProps;
+    BrowseCategoryList: BrowseCategoryListProps;
+    CategoryProducts: CategoryProductsProps;
 }
 
 const puckConfig: Config<PuckProps, RootProps> = {
@@ -475,7 +792,7 @@ const puckConfig: Config<PuckProps, RootProps> = {
     categories: {
         page: {
             title: "Page Sections",
-            components: ["Hero", "RichText", "ImageText", "FeatureGrid", "Cta", "Faq"],
+            components: ["Hero", "RichText", "ImageText", "FeatureGrid", "Cta", "Faq", "BrowseCategoryList", "CategoryProducts"],
         },
     },
     components: {
@@ -485,6 +802,8 @@ const puckConfig: Config<PuckProps, RootProps> = {
         FeatureGrid,
         Cta,
         Faq,
+        BrowseCategoryList,
+        CategoryProducts,
     },
 }
 
