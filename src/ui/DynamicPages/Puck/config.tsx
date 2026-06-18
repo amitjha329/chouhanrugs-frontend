@@ -461,7 +461,15 @@ export type BrowseCategoryListProps = {
     title: string;
     description?: string;
     headingTag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span" | "p" | "strong";
-    categoriesList: { categoryName: string; customDescription?: string }[];
+    align: "left" | "center";
+    sourceType: "category" | "custom";
+    categoryName?: string;
+    customCards?: {
+        name: string;
+        link: string;
+        image: string;
+        description?: string;
+    }[];
 }
 
 export const BrowseCategoryList: ComponentConfig<BrowseCategoryListProps> = {
@@ -475,26 +483,53 @@ export const BrowseCategoryList: ComponentConfig<BrowseCategoryListProps> = {
             label: "Title Level",
             options: headingOptions,
         },
-        categoriesList: {
-            type: "array",
-            min: 1,
-            max: 10,
-            getItemSummary: item => item.categoryName || "Category",
-            arrayFields: {
-                categoryName: CategorySelectorField,
-                customDescription: { type: "text", label: "Custom Description (optional)" },
-            },
-            defaultItemProps: { categoryName: "", customDescription: "" },
+        align: {
+            type: "radio",
+            label: "Card Alignment",
+            options: [
+                { label: "Left", value: "left" },
+                { label: "Center", value: "center" }
+            ]
         },
+        sourceType: {
+            type: "select",
+            label: "Source Type",
+            options: [
+                { label: "Database Category Dropdown", value: "category" },
+                { label: "Custom Option", value: "custom" }
+            ]
+        },
+        categoryName: {
+            ...CategorySelectorField,
+            label: "Category Dropdown (active in Database mode)"
+        } as any,
+        customCards: {
+            type: "array",
+            label: "Custom Cards (active in Custom mode)",
+            getItemSummary: item => item.name || "Custom Card",
+            arrayFields: {
+                name: { type: "text", label: "Name" },
+                link: { type: "text", label: "Link" },
+                image: { type: "text", label: "Image URL" },
+                description: { type: "text", label: "Description (optional)" }
+            },
+            defaultItemProps: { name: "", link: "", image: "", description: "" }
+        }
     },
     defaultProps: {
         eyebrow: "Browse",
         title: "Shop By Category",
         description: "Find the perfect handmade collection for your needs",
         headingTag: "h2",
-        categoriesList: [{ categoryName: "", customDescription: "" }],
+        align: "left",
+        sourceType: "category",
+        categoryName: "",
+        customCards: [
+            { name: "Custom Card 1", link: "#", image: "", description: "Description 1" },
+            { name: "Custom Card 2", link: "#", image: "", description: "Description 2" }
+        ]
     },
-    render: ({ eyebrow, title, description, headingTag, categoriesList }) => {
+    render: ({ eyebrow, title, description, headingTag, align, sourceType, categoryName, customCards }) => {
         const Heading = headingTag || "h2"
         const [allCategories, setAllCategories] = React.useState<any[]>([])
         const [loading, setLoading] = React.useState(true)
@@ -517,15 +552,55 @@ export const BrowseCategoryList: ComponentConfig<BrowseCategoryListProps> = {
             return () => { active = false }
         }, [])
 
-        const resolvedCategories = (categoriesList || []).map(item => {
-            const dbCat = allCategories.find(c => c.name === item.categoryName)
-            return {
-                name: item.categoryName,
-                description: item.customDescription || dbCat?.description || "",
-                image: dbCat?.imgSrc || dbCat?.banner || "",
-                slug: dbCat?.slug || ""
+        const resolvedCards = React.useMemo(() => {
+            if (sourceType === "category") {
+                if (!categoryName) {
+                    return [
+                        { name: "Tote Bags", description: "Spacious everyday essentials", image: "", link: "#" },
+                        { name: "Shoulder Bags", description: "Effortless elegance", image: "", link: "#" },
+                        { name: "Crossbody Bags", description: "Hands-free convenience", image: "", link: "#" },
+                        { name: "Beach Bags", description: "Summer must-haves", image: "", link: "#" }
+                    ];
+                }
+                const parentCat = allCategories.find(c => c.name === categoryName);
+                if (!parentCat) {
+                    return [];
+                }
+                const parentPath = `${parentCat.parent ?? ""}${parentCat.name}>`;
+                const subcategories = allCategories.filter(c => c.parent === parentPath);
+                if (subcategories.length > 0) {
+                    return subcategories.map(c => ({
+                        name: c.name,
+                        description: c.description || "",
+                        image: c.imgSrc || c.banner || "",
+                        link: c.slug ? `/products/category/${c.slug}` : "/products"
+                    }));
+                } else {
+                    return [{
+                        name: parentCat.name,
+                        description: parentCat.description || "",
+                        image: parentCat.imgSrc || parentCat.banner || "",
+                        link: parentCat.slug ? `/products/category/${parentCat.slug}` : "/products"
+                    }];
+                }
+            } else {
+                const cards = customCards || [];
+                if (cards.length === 0) {
+                    return [
+                        { name: "Custom Card 1", description: "Upload details in sidebar", image: "", link: "#" },
+                        { name: "Custom Card 2", description: "Upload details in sidebar", image: "", link: "#" }
+                    ];
+                }
+                return cards.map(c => ({
+                    name: c.name || "Custom Card",
+                    description: c.description || "",
+                    image: c.image || "",
+                    link: c.link || "#"
+                }));
             }
-        })
+        }, [sourceType, categoryName, customCards, allCategories]);
+
+        const shouldCenter = align === "center" || resolvedCards.length === 2
 
         return (
             <section className="bg-white py-24 sm:py-32">
@@ -542,17 +617,21 @@ export const BrowseCategoryList: ComponentConfig<BrowseCategoryListProps> = {
                         {description && <p className="text-lg text-gray-600">{description}</p>}
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {loading ? (
-                            <div className="col-span-full text-center py-10">
+                    <div className={`flex flex-wrap gap-6 ${shouldCenter ? "justify-center" : "justify-start"}`}>
+                        {loading && sourceType === "category" && categoryName ? (
+                            <div className="w-full text-center py-10">
                                 <span className="loading loading-spinner loading-md"></span>
                             </div>
+                        ) : resolvedCards.length === 0 ? (
+                            <div className="w-full text-center py-10 text-stone-400">
+                                {sourceType === "category" ? "No subcategories found." : "Please add custom cards."}
+                            </div>
                         ) : (
-                            resolvedCategories.map((cat, i) => (
+                            resolvedCards.map((cat, i) => (
                                 <Link
                                     key={i}
-                                    href={cat.slug ? `/products/category/${cat.slug}` : "/products"}
-                                    className="group relative aspect-[3/4] rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 block"
+                                    href={cat.link}
+                                    className="group relative aspect-[3/4] w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 block"
                                 >
                                     {cat.image ? (
                                         <img
@@ -566,7 +645,7 @@ export const BrowseCategoryList: ComponentConfig<BrowseCategoryListProps> = {
                                         </div>
                                     )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:from-primary/80 group-hover:via-primary/30 transition-all duration-500" />
-                                    <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                                    <div className="absolute inset-0 flex flex-col justify-end p-6 text-white text-left">
                                         <h3 className="text-xl font-bold mb-1 group-hover:translate-x-1 transition-transform duration-300">{cat.name}</h3>
                                         <p className="text-sm text-white/80 group-hover:text-white transition-colors line-clamp-2">{cat.description}</p>
                                         <div className="mt-3 flex items-center gap-1 text-sm font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
