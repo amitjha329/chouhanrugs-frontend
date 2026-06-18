@@ -109,7 +109,7 @@ async function FooterSEOContent() {
 
 const HomeHeroFallback = () => (
   <section className="bg-[#fbf7ef] pb-8 md:pb-10" aria-hidden="true">
-    <div className="relative aspect-video w-full overflow-hidden bg-[#f4ecdf]">
+    <div className="relative aspect-[16/5] w-full overflow-hidden bg-[#f4ecdf]">
       <Image
         src={bannerFallback}
         alt=""

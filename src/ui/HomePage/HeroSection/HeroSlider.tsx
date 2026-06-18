@@ -90,7 +90,7 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel | null }) => {
                     // const description = resolveLocalizedString(image.desc as any, locale) || 'Crafted for comfort. Made to impress.'
 
                     return (
-                        <div key={`${imageSrc}-${index}`} className="relative aspect-video overflow-hidden mx-0 rounded-none">
+                        <div key={`${imageSrc}-${index}`} className="relative aspect-[16/5] overflow-hidden mx-0 rounded-none">
                             <Image
                                 src={imageSrc || banner_2.src}
                                 alt={`Hero banner ${index + 1}`}
