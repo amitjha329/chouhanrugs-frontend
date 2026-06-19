@@ -11,8 +11,14 @@ WORKDIR /app
 # pnpm-workspace.yaml carries the approved dependency build-script list used by pnpm v10.
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 RUN \
-  if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && corepack prepare pnpm@10.28.1 --activate && pnpm i --no-frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
+  if [ -f pnpm-lock.yaml ]; then \
+    corepack enable pnpm && \
+    corepack prepare pnpm@10.28.1 --activate && \
+    pnpm config set store-dir /app/.pnpm-store && \
+    pnpm config set child-concurrency 1 && \
+    pnpm i --no-frozen-lockfile; \
+  else \
+    echo "Lockfile not found." && exit 1; \
   fi
 
 # Rebuild the source code only when needed
