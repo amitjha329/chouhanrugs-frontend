@@ -33,7 +33,7 @@ const ProductListingLayout = async ({ children, params }: { children: React.Reac
             <div className="container mx-auto px-3 sm:px-0">
                 <BreadCrumbs crumbs={crumbs} />
             </div>
-            <AlgoliaSearchProvider APPID={algolia.ALGOLIA_APPID} KEY={algolia.ALGOLIA_KEY_CLIENT} INDEX={algolia.ALGOLIA_INDEX} initialUiState={initialUiState}>
+            <AlgoliaSearchProvider key={categoryname} APPID={algolia.ALGOLIA_APPID} KEY={algolia.ALGOLIA_KEY_CLIENT} INDEX={algolia.ALGOLIA_INDEX} initialUiState={initialUiState}>
                 <StructureListing userCurrency={DEFAULT_USD_CURRENCY} categories={categories}>
                     {children}
                 </StructureListing>
