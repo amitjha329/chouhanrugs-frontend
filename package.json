@@ -44,6 +44,7 @@
     "node-fpe": "^2.0.4",
     "nodemailer": "^6.10.1",
     "nodemailer-express-handlebars": "^7.0.0",
+    "express-handlebars": "^8.0.4",
     "postcss": "^8.5.4",
     "pug": "^3.0.3",
     "razorpay": "^2.9.6",
