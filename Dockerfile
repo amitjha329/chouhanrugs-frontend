@@ -10,6 +10,7 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager.
 # pnpm-workspace.yaml carries the approved dependency build-script list used by pnpm v10.
 COPY package.json yarn.lock* ./
+RUN sed -i '/"packageManager":/d' package.json
 RUN \
   if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
   else yarn install; \
