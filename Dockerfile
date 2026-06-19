@@ -15,6 +15,7 @@ RUN \
     corepack enable pnpm && \
     corepack prepare pnpm@10.28.1 --activate && \
     pnpm config set store-dir /app/.pnpm-store && \
+    pnpm config set package-import-method hardlink && \
     pnpm config set child-concurrency 1 && \
     pnpm config set network-concurrency 1 && \
     UV_THREADPOOL_SIZE=1 pnpm i --no-frozen-lockfile; \
