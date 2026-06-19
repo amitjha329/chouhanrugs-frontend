@@ -26,7 +26,7 @@ const BlogListPage = async (props: {
     const locale = loc as Locale
     const searchParams = await props.searchParams
     const currentPage = parseInt(searchParams.page ?? '1', 10) || 1
-    const limit = 6
+    const limit = 9
     const { blogs, totalCount } = await getBlogPostsList(currentPage, limit)
     const totalPages = Math.ceil(totalCount / limit)
 

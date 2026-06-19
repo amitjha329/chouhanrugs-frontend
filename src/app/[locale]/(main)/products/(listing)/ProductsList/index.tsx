@@ -21,6 +21,13 @@ const ProductPagination = () => {
         return null
     }
 
+    const handlePageChange = (page: number) => {
+        refine(page)
+        if (typeof window !== 'undefined') {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+    }
+
     return (
         <nav aria-label="Product pagination" className="mt-6 flex items-center justify-end gap-2">
             <button
@@ -28,7 +35,7 @@ const ProductPagination = () => {
                 aria-label="Previous page"
                 className="btn max-sm:btn-sm btn-outline btn-primary"
                 disabled={isFirstPage}
-                onClick={() => refine(currentRefinement - 1)}
+                onClick={() => handlePageChange(currentRefinement - 1)}
             >
                 Prev
             </button>
@@ -41,7 +48,7 @@ const ProductPagination = () => {
                         aria-current={page === currentRefinement ? 'page' : undefined}
                         className={`btn max-sm:btn-sm btn-outline btn-primary join-item ${page === currentRefinement ? 'btn-disabled' : ''}`}
                         disabled={page === currentRefinement}
-                        onClick={() => refine(page)}
+                        onClick={() => handlePageChange(page)}
                     >
                         {page + 1}
                     </button>
@@ -52,7 +59,7 @@ const ProductPagination = () => {
                 aria-label="Next page"
                 className="btn max-sm:btn-sm btn-outline btn-primary"
                 disabled={isLastPage}
-                onClick={() => refine(currentRefinement + 1)}
+                onClick={() => handlePageChange(currentRefinement + 1)}
             >
                 Next
             </button>

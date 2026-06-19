@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation'
 import UserMenu from './UserMenu'
 import HeaderCartItem from './HeaderCartItem'
 import { getTranslations } from 'next-intl/server'
+import LoginLink from '@/components/LoginLink'
 
 const Header = async () => {
     const session = await getSession()
@@ -20,7 +21,7 @@ const Header = async () => {
             <Logo logoClass='text-accent' taglineClass='~text-xs/sm' className='text-center z-50 relative' />
             <div className='flex gap-10'>
                 <Link href="/user/wishlist"><HeaderItem icon='/vector/Heart.svg' text={t('wishlist')} /></Link>
-                {session?.user == null ? <Link href="/signin"><HeaderItem icon='/vector/UserIcon.svg' text={t('login')} /></Link> : <UserMenu><HeaderItem icon='/vector/UserIcon.svg' text={session?.user?.name?.split(' ')[0] ?? ""} /></UserMenu>}
+                {session?.user == null ? <LoginLink><HeaderItem icon='/vector/UserIcon.svg' text={t('login')} /></LoginLink> : <UserMenu><HeaderItem icon='/vector/UserIcon.svg' text={session?.user?.name?.split(' ')[0] ?? ""} /></UserMenu>}
                 <Link href="/cart"><HeaderCartItem icon='/vector/Cart.svg' text={t('cart')} /></Link>
             </div>
         </header>

@@ -17,6 +17,7 @@ import { getSession } from '@/lib/auth-server'
 import { Link } from '@/i18n/navigation'
 import { getTranslations } from 'next-intl/server'
 import LocaleSwitcher from '@/components/LocaleSwitcher'
+import LoginLink from '@/components/LoginLink'
 import {
     HiOutlineChevronRight,
     HiOutlineGlobeAlt,
@@ -162,19 +163,35 @@ const SideNav = async () => {
                     <FiX className="h-6 w-6" aria-hidden="true" />
                 </button>
 
-                <Link href={session?.user ? "/user/profile" : "/signin"} className="mb-4 flex items-center gap-3">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f0e1d6]">
-                        <FaRegUserCircle className="h-6 w-6 text-primary" aria-hidden="true" />
-                    </div>
-                    <div>
-                        <div className="text-base font-semibold leading-5 text-base-content">
-                            {userName ? `Hi, ${userName.split(' ')[0]}` : 'Welcome'}
+                {session?.user ? (
+                    <Link href="/user/profile" className="mb-4 flex items-center gap-3">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f0e1d6]">
+                            <FaRegUserCircle className="h-6 w-6 text-primary" aria-hidden="true" />
                         </div>
-                        <div className="flex items-center gap-1 text-xs text-base-content/65">
-                            {userName ? 'View your profile' : t('logIn')} <HiOutlineChevronRight className="h-4 w-4" aria-hidden="true" />
+                        <div>
+                            <div className="text-base font-semibold leading-5 text-base-content">
+                                {userName ? `Hi, ${userName.split(' ')[0]}` : 'Welcome'}
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-base-content/65">
+                                View your profile <HiOutlineChevronRight className="h-4 w-4" aria-hidden="true" />
+                            </div>
                         </div>
-                    </div>
-                </Link>
+                    </Link>
+                ) : (
+                    <LoginLink className="mb-4 flex items-center gap-3">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f0e1d6]">
+                            <FaRegUserCircle className="h-6 w-6 text-primary" aria-hidden="true" />
+                        </div>
+                        <div>
+                            <div className="text-base font-semibold leading-5 text-base-content">
+                                Welcome
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-base-content/65">
+                                {t('logIn')} <HiOutlineChevronRight className="h-4 w-4" aria-hidden="true" />
+                            </div>
+                        </div>
+                    </LoginLink>
+                )}
 
                 <div className="mb-4">
                     <div className="flex h-9 min-w-0 items-center gap-1.5 px-2 text-xs font-semibold">

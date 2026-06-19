@@ -10,6 +10,7 @@ import LocaleSwitcher from '@/components/LocaleSwitcher'
 import { HiOutlineBars3, HiOutlineUserCircle } from 'react-icons/hi2'
 import { getTranslations } from 'next-intl/server'
 import SignOutClient from '@/ui/SignOutClient'
+import LoginLink from '@/components/LoginLink'
 
 type SessionUserNameFields = {
     displayName?: string | null
@@ -91,10 +92,10 @@ const MobileNavigation = async () => {
                                 </ul>
                             </div>
                         ) : (
-                            <Link href="/signin" className='flex h-9 items-center gap-1 rounded-lg bg-[#f4ebe4] px-2 text-[11px] font-semibold text-primary'>
+                            <LoginLink className='flex h-9 items-center gap-1 rounded-lg bg-[#f4ebe4] px-2 text-[11px] font-semibold text-primary'>
                                 <HiOutlineUserCircle className="h-4 w-4" aria-hidden="true" />
                                 <span className="min-[360px]:inline">Login</span>
-                            </Link>
+                            </LoginLink>
                         )}
                         <Link href="/cart" className="flex h-9 w-9 items-center justify-center rounded-full text-primary"><HeaderCartItemMobile /></Link>
                     </div>

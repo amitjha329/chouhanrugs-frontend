@@ -2,6 +2,7 @@ import Link from "next/link"
 import { HiOutlineShieldCheck, HiStar } from "react-icons/hi"
 import { ReviewDataModel, ReviewEligibility } from "@/types/ReviewDataModel"
 import ReviewSubmissionForm from "./ReviewSubmissionForm"
+import LoginLink from "@/components/LoginLink"
 
 const ProductReviewsSection = ({
     productId,
@@ -105,9 +106,9 @@ const ProductReviewsSection = ({
                         <div className="mb-4 rounded-3xl border border-[#eadfd5] bg-[#fff8f1] px-4 py-4 text-sm text-[#6e6056]">
                             Sign in first to submit a verified purchase review.
                             <div className="mt-3">
-                                <Link href={`/${locale}/signin`} className="btn h-10 rounded-full border-none bg-[#2b1f18] px-5 text-sm font-medium text-white hover:bg-[#3a2b23]">
+                                <LoginLink className="btn h-10 rounded-full border-none bg-[#2b1f18] px-5 text-sm font-medium text-white hover:bg-[#3a2b23]">
                                     Sign in
-                                </Link>
+                                </LoginLink>
                             </div>
                         </div>
                     ) : null}
