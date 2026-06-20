@@ -9,7 +9,7 @@ import { searchAlgoliaProductsServerSide } from '@/lib/algoliaProducts';
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog';
 import CategorySeoBlock from '@/ui/Category/CategorySeoBlock';
 import { serializeProductCardList } from '@/lib/productCardSerialization';
-import CategoryProductListingContainer from './CategoryProductListingContainer';
+import ProductListingContainer from '../../(listing)/ProductListingContainer';
 
 function stripHtml(value?: string) {
     return String(value ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
@@ -81,10 +81,9 @@ const CategoryProcutListPage = async (props: {
     const products = (searchResult.hits.length > 0 || isFiltered) ? searchResult.hits : promotedProducts
 
     return (
-        <CategoryProductListingContainer
+        <ProductListingContainer
             products={serializeProductCardList(products)}
             facets={searchResult.facets}
-            facetsStats={searchResult.facets_stats}
             totalHits={searchResult.nbHits}
             totalPages={searchResult.nbPages}
             currentPage={searchResult.page}
@@ -92,7 +91,7 @@ const CategoryProcutListPage = async (props: {
             categoryPath={categoryPath}
         >
             <CategorySeoBlock category={category} />
-        </CategoryProductListingContainer>
+        </ProductListingContainer>
     )
 }
 

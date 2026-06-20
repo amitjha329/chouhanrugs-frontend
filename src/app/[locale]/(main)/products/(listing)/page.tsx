@@ -3,9 +3,10 @@ import { getStaticPageMetadata } from '@/lib/pageMetadata'
 import { Metadata } from 'next'
 import { connection } from 'next/server'
 import React from 'react'
-import ProductList from './ProductsList'
-import { getInitialAlgoliaProducts } from '@/lib/algoliaProducts'
+import { searchAlgoliaProductsServerSide } from '@/lib/algoliaProducts'
 import { serializeProductCardList } from '@/lib/productCardSerialization'
+import getCategoriesList from '@/backend/serverActions/getCategoriesList'
+import ProductListingContainer from './ProductListingContainer'
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     await connection()
@@ -23,12 +24,27 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
 const ProductsListPage = async (props: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
     await connection()
     const searchParams = await props.searchParams;
-    const initialProducts = await getInitialAlgoliaProducts({
+    
+    const searchResultPromise = searchAlgoliaProductsServerSide({
         searchQuery: searchParams.search?.toString(),
         searchParams,
     })
+    const categoriesPromise = getCategoriesList()
+
+    const [searchResult, categories] = await Promise.all([
+        searchResultPromise,
+        categoriesPromise
+    ])
+
     return (
-        <ProductList searchQuery={searchParams.search?.toString()} searchParams={searchParams} predefinedProducts={serializeProductCardList(initialProducts)} />
+        <ProductListingContainer 
+            products={serializeProductCardList(searchResult.hits)} 
+            facets={searchResult.facets} 
+            totalHits={searchResult.nbHits}
+            totalPages={searchResult.nbPages}
+            currentPage={searchResult.page}
+            categories={categories}
+        />
     )
 }
 
