@@ -6,14 +6,18 @@ import converter from "@/utils/mongoObjectConversionUtility";
 import { ObjectId } from "mongodb"
 import getColorMapForProductList from "./getColorMapForProductList";
 
+import { populateProduct } from "./populateProduct";
+
 export default async function getProductWithId(id: string): Promise<ProductDataModelWithColorMap|null> {
     await connection()
     try {
         const data = await (await clientPromise).db(process.env.MONGODB_DB).collection("products").findOne({ _id: new ObjectId(id) })
         if (data != null) {
+            const product = converter.fromWithNoFieldChange<ProductDataModel>(data)
+            await populateProduct(product)
             const colorData = await getColorMapForProductList([data._id.toHexString()])
             return {
-                ...converter.fromWithNoFieldChange<ProductDataModel>(data),
+                ...product,
                 colorMap: colorData.get(data._id.toHexString()) ?? []
             }
         } else

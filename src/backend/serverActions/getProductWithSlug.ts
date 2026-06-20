@@ -7,6 +7,8 @@ import SizeDataModel from "@/types/SizeDataModel";
 import { locales } from '@/i18n/routing';
 import { cacheLife, cacheTag } from "next/cache";
 
+import { populateProduct } from "./populateProduct";
+
 interface ProductWithSizeandColorData extends ProductDataModel{
     colorData:ColorDataModel[],
     sizeData:SizeDataModel[]
@@ -34,6 +36,7 @@ async function getProductWithSlugInternal(slug: string): Promise< ProductWithSiz
             return undefined;
         }
         const products = converter.fromWithNoFieldChange<ProductDataModel>(product);
+        await populateProduct(products);
         const { colors, sizes } = extractColorsAndSizes(products)
         const colrSizePromise = [
             db.collection("colors").find({

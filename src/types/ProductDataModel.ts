@@ -10,7 +10,7 @@ export interface ProductDataModel {
     careInstructions: LocalizedField<string[]>;
     productName: LocalizedField<string>;
     productTitle?: LocalizedField<string>;
-    productURL: LocalizedField<string>;
+    productURL: string | LocalizedField<string>;
     productBrand: string;
     productBaseColor: string;
     productCategory: string;
@@ -29,8 +29,8 @@ export interface ProductDataModel {
     productReturns: boolean;
     productFreeDel: boolean;
     productHandCrafted: boolean;
-    productShape?: object
-    productPattern?: object
+    productShape?: string | ObjectId | object;
+    productPattern?: string | ObjectId | object;
     images: string[];
     productReviews: ProductReviews;
     productActive: boolean;

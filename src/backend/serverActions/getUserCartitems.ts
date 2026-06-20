@@ -6,6 +6,8 @@ import CartDataModel from "@/types/CartDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 import { ObjectId } from "mongodb";
 
+import { populateProductsList } from "./populateProduct";
+
 export default async function getUserCartitems(userId: string): Promise<CartDataModel[]> {
     await connection()
     const mongoClient = await clientPromise
@@ -47,5 +49,16 @@ export default async function getUserCartitems(userId: string): Promise<CartData
     const result = await cursor.toArray()
     const returnArray: CartDataModel[] = []
     result.forEach(item => returnArray.push(converter.fromWithNoFieldChange<CartDataModel>(item)))
+
+    const allCartProducts: any[] = []
+    returnArray.forEach(item => {
+        if (item.cartProduct) {
+            allCartProducts.push(...item.cartProduct)
+        }
+    })
+    if (allCartProducts.length > 0) {
+        await populateProductsList(allCartProducts)
+    }
+
     return returnArray
 }

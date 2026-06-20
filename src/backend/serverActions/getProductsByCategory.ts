@@ -3,6 +3,9 @@ import { getStorefrontDb } from "@/lib/mongodb";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
+import { populateProductsList } from "./populateProduct";
+import { ObjectId } from "mongodb";
+
 async function fetchProductsByCategory(category: string, limit: number): Promise<ProductDataModel[]> {
     "use cache";
 
@@ -12,11 +15,24 @@ async function fetchProductsByCategory(category: string, limit: number): Promise
 
     try {
         const db = await getStorefrontDb();
+        
+        let catQuery: any = category;
+        if (ObjectId.isValid(category)) {
+            catQuery = new ObjectId(category);
+        } else {
+            const catDoc = await db.collection("categories").findOne({ name: { $regex: new RegExp(`^${category}$`, "i") } });
+            if (catDoc) {
+                catQuery = { $or: [category, catDoc._id, catDoc._id.toString()] };
+            }
+        }
+
         const products = await db.collection("products").aggregate([
-            { $match: { productCategory: category, productActive: true } },
+            { $match: { productCategory: catQuery, productActive: true } },
             { $sample: { size: limit } },
         ]).toArray();
-        return products.map(p => converter.fromWithNoFieldChange<ProductDataModel>(p));
+        const result = products.map(p => converter.fromWithNoFieldChange<ProductDataModel>(p));
+        await populateProductsList(result);
+        return result;
     } catch (error) {
         console.error("Error fetching products by category:", error);
         return [];

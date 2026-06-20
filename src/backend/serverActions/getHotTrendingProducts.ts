@@ -2,6 +2,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { getStorefrontDb } from "@/lib/mongodb";
 import { ProductDataModelWithColorMap } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
+import { populateProductsList } from "./populateProduct";
 
 async function fetchHotTrendingProducts(limit: number): Promise<ProductDataModelWithColorMap[]> {
     "use cache";
@@ -59,7 +60,9 @@ async function fetchHotTrendingProducts(limit: number): Promise<ProductDataModel
             },
             { $sort: { _id: -1 } }
         ]).toArray();
-        return products.map(p => converter.fromWithNoFieldChange<ProductDataModelWithColorMap>(p));
+        const result = products.map(p => converter.fromWithNoFieldChange<ProductDataModelWithColorMap>(p));
+        await populateProductsList(result);
+        return result;
     } catch (error) {
         console.error("Error fetching hot trending products:", error);
         return [];

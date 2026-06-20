@@ -3,6 +3,8 @@ import { getStorefrontDb } from "@/lib/mongodb";
 import { ProductDataModel } from "@/types/ProductDataModel";
 import converter from "@/utils/mongoObjectConversionUtility";
 
+import { populateProductsList } from "./populateProduct";
+
 async function fetchNewProducts(limit: number): Promise<ProductDataModel[]> {
     "use cache";
 
@@ -16,7 +18,9 @@ async function fetchNewProducts(limit: number): Promise<ProductDataModel[]> {
             { $match: { tags: { $in: ["New Arrivals"] }, productActive: true } },
             { $sample: { size: limit } }
         ]).toArray();
-        return products.map(p => converter.fromWithNoFieldChange<ProductDataModel>(p));
+        const result = products.map(p => converter.fromWithNoFieldChange<ProductDataModel>(p));
+        await populateProductsList(result);
+        return result;
     } catch (error) {
         console.error("Error fetching new products:", error);
         return [];

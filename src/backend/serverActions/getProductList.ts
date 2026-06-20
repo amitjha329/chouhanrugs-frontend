@@ -30,13 +30,15 @@ interface ProductEntry {
     updatedOn: number;
 }
 
+import { populateProductsList } from "./populateProduct";
+
 export default async function getProductListForLLMS(): Promise<ProductEntry[]> {
     try {
         const mongoClient = await clientPromise
         const db = mongoClient.db(process.env.MONGODB_DB)
         const productsCollection = db.collection('products');
         
-        return (await productsCollection.aggregate(
+        const rawProducts = await productsCollection.aggregate(
             [
                 {
                     $match: {
@@ -78,10 +80,14 @@ export default async function getProductListForLLMS(): Promise<ProductEntry[]> {
                     }
                 }
             ]
-        ).toArray()).map(function (it) {
-            const data = it as unknown as ProductEntry;
-            return data
+        ).toArray();
+
+        const mapped = rawProducts.map(function (it) {
+            return it as unknown as ProductEntry;
         });
+
+        await populateProductsList(mapped as any);
+        return mapped;
     } catch (error) {
         console.error("Error fetching related products:", error);
         return [];

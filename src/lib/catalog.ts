@@ -12,6 +12,7 @@ import clientPromise from '@/lib/clientPromise';
 import type { ProductDataModel } from '@/types/ProductDataModel';
 import type BlogDataModel from '@/types/BlogDataModel';
 import { locales } from '@/i18n/routing';
+import { populateProduct, populateProductsList } from '@/backend/serverActions/populateProduct';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -36,7 +37,9 @@ export async function getAllProducts(): Promise<ProductDataModel[]> {
         .find(publicProductFilter)
         .sort({ updatedOn: -1 })
         .toArray();
-    return docs as unknown as ProductDataModel[];
+    const products = docs as unknown as ProductDataModel[];
+    await populateProductsList(products);
+    return products;
 }
 
 /** Fetch a single product by its URL slug. */
@@ -53,7 +56,10 @@ export async function getProductBySlug(
                 ...locales.map(locale => ({ [`productURL.${locale}`]: slug })),
             ],
         });
-    return doc as unknown as ProductDataModel | null;
+    if (!doc) return null;
+    const product = doc as unknown as ProductDataModel;
+    await populateProduct(product);
+    return product;
 }
 
 // ─── Blogs ──────────────────────────────────────────────────────────────────
