@@ -53,7 +53,7 @@ const AboutJuteRugsPage = () => {
         <>
             <div className="relative isolate px-6 pt-14 lg:px-8">
                 <div
-                    className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+                    className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 pointer-events-none"
                     aria-hidden="true"
                 >
                     <div
@@ -82,7 +82,7 @@ const AboutJuteRugsPage = () => {
                     </div>
                 </div>
                 <div
-                    className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+                    className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)] pointer-events-none"
                     aria-hidden="true"
                 >
                     <div

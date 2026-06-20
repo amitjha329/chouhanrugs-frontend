@@ -106,21 +106,6 @@ function PromiseCard({ title, description, icon: Icon }: typeof promises[number]
 export default function TrustSection() {
     return (
         <main className="relative isolate overflow-hidden bg-[#f7f2ec] text-[#211915] rounded-3xl border border-[#e5ccb5]/30 shadow-sm max-w-[1400px] mx-auto">
-            {/* Scoped reset styling for iframe/devtools sandbox environments */}
-            <style>{`
-                body > div.hidden.md\\:block,
-                body > div.h-14.md\\:hidden,
-                body > nav {
-                    display: none !important;
-                }
-                button[aria-label="Open Next.js Dev Tools"] {
-                    display: none !important;
-                }
-                nextjs-portal {
-                    display: none !important;
-                }
-            `}</style>
-            
             <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_15%_15%,rgba(255,255,255,0.96),transparent_34%),linear-gradient(115deg,#f8f4ee_0%,#f3ece4_45%,#efe3d6_100%)]" />
             <div className="absolute inset-0 -z-10 opacity-[0.33] [background-image:repeating-linear-gradient(96deg,rgba(108,70,36,0.035)_0,rgba(108,70,36,0.035)_1px,transparent_1px,transparent_8px)]" />
             <div className="absolute -left-24 top-0 -z-10 h-full w-[57%] bg-[radial-gradient(ellipse_at_20%_30%,rgba(255,255,255,0.78),transparent_58%)]" />

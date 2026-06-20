@@ -1,41 +1,39 @@
 import React from 'react'
 import TrustSection from './TrustSection'
-import HeaderOptionsSwitcher from './HeaderOptions'
-import { getSession } from '@/lib/auth-server'
-import getCategoriesList from '@/backend/serverActions/getCategoriesList'
-import getSiteData from '@/backend/serverActions/getSiteData'
-import { getTranslations } from 'next-intl/server'
+import CategoryOptionsSwitcher from './CategoryOptions'
+import RoomOptionsSwitcher from './RoomOptions'
+import { getHomePagePopularCategories } from '@/backend/serverActions/getHomePagePopularCategories'
+import { getTranslations, getLocale } from 'next-intl/server'
+import { type Locale } from '@/i18n/routing'
 
 const TestPage = async () => {
-    const [session, categories, siteData, t] = await Promise.all([
-        getSession(),
-        getCategoriesList(),
-        getSiteData(),
-        getTranslations('nav'),
+    const [dynamicSection, tHomepage, tCommon, loc] = await Promise.all([
+        getHomePagePopularCategories(),
+        getTranslations('homepage'),
+        getTranslations('common'),
+        getLocale(),
     ])
-
-    const marketplaceLinks = (siteData.marketplaceLinks ?? []).filter(link => link.enabled && link.url)
-
-    const labels = {
-        home: t('home'),
-        aboutUs: t('aboutUs'),
-        contact: t('contact'),
-        blog: t('blog'),
-        policies: t('policies'),
-        terms: t('termsShort'),
-    }
+    const locale = loc as Locale
 
     return (
-        <>
-            <HeaderOptionsSwitcher
-                session={session}
-                categories={categories}
-                siteData={siteData}
-                marketplaceLinks={marketplaceLinks}
-                labels={labels}
+        <div className="bg-[#fbf7ef] min-h-screen">
+            <CategoryOptionsSwitcher
+                dynamicSection={dynamicSection}
+                tHomepage={{
+                    ourPopularCategories: tHomepage('ourPopularCategories')
+                }}
+                tCommon={{
+                    viewAll: tCommon('viewAll')
+                }}
+                locale={locale}
             />
-            <TrustSection />
-        </>
+            <div className="py-8">
+                <TrustSection />
+            </div>
+            <div className="py-8">
+                <RoomOptionsSwitcher />
+            </div>
+        </div>
     )
 }
 

@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import Image from '@/ui/components/OptimizedImage'
 import HeroSection from '@/ui/HomePage/HeroSection'
 import NewProductsSection from '@/ui/HomePage/NewProductsSection'
-import OrderProcessSection from '@/ui/HomePage/OrderProcessSection'
+import TrustSection from '@/ui/HomePage/TrustSection'
 import ProductCarouselBasic from '@/ui/ProductCarouselBasic'
 import { getNewProductsTopSelling } from '@/backend/serverActions/getNewProductsTopSelling'
 import stringEmptyOrNull from '@/lib/stringEmptyOrNull'
@@ -160,8 +160,10 @@ const HomePage = async (props: { params: Promise<{ locale: string }> }) => {
         <RightImageSideContent />
       </Suspense>
       
-      {/* Order Process - Static content, no Suspense needed */}
-      <OrderProcessSection />
+      {/* Trust Section - Styled compact visual trust indicators */}
+      <div className="py-8 md:py-12 px-4 md:px-8">
+        <TrustSection />
+      </div>
       
       {/* Popular Categories - Uses content-visibility for perf */}
       <LazySection minHeight="300px">
