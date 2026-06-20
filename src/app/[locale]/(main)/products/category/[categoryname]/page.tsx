@@ -1,14 +1,15 @@
 import React from 'react'
 import { Metadata } from 'next';
 import getSiteData from '@/backend/serverActions/getSiteData';
-import ProductList from '../../(listing)/ProductsList';
 import getCategoriesWithName from '@/backend/serverActions/getCategoriesWithName';
 import getProductPromoted from '@/backend/serverActions/getProductPromoted';
+import getCategoriesList from '@/backend/serverActions/getCategoriesList';
 import { type Locale } from '@/i18n/routing';
-import { getInitialAlgoliaProducts } from '@/lib/algoliaProducts';
+import { searchAlgoliaProductsServerSide } from '@/lib/algoliaProducts';
 import { localizedAbsoluteUrl, localizedLanguages } from '@/lib/seoCatalog';
 import CategorySeoBlock from '@/ui/Category/CategorySeoBlock';
 import { serializeProductCardList } from '@/lib/productCardSerialization';
+import CategoryProductListingContainer from './CategoryProductListingContainer';
 
 function stripHtml(value?: string) {
     return String(value ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
@@ -42,6 +43,7 @@ export async function generateMetadata(props: { params: Promise<{ categoryname: 
             description,
             card: "summary",
             images: dataAdditional.logoSrc,
+            // site: "@chouhanrugs",
         },
         alternates: {
             canonical: localizedAbsoluteUrl(dataAdditional.url, path, locale),
@@ -50,23 +52,47 @@ export async function generateMetadata(props: { params: Promise<{ categoryname: 
     }
 }
 
-const CategoryProcutListPage = async (props: { params: Promise<{ categoryname: string }> }) => {
+const CategoryProcutListPage = async (props: {
+    params: Promise<{ categoryname: string }>,
+    searchParams: Promise<{ [key: string]: string | undefined }>
+}) => {
     const { categoryname } = await props.params;
+    const searchParams = await props.searchParams;
+
     const category = await getCategoriesWithName(decodeURIComponent(categoryname))
     const categoryAncestors = category.parent?.split(">").filter(Boolean) ?? []
     const categoryPath = [...categoryAncestors, category.name].join(" > ")
-    const promotedProducts = await getProductPromoted(category.name)
-    const initialProducts = await getInitialAlgoliaProducts({
+
+    const promotedProductsPromise = getProductPromoted(category.name)
+    const categoriesPromise = getCategoriesList()
+    const searchResultPromise = searchAlgoliaProductsServerSide({
         categoryParam: category.name,
         categoryPath,
+        searchParams,
     })
-    const predefinedProducts = initialProducts.length ? initialProducts : promotedProducts
+
+    const [promotedProducts, categories, searchResult] = await Promise.all([
+        promotedProductsPromise,
+        categoriesPromise,
+        searchResultPromise,
+    ])
+
+    const isFiltered = Object.keys(searchParams).filter(k => k !== 'page').length > 0;
+    const products = (searchResult.hits.length > 0 || isFiltered) ? searchResult.hits : promotedProducts
 
     return (
-        <div className="lg:basis-5/6 w-full flex flex-col gap-6">
+        <CategoryProductListingContainer
+            products={serializeProductCardList(products)}
+            facets={searchResult.facets}
+            facetsStats={searchResult.facets_stats}
+            totalHits={searchResult.nbHits}
+            totalPages={searchResult.nbPages}
+            currentPage={searchResult.page}
+            categories={categories}
+            categoryPath={categoryPath}
+        >
             <CategorySeoBlock category={category} />
-            <ProductList className="w-full" categoryParam={category.name} categoryPath={categoryPath} predefinedProducts={serializeProductCardList(predefinedProducts)} />
-        </div>
+        </CategoryProductListingContainer>
     )
 }
 
