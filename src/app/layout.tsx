@@ -19,6 +19,7 @@ import { getTranslations as getStorefrontTranslations } from '@/backend/serverAc
 import { cacheLife, cacheTag } from 'next/cache'
 import CookieConsentProvider from '@/components/CookieConsentProvider'
 import ConsentManagedScripts from '@/components/ConsentManagedScripts'
+import NextTopLoader from 'nextjs-toploader'
 
 // Optimized font loading: Only load weights actually used in the app
 // Removed: 100, 200, 300, 800, 900 (rarely used)
@@ -136,6 +137,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
                 <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com" />
             </head>
             <body className={clsx(poppins.className, poppins.variable)}>
+                <NextTopLoader color="#6c4624" showSpinner={false} />
                 <CookieConsentProvider>
                     <GoogleAdsProvider config={googleAdsConfig}>
                         <div id="notification-container" className="notification-box flex flex-col items-center justify-start fixed w-screen h-screen z-[9999] p-3 pt-24 pointer-events-none" />

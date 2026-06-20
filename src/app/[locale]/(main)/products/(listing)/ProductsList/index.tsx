@@ -2,7 +2,7 @@
 import { ProductDataModelWithColorMap } from '@/types/ProductDataModel'
 import ProductCardItem from '@/ui/Product/ProductCardItem'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Configure, useHits, useInstantSearch, usePagination, useSearchBox } from 'react-instantsearch'
+import { Configure, useHits, useInstantSearch, usePagination, useSearchBox, useHierarchicalMenu } from 'react-instantsearch'
 import { buildProductAlgoliaParams, PRODUCT_SEARCH_ATTRIBUTES } from '@/lib/algoliaProductFilters'
 
 const ProductPagination = () => {
@@ -72,12 +72,28 @@ const ProductList = ({ className = "lg:basis-5/6 mx-auto", searchQuery, searchPa
     })
     const { status } = useInstantSearch()
     const { refine } = useSearchBox()
+    const { refine: refineHierarchical } = useHierarchicalMenu({
+        attributes: [
+            'hierarchicalCategories.lvl0',
+            'hierarchicalCategories.lvl1',
+            'hierarchicalCategories.lvl2',
+            'hierarchicalCategories.lvl3',
+        ],
+    })
     const [hasSearchSettled, setHasSearchSettled] = useState(false)
 
     const algoliaParams = useMemo(() => buildProductAlgoliaParams({
         searchQuery,
         searchParams,
-    }), [searchQuery, searchParams])
+        categoryParam,
+        categoryPath,
+    }), [searchQuery, searchParams, categoryParam, categoryPath])
+
+    useEffect(() => {
+        if (categoryPath) {
+            refineHierarchical(categoryPath)
+        }
+    }, [categoryPath, refineHierarchical])
 
     useEffect(() => {
         refine(searchQuery ?? "")

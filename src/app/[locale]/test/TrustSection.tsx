@@ -80,19 +80,18 @@ function SafeBoxIcon({ className }: PromiseIconProps) {
 
 function PromiseCard({ title, description, icon: Icon }: typeof promises[number]) {
     return (
-        <article className="card min-h-0 sm:min-h-[188px] rounded-[18px] border border-white/80 bg-white/75 p-4 sm:p-6 shadow-[0_12px_32px_rgba(92,72,54,0.08)] backdrop-blur-md">
-            <div className="flex h-full items-center gap-4 sm:gap-6">
-                <div className="flex shrink-0 flex-col items-center gap-3 sm:gap-5">
-                    <div className="grid size-[72px] sm:size-[104px] place-items-center rounded-full border border-[#dfd0c2] bg-[#eee7df] text-[#986a39] shadow-inner">
-                        <Icon className="size-[36px] sm:size-[54px]" />
+        <article className="card rounded-[14px] sm:rounded-[18px] border border-white/80 bg-white/75 p-3 sm:p-5 shadow-[0_12px_32px_rgba(92,72,54,0.08)] backdrop-blur-md">
+            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-3 sm:gap-6">
+                <div className="flex shrink-0 flex-col items-center">
+                    <div className="grid size-[52px] sm:size-[104px] place-items-center rounded-full border border-[#dfd0c2] bg-[#eee7df] text-[#986a39] shadow-inner">
+                        <Icon className="size-[26px] sm:size-[54px]" />
                     </div>
-                    <span className="hidden sm:block h-px w-10 bg-[#b88755]" />
                 </div>
-                <div className="max-w-[180px] pt-1">
-                    <h2 className="text-[18px] sm:text-[21px] leading-tight text-[#1d1714] sm:text-[22px]" style={serifFace}>
+                <div className="pt-0.5">
+                    <h2 className="text-[14px] sm:text-[21px] font-semibold leading-tight text-[#1d1714] sm:text-[22px]" style={serifFace}>
                         {title}
                     </h2>
-                    <p className="mt-2 sm:mt-4 text-[12px] sm:text-[13.5px] leading-[1.5] text-[#4e5360]">
+                    <p className="mt-1 sm:mt-3 text-[11px] sm:text-[13px] leading-[1.4] text-[#4e5360]">
                         {description}
                     </p>
                 </div>
@@ -125,39 +124,39 @@ export default function TrustSection() {
             <div className="pointer-events-none absolute bottom-0 right-[50.55%] z-10 hidden h-[72%] w-px bg-[#d0a368] xl:block" />
 
             <section className="mx-auto grid w-full max-w-[1672px] grid-cols-1 items-stretch lg:min-h-screen lg:grid-cols-[49.3%_50.7%]">
-                <div className="relative z-20 flex flex-col justify-center px-6 py-12 sm:px-10 lg:pl-[54px] lg:pr-0 lg:min-h-screen">
+                <div className="relative z-20 flex flex-col justify-center px-4 py-8 sm:px-10 lg:pl-[54px] lg:pr-0 lg:min-h-screen">
                     <Image
                         src="/test/chouhan-logo-lockup.png"
                         alt="Chouhan Rugs"
                         width={303}
                         height={58}
                         priority
-                        className="h-auto w-[200px] sm:w-[240px]"
+                        className="h-auto w-[160px] sm:w-[200px]"
                     />
 
-                    <div className="mt-8 sm:mt-14 max-w-[710px] lg:ml-[58px] xl:mt-[52px]">
+                    <div className="mt-6 sm:mt-10 max-w-[710px] lg:ml-[58px] xl:mt-[52px]">
                         <h1
-                            className="max-w-[690px] text-[2.25rem] sm:text-[clamp(3.25rem,4.45vw,4.75rem)] font-normal leading-[1.08] tracking-[-0.01em] text-[#201714]"
+                            className="max-w-[690px] text-[1.75rem] sm:text-[2.25rem] md:text-[clamp(3.25rem,4.45vw,4.75rem)] font-normal leading-[1.08] tracking-[-0.01em] text-[#201714]"
                             style={serifFace}
                         >
                             Crafted Comfort,
                             <br />
                             Delivered With Care
                         </h1>
-                        <div className="mt-4 sm:mt-8 h-[4px] w-[52px] rounded-full bg-[#a76f3c]" />
-                        <p className="mt-4 sm:mt-7 max-w-[675px] text-[15px] sm:text-[18px] lg:text-[19px] leading-[1.55] tracking-[0.01em] text-[#4f5360]">
+                        <div className="mt-3 sm:mt-6 h-[4px] w-[52px] rounded-full bg-[#a76f3c]" />
+                        <p className="mt-3 sm:mt-6 max-w-[675px] text-[13.5px] sm:text-[17px] lg:text-[19px] leading-[1.5] text-[#4f5360]">
                             From kitchen and living room rugs to bedroom essentials, explore our premium collection of jute rugs, kilim rugs, and cushion covers &mdash; backed by secure shopping and reliable delivery.
                         </p>
                     </div>
 
-                    <div className="mt-6 sm:mt-8 grid w-full max-w-[726px] grid-cols-1 gap-3.5 sm:grid-cols-2 lg:ml-[58px] xl:mt-8 xl:gap-4">
+                    <div className="mt-6 sm:mt-8 grid w-full max-w-[726px] grid-cols-2 gap-3 sm:gap-3.5 lg:ml-[58px] xl:mt-8 xl:gap-4">
                         {promises.map((promise) => (
                             <PromiseCard key={promise.title} {...promise} />
                         ))}
                     </div>
                 </div>
 
-                <div className="relative h-[300px] sm:h-[450px] overflow-hidden lg:h-auto lg:min-h-screen">
+                <div className="relative h-[200px] sm:h-[350px] overflow-hidden lg:h-auto lg:min-h-screen">
                     <div className="absolute -left-[4.4%] top-[-4.5%] h-[111%] w-[114%] rounded-tl-[430px] border border-[#d9aa67]/80 hidden lg:block" />
                     <Image
                         src="/test/chouhan-delivery-visual.png"
