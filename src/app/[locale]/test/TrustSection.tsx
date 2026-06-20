@@ -123,8 +123,8 @@ export default function TrustSection() {
             <div className="absolute -left-24 top-0 -z-10 h-full w-[57%] bg-[radial-gradient(ellipse_at_20%_30%,rgba(255,255,255,0.78),transparent_58%)]" />
             <div className="pointer-events-none absolute bottom-0 right-[50.55%] z-10 hidden h-[72%] w-px bg-[#d0a368] xl:block" />
 
-            <section className="mx-auto grid w-full max-w-[1672px] grid-cols-1 items-stretch lg:min-h-screen lg:grid-cols-[49.3%_50.7%]">
-                <div className="relative z-20 flex flex-col justify-center px-4 py-8 sm:px-10 lg:pl-[54px] lg:pr-0 lg:min-h-screen">
+            <section className="mx-auto grid w-full max-w-[1672px] grid-cols-1 items-stretch lg:grid-cols-[49.3%_50.7%]">
+                <div className="relative z-20 flex flex-col justify-center px-4 py-8 sm:px-10 lg:pl-[54px] lg:pr-0 lg:py-16">
                     <Image
                         src="/test/chouhan-logo-lockup.png"
                         alt="Chouhan Rugs"
@@ -156,7 +156,7 @@ export default function TrustSection() {
                     </div>
                 </div>
 
-                <div className="relative h-[200px] sm:h-[350px] overflow-hidden lg:h-auto lg:min-h-screen">
+                <div className="relative h-[200px] sm:h-[350px] overflow-hidden lg:h-auto lg:min-h-[580px]">
                     <div className="absolute -left-[4.4%] top-[-4.5%] h-[111%] w-[114%] rounded-tl-[430px] border border-[#d9aa67]/80 hidden lg:block" />
                     <Image
                         src="/test/chouhan-delivery-visual.png"
