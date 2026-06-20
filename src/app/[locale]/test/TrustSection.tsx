@@ -80,19 +80,19 @@ function SafeBoxIcon({ className }: PromiseIconProps) {
 
 function PromiseCard({ title, description, icon: Icon }: typeof promises[number]) {
     return (
-        <article className="card min-h-[188px] rounded-[18px] border border-white/80 bg-white/75 p-6 shadow-[0_18px_45px_rgba(92,72,54,0.10)] backdrop-blur-md sm:p-6">
-            <div className="flex h-full items-center gap-6">
-                <div className="flex shrink-0 flex-col items-center gap-5">
-                    <div className="grid size-[104px] place-items-center rounded-full border border-[#dfd0c2] bg-[#eee7df] text-[#986a39] shadow-inner">
-                        <Icon className="size-[54px]" />
+        <article className="card min-h-0 sm:min-h-[188px] rounded-[18px] border border-white/80 bg-white/75 p-4 sm:p-6 shadow-[0_12px_32px_rgba(92,72,54,0.08)] backdrop-blur-md">
+            <div className="flex h-full items-center gap-4 sm:gap-6">
+                <div className="flex shrink-0 flex-col items-center gap-3 sm:gap-5">
+                    <div className="grid size-[72px] sm:size-[104px] place-items-center rounded-full border border-[#dfd0c2] bg-[#eee7df] text-[#986a39] shadow-inner">
+                        <Icon className="size-[36px] sm:size-[54px]" />
                     </div>
-                    <span className="h-px w-10 bg-[#b88755]" />
+                    <span className="hidden sm:block h-px w-10 bg-[#b88755]" />
                 </div>
                 <div className="max-w-[180px] pt-1">
-                    <h2 className="text-[21px] leading-tight text-[#1d1714] sm:text-[22px]" style={serifFace}>
+                    <h2 className="text-[18px] sm:text-[21px] leading-tight text-[#1d1714] sm:text-[22px]" style={serifFace}>
                         {title}
                     </h2>
-                    <p className="mt-4 text-[13px] leading-[1.6] text-[#4e5360] sm:text-[13.5px]">
+                    <p className="mt-2 sm:mt-4 text-[12px] sm:text-[13.5px] leading-[1.5] text-[#4e5360]">
                         {description}
                     </p>
                 </div>
@@ -103,7 +103,7 @@ function PromiseCard({ title, description, icon: Icon }: typeof promises[number]
 
 export default function TrustSection() {
     return (
-        <main className="relative isolate min-h-screen overflow-hidden bg-[#f7f2ec] text-[#211915]">
+        <main className="relative isolate overflow-hidden bg-[#f7f2ec] text-[#211915]">
             <style>{`
                 body > div.hidden.md\\:block,
                 body > div.h-14.md\\:hidden,
@@ -124,41 +124,41 @@ export default function TrustSection() {
             <div className="absolute -left-24 top-0 -z-10 h-full w-[57%] bg-[radial-gradient(ellipse_at_20%_30%,rgba(255,255,255,0.78),transparent_58%)]" />
             <div className="pointer-events-none absolute bottom-0 right-[50.55%] z-10 hidden h-[72%] w-px bg-[#d0a368] xl:block" />
 
-            <section className="mx-auto grid min-h-screen w-full max-w-[1672px] grid-cols-1 items-stretch lg:grid-cols-[49.3%_50.7%]">
-                <div className="relative z-20 flex min-h-screen flex-col px-6 pb-12 pt-8 sm:px-10 lg:pl-[54px] lg:pr-0 xl:pb-[92px] xl:pt-[40px]">
+            <section className="mx-auto grid w-full max-w-[1672px] grid-cols-1 items-stretch lg:min-h-screen lg:grid-cols-[49.3%_50.7%]">
+                <div className="relative z-20 flex flex-col justify-center px-6 py-12 sm:px-10 lg:pl-[54px] lg:pr-0 lg:min-h-screen">
                     <Image
                         src="/test/chouhan-logo-lockup.png"
                         alt="Chouhan Rugs"
                         width={303}
                         height={58}
                         priority
-                        className="h-auto w-[245px] sm:w-[285px]"
+                        className="h-auto w-[200px] sm:w-[240px]"
                     />
 
-                    <div className="mt-14 max-w-[710px] lg:ml-[58px] xl:mt-[52px]">
+                    <div className="mt-8 sm:mt-14 max-w-[710px] lg:ml-[58px] xl:mt-[52px]">
                         <h1
-                            className="max-w-[690px] text-[clamp(3.25rem,4.45vw,4.75rem)] font-normal leading-[1.08] tracking-[-0.01em] text-[#201714]"
+                            className="max-w-[690px] text-[2.25rem] sm:text-[clamp(3.25rem,4.45vw,4.75rem)] font-normal leading-[1.08] tracking-[-0.01em] text-[#201714]"
                             style={serifFace}
                         >
                             Crafted Comfort,
                             <br />
                             Delivered With Care
                         </h1>
-                        <div className="mt-8 h-[4px] w-[52px] rounded-full bg-[#a76f3c]" />
-                        <p className="mt-7 max-w-[675px] text-[18px] leading-[1.55] tracking-[0.01em] text-[#4f5360] sm:text-[19px]">
+                        <div className="mt-4 sm:mt-8 h-[4px] w-[52px] rounded-full bg-[#a76f3c]" />
+                        <p className="mt-4 sm:mt-7 max-w-[675px] text-[15px] sm:text-[18px] lg:text-[19px] leading-[1.55] tracking-[0.01em] text-[#4f5360]">
                             From kitchen and living room rugs to bedroom essentials, explore our premium collection of jute rugs, kilim rugs, and cushion covers &mdash; backed by secure shopping and reliable delivery.
                         </p>
                     </div>
 
-                    <div className="mt-8 grid w-full max-w-[726px] grid-cols-1 gap-3.5 sm:grid-cols-2 lg:ml-[58px] xl:mt-8 xl:gap-4">
+                    <div className="mt-6 sm:mt-8 grid w-full max-w-[726px] grid-cols-1 gap-3.5 sm:grid-cols-2 lg:ml-[58px] xl:mt-8 xl:gap-4">
                         {promises.map((promise) => (
                             <PromiseCard key={promise.title} {...promise} />
                         ))}
                     </div>
                 </div>
 
-                <div className="relative min-h-[700px] overflow-hidden lg:min-h-screen">
-                    <div className="absolute -left-[4.4%] top-[-4.5%] h-[111%] w-[114%] rounded-tl-[430px] border border-[#d9aa67]/80" />
+                <div className="relative h-[300px] sm:h-[450px] overflow-hidden lg:h-auto lg:min-h-screen">
+                    <div className="absolute -left-[4.4%] top-[-4.5%] h-[111%] w-[114%] rounded-tl-[430px] border border-[#d9aa67]/80 hidden lg:block" />
                     <Image
                         src="/test/chouhan-delivery-visual.png"
                         alt="Chouhan Rugs delivery professional holding branded packages"
