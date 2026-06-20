@@ -1,4 +1,5 @@
 import React from 'react'
+import { notFound } from 'next/navigation'
 import TrustSection from './TrustSection'
 import CategoryOptionsSwitcher from './CategoryOptions'
 import RoomOptionsSwitcher from './RoomOptions'
@@ -7,6 +8,10 @@ import { getTranslations, getLocale } from 'next-intl/server'
 import { type Locale } from '@/i18n/routing'
 
 const TestPage = async () => {
+    if (process.env.NODE_ENV === 'production') {
+        notFound()
+    }
+
     const [dynamicSection, tHomepage, tCommon, loc] = await Promise.all([
         getHomePagePopularCategories(),
         getTranslations('homepage'),

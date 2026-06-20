@@ -26,7 +26,7 @@ const ShopByRoom = async () => {
             id: item.id || (idx + 1),
             title: resolveLocalizedString(item.title, locale),
             content: resolveLocalizedString(item.content, locale),
-            image: roomImages[idx % roomImages.length],
+            image: item.image || roomImages[idx % roomImages.length],
         }))
         : [
             { id: 1, title: 'Entryway / Hallway', content: t('areaRugsDesc') || 'This area has heavy foot traffic, so choose a long runner rug. Darker shades and durable jute materials hide dirt easily.', image: roomImages[0] },

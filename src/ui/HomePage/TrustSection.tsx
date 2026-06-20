@@ -1,5 +1,9 @@
 import Image from 'next/image'
 import React from 'react'
+import { getLocale } from 'next-intl/server'
+import { getHomePageOrderProcessInformation } from '@/backend/serverActions/getHomePageOrderProcessInformation'
+import { resolveLocalizedString } from '@/lib/resolveLocalized'
+import { type Locale } from '@/i18n/routing'
 
 type PromiseIconProps = {
     className?: string
@@ -8,29 +12,6 @@ type PromiseIconProps = {
 const serifFace = {
     fontFamily: 'Georgia, "Times New Roman", serif',
 }
-
-const promises = [
-    {
-        title: 'Secure Payments',
-        description: 'Protected transactions with trusted gateways like Razorpay and Stripe.',
-        icon: ShieldLockIcon,
-    },
-    {
-        title: 'Easy Returns',
-        description: 'Hassle-free return support for eligible orders, giving you peace of mind.',
-        icon: ReturnIcon,
-    },
-    {
-        title: 'Free Shipping',
-        description: 'Fast worldwide shipping across the US, UK, Australia, and more at no extra cost.',
-        icon: TruckIcon,
-    },
-    {
-        title: 'Safe Delivery',
-        description: 'Every order is packed carefully to ensure it reaches you in perfect condition.',
-        icon: SafeBoxIcon,
-    },
-]
 
 function ShieldLockIcon({ className }: PromiseIconProps) {
     return (
@@ -43,7 +24,6 @@ function ShieldLockIcon({ className }: PromiseIconProps) {
     )
 }
 
-// ReturnIcon
 function ReturnIcon({ className }: PromiseIconProps) {
     return (
         <svg className={className} viewBox="0 0 64 64" fill="none" aria-hidden="true">
@@ -55,7 +35,6 @@ function ReturnIcon({ className }: PromiseIconProps) {
     )
 }
 
-// TruckIcon
 function TruckIcon({ className }: PromiseIconProps) {
     return (
         <svg className={className} viewBox="0 0 64 64" fill="none" aria-hidden="true">
@@ -68,7 +47,6 @@ function TruckIcon({ className }: PromiseIconProps) {
     )
 }
 
-// SafeBoxIcon
 function SafeBoxIcon({ className }: PromiseIconProps) {
     return (
         <svg className={className} viewBox="0 0 64 64" fill="none" aria-hidden="true">
@@ -81,7 +59,14 @@ function SafeBoxIcon({ className }: PromiseIconProps) {
     )
 }
 
-function PromiseCard({ title, description, icon: Icon }: typeof promises[number]) {
+const iconMap: Record<string, any> = {
+    'ShieldLock.svg': ShieldLockIcon,
+    'EasyReturn.svg': ReturnIcon,
+    'FreeShipping.svg': TruckIcon,
+    'SafeDelivery.svg': SafeBoxIcon,
+}
+
+function PromiseCard({ title, description, icon: Icon }: { title: string; description: string; icon: any }) {
     return (
         <article className="card rounded-xl border border-white/80 bg-white/75 p-2.5 sm:p-3.5 shadow-[0_4px_16px_rgba(92,72,54,0.03)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-[#6c4624]/20">
             <div className="flex flex-row items-start text-left gap-2.5 sm:gap-3.5">
@@ -103,7 +88,64 @@ function PromiseCard({ title, description, icon: Icon }: typeof promises[number]
     )
 }
 
-export default function TrustSection() {
+export default async function TrustSection() {
+    const [loc, data] = await Promise.all([
+        getLocale(),
+        getHomePageOrderProcessInformation()
+    ])
+    const locale = loc as Locale
+
+    const resolvedTitle = data?.title 
+        ? resolveLocalizedString(data.title, locale) 
+        : 'Crafted Comfort,\nDelivered With Care'
+
+    const stepsData = data?.steps
+    const promises = stepsData
+        ? [
+            {
+                title: resolveLocalizedString(stepsData.stepOne.title, locale) || 'Secure Payments',
+                description: resolveLocalizedString(stepsData.stepOne.description, locale) || 'Protected transactions with trusted gateways.',
+                icon: iconMap[stepsData.stepOne.icon] || ShieldLockIcon,
+            },
+            {
+                title: resolveLocalizedString(stepsData.stepTwo.title, locale) || 'Easy Returns',
+                description: resolveLocalizedString(stepsData.stepTwo.description, locale) || 'Hassle-free return support for eligible orders.',
+                icon: iconMap[stepsData.stepTwo.icon] || ReturnIcon,
+            },
+            {
+                title: resolveLocalizedString(stepsData.stepThree.title, locale) || 'Free Shipping',
+                description: resolveLocalizedString(stepsData.stepThree.description, locale) || 'Fast worldwide shipping across the US, UK, etc.',
+                icon: iconMap[stepsData.stepThree.icon] || TruckIcon,
+            },
+            {
+                title: resolveLocalizedString(stepsData.stepFour.title, locale) || 'Safe Delivery',
+                description: resolveLocalizedString(stepsData.stepFour.description, locale) || 'Every order is packed carefully to reach in perfect condition.',
+                icon: iconMap[stepsData.stepFour.icon] || SafeBoxIcon,
+            },
+        ]
+        : [
+            {
+                title: 'Secure Payments',
+                description: 'Protected transactions with trusted gateways like Razorpay and Stripe.',
+                icon: ShieldLockIcon,
+            },
+            {
+                title: 'Easy Returns',
+                description: 'Hassle-free return support for eligible orders, giving you peace of mind.',
+                icon: ReturnIcon,
+            },
+            {
+                title: 'Free Shipping',
+                description: 'Fast worldwide shipping across the US, UK, Australia, and more at no extra cost.',
+                icon: TruckIcon,
+            },
+            {
+                title: 'Safe Delivery',
+                description: 'Every order is packed carefully to ensure it reaches you in perfect condition.',
+                icon: SafeBoxIcon,
+            },
+        ]
+
     return (
         <main className="relative isolate overflow-hidden bg-[#f7f2ec] text-[#211915] rounded-3xl border border-[#e5ccb5]/30 shadow-sm max-w-[1400px] mx-auto">
             <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_15%_15%,rgba(255,255,255,0.96),transparent_34%),linear-gradient(115deg,#f8f4ee_0%,#f3ece4_45%,#efe3d6_100%)]" />
@@ -125,12 +167,10 @@ export default function TrustSection() {
 
                     <div className="mt-4 sm:mt-6 max-w-[650px] lg:ml-2 xl:mt-8">
                         <h1
-                            className="max-w-[600px] text-[1.35rem] sm:text-[1.75rem] md:text-[2rem] lg:text-[2.25rem] xl:text-[2.6rem] font-normal leading-[1.15] tracking-[-0.015em] text-[#201714]"
+                            className="max-w-[600px] text-[1.35rem] sm:text-[1.75rem] md:text-[2rem] lg:text-[2.25rem] xl:text-[2.6rem] font-normal leading-[1.15] tracking-[-0.015em] text-[#201714] whitespace-pre-line"
                             style={serifFace}
                         >
-                            Crafted Comfort,
-                            <br />
-                            Delivered With Care
+                            {resolvedTitle}
                         </h1>
                         <div className="mt-2.5 sm:mt-3 h-[3px] w-[35px] rounded-full bg-[#a76f3c]" />
                         <p className="mt-3 sm:mt-4 max-w-[550px] text-[11.5px] sm:text-[13px] lg:text-[13.5px] leading-[1.4] text-[#4f5360] font-medium">
@@ -140,8 +180,8 @@ export default function TrustSection() {
 
                     {/* Responsive promises grid (2 cols on all screens for compactness) */}
                     <div className="mt-5 sm:mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:ml-2 xl:mt-6">
-                        {promises.map((promise) => (
-                            <PromiseCard key={promise.title} {...promise} />
+                        {promises.map((promise, idx) => (
+                            <PromiseCard key={idx} {...promise} />
                         ))}
                     </div>
                 </div>

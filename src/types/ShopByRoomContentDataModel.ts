@@ -11,4 +11,5 @@ export type ShopByRoomContent = {
     id: number;
     title: LocalizedField<string>;
     content: LocalizedField<string>;
+    image?: string;
 };
