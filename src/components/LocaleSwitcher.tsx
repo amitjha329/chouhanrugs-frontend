@@ -17,7 +17,6 @@ const LOCALE_LABELS: Record<string, string> = {
     'en-US': 'English (US)',
     'en-IN': 'English (India)',
     'en-GB': 'English (UK)',
-    'hi-IN': 'हिन्दी (भारत)',
     'ar': 'العربية',
 } as const;
 

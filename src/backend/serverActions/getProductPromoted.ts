@@ -22,7 +22,7 @@ export default async function getProductPromoted(category: string): Promise<Prod
         } else {
             const catDoc = await db.collection("categories").findOne({ name: { $regex: new RegExp(`^${category}$`, "i") } });
             if (catDoc) {
-                catQuery = { $or: [category, catDoc._id, catDoc._id.toString()] };
+                catQuery = { $in: [category, catDoc._id, catDoc._id.toString()] };
             }
         }
 

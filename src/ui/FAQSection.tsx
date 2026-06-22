@@ -110,7 +110,7 @@ const FaqAccordionCard = ({
                 {faq.question}
             </div>
             <div className="collapse-content text-[13px] sm:text-sm text-[#7a6452] leading-relaxed">
-                <div className="px-6 pb-6 border-t border-[#f5ece3] pt-4">
+                <div className="px-6 pb-2 border-t border-[#f5ece3] pt-4">
                     <p className="whitespace-pre-line">{faq.answer}</p>
                 </div>
             </div>

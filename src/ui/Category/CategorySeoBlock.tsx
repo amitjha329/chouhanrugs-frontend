@@ -82,10 +82,10 @@ const CategorySeoBlock = async ({ category }: { category: CategoriesDataModel })
                         </div>
                     ) : (
                         /* Desktop Hero Card */
-                        <div className="flex relative overflow-hidden rounded-2xl border border-[#eadfd5] bg-white shadow-[0_8px_24px_rgb(0,0,0,0.02)] lg:items-stretch max-h-[360px]">
+                        <div className="flex relative overflow-hidden rounded-2xl border border-[#eadfd5] bg-white shadow-[0_8px_24px_rgb(0,0,0,0.02)] lg:items-stretch lg:min-h-[340px]">
 
                             {/* Left Column: Text Content & Feature Badges */}
-                            <div className="flex flex-col justify-between p-6 sm:p-8 lg:w-[100%] lg:p-9">
+                            <div className="flex flex-col justify-between p-6 sm:p-8 lg:w-[58%] lg:p-9">
                                 <div>
                                     {/* Category Category Name / Tag */}
                                     <div className="flex items-center gap-3">
@@ -121,17 +121,19 @@ const CategorySeoBlock = async ({ category }: { category: CategoriesDataModel })
                             </div>
 
                             {/* Your exact customized image */}
-                            <Image
-                                src={categoryImage}
-                                alt={category.name}
-                                fill
-                                sizes="(max-width: 1024px) 100vw, 45vw"
-                                priority
-                                className="transition-transform duration-700 hover:scale-105 !relative"
-                                style={{
-                                    clipPath: 'ellipse(78% 96% at 75% 90%)'
-                                }}
-                            />
+                            <div className="relative lg:w-[42%] overflow-hidden min-h-[340px]">
+                                <Image
+                                    src={categoryImage}
+                                    alt={category.name}
+                                    fill
+                                    sizes="(max-width: 1024px) 100vw, 42vw"
+                                    priority
+                                    className="object-cover transition-transform duration-700 hover:scale-105"
+                                    style={{
+                                        clipPath: 'ellipse(78% 96% at 75% 90%)'
+                                    }}
+                                />
+                            </div>
                         </div>
                     )}
             </div>

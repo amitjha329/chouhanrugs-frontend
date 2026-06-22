@@ -9,7 +9,7 @@ import { serializeProductCardList } from '@/lib/productCardSerialization'
 const TrendingProducts = async () => {
     const [t, trendingProducts] = await Promise.all([
         getTranslations('homepage'),
-        getHotTrendingProducts({ limit: 8 }),
+        getHotTrendingProducts({ limit: 10 }),
     ])
     const products = serializeProductCardList(serializeForClient(trendingProducts))
 

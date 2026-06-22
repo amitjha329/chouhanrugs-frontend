@@ -77,7 +77,6 @@ pillow & cushion covers, wall hangings, and macramé products.
 ## Supported Locales
 - en-IN (default) — English (India)
 - en-US           — English (US)
-- hi-IN           — Hindi
 - en-GB           — English (UK)
 - ar              — Arabic
 `;

@@ -6,7 +6,7 @@ const ProductListHotTrending = async ({ trendingProducts }: { trendingProducts: 
     if (trendingProducts.length === 0) return null
 
     return (
-        <div className='fluid_conainer grid grid-cols-4 gap-5'>
+        <div className='fluid_conainer grid grid-cols-5 gap-5'>
             {
                 trendingProducts.map(product => {
                     return <ProductCardItem key={product._id?.toString()} {...product} />

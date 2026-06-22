@@ -22,7 +22,7 @@ async function fetchProductsByCategory(category: string, limit: number): Promise
         } else {
             const catDoc = await db.collection("categories").findOne({ name: { $regex: new RegExp(`^${category}$`, "i") } });
             if (catDoc) {
-                catQuery = { $or: [category, catDoc._id, catDoc._id.toString()] };
+                catQuery = { $in: [category, catDoc._id, catDoc._id.toString()] };
             }
         }
 

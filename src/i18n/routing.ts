@@ -6,14 +6,13 @@ import { defineRouting } from 'next-intl/routing';
  * Native-Check: defineRouting is from the already-required next-intl package.
  * No additional slug or locale-detection packages added.
  */
-export const locales = ['en-US', 'en-IN', 'en-GB', 'hi-IN', 'ar'] as const;
+export const locales = ['en-US', 'en-IN', 'en-GB', 'ar'] as const;
 export type Locale = (typeof locales)[number];
 
 export const localePrefixes: Record<Locale, string> = {
     'en-US': '/en/us',
     'en-IN': '/en/in',
     'en-GB': '/en/gb',
-    'hi-IN': '/hi/in',
     ar: '/ar',
 };
 

@@ -60,7 +60,7 @@ function localeForCountry(countryCode: string | undefined, acceptLanguage: strin
     const language = acceptLanguage?.toLowerCase() ?? ''
 
     if (code === 'IN') {
-        return language.includes('hi') ? 'hi-IN' : 'en-IN'
+        return 'en-IN'
     }
 
     if (code === 'GB') {

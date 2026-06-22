@@ -5,7 +5,7 @@ import React from 'react'
 const ProductListHotFeatured = async ({ trendingProducts }: { trendingProducts: ProductDataModelWithColorMap[] }) => {
 
     return (
-        <div className='fluid_conainer grid grid-cols-4 gap-5'>
+        <div className='fluid_conainer grid grid-cols-5 gap-5'>
             {
                 trendingProducts.length > 0 && trendingProducts.map(product => {
                     return <ProductCardItem key={product._id?.toString()} {...product} />

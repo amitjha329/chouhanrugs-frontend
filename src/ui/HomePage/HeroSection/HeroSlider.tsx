@@ -31,6 +31,25 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel | null }) => {
         desc: 'Crafted for comfort. Made to impress.',
     }]
 
+    if (slides.length <= 1) {
+        const image = slides[0]
+        const imageSrc = typeof image.src === 'string' ? image.src : image.src.toString()
+        return (
+            <div className="relative aspect-[16/5] overflow-hidden mx-0 rounded-none w-full">
+                <Image
+                    src={imageSrc || banner_2.src}
+                    alt="Hero banner"
+                    priority
+                    loading="eager"
+                    fill
+                    sizes="100vw"
+                    className="object-fill"
+                    quality={imageQuality.high}
+                />
+            </div>
+        )
+    }
+
     return (
         <Carousel
             additionalTransfrom={0}

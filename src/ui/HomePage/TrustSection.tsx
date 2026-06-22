@@ -156,16 +156,7 @@ export default async function TrustSection() {
             <section className="mx-auto grid w-full grid-cols-1 items-stretch lg:grid-cols-[58%_42%]">
                 {/* Left Side: Brand & Promises Content */}
                 <div className="relative z-20 flex flex-col justify-center px-4 py-6 sm:px-8 sm:py-8 lg:pl-10 lg:pr-6 lg:py-10 xl:py-11">
-                    <Image
-                        src="/test/chouhan-logo-lockup.png"
-                        alt="Chouhan Rugs"
-                        width={303}
-                        height={58}
-                        priority
-                        className="h-auto w-[110px] sm:w-[130px]"
-                    />
-
-                    <div className="mt-4 sm:mt-6 max-w-[650px] lg:ml-2 xl:mt-8">
+                    <div className="max-w-[650px] lg:ml-2">
                         <h1
                             className="max-w-[600px] text-[1.35rem] sm:text-[1.75rem] md:text-[2rem] lg:text-[2.25rem] xl:text-[2.6rem] font-normal leading-[1.15] tracking-[-0.015em] text-[#201714] whitespace-pre-line"
                             style={serifFace}

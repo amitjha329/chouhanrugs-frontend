@@ -19,11 +19,11 @@ async function getRelatedProductsInternal(categoryId: string, excludeProductId: 
         if (ObjectId.isValid(categoryId)) {
             const catDoc = await db.collection("categories").findOne({ _id: new ObjectId(categoryId) });
             const catName = catDoc?.name || categoryId;
-            catQuery = { $or: [categoryId, new ObjectId(categoryId), catName] };
+            catQuery = { $in: [categoryId, new ObjectId(categoryId), catName] };
         } else {
             const catDoc = await db.collection("categories").findOne({ name: { $regex: new RegExp(`^${categoryId}$`, "i") } });
             if (catDoc) {
-                catQuery = { $or: [categoryId, catDoc._id, catDoc._id.toString()] };
+                catQuery = { $in: [categoryId, catDoc._id, catDoc._id.toString()] };
             }
         }
 
