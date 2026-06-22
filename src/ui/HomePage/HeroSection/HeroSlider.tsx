@@ -33,17 +33,30 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel | null }) => {
 
     if (slides.length <= 1) {
         const image = slides[0]
-        const imageSrc = typeof image.src === 'string' ? image.src : image.src.toString()
+        const desktopSrc = typeof image.src === 'string' ? image.src : image.src.toString()
+        const mobileSrc = typeof image.mobileSrc === 'string' ? image.mobileSrc : undefined
         return (
-            <div className="relative aspect-[16/5] overflow-hidden mx-0 rounded-none w-full">
+            <div className="relative aspect-[16/9] md:aspect-[16/5] overflow-hidden mx-0 rounded-none w-full">
+                {/* Desktop view image */}
                 <Image
-                    src={imageSrc || banner_2.src}
+                    src={desktopSrc || banner_2.src}
                     alt="Hero banner"
                     priority
                     loading="eager"
                     fill
                     sizes="100vw"
-                    className="object-fill"
+                    className="hidden md:block object-fill"
+                    quality={imageQuality.high}
+                />
+                {/* Mobile view image (16:9) */}
+                <Image
+                    src={mobileSrc || desktopSrc || banner_2.src}
+                    alt="Hero banner"
+                    priority
+                    loading="eager"
+                    fill
+                    sizes="100vw"
+                    className="md:hidden object-fill"
                     quality={imageQuality.high}
                 />
             </div>
@@ -103,21 +116,31 @@ const HeroSLider = ({ slider }: { slider: SliderDataModel | null }) => {
             {
                 slides.map((image, index) => {
                     const isFirstSlide = index === 0
-                    const imageSrc = typeof image.src === 'string' ? image.src : image.src.toString()
-                    // const heading = resolveLocalizedString(image.heading as any, locale) || 'Elegant Rugs'
-                    // const eyebrow = resolveLocalizedString(image.title as any, locale) || 'Sophisticated designs for every space'
-                    // const description = resolveLocalizedString(image.desc as any, locale) || 'Crafted for comfort. Made to impress.'
+                    const desktopSrc = typeof image.src === 'string' ? image.src : image.src.toString()
+                    const mobileSrc = typeof image.mobileSrc === 'string' ? image.mobileSrc : undefined
 
                     return (
-                        <div key={`${imageSrc}-${index}`} className="relative aspect-[16/5] overflow-hidden mx-0 rounded-none">
+                        <div key={`${desktopSrc}-${index}`} className="relative aspect-[16/9] md:aspect-[16/5] overflow-hidden mx-0 rounded-none">
+                            {/* Desktop view image */}
                             <Image
-                                src={imageSrc || banner_2.src}
+                                src={desktopSrc || banner_2.src}
                                 alt={`Hero banner ${index + 1}`}
                                 priority={isFirstSlide}
                                 loading={isFirstSlide ? "eager" : "lazy"}
                                 fill
                                 sizes="100vw"
-                                className="object-fill"
+                                className="hidden md:block object-fill"
+                                quality={imageQuality.high}
+                            />
+                            {/* Mobile view image (16:9) */}
+                            <Image
+                                src={mobileSrc || desktopSrc || banner_2.src}
+                                alt={`Hero banner ${index + 1}`}
+                                priority={isFirstSlide}
+                                loading={isFirstSlide ? "eager" : "lazy"}
+                                fill
+                                sizes="100vw"
+                                className="md:hidden object-fill"
                                 quality={imageQuality.high}
                             />
                             {/* <div className="absolute inset-0 bg-gradient-to-r from-[#fff8ef]/90 via-[#fff8ef]/45 to-transparent md:bg-gradient-to-b md:from-black/15 md:via-black/30 md:to-black/45" />

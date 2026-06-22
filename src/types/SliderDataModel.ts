@@ -8,6 +8,7 @@ type SliderDataModel = {
 
 export type Slides = {
     src: string | File;
+    mobileSrc?: string;
     title: string;
     heading: string;
     desc: string;
