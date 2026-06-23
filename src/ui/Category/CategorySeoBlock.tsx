@@ -55,7 +55,7 @@ const CategorySeoBlock = async ({ category }: { category: CategoriesDataModel })
 
                                     {/* Headline */}
                                     <h1 className="mt-3 font-serif text-[1.45rem] font-bold leading-tight text-[#231814] min-[390px]:text-2xl sm:text-3xl">
-                                        {category.seoTitle || category.name}
+                                        {category.name}
                                     </h1>
 
                                     {/* Description */}
@@ -97,7 +97,7 @@ const CategorySeoBlock = async ({ category }: { category: CategoriesDataModel })
 
                                     {/* Headline (SEO Title or Name) */}
                                     <h1 className="mt-3 font-serif text-3xl font-bold leading-tight text-[#231814] sm:text-4xl lg:text-[2.65rem] lg:leading-[1.08]">
-                                        {category.seoTitle || category.name}
+                                        {category.name}
                                     </h1>
 
                                     {/* Paragraph description */}
