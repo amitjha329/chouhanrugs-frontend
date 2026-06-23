@@ -37,7 +37,7 @@ const RangeSlider = ({ userCurrency }: { userCurrency: Currency }) => {
             <Label className="text-sm font-semibold text-[#2c211a]">Price Range</Label>
             <SliderOutput className="text-sm font-semibold text-[#6c4624]">
                 {({ state }) =>
-                    state.values.map((_, i) => `${userCurrency?.currencySymbol} ` + (Number(state.getThumbValueLabel(i)) * (userCurrency?.exchangeRates ?? 1) << 0)).join(' - ')}
+                    state.values.map((val) => `${userCurrency?.currencySymbol} ` + (val * (userCurrency?.exchangeRates ?? 1) << 0)).join(' - ')}
             </SliderOutput>
             <SliderTrack className="group col-span-2 flex h-8 items-center">
                 {({ state, isDisabled }) =>

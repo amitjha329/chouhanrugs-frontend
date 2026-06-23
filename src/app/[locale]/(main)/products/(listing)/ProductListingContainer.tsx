@@ -562,9 +562,9 @@ function PriceRangeSlider({
                 {({ state }) =>
                     state.values
                         .map(
-                            (_, i) =>
+                            (val) =>
                                 `${userCurrency.currencySymbol} ` +
-                                (Number(state.getThumbValueLabel(i)) * (userCurrency.exchangeRates ?? 1) << 0)
+                                (val * (userCurrency.exchangeRates ?? 1) << 0)
                         )
                         .join(' - ')}
             </SliderOutput>
