@@ -30,7 +30,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 
 # Build arguments for environment variables
-ARG MONGODB="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mongodb.net/ecom?retryWrites=true&w=majority"
+ARG MONGODB="mongodb://192.168.1.4:27017/?directConnection=true"
 ARG MONGODB_DB="ecom"
 ARG AUTH_URL="https://chouhan.yashjha.dev"
 ARG NEXTAUTH_SECRET="{O^:,b!\"$8qBET_vk%;IP$Tl3`ut3!'"
@@ -90,7 +90,7 @@ ENV PORT=3001
 ENV HOSTNAME="0.0.0.0"
 
 # Runtime environment variables
-ENV MONGODB="mongodb+srv://chouhanrugs:wcnWRC3QAXsOaWrU@chouhanrugs.vpli7um.mongodb.net/ecom?retryWrites=true&w=majority"
+ENV MONGODB="mongodb://192.168.1.4:27017/?directConnection=true"
 ENV MONGODB_DB="ecom"
 ENV AUTH_URL="https://chouhan.yashjha.dev"
 ENV NEXTAUTH_SECRET="{O^:,b!\"$8qBET_vk%;IP$Tl3`ut3!'"
