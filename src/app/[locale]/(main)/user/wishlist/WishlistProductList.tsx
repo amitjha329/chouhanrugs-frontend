@@ -7,6 +7,7 @@ import { ProductDataModel } from '@/types/ProductDataModel'
 import { cookies } from 'next/headers'
 import Currency from '@/types/Currency'
 import WishlistProductDeleteButton from './WishlistProductDeleteButton'
+import WishlistAddToCartButton from './WishlistAddToCartButton'
 import { HiOutlineHeart, HiOutlineExclamationTriangle } from 'react-icons/hi2'
 import { getLocale } from 'next-intl/server'
 import { resolveLocalizedString } from '@/lib/resolveLocalized'
@@ -54,6 +55,9 @@ const WishlistProductList = async ({ productList, itemIds }: { productList: (Pro
                                     <p className="text-sm text-base-content/60 mt-1">
                                         Brand: {product.productBrand}
                                     </p>
+                                    <div className="mt-2">
+                                        <WishlistAddToCartButton product={product} userId={session?.user?.id} />
+                                    </div>
                                 </div>
                                 <div className="flex items-center justify-between gap-4 mt-3 pt-3 border-t border-base-300/50">
                                     <div className="flex items-center gap-2">

@@ -4,7 +4,6 @@ import { emailOTP } from 'better-auth/plugins'
 import { nextCookies } from 'better-auth/next-js'
 import { MongoClient } from 'mongodb'
 import { createTransport } from 'nodemailer'
-import html from '../../templates/otp_email'
 import { getConfigBulk } from '@/lib/services/ConfigService'
 
 const client = new MongoClient(process.env.MONGODB!, {
@@ -22,7 +21,9 @@ export const auth = betterAuth({
     // bootstrap env values rather than request-time DB-backed config.
     baseURL: process.env.AUTH_URL,
     secret: process.env.NEXTAUTH_SECRET,
-    database: mongodbAdapter(db),
+    database: mongodbAdapter(db, {
+        usePlural: true
+    }),
     socialProviders: {
         google: {
             // OAuth provider setup is also initialization-time Better Auth config.
@@ -94,8 +95,7 @@ export const auth = betterAuth({
                     from: `Chouhan Rugs <${smtp.SMTP_FROM || smtp.SMTP_USER}>`,
                     replyTo: smtp.SMTP_FROM || smtp.SMTP_USER,
                     subject: 'OTP for Chouhan Rugs Email Signin',
-                    html: html({ OTP: otp, SITE: 'Chouhan Rugs' }),
-                    text: `OTP for Chouhan Rugs Email Signin is: ${otp}`,
+                    text: `Your OTP for signing in to Chouhan Rugs is: ${otp}\n\nThis OTP is valid for 10 minutes.`,
                 })
             },
         }),

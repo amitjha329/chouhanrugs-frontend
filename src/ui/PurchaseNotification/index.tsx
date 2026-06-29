@@ -86,8 +86,8 @@ function generateNotification(products: NotificationProduct[], timeAgo: string) 
 type Notification = ReturnType<typeof generateNotification>
 
 const SHOW_DURATION = 5000       // visible for 5s
-const INTERVAL_MIN = 16000       // min 16s between popups
-const INTERVAL_MAX = 22000       // max 22s between popups
+const INTERVAL_MIN = 20 * 60 * 1000 // 20 minutes (1,200,000 ms)
+const INTERVAL_MAX = 20 * 60 * 1000 // 20 minutes (1,200,000 ms)
 const INITIAL_DELAY = 7000       // first popup after 7s
 
 export default function PurchaseNotification({ products, translations }: { products: NotificationProduct[], translations: NotificationTranslations }) {

@@ -1,6 +1,5 @@
 "use server"
 import { createTransport } from "nodemailer"
-import html from "../../../templates/otp_email";
 import clientPromise from "@/lib/clientPromise";
 import { createHash } from 'crypto';
 import { getConfigBulk } from '@/lib/services/ConfigService';
@@ -56,11 +55,7 @@ export default async function sendOtp(params: {
             from: `Chouhan Rugs <${smtp.SMTP_FROM || smtp.SMTP_USER}>`,
             replyTo: smtp.SMTP_FROM || smtp.SMTP_USER,
             subject: `OTP for Chouhan Rugs Email Signin`,
-            html: html({
-                OTP: token.toString(),
-                SITE: "Chouhan Rugs",
-            }),
-            text: `OTP for Chouhan Rugs Email Signin is : ${token}`,
+            text: `Your OTP for Chouhan Rugs email signin is: ${token}\n\nThis OTP is valid for 10 minutes.`,
         });
         
         const tokenId = await (await clientPromise).db('ecom').collection('verification_tokens').insertOne({

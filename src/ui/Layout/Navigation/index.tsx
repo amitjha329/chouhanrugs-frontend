@@ -33,6 +33,9 @@ const Navigation = async () => {
     ])
 
     const marketplaceLinks = (siteData.marketplaceLinks ?? []).filter(link => link.enabled && link.url)
+    const displayName = session?.user?.name?.trim()
+        ? `Account (${session.user.name.trim().split(' ')[0]})`
+        : 'Account'
 
     return (
         <>
@@ -178,13 +181,13 @@ const Navigation = async () => {
                                 <Suspense fallback={
                                     <div className="flex items-center gap-1.5 text-xs font-bold text-[#5d3c1e]">
                                         <img src="/vector/UserIcon.svg" alt="" className="w-4 h-4 opacity-80" />
-                                        <span>Account ({session.user.name?.split(' ')[0]})</span>
+                                        <span>{displayName}</span>
                                     </div>
                                 }>
                                     <UserMenu>
                                         <div className="flex items-center gap-1.5 hover:text-[#6c4624]">
                                             <img src="/vector/UserIcon.svg" alt="" className="w-4 h-4 opacity-80" />
-                                            <span>Account ({session.user.name?.split(' ')[0]})</span>
+                                            <span>{displayName}</span>
                                         </div>
                                     </UserMenu>
                                 </Suspense>

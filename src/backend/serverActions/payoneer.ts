@@ -7,6 +7,7 @@ import converter from "@/utils/mongoObjectConversionUtility"
 import { getCountriesByName } from "@yusifaliyevpro/countries"
 import { ObjectId } from "mongodb"
 import { getConfig } from '@/lib/services/ConfigService'
+import { sendOrderConfirmationEmail } from './sendOrderEmailHelper'
 
 /**
  * Get Payoneer configuration from database
@@ -324,6 +325,11 @@ export async function updatePayoneerOrderStatus(
         if (status === 'paid') {
             updateData.paidAt = new Date()
             updateData.orderStatus = 'placed'
+            
+            // Trigger plain-text order confirmation email asynchronously
+            sendOrderConfirmationEmail(orderId).catch(err => {
+                console.error("[payoneer] Failed to send order confirmation email:", err)
+            })
         }
         
         // Handle cancelled payments - mark order as cancelled
